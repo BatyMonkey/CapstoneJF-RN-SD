@@ -1,0 +1,7 @@
+{
+  "name": "miAppIonic",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
