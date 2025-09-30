@@ -1,0 +1,7 @@
+{
+  "name": "redbarrio",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
