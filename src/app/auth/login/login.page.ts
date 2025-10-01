@@ -7,10 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { AuthService } from '../auth.service';
 
 @Component({
-<<<<<<< HEAD
   standalone: true,
-=======
->>>>>>> master
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],

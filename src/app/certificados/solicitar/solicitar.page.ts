@@ -16,10 +16,7 @@ import {
 
 @Component({
   selector: 'app-solicitar-certificado',
-<<<<<<< HEAD
   standalone: true,
-=======
->>>>>>> master
   imports: [CommonModule, FormsModule, IonicModule, DatePipe],
   templateUrl: './solicitar.page.html',
   styleUrls: ['./solicitar.page.scss'],
