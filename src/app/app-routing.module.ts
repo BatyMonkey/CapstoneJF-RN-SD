@@ -31,7 +31,19 @@ const routes: Routes = [
     loadComponent: () =>
       import('./home/home.page').then(m => m.HomePage),
   },
+<<<<<<< HEAD
 
+=======
+  {
+  path: 'noticias',
+  loadComponent: () => import('./noticias/noticias.page').then(m => m.NoticiasPage),
+  },
+  {
+  path: 'noticias/:id', // La variable ':id' es crucial
+  loadComponent: () => import('./detalle-noticia/detalle-noticia.page').then(m => m.DetalleNoticiaPage)
+},
+  //TODAS LAS RUTAS DEBEN IR SOBRE ESTE
+>>>>>>> master
   { path: '**', redirectTo: 'auth/login' },
 ];
 
@@ -39,7 +51,11 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })],
   exports: [RouterModule],
 })
+<<<<<<< HEAD
 export class AppRoutingModule {}
 
 
 
+=======
+export class AppRoutingModule {}
+>>>>>>> master
