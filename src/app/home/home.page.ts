@@ -1,60 +1,23 @@
-// src/app/home/home.page.ts
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
-import { FormsModule } from '@angular/forms'; // si usas ngModel
-import { Router } from '@angular/router';
-import { ActionSheetController } from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
+
+// Asegúrate de importar el IonicModule aquí
+import { IonicModule } from '@ionic/angular'; 
+// También es buena práctica importar las directivas comunes
+import { CommonModule } from '@angular/common'; 
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  standalone: true,
   selector: 'app-home',
-  templateUrl: './home.page.html',
-  styleUrls: ['./home.page.scss'],
-  imports: [IonicModule, CommonModule, FormsModule], // <-- clave
+  templateUrl: 'home.page.html',
+  styleUrls: ['home.page.scss'],
+  standalone: true,
+  imports: [
+    IonicModule, // <-- ¡ESTO ES LO CRUCIAL!
+    CommonModule,
+    FormsModule
+    // Añade cualquier otro componente standalone o módulo que necesites
+  ] 
 })
-
-
-export class HomePage {
-  // tu lógica aquí
-  constructor(private router: Router, private actionSheetCtrl: ActionSheetController) {}
-  
-  solicitudes() {
-    this.router.navigate(['/solicitudes'])
-  }
-
-  certificados(){
-    this.router.navigate(['/certificados'])
-  }
-
-  noticias(){
-    this.router.navigate(['/noticias'])
-  }
-
-  calendario(){
-    this.router.navigate(['/calendario'])
-  }
-
-  async abrirMenuUsuario() {
-    const actionSheet = await this.actionSheetCtrl.create({
-      header: 'Usuario',
-      buttons: [
-        {
-          text: 'Ver perfil',
-          icon: 'person-outline',
-          handler: () => this.router.navigate(['/perfil'])
-        },
-        {
-          text: 'Cerrar sesión',
-          icon: 'log-out-outline',
-          handler: () => this.router.navigate(['/auth/login'])
-        },
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        }
-      ]
-    });
-    await actionSheet.present();
-  }
+export class HomePage{
+  // ...
 }

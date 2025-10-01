@@ -1,11 +1,19 @@
+// src/app/app-routing.module.ts
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from './core/auth-guard'; // ajusta al path real
+import { AuthGuard } from './core/auth-guard'; // ajusta si tu guard está en otro path
 
 const routes: Routes = [
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
 
-  // auth (standalone)
+  {
+    path: 'solicitar',
+    // canActivate: [AuthGuard], // opcional
+    loadComponent: () =>
+      import('./certificados/solicitar/solicitar.page')  // << ruta correcta
+        .then(m => m.SolicitarCertificadoPage),
+  },
+
   {
     path: 'auth/login',
     loadComponent: () =>
@@ -17,43 +25,21 @@ const routes: Routes = [
       import('./auth/register/register.page').then(m => m.RegisterPage),
   },
 
-  // home protegido (standalone)
   {
     path: 'home',
     canActivate: [AuthGuard],
     loadComponent: () =>
       import('./home/home.page').then(m => m.HomePage),
   },
-
-  // si usas tabs (standalone), similar:
-  // {
-  //   path: 'tabs',
-  //   canActivate: [AuthGuard],
-  //   loadComponent: () =>
-  //     import('./tabs/tabs.page').then(m => m.TabsPage),
-  // },
   {
-    path: 'certificados',
-    loadComponent: () =>
-      import('./certificados/certificados.page').then(m => m.CertificadosPage)
+  path: 'noticias',
+  loadComponent: () => import('./noticias/noticias.page').then(m => m.NoticiasPage),
   },
   {
-    path: 'noticias',
-    loadComponent: () =>
-      import('./noticias/noticias.page').then(m => m.NoticiasPage)
-  },
-  {
-    path: 'calendario',
-    loadComponent: () =>
-      import('./calendario/calendario.page').then(m => m.CalendarioPage)
-  },
-  {
-    path: 'solicitudes',
-    loadComponent: () =>
-      import('./solicitudes/solicitudes.page').then(m => m.SolicitudesPage)
-  },
-  //tinen que ir todas las rutas sobre esta, porque si no manda al login
-
+  path: 'noticias/:id', // La variable ':id' es crucial
+  loadComponent: () => import('./detalle-noticia/detalle-noticia.page').then(m => m.DetalleNoticiaPage)
+},
+  //TODAS LAS RUTAS DEBEN IR SOBRE ESTE
   { path: '**', redirectTo: 'auth/login' },
 ];
 
@@ -62,4 +48,3 @@ const routes: Routes = [
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
-

@@ -7,7 +7,6 @@ import { IonicModule } from '@ionic/angular';
 import { AuthService } from '../auth.service';
 
 @Component({
-  standalone: true,
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
@@ -32,9 +31,5 @@ export class LoginPage {
     } finally {
       this.loading = false;
     }
-  }
-  
-  register() {
-    this.router.navigate(['auth/register']);
   }
 }
