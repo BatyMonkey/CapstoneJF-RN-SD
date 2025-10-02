@@ -1,0 +1,60 @@
+<!-- src/app/certificados/solicitar.page.html -->
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Solicitar Certificado</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Emisión</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <!-- Correo destino: precargado con el email del usuario -->
+      <ion-item>
+        <ion-label position="stacked">Correo destino</ion-label>
+        <ion-input
+          [(ngModel)]="emailDestino"
+          name="emailDestino"
+          type="email"
+          readonly>
+        </ion-input>
+      </ion-item>
+
+      <!-- Lugar y fecha opcional -->
+      <ion-item>
+        <ion-label position="stacked">Lugar y fecha (opcional)</ion-label>
+        <ion-input
+          [(ngModel)]="placeAndDate"
+          name="placeAndDate"
+          placeholder="Santiago, 30/09/2025">
+        </ion-input>
+      </ion-item>
+
+      <!-- Botones de acción -->
+      <ion-button expand="block" (click)="emitirDescargar()" [disabled]="loading">
+        {{ loading ? 'Generando...' : 'Generar y Descargar' }}
+      </ion-button>
+
+      <ion-button expand="block" color="secondary" (click)="emitirEnviar()" [disabled]="loading">
+        {{ loading ? 'Generando...' : 'Generar y Enviar por correo' }}
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Historial de certificados -->
+  <ion-list class="ion-margin-top">
+    <ion-list-header>Mis certificados</ion-list-header>
+    <ion-item *ngFor="let c of certificados">
+      <ion-label>
+        <h2>Certificado #{{ c.id }}</h2>
+        <p>Emitido: {{ c.created_at | date:'short' }}</p>
+      </ion-label>
+      <ion-button *ngIf="c.pdf_url" fill="clear" [href]="c.pdf_url" target="_blank">
+        Ver PDF
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>
+
