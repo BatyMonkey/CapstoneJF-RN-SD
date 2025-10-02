@@ -33,8 +33,4 @@ export class LoginPage {
       this.loading = false;
     }
   }
-  
-  register() {
-    this.router.navigate(['auth/register']);
-  }
 }

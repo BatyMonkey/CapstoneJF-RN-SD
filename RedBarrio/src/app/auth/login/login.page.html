@@ -18,10 +18,6 @@
   <ion-button expand="block" (click)="login()" [disabled]="loading">
     {{ loading ? 'Ingresando…' : 'Ingresar' }}
   </ion-button>
-  
-  <ion-button expand="block" (click)="register()" [disabled]="loading">
-    {{ loading ? 'Ingresando…' : 'Registrarme' }}
-  </ion-button>
 
   <ion-text color="danger" *ngIf="errorMsg" style="margin-top:12px;display:block">
     {{ errorMsg }}

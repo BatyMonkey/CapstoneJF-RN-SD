@@ -1,58 +1,42 @@
+// src/app/app-routing.module.ts
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from './core/auth-guard'; // ajusta al path real
+import { AuthGuard } from './core/auth-guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
 
-  // auth (standalone)
   {
     path: 'auth/login',
     loadComponent: () =>
-      import('./auth/login/login.page').then(m => m.LoginPage),
+      import('./auth/login/login.page').then(c => c.LoginPage),
   },
   {
     path: 'auth/register',
     loadComponent: () =>
-      import('./auth/register/register.page').then(m => m.RegisterPage),
+      import('./auth/register/register.page').then(c => c.RegisterPage), // 👈 Debe existir EXACTAMENTE este export
   },
-
-  // home protegido (standalone)
   {
-    path: 'home',
-    canActivate: [AuthGuard],
+    path: 'solicitar',
     loadComponent: () =>
-      import('./home/home.page').then(m => m.HomePage),
-  },
-
-  // si usas tabs (standalone), similar:
-  // {
-  //   path: 'tabs',
-  //   canActivate: [AuthGuard],
-  //   loadComponent: () =>
-  //     import('./tabs/tabs.page').then(m => m.TabsPage),
-  // },
-  {
-    path: 'certificados',
-    loadComponent: () =>
-      import('./certificados/certificados.page').then(m => m.CertificadosPage)
+      import('./certificados/solicitar/solicitar.page').then(c => c.SolicitarCertificadoPage),
   },
   {
     path: 'noticias',
     loadComponent: () =>
-      import('./noticias/noticias.page').then(m => m.NoticiasPage)
+      import('./noticias/noticias.page').then(c => c.NoticiasPage),
   },
   {
-    path: 'calendario',
+    path: 'solicitud',
     loadComponent: () =>
-      import('./calendario/calendario.page').then(m => m.CalendarioPage)
+      import('./solicitud/solicitud.page').then(c => c.SolicitudPage),
   },
   {
-    path: 'solicitudes',
+    path: 'home',
+    canActivate: [AuthGuard],
     loadComponent: () =>
-      import('./solicitudes/solicitudes.page').then(m => m.SolicitudesPage)
+      import('./home/home.page').then(c => c.HomePage),
   },
-  //tinen que ir todas las rutas sobre esta, porque si no manda al login
 
   { path: '**', redirectTo: 'auth/login' },
 ];
@@ -62,4 +46,5 @@ const routes: Routes = [
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
+
 

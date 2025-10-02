@@ -24,8 +24,6 @@
     {{ loading ? 'Creando...' : 'Registrarme' }}
   </ion-button>
 
-  <ion-button expand="block" (click)="volver()">Volver</ion-button>
-
   <ion-text color="danger" *ngIf="errorMsg" style="margin-top:12px;display:block">
     {{ errorMsg }}
   </ion-text>

@@ -1,32 +1,49 @@
-<ion-header>
+<ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>RedBarrio</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="abrirMenuUsuario()">
-        <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
+    <ion-title>
+      RedBarrio
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <div class="card-grid">
-    <ion-card class="custom-card" button (click)="solicitudes()">
-      <ion-card-header>
-        <ion-card-title>Solicitudes</ion-card-title>
-      </ion-card-header>
-    </ion-card>
+<ion-grid>
+  <ion-row>
+    <ion-col size="12" size-md="6">
+      <ion-card>
+        <ion-card-header>
+          <img src="assets/newspaper-outline.svg" alt="Icono de Solicitudes" class="custom-icon">
+          <ion-card-title>Solicitudes</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          Apartado de solicitudes.
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
 
-    <ion-card class="custom-card" button (click)="noticias()">
-      <ion-card-header>
-        <ion-card-title>Noticias</ion-card-title>
-      </ion-card-header>
-    </ion-card>
+    <ion-col size="12" size-md="6">
+      <ion-card>
+        <ion-card-header>
+          <img src="assets/document-text-outline.svg" alt="Icono de Solicitudes" class="custom-icon">
+          <ion-card-title>Certificados</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          Apartado de certificados.
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+  </ion-row>
 
-    <ion-card class="custom-card" button (click)="calendario()">
-      <ion-card-header>
-        <ion-card-title>Calendario vecinal</ion-card-title>
-      </ion-card-header>
-    </ion-card>
-  </div>
-</ion-content>
+  <ion-row>
+    <ion-col size="12">
+      <ion-card>
+        <ion-card-header>
+          <img src="assets/bag-remove-outline.svg" alt="Icono de Solicitudes" class="custom-icon">
+          <ion-card-title>Proyectos vecinales</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          Apartado de proyectos vecinales.
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+</ion-grid>

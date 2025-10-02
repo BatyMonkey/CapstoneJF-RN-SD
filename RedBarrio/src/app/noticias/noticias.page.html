@@ -4,10 +4,85 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="ion-padding">
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">Noticias</ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <!-- Formulario de Publicación de Nueva Noticia -->
+  <ion-card class="mb-6 shadow-xl">
+    <ion-card-header>
+      <ion-card-title class="text-xl font-bold text-center">Publicar Nueva Noticia</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item class="mb-4" lines="none">
+        <ion-input label="Título" labelPlacement="stacked" [(ngModel)]="nuevaNoticia.titulo" placeholder="Título de la noticia"></ion-input>
+      </ion-item>
+
+      <ion-item class="mb-4" lines="none">
+        <ion-textarea label="Contenido" labelPlacement="stacked" [(ngModel)]="nuevaNoticia.contenido" placeholder="Escribe el contenido de la noticia aquí..." [autoGrow]="true"></ion-textarea>
+      </ion-item>
+
+      <ion-item class="mb-4" lines="none">
+        <input type="file" (change)="handleFileSelect($event)" accept="image/*" class="w-full p-2 border border-gray-300 rounded-lg">
+      </ion-item>
+
+      <!-- Mensaje de error para el campo faltante -->
+      <div *ngIf="!nuevaNoticia.titulo.trim() && !nuevaNoticia.contenido.trim() && !nuevaNoticia.url_foto" class="text-red-600 text-sm mb-4 text-center p-2 rounded-lg bg-red-100">
+        Debes completar el título, el contenido y seleccionar una imagen para publicar.
+      </div>
+      <div *ngIf="nuevaNoticia.titulo.trim() && nuevaNoticia.contenido.trim() && !nuevaNoticia.url_foto" class="text-red-600 text-sm mb-4 text-center p-2 rounded-lg bg-red-100">
+        Debe seleccionar una foto para la noticia.
+      </div>
+      <div *ngIf="!esUsuarioAutenticado" class="text-red-600 text-sm mb-4 text-center p-2 rounded-lg bg-red-100">
+        Debes iniciar sesión para publicar noticias.
+      </div>
+
+
+      <ion-button 
+        expand="block" 
+        (click)="publicarNoticia()"
+        [disabled]="!esUsuarioAutenticado || !nuevaNoticia.titulo.trim() || !nuevaNoticia.contenido.trim() || !nuevaNoticia.url_foto || estaCargando"
+      >
+        <ion-spinner *ngIf="estaCargando" name="dots"></ion-spinner>
+        <span *ngIf="!estaCargando">Publicar Noticia</span>
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list>
+    <ion-list-header>
+      <ion-label class="text-2xl font-semibold">Últimas Noticias</ion-label>
+    </ion-list-header>
+
+    <!-- Indicador de Carga de Noticias -->
+    <div *ngIf="estaCargandoNoticias" class="ion-text-center ion-padding">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Cargando lista de noticias...</p>
+    </div>
+
+    <!-- Lista de Noticias -->
+    <ion-card *ngFor="let noticia of noticias" [routerLink]="['/noticias', noticia.id]" class="mb-4 shadow-md transition-shadow duration-300 hover:shadow-lg cursor-pointer">
+      <img *ngIf="noticia.url_foto" [src]="noticia.url_foto" [alt]="noticia.titulo" class="w-full h-48 object-cover">
+      <ion-card-header>
+        <ion-card-title class="text-xl font-bold">{{ noticia.titulo }}</ion-card-title>
+        <ion-card-subtitle class="text-sm text-gray-500">
+          Autor: {{ noticia.nombre_autor || 'Anónimo' }}
+          <span *ngIf="noticia.fecha_creacion"> | {{ noticia.fecha_creacion | date:'mediumDate' }}</span>
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <p class="truncate-3-lines">{{ noticia.contenido }}</p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Mensaje si no hay noticias -->
+    <div *ngIf="!estaCargandoNoticias && noticias.length === 0" class="ion-text-center ion-padding">
+      <ion-icon name="information-circle-outline" color="medium" size="large"></ion-icon>
+      <h2 class="text-xl font-semibold">No hay noticias publicadas</h2>
+      <p class="text-gray-600">¡Sé el primero en publicar una!</p>
+    </div>
+  </ion-list>
 </ion-content>
