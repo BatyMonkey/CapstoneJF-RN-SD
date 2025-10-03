@@ -1,7 +1,0 @@
-{
-  "name": "RedBarrio",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular-standalone"
-}
