@@ -1,88 +1,62 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Noticias</ion-title>
+    
+    <ion-buttons slot="end" *ngIf="esAdmin"> 
+      <ion-button (click)="navegarACrearNoticia()" fill="solid" color="primary">
+        NUEVA NOTICIA
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Noticias</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true">
+  
+  <div *ngIf="estaCargando" class="ion-text-center ion-padding">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando noticias...</p>
+  </div>
 
-  <!-- Formulario de Publicación de Nueva Noticia -->
-  <ion-card class="mb-6 shadow-xl">
-    <ion-card-header>
-      <ion-card-title class="text-xl font-bold text-center">Publicar Nueva Noticia</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-item class="mb-4" lines="none">
-        <ion-input label="Título" labelPlacement="stacked" [(ngModel)]="nuevaNoticia.titulo" placeholder="Título de la noticia"></ion-input>
-      </ion-item>
+  <div *ngIf="!estaCargando && noticias.length > 0">
+    
+    <ion-grid>
+      <ion-row>
+        
+        <ion-col size="6" *ngFor="let noticia of noticias">
+          
+          <ion-card button (click)="verDetalle(noticia.id)">
+            
+            <div *ngIf="noticia.url_foto && noticia.url_foto.length > 0" class="card-image-container">
+              <img [src]="noticia.url_foto[0]" alt="Miniatura de la noticia" class="card-image"/>
+            </div>
+            
+            <ion-card-header>
+              <ion-card-title class="card-title ion-text-wrap">{{ noticia.titulo }}</ion-card-title>
+              <ion-card-subtitle>
+                {{ noticia.nombre_autor || 'Anónimo' }} | {{ noticia.fecha_creacion | date:'shortDate' }}
+              </ion-card-subtitle>
+            </ion-card-header>
 
-      <ion-item class="mb-4" lines="none">
-        <ion-textarea label="Contenido" labelPlacement="stacked" [(ngModel)]="nuevaNoticia.contenido" placeholder="Escribe el contenido de la noticia aquí..." [autoGrow]="true"></ion-textarea>
-      </ion-item>
-
-      <ion-item class="mb-4" lines="none">
-        <input type="file" (change)="handleFileSelect($event)" accept="image/*" class="w-full p-2 border border-gray-300 rounded-lg">
-      </ion-item>
-
-      <!-- Mensaje de error para el campo faltante -->
-      <div *ngIf="!nuevaNoticia.titulo.trim() && !nuevaNoticia.contenido.trim() && !nuevaNoticia.url_foto" class="text-red-600 text-sm mb-4 text-center p-2 rounded-lg bg-red-100">
-        Debes completar el título, el contenido y seleccionar una imagen para publicar.
-      </div>
-      <div *ngIf="nuevaNoticia.titulo.trim() && nuevaNoticia.contenido.trim() && !nuevaNoticia.url_foto" class="text-red-600 text-sm mb-4 text-center p-2 rounded-lg bg-red-100">
-        Debe seleccionar una foto para la noticia.
-      </div>
-      <div *ngIf="!esUsuarioAutenticado" class="text-red-600 text-sm mb-4 text-center p-2 rounded-lg bg-red-100">
-        Debes iniciar sesión para publicar noticias.
-      </div>
-
-
-      <ion-button 
-        expand="block" 
-        (click)="publicarNoticia()"
-        [disabled]="!esUsuarioAutenticado || !nuevaNoticia.titulo.trim() || !nuevaNoticia.contenido.trim() || !nuevaNoticia.url_foto || estaCargando"
-      >
-        <ion-spinner *ngIf="estaCargando" name="dots"></ion-spinner>
-        <span *ngIf="!estaCargando">Publicar Noticia</span>
-      </ion-button>
-    </ion-card-content>
-  </ion-card>
-
-  <ion-list>
-    <ion-list-header>
-      <ion-label class="text-2xl font-semibold">Últimas Noticias</ion-label>
-    </ion-list-header>
-
-    <!-- Indicador de Carga de Noticias -->
-    <div *ngIf="estaCargandoNoticias" class="ion-text-center ion-padding">
-      <ion-spinner name="crescent" color="primary"></ion-spinner>
-      <p>Cargando lista de noticias...</p>
+            <ion-card-content>
+              <p *ngIf="noticia.parrafos && noticia.parrafos.length > 0" class="card-excerpt">
+                {{ noticia.parrafos[0].substring(0, 80) }}...
+              </p>
+              <p *ngIf="!noticia.parrafos || noticia.parrafos.length === 0" class="card-excerpt-placeholder">
+                [Sin resumen]
+              </p>
+            </ion-card-content>
+            
+          </ion-card>
+          
+        </ion-col>
+        
+      </ion-row>
+    </ion-grid>
     </div>
 
-    <!-- Lista de Noticias -->
-    <ion-card *ngFor="let noticia of noticias" [routerLink]="['/noticias', noticia.id]" class="mb-4 shadow-md transition-shadow duration-300 hover:shadow-lg cursor-pointer">
-      <img *ngIf="noticia.url_foto" [src]="noticia.url_foto" [alt]="noticia.titulo" class="w-full h-48 object-cover">
-      <ion-card-header>
-        <ion-card-title class="text-xl font-bold">{{ noticia.titulo }}</ion-card-title>
-        <ion-card-subtitle class="text-sm text-gray-500">
-          Autor: {{ noticia.nombre_autor || 'Anónimo' }}
-          <span *ngIf="noticia.fecha_creacion"> | {{ noticia.fecha_creacion | date:'mediumDate' }}</span>
-        </ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        <p class="truncate-3-lines">{{ noticia.contenido }}</p>
-      </ion-card-content>
-    </ion-card>
+  <div *ngIf="!estaCargando && noticias.length === 0" class="ion-text-center ion-padding">
+    <h2>No hay noticias disponibles</h2>
+    <p>Sé el primero en crear una noticia usando el botón "Nueva Noticia".</p>
+  </div>
 
-    <!-- Mensaje si no hay noticias -->
-    <div *ngIf="!estaCargandoNoticias && noticias.length === 0" class="ion-text-center ion-padding">
-      <ion-icon name="information-circle-outline" color="medium" size="large"></ion-icon>
-      <h2 class="text-xl font-semibold">No hay noticias publicadas</h2>
-      <p class="text-gray-600">¡Sé el primero en publicar una!</p>
-    </div>
-  </ion-list>
 </ion-content>

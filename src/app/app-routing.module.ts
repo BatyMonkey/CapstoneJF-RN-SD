@@ -14,18 +14,40 @@ const routes: Routes = [
   {
     path: 'auth/register',
     loadComponent: () =>
-      import('./auth/register/register.page').then(c => c.RegisterPage), // 👈 Debe existir EXACTAMENTE este export
+      import('./auth/register/register.page').then(c => c.RegisterPage), 
   },
   {
     path: 'solicitar',
     loadComponent: () =>
       import('./certificados/solicitar/solicitar.page').then(c => c.SolicitarCertificadoPage),
   },
+  
+  // ----------------------------------------------------
+  // INICIO DE LA CORRECCIÓN DE RUTAS DE NOTICIAS
+  // ----------------------------------------------------
+  
+  // 1. RUTA ESPECÍFICA PARA CREAR (Debe ir primero para que no sea confundida con un ID)
+  {
+    path: 'noticias/crear',
+    loadComponent: () => import('./crear-noticia/crear-noticia.page').then(m => m.CrearNoticiaPage)
+  },
+
+  // 2. RUTA PRINCIPAL (LISTA)
   {
     path: 'noticias',
-    loadComponent: () =>
-      import('./noticias/noticias.page').then(c => c.NoticiasPage),
+    loadComponent: () => import('./noticias/noticias.page').then(m => m.NoticiasPage)
   },
+
+  // 3. RUTA GENÉRICA (DETALLE) - Debe ir al final
+  {
+    path: 'noticias/:id',
+    loadComponent: () => import('./detalle-noticia/detalle-noticia.page').then(m => m.DetalleNoticiaPage)
+  },
+
+  // ----------------------------------------------------
+  // FIN DE LA CORRECCIÓN DE RUTAS
+  // ----------------------------------------------------
+
   {
     path: 'solicitud',
     loadComponent: () =>
@@ -46,5 +68,3 @@ const routes: Routes = [
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
-
-

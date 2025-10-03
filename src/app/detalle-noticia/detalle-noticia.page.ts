@@ -1,66 +1,129 @@
+// src/app/detalle-noticia/detalle-noticia.page.ts
+
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { NoticiasService, Noticia } from '../services/noticias';
-import { ActivatedRoute } from '@angular/router';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { environment } from 'src/environments/environment';
+
+// Definición de la interfaz para la noticia (ajustada a la nueva estructura)
+interface DetalleNoticia {
+  id: number;
+  titulo: string;
+  parrafos: string[] | null; // Array de párrafos
+  nombre_autor: string | null;
+  fecha_creacion: string;
+  url_foto: string[] | null; // Array de URLs de fotos
+}
+
+// Interfaz para el contenido mixto que se renderizará
+interface ContenidoMixtoItem {
+  type: 'parrafo' | 'foto';
+  value: string;
+}
 
 @Component({
   selector: 'app-detalle-noticia',
   templateUrl: './detalle-noticia.page.html',
-  // Se elimina la referencia al SCSS que no existe (Error NG2008)
-  styleUrls: [], 
+  styleUrls: ['./detalle-noticia.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [CommonModule, IonicModule, RouterModule]
 })
 export class DetalleNoticiaPage implements OnInit {
 
-  public noticia: Noticia | null = null;
-  // Propiedad faltante que causaba el error TS2339
-  public estaCargando: boolean = true; 
-  public errorCarga: boolean = false;
+  supabase: SupabaseClient;
+  noticiaId: number | null = null;
+  noticia: DetalleNoticia | null = null;
+  estaCargando = true;
 
-  constructor(
-    private route: ActivatedRoute,
-    private noticiasService: NoticiasService
-  ) { }
+  // Array para almacenar párrafos y URLs mezclados
+  contenidoMixto: ContenidoMixtoItem[] = [];
 
-  ngOnInit() {
-    this.cargarDetalleNoticia();
+  constructor(private route: ActivatedRoute) {
+    this.supabase = createClient(
+      environment.supabaseUrl,
+      environment.supabaseAnonKey
+    );
   }
 
-  async cargarDetalleNoticia() {
+  ngOnInit() {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (idParam) {
+      this.noticiaId = parseInt(idParam, 10);
+      this.cargarDetalleNoticia(this.noticiaId);
+    } else {
+      this.estaCargando = false;
+    }
+  }
+
+  async cargarDetalleNoticia(id: number) {
     this.estaCargando = true;
-    this.errorCarga = false;
-    
     try {
-      // 1. Obtener el ID de la URL
-      const idString = this.route.snapshot.paramMap.get('id');
-      const id = idString ? parseInt(idString, 10) : NaN;
+      const { data, error } = await this.supabase
+        .from('noticias')
+        // Seleccionamos 'parrafos' y 'url_foto'
+        .select('id, titulo, parrafos, nombre_autor, fecha_creacion, url_foto') 
+        .eq('id', id)
+        .single(); 
 
-      if (isNaN(id)) {
-        console.error('ID de noticia no válido.');
-        this.errorCarga = true;
-        this.noticia = null;
-        return;
-      }
-
-      // 2. Cargar la noticia por ID usando el servicio
-      const data = await this.noticiasService.getNoticiaById(id);
+      if (error && error.code !== 'PGRST116') throw error; 
 
       if (data) {
-        this.noticia = data;
+        this.noticia = data as DetalleNoticia;
+        // Llenar el array de contenido mezclado después de cargar
+        this.mezclarContenido(); 
       } else {
-        this.errorCarga = true;
         this.noticia = null;
-        console.warn('No se encontró la noticia o falló la carga.');
       }
 
     } catch (error) {
-      console.error('Error al cargar detalle de la noticia:', error);
-      this.errorCarga = true;
+      console.error('Error al cargar el detalle de la noticia:', error);
+      this.noticia = null;
     } finally {
       this.estaCargando = false;
     }
+  }
+
+  // Lógica para mezclar el contenido: 2 párrafos por 1 foto
+  private mezclarContenido() {
+    this.contenidoMixto = [];
+    if (!this.noticia) return;
+
+    const parrafos = this.noticia.parrafos || [];
+    const fotos = this.noticia.url_foto || [];
+
+    let pIndex = 0;
+    let fIndex = 0;
+
+    // Intercalar el contenido: 2 párrafos por 1 foto
+    // El bucle continúa mientras quede contenido en cualquiera de los dos arrays
+    while (pIndex < parrafos.length || fIndex < fotos.length) {
+      
+      // 1. Agregar dos párrafos
+      for (let i = 0; i < 2; i++) {
+        if (pIndex < parrafos.length) {
+          this.contenidoMixto.push({ type: 'parrafo', value: parrafos[pIndex] });
+          pIndex++;
+        }
+      }
+
+      // 2. Agregar una foto
+      if (fIndex < fotos.length) {
+        this.contenidoMixto.push({ type: 'foto', value: fotos[fIndex] });
+        fIndex++;
+      }
+    }
+    
+    // Si quedan párrafos o fotos sobrantes, ya están incluidos debido al bucle 'while'
+  }
+
+  // Helper para formatear la fecha
+  formatearFecha(fecha: string): string {
+    // Maneja el caso de fecha nula si ocurre
+    if (!fecha) return ''; 
+    return new Date(fecha).toLocaleDateString('es-ES', { 
+        year: 'numeric', month: 'long', day: 'numeric' 
+    });
   }
 }

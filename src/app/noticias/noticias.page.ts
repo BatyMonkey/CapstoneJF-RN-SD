@@ -1,150 +1,123 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+// src/app/noticias/noticias.page.ts
+
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, ToastController } from '@ionic/angular';
-import { NoticiasService, Noticia } from '../services/noticias'; // Revisar esta importación para asegurar que el path sea correcto
-import { RouterModule } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
+import { Router, RouterModule } from '@angular/router';
+
+// Vuelve la importación de createClient y User para la autenticación
+import { createClient, SupabaseClient, User } from '@supabase/supabase-js'; 
+import { environment } from 'src/environments/environment';
+
+// Definición de la interfaz para la noticia
+interface Noticia {
+  id: number;
+  titulo: string;
+  url_foto: string[] | null; 
+  nombre_autor: string | null;
+  fecha_creacion: string;
+  parrafos: string[] | null; 
+}
 
 @Component({
   selector: 'app-noticias',
   templateUrl: './noticias.page.html',
   styleUrls: ['./noticias.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, RouterModule] // RouterModule es clave aquí
+  imports: [IonicModule, CommonModule, FormsModule, RouterModule]
 })
 export class NoticiasPage implements OnInit {
 
-  public noticias: Noticia[] = []; 
-  public nuevaNoticia: Noticia = { titulo: '', contenido: '' }; 
-  public fotoArchivo: File | null = null;
-  public estaCargando: boolean = false;
-  // ******* CORRECCIÓN CLAVE *******
-  public estaCargandoNoticias: boolean = true; // Agregada para resolver TS2551
-  // ******* CORRECCIÓN CLAVE *******
-
-  // Mensajes de error específicos para la UI
-  public mensajeError: string | null = null; 
-  public esUsuarioAutenticado: boolean = false; // Se añade para el control del botón
+  supabase: SupabaseClient; 
+  noticias: Noticia[] = [];
+  estaCargando = false;
+  
+  // NUEVA VARIABLE: Para controlar la visibilidad del botón de crear
+  esAdmin: boolean = false; 
+  usuarioActual: User | null = null; // Para guardar el usuario
 
   constructor(
-    private noticiasService: NoticiasService,
-    private cdr: ChangeDetectorRef, 
-    private toastController: ToastController
-  ) { }
-
-  async ngOnInit() {
-    await this.verificarAutenticacion();
-    this.cargarNoticias();
+    private router: Router
+  ) {
+    // Inicialización directa del cliente (versión funcional)
+    this.supabase = createClient(
+      environment.supabaseUrl,
+      environment.supabaseAnonKey
+    );
   }
 
-  // Nuevo método para verificar si el usuario está logueado
-  async verificarAutenticacion() {
-    const userId = await this.noticiasService.getCurrentUserId();
-    this.esUsuarioAutenticado = !!userId;
-    this.cdr.detectChanges(); 
+  ngOnInit() {
+    // La primera vez que carga, intenta obtener todo
+    this.cargarEstadoYNoticias();
   }
 
-  async presentToast(message: string, color: 'success' | 'danger') {
-    const toast = await this.toastController.create({
-      message: message,
-      duration: 3000,
-      position: 'top',
-      color: color
-    });
-    toast.present();
-  }
-
-  async cargarNoticias() {
-    this.estaCargandoNoticias = true; // Inicia la carga
-    try {
-      const data = await this.noticiasService.getNoticias();
-      if (data) {
-        this.noticias = data;
-        this.cdr.detectChanges(); 
-      } else {
-        console.error('Fallo al cargar noticias. Revisa las políticas RLS y la configuración de la vista.');
-      }
-    } catch (error) {
-      console.error('Error cargando noticias:', error);
-    } finally {
-      this.estaCargandoNoticias = false; // Finaliza la carga
-    }
+  ionViewWillEnter() {
+    // Al volver a esta vista (ej: desde el login o crear), forzamos la recarga del estado
+    this.cargarEstadoYNoticias();
   }
   
-  // Renombrado de handleFotoChange a handleFileSelect para coincidir con el HTML
-  handleFileSelect(event: any) {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      this.fotoArchivo = files[0];
-      // Si la noticia ya tenía una URL, se limpia al subir una nueva foto
-      this.nuevaNoticia.url_foto = undefined; 
-    } else {
-      this.fotoArchivo = null;
-    }
-    this.mensajeError = null; 
+  // NUEVA FUNCIÓN: Combina la carga de noticias y el estado del usuario
+  async cargarEstadoYNoticias() {
+      await this.cargarEstadoUsuario();
+      await this.cargarNoticias();
   }
 
-  async publicarNoticia() { 
-    this.mensajeError = null;
-    
-    // 1. Validar autenticación
-    const userId = await this.noticiasService.getCurrentUserId(); 
-    
-    if (!userId) {
-        this.presentToast('Debes iniciar sesión para publicar noticias.', 'danger');
-        return;
-    }
-    
-    // 2. Validar campos obligatorios
-    if (!this.nuevaNoticia.titulo?.trim() || !this.nuevaNoticia.contenido?.trim() || !this.fotoArchivo) {
-      this.mensajeError = 'Faltan campos obligatorios o la foto.';
-      this.presentToast('Error: Faltan título, contenido o la foto.', 'danger');
-      return;
-    }
-    
+  // NUEVA FUNCIÓN: Carga el estado del usuario y verifica el rol
+  async cargarEstadoUsuario() {
+      try {
+          // 1. Obtener la sesión activa
+          const { data: { user } } = await this.supabase.auth.getUser();
+          this.usuarioActual = user;
+
+          if (user) {
+              // 2. Si hay usuario, consultar el rol en la tabla 'usuario'
+              const { data: perfil, error } = await this.supabase
+                  .from('usuario')
+                  .select('rol') // <-- Asume que el rol está en la columna 'rol'
+                  .eq('user_id', user.id)
+                  .single();
+
+              if (error && error.code !== 'PGRST116') throw error;
+              
+              // 3. Verificar si el rol es 'administrador' (o el valor que uses para el admin)
+              // Aquí debes usar el valor exacto de la columna 'rol' para el admin
+              this.esAdmin = perfil?.rol === 'administrador'; 
+              
+          } else {
+              this.esAdmin = false;
+          }
+      } catch (error) {
+          console.error('Error al cargar estado de usuario:', error);
+          this.esAdmin = false;
+      }
+  }
+
+
+  async cargarNoticias() {
     this.estaCargando = true;
-    let fotoUrl: string | null = null;
-
     try {
-      // 3. Subir la foto
-      if (this.fotoArchivo) {
-        fotoUrl = await this.noticiasService.subirFotoNoticia(this.fotoArchivo);
-        
-        if (fotoUrl === null) {
-            this.mensajeError = 'Error al subir la foto al servidor.';
-            this.presentToast('Error: No se pudo subir la imagen.', 'danger');
-            return;
-        }
-      }
+      const { data, error } = await this.supabase
+        .from('noticias')
+        .select('id, titulo, url_foto, nombre_autor, fecha_creacion, parrafos') 
+        .order('fecha_creacion', { ascending: false });
 
-      // 4. Asignar datos finales y publicar
-      this.nuevaNoticia.url_foto = fotoUrl;
-      this.nuevaNoticia.user_id = userId; // Asignamos el ID del autor
+      if (error) throw error;
+
+      this.noticias = data as Noticia[];
       
-      const noticiaCreada = await this.noticiasService.crearNoticia(this.nuevaNoticia);
-
-      if (noticiaCreada) {
-        this.presentToast('Noticia publicada con éxito.', 'success');
-        
-        // Recargar la lista
-        await this.cargarNoticias(); 
-        
-        // Limpiar el formulario y el archivo
-        this.nuevaNoticia = { titulo: '', contenido: '' };
-        this.fotoArchivo = null;
-        
-        // Limpiar el input file (requiere referencia directa en un entorno real, pero aquí solo reiniciamos el modelo)
-        
-      } else {
-        this.mensajeError = 'La publicación falló. Revisa RLS de INSERT y el user_id.';
-        this.presentToast('Error al crear la noticia en la DB.', 'danger');
-      }
     } catch (error) {
-      console.error('Error al publicar la noticia:', error);
-      this.mensajeError = 'Ocurrió un error inesperado al publicar.';
-      this.presentToast('Error: Ocurrió un error inesperado.', 'danger');
+      console.error('Error al cargar noticias:', error);
     } finally {
       this.estaCargando = false;
     }
+  }
+
+  verDetalle(noticiaId: number) {
+    this.router.navigate(['/noticias', noticiaId]);
+  }
+
+  navegarACrearNoticia() {
+    this.router.navigate(['noticias/crear']);
   }
 }
