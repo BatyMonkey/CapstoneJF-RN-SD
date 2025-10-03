@@ -72,10 +72,29 @@
       </ion-list-header>
       
       <ion-item *ngFor="let archivo of archivosSeleccionados; let i = index" lines="full">
+        
         <ion-label slot="start" class="ion-text-wrap">
-          {{ i === 0 ? 'Imagen de Portada (Obligatoria)' : 'Imagen ' + (i) + ' (Opcional)' }}
+          {{ i === 0 ? 'Imagen de Portada (Obligatoria)' : 'Imagen ' + i + ' (Opcional)' }}
         </ion-label>
-        <ion-input type="file" (change)="onFileSelected($event, i)" accept="image/jpeg, image/png" [required]="i === 0"></ion-input>
+        
+        <div slot="end" class="ion-text-end">
+            
+            <p class="ion-no-margin ion-text-wrap" style="font-size: 0.9em; color: var(--ion-color-medium);">
+                {{ archivosSeleccionados[i]?.name || 'Sin archivos seleccionados' }}
+            </p>
+            
+            <input type="file" 
+                   style="display: none;" 
+                   #fileInput 
+                   (change)="onFileSelected($event, i)" 
+                   accept="image/jpeg, image/png" 
+                   [required]="i === 0">
+
+            <ion-button size="small" (click)="fileInput.click()">
+                Seleccionar archivo
+            </ion-button>
+        </div>
+        
       </ion-item>
       
       <ion-text color="danger" class="ion-padding-start">
