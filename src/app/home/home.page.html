@@ -1,49 +1,17 @@
-<ion-header [translucent]="true">
+<!-- src/app/home/home.page.html -->
+<ion-header class="rb-header">
   <ion-toolbar>
-    <ion-title>
-      RedBarrio
-    </ion-title>
+    <ion-buttons slot="start">
+      <!-- Debe coincidir con menuId="mainMenu" del app.component.html -->
+      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>RedBarrio</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-grid>
-  <ion-row>
-    <ion-col size="12" size-md="6">
-      <ion-card>
-        <ion-card-header>
-          <img src="assets/newspaper-outline.svg" alt="Icono de Solicitudes" class="custom-icon">
-          <ion-card-title>Solicitudes</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          Apartado de solicitudes.
-        </ion-card-content>
-      </ion-card>
-    </ion-col>
-
-    <ion-col size="12" size-md="6">
-      <ion-card>
-        <ion-card-header>
-          <img src="assets/document-text-outline.svg" alt="Icono de Solicitudes" class="custom-icon">
-          <ion-card-title>Certificados</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          Apartado de certificados.
-        </ion-card-content>
-      </ion-card>
-    </ion-col>
-  </ion-row>
-
-  <ion-row>
-    <ion-col size="12">
-      <ion-card>
-        <ion-card-header>
-          <img src="assets/bag-remove-outline.svg" alt="Icono de Solicitudes" class="custom-icon">
-          <ion-card-title>Proyectos vecinales</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          Apartado de proyectos vecinales.
-        </ion-card-content>
-      </ion-card>
-    </ion-col>
-  </ion-row>
-</ion-grid>
+<ion-content class="ion-padding home">
+  <div class="hero">
+    <h1>¡Bienvenido/a!</h1>
+    <p>Usa el menú (arriba a la izquierda) para navegar por la app.</p>
+  </div>
+</ion-content>

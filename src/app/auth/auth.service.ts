@@ -35,8 +35,6 @@ async signUp(email: string, password: string, nombre: string) {
       correo: email,
       rol: 'vecino',
       verificado: false,
-      creado_en: new Date().toISOString(),
-      actualizado_en: new Date().toISOString(),
     });
 
   if (upsertError) throw upsertError;
@@ -74,6 +72,9 @@ async signUp(email: string, password: string, nombre: string) {
     if (error) return null;
     return data as Perfil;
   }
+    // ----------------------------------------
+  // UID (auth.users.id) directo para usar en reserva
+  // ----------------------------------------
   async miUID(): Promise<string | null> {
     const ses = await this.session();
     return ses?.user?.id ?? null;

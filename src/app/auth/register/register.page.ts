@@ -1,10 +1,9 @@
-// src/app/auth/register/register.page.ts
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
-import { supabase } from '../../core/supabase.client'; // ← ajusta la ruta si difiere
+import { IonicModule, ToastController } from '@ionic/angular';
+import { supabase } from '../../core/supabase.client';
 
 @Component({
   standalone: true,
@@ -18,62 +17,83 @@ export class RegisterPage {
   email = '';
   password = '';
   loading = false;
+
+  // solo por si quieres mostrar también el error en la página
   errorMsg = '';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private toastCtrl: ToastController
+  ) {}
+
+  private async toast(message: string, color: 'success' | 'danger' | 'warning' = 'success') {
+    const t = await this.toastCtrl.create({
+      message,
+      color,
+      duration: 2800,
+      position: 'top',
+      buttons: [{ text: 'OK', role: 'cancel' }],
+    });
+    await t.present();
+  }
 
   async register() {
     this.loading = true;
     this.errorMsg = '';
+
     try {
-      // 1) Crear usuario de Auth
+      // 1) Crear usuario en Auth
       const { data, error } = await supabase.auth.signUp({
-        email: this.email,
+        email: this.email.trim(),
         password: this.password,
         options: {
-          data: { full_name: this.nombre }, // metadata opcional
+          data: { full_name: this.nombre?.trim() || '' },
         },
       });
-      if (error) throw error;
 
-      const authId = data.user?.id; // <- UUID del usuario en auth.users
-      if (!authId) throw new Error('No se obtuvo el ID de usuario de Supabase.');
-
-      // Si tu proyecto exige confirmación por email, no tendrás sesión aquí.
-      // En ese caso, intenta iniciar sesión para obtener el JWT y poder insertar.
-      let hasSession = !!data.session;
-
-      if (!hasSession) {
-        // Intentar login inmediato (si confirmación está desactivada funcionará;
-        // si está activada, fallará hasta que confirme el correo).
-        const { data: loginData, error: loginErr } = await supabase.auth.signInWithPassword({
-          email: this.email,
-          password: this.password,
-        });
-        if (loginErr) {
-          // No hay sesión => no podrás insertar por RLS. Redirige a login y crea el registro en el primer login (Opción 2).
-          // También puedes mostrar un mensaje claro.
-          this.router.navigateByUrl('/auth/login', { replaceUrl: true });
-          return;
-        }
-        hasSession = !!loginData.session;
+      if (error) {
+        // Mensaje amable si el correo ya existe
+        const msg = /registered|exists|already/i.test(error.message)
+          ? 'Este correo ya está registrado. Intenta iniciar sesión.'
+          : error.message || 'No se pudo crear la cuenta.';
+        this.errorMsg = msg;
+        await this.toast(msg, 'danger');
+        return;
       }
 
-      // 2) Insertar fila en public.usuario
-      // ADAPTA los nombres de columnas a tu tabla: user_id, id_auth, nombre, correo...
+      const authId = data.user?.id;
+      const hasSession = !!data.session;
+
+      // 2) Si tu proyecto requiere confirmación por correo, no habrá sesión todavía
+      if (!hasSession) {
+        await this.toast('Te enviamos un correo para confirmar tu cuenta. Revisa tu bandeja ✉️', 'success');
+        // En este escenario no podemos insertar en tu tabla perfil por RLS.
+        // Lo haremos al primer login si así lo decides.
+        await this.router.navigateByUrl('/auth/login', { replaceUrl: true });
+        return;
+      }
+
+      // 3) Si hay sesión, insertamos en tu tabla `usuario`
+      if (!authId) throw new Error('No se obtuvo el ID de auth del usuario.');
+
       const { error: insErr } = await supabase.from('usuario').insert({
-        user_id: authId,         // <- usa la columna que pusiste NOT NULL
-        id_auth: authId,         // si la tienes
+        user_id: authId,          // ajusta nombres de columnas a tu esquema
+        id_auth: authId,          // si existe en tu tabla
         nombre: this.nombre,
         correo: this.email,
-        creado_en: new Date().toISOString(), // si existe la columna
+        creado_en: new Date().toISOString(), // si tu tabla lo tiene
       });
-      if (insErr) throw insErr;
+      if (insErr) {
+        // No bloqueamos el flujo, pero avisamos.
+        console.warn('No se pudo insertar en tabla usuario:', insErr);
+      }
 
-      // 3) Redirigir
-      this.router.navigateByUrl('/auth/login', { replaceUrl: true });
+      await this.toast('Cuenta creada con éxito. ¡Ya puedes iniciar sesión! 🎉', 'success');
+      await this.router.navigateByUrl('/auth/login', { replaceUrl: true });
     } catch (e: any) {
-      this.errorMsg = e?.message ?? 'Error al registrar la cuenta';
+      const msg = e?.message ?? 'Error al registrar la cuenta.';
+      this.errorMsg = msg;
+      await this.toast(msg, 'danger');
     } finally {
       this.loading = false;
     }

@@ -26,11 +26,17 @@ export class LoginPage {
     this.errorMsg = '';
     try {
       await this.auth.signIn(this.email, this.password);
-      this.router.navigateByUrl('/home', { replaceUrl: true }); // o '/tabs' si usas tabs
+      this.router.navigateByUrl('/home', { replaceUrl: true });
     } catch (e: any) {
       this.errorMsg = e?.message ?? 'Error al iniciar sesión';
     } finally {
       this.loading = false;
     }
+  }
+
+  // 👉 Navegar al registro
+  goToRegister() {
+    if (this.loading) return;
+    this.router.navigateByUrl('/auth/register');
   }
 }

@@ -1,4 +1,3 @@
-// src/app/certificados/solicitar.page.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -23,32 +22,39 @@ import { environment } from 'src/environments/environment';
 })
 export class SolicitarCertificadoPage implements OnInit {
   loading = false;
-  emailDestino = '';           // <- se autocompleta en ngOnInit
+  emailDestino = '';
   placeAndDate = '';
   certificados: any[] = [];
+  displayName: string | null = null;
 
   async ngOnInit() {
-    await this.prefillEmail();   // 👈 nuevo
+    await this.prefillUserInfo();
     await this.cargarHistorial();
   }
 
-  /** Prellenar el email con el correo del usuario autenticado */
-  private async prefillEmail() {
-    try {
-      // 1) intenta desde auth.users
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user?.email) {
-        this.emailDestino = user.email;
-        return;
-      }
+  /** Prellenar el email y nombre del usuario autenticado */
+private async prefillUserInfo() {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      if (user.email) this.emailDestino = user.email;
 
-      // 2) como fallback, toma el correo desde tu tabla de perfil (si la manejas)
-      const who = await getMyUserData().catch(() => null as any);
-      if (who?.correo) this.emailDestino = who.correo;
-    } catch (_) {
-      // ignora, el usuario siempre podrá editar manualmente el campo
+      const meta = (user.user_metadata ?? {}) as Record<string, any>;
+      const metaName = meta['full_name'] || meta['name'] || null;
+      if (metaName) this.displayName = metaName;
     }
+
+    // Fallback a tu tabla de perfil / datos
+    const who = await getMyUserData().catch(() => null as any);
+    if (!this.emailDestino && who?.correo) this.emailDestino = who.correo;
+    if (!this.displayName && (who?.full_name || who?.nombre)) {
+      this.displayName = who.full_name || who.nombre;
+    }
+  } catch {
+    // Silencioso
   }
+}
+
 
   private async callN8nWebhook(payload: {
     to: string;
@@ -97,7 +103,7 @@ export class SolicitarCertificadoPage implements OnInit {
       });
 
       const meta = { ...who, placeAndDate: this.placeAndDate || '' };
-      const saved = await uploadAndRegister(blob, meta); // { id, pdf_url, ... }
+      const saved = await uploadAndRegister(blob, meta);
 
       downloadBlob(blob, `certificado-${saved.id}.pdf`);
       await this.cargarHistorial();
@@ -130,10 +136,10 @@ export class SolicitarCertificadoPage implements OnInit {
       });
 
       const meta = { ...who, placeAndDate: this.placeAndDate || '' };
-      const saved = await uploadAndRegister(blob, meta); // ← debe devolver { id, pdf_url }
+      const saved = await uploadAndRegister(blob, meta);
 
       await this.callN8nWebhook({
-        to: this.emailDestino,                       // 👈 usa el email prellenado
+        to: this.emailDestino,
         subject: 'Certificado emitido',
         pdf_url: saved.pdf_url,
         filename: `certificado-${saved.id}.pdf`
@@ -149,5 +155,3 @@ export class SolicitarCertificadoPage implements OnInit {
     }
   }
 }
-
-

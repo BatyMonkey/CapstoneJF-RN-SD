@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Generar Proyecto</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="proyectoForm" (ngSubmit)="generarProyecto()">
+    
+    <ion-item>
+      <ion-label position="stacked">Título del Proyecto</ion-label>
+      <ion-input formControlName="titulo" type="text" placeholder="Ej: Plaza Comunitaria"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Descripción</ion-label>
+      <ion-textarea
+        formControlName="descripcion"
+        autoGrow="true"
+        placeholder="Explica el propósito del proyecto...">
+      </ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Estado</ion-label>
+      <ion-select formControlName="estado">
+        <ion-select-option value="pendiente">Pendiente</ion-select-option>
+        <ion-select-option value="aprobado">Aprobado</ion-select-option>
+        <ion-select-option value="rechazado">Rechazado</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-button expand="block" type="submit" [disabled]="proyectoForm.invalid">
+      Crear Proyecto
+    </ion-button>
+  </form>
+</ion-content>
