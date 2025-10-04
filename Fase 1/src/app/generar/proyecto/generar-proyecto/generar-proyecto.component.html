@@ -1,0 +1,82 @@
+<ion-header class="rb-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <!-- usa el menú global -->
+      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Generar Proyecto</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding generar-proyecto" [fullscreen]="true">
+  <!-- Hero / intro -->
+  <ion-card class="card hero">
+    <ion-card-header>
+      <ion-card-title>Nuevo proyecto</ion-card-title>
+      <ion-card-subtitle>Completa los datos y publica para tu comunidad</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Los campos marcados son obligatorios. Podrás actualizar el estado luego.</p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Formulario -->
+  <ion-card class="card">
+    <ion-card-header>
+      <ion-card-title>Datos del proyecto</ion-card-title>
+      <ion-card-subtitle>Información básica</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+      <form [formGroup]="proyectoForm" (ngSubmit)="generarProyecto()" novalidate>
+        <ion-list lines="none">
+          <!-- Título -->
+          <ion-item
+            class="field"
+            [class.invalid]="proyectoForm.get('titulo')?.invalid && (proyectoForm.get('titulo')?.dirty || proyectoForm.get('titulo')?.touched)">
+            <ion-label position="stacked">Título del proyecto</ion-label>
+            <ion-input
+              formControlName="titulo"
+              type="text"
+              placeholder="Ej: Plaza Comunitaria">
+            </ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="proyectoForm.get('titulo')?.errors && (proyectoForm.get('titulo')?.dirty || proyectoForm.get('titulo')?.touched)">
+            Debe tener al menos 5 caracteres.
+          </ion-note>
+
+          <!-- Descripción -->
+          <ion-item
+            class="field"
+            [class.invalid]="proyectoForm.get('descripcion')?.invalid && (proyectoForm.get('descripcion')?.dirty || proyectoForm.get('descripcion')?.touched)">
+            <ion-label position="stacked">Descripción</ion-label>
+            <ion-textarea
+              formControlName="descripcion"
+              autoGrow="true"
+              placeholder="Explica el propósito del proyecto…">
+            </ion-textarea>
+          </ion-item>
+          <ion-note color="danger" *ngIf="proyectoForm.get('descripcion')?.errors && (proyectoForm.get('descripcion')?.dirty || proyectoForm.get('descripcion')?.touched)">
+            Debe tener al menos 10 caracteres.
+          </ion-note>
+
+          <!-- Estado -->
+          <ion-item class="field">
+            <ion-label position="stacked">Estado</ion-label>
+            <ion-select formControlName="estado" interface="popover">
+              <ion-select-option value="pendiente">Pendiente</ion-select-option>
+              <ion-select-option value="aprobado">Aprobado</ion-select-option>
+              <ion-select-option value="rechazado">Rechazado</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-list>
+
+        <div class="actions">
+          <ion-button expand="block" type="submit" [disabled]="proyectoForm.invalid">
+            Crear proyecto
+          </ion-button>
+        </div>
+      </form>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

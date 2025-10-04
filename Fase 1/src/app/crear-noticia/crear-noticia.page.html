@@ -1,0 +1,129 @@
+<ion-header class="rb-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <!-- Botón de menú global -->
+      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
+      <!-- Si prefieres mantener el “volver”, deja ambas opciones y ocúltalas por CSS según viewport -->
+      <!-- <ion-back-button defaultHref="/noticias"></ion-back-button> -->
+    </ion-buttons>
+    <ion-title>Crear Nueva Noticia</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-text color="medium">
+    <p>Creando como: <strong>{{ nombreAutor || 'Cargando...' }}</strong></p>
+  </ion-text>
+
+  <form [formGroup]="noticiaForm" (ngSubmit)="crearNoticia()">
+
+    <ion-item lines="full" class="ion-margin-bottom">
+      <ion-input
+        label="Título"
+        labelPlacement="stacked"
+        formControlName="titulo"
+        placeholder="Máx 100 caracteres"
+        [maxlength]="100"
+        required>
+      </ion-input>
+    </ion-item>
+
+    <div *ngIf="noticiaForm.get('titulo')?.invalid && (noticiaForm.get('titulo')?.dirty || noticiaForm.get('titulo')?.touched)">
+      <ion-text color="danger" class="ion-padding-start">
+        <p *ngIf="noticiaForm.get('titulo')?.errors?.['required']">El título es obligatorio.</p>
+      </ion-text>
+    </div>
+
+    <ion-list formArrayName="parrafos" class="ion-margin-vertical">
+      <ion-list-header>
+        <ion-label>Contenido (Párrafos - Máx {{ MAX_PARRAFOS }})</ion-label>
+      </ion-list-header>
+
+      <div *ngFor="let parrafoControl of parrafoControls; let i = index">
+        <!-- Nota: si Angular se queja del formArray, quita [formGroupName]="i" y deja solo [formControl] -->
+        <ion-item lines="full" class="ion-margin-bottom" [formGroupName]="i">
+          <ion-textarea
+            label="Párrafo {{ i + 1 }}"
+            labelPlacement="stacked"
+            [formControl]="parrafoControl"
+            placeholder="Escribe el contenido aquí..."
+            rows="4"
+            [autoGrow]="true">
+          </ion-textarea>
+
+          <ion-buttons slot="end">
+            <ion-button color="danger" (click)="quitarParrafo(i)" [disabled]="parrafosFormArray.length <= 1">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-item>
+
+        <div *ngIf="parrafoControl.invalid && (parrafoControl.dirty || parrafoControl.touched)">
+          <ion-text color="danger" class="ion-padding-start">
+            <p *ngIf="parrafoControl.errors?.['required']">El primer párrafo es obligatorio.</p>
+          </ion-text>
+        </div>
+      </div>
+    </ion-list>
+
+    <ion-button
+      (click)="agregarParrafo()"
+      [disabled]="parrafosFormArray.length >= MAX_PARRAFOS"
+      expand="block"
+      fill="outline"
+      class="ion-margin-bottom">
+      <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+      Añadir Párrafo ({{ parrafosFormArray.length }}/{{ MAX_PARRAFOS }})
+    </ion-button>
+
+    <hr>
+
+    <ion-list class="ion-margin-vertical">
+      <ion-list-header>
+        <ion-label>Imágenes (La primera es la Portada)</ion-label>
+      </ion-list-header>
+
+      <ion-item *ngFor="let archivo of archivosSeleccionados; let i = index" lines="full">
+        <ion-label slot="start" class="ion-text-wrap">
+          {{ i === 0 ? 'Imagen de Portada (Obligatoria)' : 'Imagen ' + i + ' (Opcional)' }}
+        </ion-label>
+
+        <div slot="end" class="ion-text-end">
+          <p class="ion-no-margin ion-text-wrap" style="font-size: 0.9em; color: var(--ion-color-medium);">
+            {{ archivosSeleccionados[i]?.name || 'Sin archivos seleccionados' }}
+          </p>
+
+          <input
+            type="file"
+            style="display: none;"
+            #fileInput
+            (change)="onFileSelected($event, i)"
+            accept="image/jpeg, image/png"
+            [required]="i === 0">
+
+          <ion-button size="small" (click)="fileInput.click()">
+            Seleccionar archivo
+          </ion-button>
+        </div>
+      </ion-item>
+
+      <ion-text color="danger" class="ion-padding-start">
+        <p *ngIf="!archivosSeleccionados[0] && noticiaForm.touched">
+          Debe seleccionar una Imagen de Portada.
+        </p>
+      </ion-text>
+    </ion-list>
+
+    <ion-button
+      type="submit"
+      expand="block"
+      class="ion-margin-top"
+      [disabled]="estaGuardando || estaSubiendoImagen || noticiaForm.invalid">
+      <span *ngIf="!estaGuardando && !estaSubiendoImagen">Guardar Noticia</span>
+      <span *ngIf="estaSubiendoImagen">Subiendo Imágenes...</span>
+      <span *ngIf="estaGuardando && !estaSubiendoImagen">Guardando...</span>
+      <ion-spinner *ngIf="estaGuardando || estaSubiendoImagen" slot="end" name="dots"></ion-spinner>
+    </ion-button>
+
+  </form>
+</ion-content>

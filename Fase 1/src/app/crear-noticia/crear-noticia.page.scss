@@ -1,0 +1,139 @@
+/* ===== Crear Noticia (look & feel unificado) ===== */
+:host {
+  /* Paleta */
+  --rb-primary: #2563eb;
+  --rb-primary-10: rgba(37, 99, 235, 0.10);
+  --rb-primary-15: rgba(37, 99, 235, 0.15);
+  --rb-primary-20: rgba(37, 99, 235, 0.20);
+  --rb-text: #0f172a;
+
+  /* Fondo claro */
+  --bg1: #f7fbff;
+  --bg2: #e8f0ff;
+  --card-bg: #ffffff;
+
+  color-scheme: light;
+}
+
+ion-content {
+  --background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
+}
+
+/* Header con estilo consistente */
+ion-toolbar {
+  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
+  --color: #fff;
+  --border-color: transparent;
+  --min-height: 56px;
+}
+
+/* Contenedor del formulario centrado */
+form {
+  max-width: 860px;
+  margin: 16px auto;
+}
+
+/* Etiqueta “Creando como…” */
+ion-text[color="medium"] {
+  display: block;
+  max-width: 860px;
+  margin: 8px auto 0;
+}
+
+/* Items/inputs blancos con relieve */
+ion-item {
+  --background: #fff;
+  --padding-start: 12px;
+  --inner-padding-end: 12px;
+  --min-height: 54px;
+
+  background: #fff;
+  border: 1px solid rgba(25, 71, 170, 0.15);
+  border-radius: 14px;
+  margin-top: 12px;
+
+  box-shadow: 0 8px 18px rgba(2, 6, 23, 0.06);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+ion-item.item-has-focus {
+  border-color: var(--rb-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+}
+
+/* List header y secciones */
+ion-list {
+  background: transparent;
+}
+
+ion-list-header {
+  padding-inline-start: 0;
+  margin-top: 12px;
+  margin-bottom: 6px;
+
+  ion-label {
+    font-weight: 700;
+    color: var(--rb-text);
+  }
+}
+
+/* Botón “Añadir párrafo” y primarios */
+ion-button {
+  --border-radius: 12px;
+  --box-shadow: 0 8px 18px var(--rb-primary-10);
+}
+
+ion-button[fill="outline"] {
+  --border-color: var(--rb-primary-20);
+  --color: var(--rb-primary);
+  --ripple-color: var(--rb-primary);
+}
+
+/* Filas de párrafos: deja bien el botón de borrar a la derecha */
+ion-item ion-buttons[slot="end"] {
+  margin-left: 8px;
+}
+
+/* Mensajes de error */
+ion-text[color="danger"] p {
+  font-size: 0.9rem;
+  margin: 6px 0 0;
+}
+
+/* HR sutil para separar bloques */
+hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(2,6,23,0.08), transparent);
+  margin: 16px 0;
+}
+
+/* Bloque de imágenes */
+.card-image-container {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Texto del nombre de archivo a la derecha */
+ion-item .ion-text-end p {
+  font-size: 0.9em;
+  color: var(--ion-color-medium);
+}
+
+/* Botón submit con estados */
+ion-button[type="submit"] {
+  margin-top: 12px;
+  font-weight: 700;
+}
+
+ion-button[disabled] {
+  opacity: 0.7;
+  filter: grayscale(6%);
+}
+
+/* Responsive: reduce sombra en móviles para que no se vea “pesado” */
+@media (max-width: 480px) {
+  ion-item {
+    box-shadow: 0 6px 12px rgba(2, 6, 23, 0.05);
+  }
+}
