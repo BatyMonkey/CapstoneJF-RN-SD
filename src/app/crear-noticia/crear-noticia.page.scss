@@ -1,0 +1,104 @@
+/* Paleta suave celeste/azul */
+:host {
+  --rb-primary: #2563eb;
+  --rb-bg: #f8fafc;
+  --rb-text: #0f172a;
+
+  /* Fondo claro garantizado */
+  --ion-background-color: var(--rb-bg);
+  --ion-text-color: var(--rb-text);
+}
+
+/* Header */
+.rb-header ion-toolbar {
+  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
+  --color: #fff;
+  --border-color: transparent;
+  --min-height: 56px;
+}
+
+/* Contenido y Fondo */
+ion-content {
+  --background: var(--rb-bg);
+}
+
+/* Estilos de Formulario: Aseguramos el fondo blanco y el texto oscuro */
+ion-item {
+    --background: #fff; /* Fondo blanco forzado */
+    --color: var(--rb-text); /* Texto oscuro forzado */
+    --border-radius: 8px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+/* CORRECCIÓN CLAVE: El ion-list necesita un fondo claro para las áreas circundantes */
+ion-list {
+    --ion-background-color: var(--rb-bg);
+    background: var(--rb-bg);
+}
+
+/* Aseguramos que el texto dentro de los items sea oscuro */
+ion-input, ion-textarea, ion-label {
+    color: var(--rb-text);
+    /* Necesario para asegurar que el label en textarea sea oscuro */
+    --color: var(--rb-text); 
+}
+
+/* Estilos para el título de las listas (Párrafos, Imágenes) */
+ion-list-header {
+    color: var(--rb-text);
+    font-weight: 600;
+    padding-left: 0;
+    /* Evita que el fondo de la lista en iOS oscurezca la cabecera */
+    --ion-color-base: var(--rb-bg) !important; 
+    padding-bottom: 0;
+}
+
+/* Texto del autor (Creando como...) */
+ion-text[color="medium"] {
+    p {
+        color: #475569; /* Gris suave */
+    }
+    strong {
+        color: var(--rb-text); /* Negro */
+    }
+}
+
+
+// Botón principal (Guardar Noticia)
+ion-button[type="submit"] {
+    --background: var(--rb-primary);
+    --background-activated: #60a5fa;
+    --color: #fff;
+    font-weight: 600;
+    height: 48px;
+    border-radius: 10px;
+}
+
+// Botón secundario (Añadir Párrafo)
+ion-button[fill="outline"] {
+    --color: var(--rb-primary);
+    --border-color: var(--rb-primary);
+    --border-radius: 10px;
+    height: 48px;
+}
+
+// Botón de eliminar párrafo
+ion-button[color="danger"] {
+    --color: #ef4444;
+}
+
+// Separador visual
+hr {
+    border: none;
+    border-top: 1px solid #e2e8f0;
+    margin: 20px 0;
+}
+
+/* Estilos para los mensajes de error */
+ion-text[color="danger"] p {
+    font-size: 0.85rem;
+    margin-top: -8px;
+    margin-bottom: 8px;
+}

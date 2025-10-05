@@ -1,11 +1,8 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" class="rb-header">
   <ion-toolbar>
     <ion-title>Noticias</ion-title>
-    
-    <ion-buttons slot="end" *ngIf="esAdmin"> 
-      <ion-button (click)="navegarACrearNoticia()" fill="solid" color="primary">
-        NUEVA NOTICIA
-      </ion-button>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -24,7 +21,7 @@
         
         <ion-col size="6" *ngFor="let noticia of noticias">
           
-          <ion-card button (click)="verDetalle(noticia.id)">
+          <ion-card button (click)="verDetalle(noticia.id)" class="noticia-card">
             
             <div *ngIf="noticia.url_foto && noticia.url_foto.length > 0" class="card-image-container">
               <img [src]="noticia.url_foto[0]" alt="Miniatura de la noticia" class="card-image"/>
@@ -47,16 +44,29 @@
             </ion-card-content>
             
           </ion-card>
-          
+            <ion-button 
+            *ngIf="esAdmin" 
+            (click)="confirmarYEliminarNoticia(noticia.id)"  
+            expand="full" 
+            color="danger"
+            class="eliminar-button"
+          >
+            ELIMINAR
+          </ion-button>
         </ion-col>
-        
       </ion-row>
     </ion-grid>
     </div>
 
   <div *ngIf="!estaCargando && noticias.length === 0" class="ion-text-center ion-padding">
     <h2>No hay noticias disponibles</h2>
-    <p>Sé el primero en crear una noticia usando el botón "Nueva Noticia".</p>
+    <p>Sé el primero en crear una noticia.</p>
   </div>
+  
+  <ion-fab *ngIf="esAdmin" slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="navegarACrearNoticia()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 
 </ion-content>
