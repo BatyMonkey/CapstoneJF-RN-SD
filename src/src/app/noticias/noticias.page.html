@@ -1,0 +1,72 @@
+<ion-header [translucent]="true" class="rb-header">
+  <ion-toolbar>
+    <ion-title>Noticias</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  
+  <div *ngIf="estaCargando" class="ion-text-center ion-padding">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando noticias...</p>
+  </div>
+
+  <div *ngIf="!estaCargando && noticias.length > 0">
+    
+    <ion-grid>
+      <ion-row>
+        
+        <ion-col size="6" *ngFor="let noticia of noticias">
+          
+          <ion-card button (click)="verDetalle(noticia.id)" class="noticia-card">
+            
+            <div *ngIf="noticia.url_foto && noticia.url_foto.length > 0" class="card-image-container">
+              <img [src]="noticia.url_foto[0]" alt="Miniatura de la noticia" class="card-image"/>
+            </div>
+            
+            <ion-card-header>
+              <ion-card-title class="card-title ion-text-wrap">{{ noticia.titulo }}</ion-card-title>
+              <ion-card-subtitle>
+                {{ noticia.nombre_autor || 'Anónimo' }} | {{ noticia.fecha_creacion | date:'shortDate' }}
+              </ion-card-subtitle>
+            </ion-card-header>
+
+            <ion-card-content>
+              <p *ngIf="noticia.parrafos && noticia.parrafos.length > 0" class="card-excerpt">
+                {{ noticia.parrafos[0].substring(0, 80) }}...
+              </p>
+              <p *ngIf="!noticia.parrafos || noticia.parrafos.length === 0" class="card-excerpt-placeholder">
+                [Sin resumen]
+              </p>
+            </ion-card-content>
+            
+          </ion-card>
+            <ion-button 
+            *ngIf="esAdmin" 
+            (click)="confirmarYEliminarNoticia(noticia.id)"  
+            expand="full" 
+            color="danger"
+            class="eliminar-button"
+          >
+            ELIMINAR
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    </div>
+
+  <div *ngIf="!estaCargando && noticias.length === 0" class="ion-text-center ion-padding">
+    <h2>No hay noticias disponibles</h2>
+    <p>Sé el primero en crear una noticia.</p>
+  </div>
+  
+  <ion-fab *ngIf="esAdmin" slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="navegarACrearNoticia()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>
