@@ -1,0 +1,71 @@
+<ion-header [translucent]="true" class="rb-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/noticias"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalle de Noticia</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  
+  <div *ngIf="estaCargando" class="ion-text-center ion-padding">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando noticia...</p>
+  </div>
+  
+  <div *ngIf="!estaCargando && noticia" class="noticia-detalle-container">
+
+    <div *ngIf="noticia.url_foto && noticia.url_foto.length > 0" class="image-hero-container">
+      <img [src]="noticia.url_foto[0]" alt="Imagen principal de la noticia" class="image-hero" />
+    </div>
+
+    <ion-grid class="ion-padding">
+      <ion-row>
+        <ion-col size-lg="8" offset-lg="2" size="12">
+
+          <h1 class="noticia-titulo">{{ noticia.titulo }}</h1>
+          
+          <div class="noticia-metadata ion-margin-bottom">
+            <span class="autor-chip">{{ noticia.nombre_autor || 'Anónimo' }}</span>
+            &nbsp;|&nbsp;
+            <span class="fecha-chip">{{ noticia.fecha_creacion | date:'mediumDate' }}</span>
+          </div>
+          
+          <hr class="noticia-divider ion-margin-vertical">
+
+          <div class="noticia-cuerpo">
+            <p *ngFor="let parrafo of noticia.parrafos" class="parrafo-texto">
+              {{ parrafo }}
+            </p>
+          </div>
+          
+          <div *ngIf="!noticia.parrafos || noticia.parrafos.length === 0" class="ion-text-center ion-padding-vertical">
+            <p class="parrafo-vacio">Esta noticia no tiene contenido.</p>
+          </div>
+
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    
+    <ion-row *ngIf="noticia.url_foto && noticia.url_foto.length > 1" class="ion-padding-horizontal ion-margin-bottom">
+        <ion-col size-lg="8" offset-lg="2" size="12">
+            <h2>Galería</h2>
+            <div class="galeria-imagenes">
+                <ng-container *ngFor="let url of noticia.url_foto; let i = index">
+                    <img *ngIf="i > 0" 
+                         [src]="url" 
+                         alt="Imagen secundaria {{ i + 1 }}" 
+                         class="imagen-secundaria" />
+                </ng-container>
+            </div>
+        </ion-col>
+    </ion-row>
+  </div>
+
+  <div *ngIf="!estaCargando && !noticia" class="ion-text-center ion-padding-top">
+      <h2>Noticia No Encontrada</h2>
+      <p>Lo sentimos, la noticia que buscas no existe o fue eliminada.</p>
+  </div>
+
+</ion-content>

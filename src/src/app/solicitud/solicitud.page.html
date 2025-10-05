@@ -1,0 +1,68 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Solicitud Comunitaria</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="solicitudForm" (ngSubmit)="enviarSolicitud()">
+
+    <!-- Tipo de solicitud -->
+    <ion-item>
+      <ion-label>Tipo de Solicitud</ion-label>
+      <ion-select formControlName="tipo" placeholder="Selecciona">
+        <ion-select-option value="proyecto">Postulación de Proyecto</ion-select-option>
+        <ion-select-option value="reserva">Reserva de Espacio/Terreno</ion-select-option>
+        <ion-select-option value="actividad">Inscripción a Actividad</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Campos comunes -->
+    <ion-item>
+      <ion-label position="floating">Descripción</ion-label>
+      <ion-textarea formControlName="descripcion"></ion-textarea>
+    </ion-item>
+
+    <!-- Campos para Reserva -->
+    <div *ngIf="solicitudForm.get('tipo')?.value === 'reserva'">
+      <ion-item>
+        <ion-label position="floating">Nombre del Espacio</ion-label>
+        <ion-input formControlName="espacio_nombre"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Tipo de Espacio</ion-label>
+        <ion-input formControlName="espacio_tipo"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Capacidad</ion-label>
+        <ion-input type="number" formControlName="espacio_capacidad"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Título del Evento</ion-label>
+        <ion-input formControlName="evento_titulo"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Descripción del Evento</ion-label>
+        <ion-textarea formControlName="evento_descripcion"></ion-textarea>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Fecha de Inicio</ion-label>
+        <ion-datetime formControlName="evento_inicio" presentation="date-time"></ion-datetime>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Fecha de Término</ion-label>
+        <ion-datetime formControlName="evento_fin" presentation="date-time"></ion-datetime>
+      </ion-item>
+    </div>
+
+    <ion-button expand="block" type="submit" [disabled]="solicitudForm.invalid">
+      Enviar Solicitud
+    </ion-button>
+  </form>
+</ion-content>
