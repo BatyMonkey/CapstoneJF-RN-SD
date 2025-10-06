@@ -1,15 +1,13 @@
-/* ===== Solicitar Certificado (look & feel unificado + legible) ===== */
 :host {
+  /* Fuerza paleta clara en esta página */
   color-scheme: light;
 
-  /* Paleta base */
+  /* Colores base */
   --rb-primary: #2563eb;
   --rb-primary-10: rgba(37, 99, 235, 0.10);
   --rb-primary-20: rgba(37, 99, 235, 0.20);
-
   --rb-bg: #f8fafc;
   --rb-text: #0f172a;
-  --rb-muted: #64748b;
 
   /* Forzar fondos claros en esta vista */
   --ion-background-color: var(--rb-bg);
@@ -19,14 +17,14 @@
   --ion-toolbar-background: #ffffff;
 }
 
-/* Header con gradiente consistente */
+/* Header con gradiente (coincide con Home) */
 .rb-header ion-toolbar {
   --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
   --color: #fff;
   --border-color: transparent;
-  --min-height: 56px;
 }
 
+/* Contenido */
 .solicitar {
   --background: var(--rb-bg);
 
@@ -36,7 +34,6 @@
     border: 1px solid rgba(2, 6, 23, 0.06);
     box-shadow: 0 10px 26px rgba(2, 6, 23, 0.08);
     overflow: hidden;
-    margin-bottom: 16px; /* separa tarjetas */
 
     ion-card-header {
       background: #fff;
@@ -49,62 +46,42 @@
     }
 
     ion-card-subtitle {
-      color: var(--rb-muted);
+      color: #64748b;
       font-weight: 500;
     }
 
-    /* ===== Campos con relieve + legibles ===== */
     .field {
-      --background: #fff;        /* asegura fondo blanco */
+      margin: 10px 0;
+      border-radius: 14px;
+      background: #fff;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      box-shadow: 0 6px 14px rgba(2, 6, 23, 0.06);
+
+      /* Asegura fondo claro en el item */
+      --background: #fff;
       --inner-background: #fff;
       --color: var(--rb-text);
       --placeholder-color: #94a3b8;
 
-      background: #fff;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 14px;
-      box-shadow: 0 8px 18px rgba(2, 6, 23, 0.06);
-
-      /* Espaciado cómodo para que la etiqueta no se “corte” */
-      --padding-start: 12px;
-      --inner-padding-end: 12px;
-      --inner-padding-top: 12px;
-      --inner-padding-bottom: 12px;
-      --min-height: auto;
-
-      margin: 10px 0;
-      transition: border-color 160ms ease, box-shadow 160ms ease;
-
-      /* Label (estás usando ion-label + position="stacked") */
       ion-label {
-        color: #334155;          /* gris oscuro legible */
-        font-weight: 700;
-        line-height: 1.2;
-        margin: 2px 4px 6px 2px; /* evita recortes visuales */
-      }
-
-      /* Texto del input */
-      ion-input::part(native) {
-        color: var(--rb-text);
-        background: #fff;
-        line-height: 1.25;
+        color: #475569;
         font-weight: 600;
-        padding: 8px 10px 10px;  /* alto suficiente para el contenido */
+        padding: 10px 12px 0 12px;
       }
 
-      /* Placeholders visibles sin competir */
-      ion-input::part(native)::placeholder {
-        color: #6b7280;
-        opacity: 1;
+      ion-input {
+        --background: #fff;
+        --color: var(--rb-text);
+        --padding-start: 12px;
+        --padding-end: 12px;
+        --padding-top: 6px;
+        --padding-bottom: 12px;
+        font-weight: 600;
       }
 
-      /* Foco accesible */
-      &.item-has-focus,
-      &:focus-within {
-        border-color: var(--rb-primary);
-        box-shadow:
-          0 0 0 3px rgba(37, 99, 235, 0.14),
-          0 8px 18px rgba(2, 6, 23, 0.06);
+      /* Compatibilidad Ionic 7 */
+      ion-input::part(native) {
+        background: #fff;
       }
     }
 
@@ -116,18 +93,14 @@
         border-radius: 12px;
         box-shadow: 0 10px 18px var(--rb-primary-10);
 
-        &:active { transform: translateY(1px); }
-      }
-
-      /* Botón secundario con outline elegante (opcional) */
-      ion-button[color="secondary"] {
-        --border-color: var(--rb-primary-20);
-        --box-shadow: 0 8px 16px var(--rb-primary-10);
+        &:active {
+          transform: translateY(1px);
+        }
       }
     }
   }
 
-  /* Historial */
+  /* Historial con look claro */
   .history {
     background: #fff !important;
     border-radius: 18px;
@@ -148,7 +121,6 @@
       --background: #fff;
       --inner-background: #fff;
       --color: var(--rb-text);
-
       margin: 8px 6px;
       border-radius: 14px;
       border: 1px solid rgba(2, 6, 23, 0.06);
@@ -163,13 +135,7 @@
 
       p {
         margin: 0;
-        color: var(--rb-muted);
-      }
-
-      ion-button {
-        --padding-start: 8px;
-        --padding-end: 8px;
-        --border-radius: 10px;
+        color: #64748b;
       }
     }
   }
@@ -177,21 +143,17 @@
   .empty {
     text-align: center;
     margin-top: 16px;
-    color: var(--rb-muted);
-    font-weight: 600;
+    color: #64748b;
   }
 }
 
-/* iOS: padding más agradable */
-.ios ion-item.field {
+/* iOS ajuste padding */
+.ios ion-item {
   --padding-start: 12px;
   --inner-padding-end: 12px;
 }
 
-/* Responsive: sombra más ligera en móviles */
-@media (max-width: 480px) {
-  .solicitar .card .field {
-    box-shadow: 0 6px 12px rgba(2, 6, 23, 0.05);
-  }
-}
-
+/* ❗ IMPORTANTE:
+   Estilos del MENÚ (ion-menu) ahora viven en app.component.scss.
+   No declares aquí reglas para ion-menu para evitar duplicados/escapes de scope.
+*/
