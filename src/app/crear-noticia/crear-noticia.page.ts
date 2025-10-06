@@ -247,7 +247,7 @@ export class CrearNoticiaPage implements OnInit {
         this.agregarParrafo(true); 
         this.archivosSeleccionados = new Array(MAX_IMAGENES).fill(null);
         
-        this.router.navigate(['/home']);
+        this.router.navigate(['/noticias']);
       }
     } catch (err) {
       console.error('Error inesperado:', err);

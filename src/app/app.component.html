@@ -1,12 +1,6 @@
 <ion-app>
-  <!-- Menú lateral global: NO se muestra en /auth/* -->
-  <ion-menu
-    *ngIf="!isAuth"
-    side="start"
-    menuId="mainMenu"
-    contentId="main-content"
-    type="reveal"
-  >
+  <!-- Menú lateral global -->
+  <ion-menu side="start" menuId="mainMenu" contentId="main-content" type="reveal">
     <ion-header class="menu-header">
       <ion-toolbar>
         <ion-title>Menú</ion-title>
@@ -14,55 +8,45 @@
     </ion-header>
 
     <ion-content class="menu-content">
+      <!-- Si quisieras ocultar el menú en /auth/*:
+      <ng-container *ngIf="!hideMenuOnAuth">
+      -->
       <ion-list lines="none" class="menu-list">
         <ion-menu-toggle auto-hide="true">
-          <!-- General -->
+          <!-- Oculta "Inicio" si ya estás en /home -->
           <ion-item button detail="false" (click)="go('/home')" *ngIf="!isActive('/home')">
             <ion-icon slot="start" name="home-outline"></ion-icon>
             <ion-label>Inicio</ion-label>
           </ion-item>
 
+          <!-- Oculta "Solicitar certificado" si ya estás en /solicitar -->
           <ion-item button detail="false" (click)="go('/solicitar')" *ngIf="!isActive('/solicitar')">
             <ion-icon slot="start" name="document-text-outline"></ion-icon>
             <ion-label>Solicitar certificado</ion-label>
           </ion-item>
 
-          <ion-item button detail="false" (click)="go('/votaciones')" *ngIf="!isActive('/votaciones')">
+          <!-- Oculta "Noticias" si ya estás en /noticias -->
+          <ion-item button detail="false" (click)="go('/noticias')" *ngIf="!isActive('/noticias')">
+            <ion-icon slot="start" name="newspaper-outline"></ion-icon>
+            <ion-label>Noticias</ion-label>
+          </ion-item>
+
+          <!-- Oculta "Noticias" si ya estás en /noticias -->
+          <ion-item button detail="false" (click)="go('/generar/proyecto')" *ngIf="!isActive('/generar/proyecto')">
+            <ion-icon slot="start" name="newspaper-outline"></ion-icon>
+            <ion-label>Generar Proyecto</ion-label>
+          </ion-item>
+          <!-- Oculta "Votaciones" si ya estás en /votaciones o /votacion/:id -->
+          <ion-item
+            button
+            detail="false"
+            (click)="go('/votaciones')"
+            *ngIf="!isActiveAny(['/votaciones','/votacion'])">
             <ion-icon slot="start" name="people-outline"></ion-icon>
             <ion-label>Votaciones</ion-label>
           </ion-item>
-
-          <!-- Admin -->
-          <ion-list-header *ngIf="isAdmin">Administración</ion-list-header>
-
-          <ion-item
-            button
-            detail="false"
-            (click)="go('/generar/proyecto')"
-            *ngIf="isAdmin && !isActive('/generar/proyecto')"
-          >
-            <ion-icon slot="start" name="construct-outline"></ion-icon>
-            <ion-label>Generar proyecto</ion-label>
-          </ion-item>
-
-          <ion-item
-            button
-            detail="false"
-            (click)="go('/generar/votacion')"
-            *ngIf="isAdmin && !isActive('/generar/votacion')"
-          >
-            <ion-icon slot="start" name="list-circle-outline"></ion-icon>
-            <ion-label>Generar votación</ion-label>
-          </ion-item>
         </ion-menu-toggle>
       </ion-list>
-
-      <div class="perfil-wrap">
-        <ion-item button detail="false" class="perfil" (click)="go('/perfil')" *ngIf="!isActive('/perfil')">
-          <ion-icon slot="start" name="person-circle-outline"></ion-icon>
-          <ion-label>Mi perfil</ion-label>
-        </ion-item>
-      </div>
 
       <div class="logout-wrap">
         <ion-item button detail="false" class="logout" (click)="salir()">
@@ -70,10 +54,10 @@
           <ion-label>Cerrar sesión</ion-label>
         </ion-item>
       </div>
+      <!-- </ng-container> -->
     </ion-content>
   </ion-menu>
 
-  <!-- Donde se renderizan tus páginas -->
+  <!-- Debe coincidir con contentId del ion-menu -->
   <ion-router-outlet id="main-content"></ion-router-outlet>
 </ion-app>
-

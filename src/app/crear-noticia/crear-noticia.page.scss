@@ -1,186 +1,104 @@
-/* ===== Crear Noticia (legible + consistente) ===== */
+/* Paleta suave celeste/azul */
 :host {
-  /* Paleta */
   --rb-primary: #2563eb;
-  --rb-primary-10: rgba(37, 99, 235, 0.10);
-  --rb-primary-20: rgba(37, 99, 235, 0.20);
-  --rb-text: #0f172a;   /* texto principal oscuro */
-  --rb-muted: #64748b;
+  --rb-bg: #f8fafc;
+  --rb-text: #0f172a;
 
-  /* Fuerza esquema claro y texto oscuro en esta página */
-  color-scheme: light;
+  /* Fondo claro garantizado */
+  --ion-background-color: var(--rb-bg);
   --ion-text-color: var(--rb-text);
-  --ion-background-color: #f7fbff;
-}
-
-ion-content {
-  --background: linear-gradient(180deg, #f7fbff 0%, #e8f0ff 100%);
-  color: var(--rb-text); /* fallback */
 }
 
 /* Header */
-ion-toolbar {
+.rb-header ion-toolbar {
   --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
   --color: #fff;
   --border-color: transparent;
   --min-height: 56px;
 }
 
-/* Contenedor del formulario */
-form {
-  max-width: 860px;
-  margin: 16px auto;
+/* Contenido y Fondo */
+ion-content {
+  --background: var(--rb-bg);
 }
 
-/* “Creando como…” */
-ion-text[color="medium"] {
-  display: block;
-  max-width: 860px;
-  margin: 8px auto 0;
-  color: var(--rb-muted);
-}
-
-/* =======================
-   CAMPOS: tarjeta + legibles
-   ======================= */
+/* Estilos de Formulario: Aseguramos el fondo blanco y el texto oscuro */
 ion-item {
-  /* tarjeta blanca con relieve */
-  --background: #fff;
-  background: #fff;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 14px;
-  box-shadow: 0 8px 18px rgba(2, 6, 23, 0.06);
-
-  /* espaciado cómodo */
-  --padding-start: 12px;
-  --inner-padding-end: 12px;
-  --inner-padding-top: 12px;
-  --inner-padding-bottom: 12px;
-  --min-height: auto;
-
-  margin-top: 12px;
-  transition: border-color 160ms ease, box-shadow 160ms ease;
-
-  /* Asegura texto oscuro también a nivel de item */
-  color: var(--rb-text);
+    --background: #fff; /* Fondo blanco forzado */
+    --color: var(--rb-text); /* Texto oscuro forzado */
+    --border-radius: 8px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
 }
 
-/* Focus accesible */
-ion-item.item-has-focus,
-ion-item:focus-within {
-  border-color: var(--rb-primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14), 0 8px 18px rgba(2, 6, 23, 0.06);
-}
-
-/* === Fuerza labels (stacked) SIEMPRE visibles y oscuros === */
-ion-input::part(label),
-ion-textarea::part(label),
-ion-input[label-placement="stacked"]::part(label),
-ion-textarea[label-placement="stacked"]::part(label) {
-  color: #1f2937 !important;
-  opacity: 1 !important;
-  transform: none !important;
-  margin: 2px 4px 6px 2px;
-  line-height: 1.2;
-  font-weight: 700;
-  z-index: 1;
-}
-
-/* === Texto que escribes: negro (con fallback WebKit) === */
-ion-input,
-ion-textarea {
-  --color: var(--rb-text) !important;           /* variable de Ionic */
-  --placeholder-color: #475569 !important;      /* contraste medio */
-}
-
-ion-input::part(native),
-ion-textarea::part(native) {
-  color: var(--rb-text) !important;
-  -webkit-text-fill-color: var(--rb-text) !important; /* Safari/WebKit */
-  background: #fff;
-  line-height: 1.25;
-  font-weight: 600;
-  padding: 8px 10px 10px;
-  caret-color: var(--rb-primary);
-}
-
-/* Placeholders (fallback para navegadores que ignoran --placeholder-color) */
-ion-input::part(native)::placeholder,
-ion-textarea::part(native)::placeholder {
-  color: #475569 !important;
-  opacity: 1;
-}
-
-/* Textarea base si aún no auto-crece */
-ion-textarea {
-  min-height: 110px;
-}
-
-/* Mensajes de error */
-ion-text[color="danger"] p {
-  font-size: 0.9rem;
-  margin: 6px 0 0;
-}
-
-/* List header / secciones */
+/* CORRECCIÓN CLAVE: El ion-list necesita un fondo claro para las áreas circundantes */
 ion-list {
-  background: transparent;
+    --ion-background-color: var(--rb-bg);
+    background: var(--rb-bg);
 }
-ion-list-header {
-  padding-inline-start: 0;
-  margin-top: 12px;
-  margin-bottom: 6px;
 
-  ion-label {
-    font-weight: 700;
+/* Aseguramos que el texto dentro de los items sea oscuro */
+ion-input, ion-textarea, ion-label {
     color: var(--rb-text);
-  }
+    /* Necesario para asegurar que el label en textarea sea oscuro */
+    --color: var(--rb-text); 
 }
 
-/* Botones */
-ion-button {
-  --border-radius: 12px;
-  --box-shadow: 0 8px 18px var(--rb-primary-10);
-}
-ion-button[fill="outline"] {
-  --border-color: var(--rb-primary-20);
-  --color: var(--rb-primary);
-  --ripple-color: var(--rb-primary);
-}
-
-/* Botón borrar a la derecha del párrafo */
-ion-item ion-buttons[slot="end"] {
-  margin-left: 8px;
+/* Estilos para el título de las listas (Párrafos, Imágenes) */
+ion-list-header {
+    color: var(--rb-text);
+    font-weight: 600;
+    padding-left: 0;
+    /* Evita que el fondo de la lista en iOS oscurezca la cabecera */
+    --ion-color-base: var(--rb-bg) !important; 
+    padding-bottom: 0;
 }
 
-/* Separador sutil */
-hr {
-  border: none;
-  height: 1px;
-  background: linear-gradient(to right, transparent, rgba(2,6,23,0.08), transparent);
-  margin: 16px 0;
+/* Texto del autor (Creando como...) */
+ion-text[color="medium"] {
+    p {
+        color: #475569; /* Gris suave */
+    }
+    strong {
+        color: var(--rb-text); /* Negro */
+    }
 }
 
-/* Nombre de archivo más oscuro y legible */
-ion-item .ion-text-end p {
-  font-size: 0.9em;
-  color: #334155 !important;
-  font-weight: 600;
-}
 
-/* Botón submit con estados */
+// Botón principal (Guardar Noticia)
 ion-button[type="submit"] {
-  margin-top: 12px;
-  font-weight: 700;
-}
-ion-button[disabled] {
-  opacity: 0.7;
-  filter: grayscale(6%);
+    --background: var(--rb-primary);
+    --background-activated: #60a5fa;
+    --color: #fff;
+    font-weight: 600;
+    height: 48px;
+    border-radius: 10px;
 }
 
-/* Responsive: sombra más ligera */
-@media (max-width: 480px) {
-  ion-item {
-    box-shadow: 0 6px 12px rgba(2, 6, 23, 0.05);
-  }
+// Botón secundario (Añadir Párrafo)
+ion-button[fill="outline"] {
+    --color: var(--rb-primary);
+    --border-color: var(--rb-primary);
+    --border-radius: 10px;
+    height: 48px;
+}
+
+// Botón de eliminar párrafo
+ion-button[color="danger"] {
+    --color: #ef4444;
+}
+
+// Separador visual
+hr {
+    border: none;
+    border-top: 1px solid #e2e8f0;
+    margin: 20px 0;
+}
+
+/* Estilos para los mensajes de error */
+ion-text[color="danger"] p {
+    font-size: 0.85rem;
+    margin-top: -8px;
+    margin-bottom: 8px;
 }

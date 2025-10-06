@@ -123,48 +123,4 @@ export class VotacionesService {
     if (error) throw error;
     return (data ?? []) as Votacion[];
   }
-  async crearVotacionConOpciones(input: {
-  titulo: string;
-  descripcion?: string;
-  fecha_inicio: string; // ISO
-  fecha_fin: string;    // ISO
-  opciones: string[];   // títulos
-}): Promise<string> {
-  // 1) Usuario autenticado
-  const { data: { user }, error: authErr } = await this.supabase.auth.getUser();
-  if (authErr) throw authErr;
-  if (!user) throw new Error('Debes iniciar sesión');
-
-  // 2) Insert votación
-  const { data: vot, error: e1 } = await this.supabase
-    .from('votaciones')
-    .insert([{
-      titulo: input.titulo,
-      descripcion: input.descripcion ?? null,
-      fecha_inicio: input.fecha_inicio,
-      fecha_fin: input.fecha_fin,
-      creado_por: user.id,            // RLS: tu política debe permitirlo
-    }])
-    .select('id')
-    .single();
-
-  if (e1) throw e1;
-  const votacionId = vot.id as string;
-
-  // 3) Insert opciones (mínimo 2)
-  const limpias = input.opciones.map(t => t.trim()).filter(Boolean);
-  if (limpias.length < 2) throw new Error('Agrega al menos dos opciones');
-
-  const { error: e2 } = await this.supabase
-    .from('opciones_votacion')        // usa el nombre exacto de tu tabla
-    .insert(limpias.map(t => ({
-      votacion_id: votacionId,
-      titulo: t,
-    })));
-
-  if (e2) throw e2;
-
-  return votacionId;
-}
-
 }

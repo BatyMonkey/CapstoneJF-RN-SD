@@ -3,10 +3,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, AlertController } from '@ionic/angular'; 
 import { Router, RouterModule } from '@angular/router';
 
-// Vuelve la importación de createClient y User para la autenticación
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js'; 
 import { environment } from 'src/environments/environment';
 
@@ -33,14 +32,13 @@ export class NoticiasPage implements OnInit {
   noticias: Noticia[] = [];
   estaCargando = false;
   
-  // NUEVA VARIABLE: Para controlar la visibilidad del botón de crear
   esAdmin: boolean = false; 
-  usuarioActual: User | null = null; // Para guardar el usuario
+  usuarioActual: User | null = null; 
 
   constructor(
-    private router: Router
+    private router: Router,
+    private alertController: AlertController 
   ) {
-    // Inicialización directa del cliente (versión funcional)
     this.supabase = createClient(
       environment.supabaseUrl,
       environment.supabaseAnonKey
@@ -48,40 +46,32 @@ export class NoticiasPage implements OnInit {
   }
 
   ngOnInit() {
-    // La primera vez que carga, intenta obtener todo
     this.cargarEstadoYNoticias();
   }
 
   ionViewWillEnter() {
-    // Al volver a esta vista (ej: desde el login o crear), forzamos la recarga del estado
     this.cargarEstadoYNoticias();
   }
   
-  // NUEVA FUNCIÓN: Combina la carga de noticias y el estado del usuario
   async cargarEstadoYNoticias() {
       await this.cargarEstadoUsuario();
       await this.cargarNoticias();
   }
 
-  // NUEVA FUNCIÓN: Carga el estado del usuario y verifica el rol
   async cargarEstadoUsuario() {
       try {
-          // 1. Obtener la sesión activa
           const { data: { user } } = await this.supabase.auth.getUser();
           this.usuarioActual = user;
 
           if (user) {
-              // 2. Si hay usuario, consultar el rol en la tabla 'usuario'
               const { data: perfil, error } = await this.supabase
                   .from('usuario')
-                  .select('rol') // <-- Asume que el rol está en la columna 'rol'
+                  .select('rol') 
                   .eq('user_id', user.id)
                   .single();
 
               if (error && error.code !== 'PGRST116') throw error;
               
-              // 3. Verificar si el rol es 'administrador' (o el valor que uses para el admin)
-              // Aquí debes usar el valor exacto de la columna 'rol' para el admin
               this.esAdmin = perfil?.rol === 'administrador'; 
               
           } else {
@@ -92,7 +82,6 @@ export class NoticiasPage implements OnInit {
           this.esAdmin = false;
       }
   }
-
 
   async cargarNoticias() {
     this.estaCargando = true;
@@ -113,6 +102,49 @@ export class NoticiasPage implements OnInit {
     }
   }
 
+  // FUNCIÓN LLAMADA DESDE EL HTML (CONFIRMAR)
+  async confirmarYEliminarNoticia(noticiaId: number) {
+    const alert = await this.alertController.create({
+      header: 'Confirmar Eliminación',
+      message: '¿Estás seguro de que quieres eliminar esta noticia? Esta acción no se puede deshacer.',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Eliminar',
+          handler: () => {
+            this.eliminarNoticia(noticiaId);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  // FUNCIÓN QUE EJECUTA LA ELIMINACIÓN EN SUPABASE
+  async eliminarNoticia(noticiaId: number) {
+    this.estaCargando = true; 
+    try {
+      const { error } = await this.supabase
+        .from('noticias')
+        .delete()
+        .eq('id', noticiaId);
+
+      if (error) throw error;
+
+      await this.cargarNoticias(); 
+
+    } catch (error) {
+      console.error('Error al intentar eliminar noticia:', error);
+    } finally {
+      this.estaCargando = false;
+    }
+  }
+  
   verDetalle(noticiaId: number) {
     this.router.navigate(['/noticias', noticiaId]);
   }
