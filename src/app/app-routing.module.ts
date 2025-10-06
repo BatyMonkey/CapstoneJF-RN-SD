@@ -48,7 +48,6 @@ const routes: Routes = [
     path: 'solicitud',
     loadComponent: () => import('./solicitud/solicitud.page').then(m => m.SolicitudPage)
     },
-    
   {
       path: 'generar/proyecto',
       canActivate: [AuthGuard],
@@ -56,6 +55,14 @@ const routes: Routes = [
       loadComponent: () =>
         import('./generar/proyecto/generar-proyecto/generar-proyecto.component')
           .then(m => m.GenerarProyectoComponent),
+    },
+    {
+      path: 'generar/votacion',
+      canActivate: [AuthGuard],
+      data: { roles: ['administrador'] },
+      loadComponent: () =>
+        import('./generar-votacion/generar-votacion.page')
+          .then(m => m.GenerarVotacionPage),
     },
   {
   path: 'home',

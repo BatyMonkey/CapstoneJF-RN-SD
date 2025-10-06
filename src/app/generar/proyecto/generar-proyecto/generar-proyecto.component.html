@@ -1,37 +1,123 @@
-<ion-header>
-  <ion-toolbar color="primary">
+<ion-header class="rb-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <!-- Menú global -->
+      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
+    </ion-buttons>
     <ion-title>Generar Proyecto</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <form [formGroup]="proyectoForm" (ngSubmit)="generarProyecto()">
-    
-    <ion-item>
-      <ion-label position="stacked">Título del Proyecto</ion-label>
-      <ion-input formControlName="titulo" type="text" placeholder="Ej: Plaza Comunitaria"></ion-input>
-    </ion-item>
+<ion-content class="ion-padding generar-proyecto" [fullscreen]="true">
+  <div class="page-wrap">
+    <!-- Hero -->
+    <ion-card class="card hero">
+      <ion-card-header>
+        <ion-icon name="build-outline" slot="start" class="hero-icon"></ion-icon>
+        <div class="hero-text">
+          <ion-card-title>Nuevo proyecto</ion-card-title>
+          <ion-card-subtitle>Completa los datos y publícalo para tu comunidad</ion-card-subtitle>
+        </div>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-chip color="primary" outline="true">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          <ion-label>Los campos con validación son obligatorios</ion-label>
+        </ion-chip>
+      </ion-card-content>
+    </ion-card>
 
-    <ion-item>
-      <ion-label position="stacked">Descripción</ion-label>
-      <ion-textarea
-        formControlName="descripcion"
-        autoGrow="true"
-        placeholder="Explica el propósito del proyecto...">
-      </ion-textarea>
-    </ion-item>
+    <!-- Formulario -->
+    <ion-card class="card">
+      <ion-card-header>
+        <ion-card-title>Datos del proyecto</ion-card-title>
+        <ion-card-subtitle>Información básica</ion-card-subtitle>
+      </ion-card-header>
 
-    <ion-item>
-      <ion-label position="stacked">Estado</ion-label>
-      <ion-select formControlName="estado">
-        <ion-select-option value="pendiente">Pendiente</ion-select-option>
-        <ion-select-option value="aprobado">Aprobado</ion-select-option>
-        <ion-select-option value="rechazado">Rechazado</ion-select-option>
-      </ion-select>
-    </ion-item>
+      <ion-card-content>
+        <form [formGroup]="proyectoForm" (ngSubmit)="generarProyecto()" novalidate>
+          <ion-grid class="form-grid">
+            <ion-row class="row-gap">
+              <!-- Título -->
+              <ion-col size="12" sizeMd="8">
+                <ion-item
+                  class="field"
+                  [class.invalid]="proyectoForm.get('titulo')?.invalid && (proyectoForm.get('titulo')?.dirty || proyectoForm.get('titulo')?.touched)">
+                  <ion-label position="stacked">Título del proyecto</ion-label>
+                  <ion-input
+                    formControlName="titulo"
+                    type="text"
+                    placeholder="Ej: Plaza Comunitaria"
+                    maxlength="80">
+                  </ion-input>
+                </ion-item>
+                <div class="meta-row">
+                  <ion-note color="danger" *ngIf="proyectoForm.get('titulo')?.errors && (proyectoForm.get('titulo')?.dirty || proyectoForm.get('titulo')?.touched)">
+                    Debe tener al menos 5 caracteres.
+                  </ion-note>
+                  <span class="char-count">
+                    {{ (proyectoForm.get('titulo')?.value?.length || 0) }}/80
+                  </span>
+                </div>
+              </ion-col>
 
-    <ion-button expand="block" type="submit" [disabled]="proyectoForm.invalid">
-      Crear Proyecto
-    </ion-button>
-  </form>
+              <!-- Estado -->
+              <ion-col size="12" sizeMd="4">
+                <!-- Segment = más visual que el select y sigue siendo formControl -->
+                <div class="field field-ghost">
+                  <label class="stacked-label">Estado</label>
+                  <ion-segment formControlName="estado" mode="ios" class="estado-segment">
+                    <ion-segment-button value="pendiente">
+                      <ion-label>Pendiente</ion-label>
+                    </ion-segment-button>
+                    <ion-segment-button value="aprobado">
+                      <ion-label>Aprobado</ion-label>
+                    </ion-segment-button>
+                    <ion-segment-button value="rechazado">
+                      <ion-label>Rechazado</ion-label>
+                    </ion-segment-button>
+                  </ion-segment>
+                </div>
+              </ion-col>
+            </ion-row>
+
+            <ion-row class="row-gap">
+              <!-- Descripción -->
+              <ion-col size="12">
+                <ion-item
+                  class="field"
+                  [class.invalid]="proyectoForm.get('descripcion')?.invalid && (proyectoForm.get('descripcion')?.dirty || proyectoForm.get('descripcion')?.touched)">
+                  <ion-label position="stacked">Descripción</ion-label>
+                  <ion-textarea
+                    formControlName="descripcion"
+                    autoGrow="true"
+                    rows="5"
+                    placeholder="Explica el propósito del proyecto, etapas y beneficios…">
+                  </ion-textarea>
+                </ion-item>
+                <ion-note color="danger" *ngIf="proyectoForm.get('descripcion')?.errors && (proyectoForm.get('descripcion')?.dirty || proyectoForm.get('descripcion')?.touched)">
+                  Debe tener al menos 10 caracteres.
+                </ion-note>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <div class="actions">
+            <ion-button
+              type="button"
+              fill="outline"
+              color="medium"
+              (click)="proyectoForm.reset({ titulo: '', descripcion: '', estado: 'pendiente' })">
+              Limpiar
+            </ion-button>
+
+            <ion-button type="submit" [disabled]="proyectoForm.invalid">
+              Crear proyecto
+            </ion-button>
+          </div>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>
+

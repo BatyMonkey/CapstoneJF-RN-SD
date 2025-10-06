@@ -1,4 +1,4 @@
-<ion-header [translucent]="true" class="rb-header">
+<ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/noticias"></ion-back-button>
@@ -11,61 +11,44 @@
   
   <div *ngIf="estaCargando" class="ion-text-center ion-padding">
     <ion-spinner name="crescent"></ion-spinner>
-    <p>Cargando noticia...</p>
+    <p>Cargando detalle de noticia...</p>
   </div>
-  
-  <div *ngIf="!estaCargando && noticia" class="noticia-detalle-container">
 
-    <div *ngIf="noticia.url_foto && noticia.url_foto.length > 0" class="image-hero-container">
-      <img [src]="noticia.url_foto[0]" alt="Imagen principal de la noticia" class="image-hero" />
+  <div *ngIf="!estaCargando && noticia">
+    
+    <div *ngIf="noticia.url_foto && noticia.url_foto.length > 0">
+        <img [src]="noticia.url_foto[0]" class="cover-image" alt="Imagen de Portada de la Noticia">
     </div>
 
-    <ion-grid class="ion-padding">
-      <ion-row>
-        <ion-col size-lg="8" offset-lg="2" size="12">
-
-          <h1 class="noticia-titulo">{{ noticia.titulo }}</h1>
-          
-          <div class="noticia-metadata ion-margin-bottom">
-            <span class="autor-chip">{{ noticia.nombre_autor || 'Anónimo' }}</span>
-            &nbsp;|&nbsp;
-            <span class="fecha-chip">{{ noticia.fecha_creacion | date:'mediumDate' }}</span>
-          </div>
-          
-          <hr class="noticia-divider ion-margin-vertical">
-
-          <div class="noticia-cuerpo">
-            <p *ngFor="let parrafo of noticia.parrafos" class="parrafo-texto">
-              {{ parrafo }}
+    <div class="ion-padding">
+        <h1>{{ noticia.titulo }}</h1>
+        
+        <ion-text color="medium">
+            <p class="ion-margin-bottom">
+                Autor: <strong>{{ noticia.nombre_autor || 'Anónimo' }}</strong> | {{ formatearFecha(noticia.fecha_creacion) }}
             </p>
-          </div>
-          
-          <div *ngIf="!noticia.parrafos || noticia.parrafos.length === 0" class="ion-text-center ion-padding-vertical">
-            <p class="parrafo-vacio">Esta noticia no tiene contenido.</p>
-          </div>
-
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+        </ion-text>
+    </div>
     
-    <ion-row *ngIf="noticia.url_foto && noticia.url_foto.length > 1" class="ion-padding-horizontal ion-margin-bottom">
-        <ion-col size-lg="8" offset-lg="2" size="12">
-            <h2>Galería</h2>
-            <div class="galeria-imagenes">
-                <ng-container *ngFor="let url of noticia.url_foto; let i = index">
-                    <img *ngIf="i > 0" 
-                         [src]="url" 
-                         alt="Imagen secundaria {{ i + 1 }}" 
-                         class="imagen-secundaria" />
-                </ng-container>
-            </div>
-        </ion-col>
-    </ion-row>
+    <hr>
+
+    <div *ngFor="let item of contenidoMixto" class="ion-padding-horizontal">
+      
+      <p *ngIf="item.type === 'parrafo'">{{ item.value }}</p>
+
+      <ion-card *ngIf="item.type === 'foto'" class="ion-margin-vertical">
+        <img [src]="item.value" class="content-image" alt="Imagen de contenido"/>
+      </ion-card>
+      
+    </div>
+    
+    <div class="ion-padding"></div>
+    
   </div>
 
-  <div *ngIf="!estaCargando && !noticia" class="ion-text-center ion-padding-top">
-      <h2>Noticia No Encontrada</h2>
-      <p>Lo sentimos, la noticia que buscas no existe o fue eliminada.</p>
+  <div *ngIf="!estaCargando && !noticia" class="ion-text-center ion-padding">
+    <h2>Noticia no encontrada</h2>
+    <p>Lo sentimos, no pudimos cargar el detalle de la noticia. Por favor, verifica el ID.</p>
   </div>
 
 </ion-content>
