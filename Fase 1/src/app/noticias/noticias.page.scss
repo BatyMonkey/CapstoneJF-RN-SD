@@ -1,40 +1,61 @@
-/* Fuerza modo claro y fondo blanco */
+/* ===== Noticias (mobile-first) ===== */
 :host {
   color-scheme: light;
-  --ion-background-color: #fff;
+
+  /* Paleta */
+  --rb-primary: #2563eb;
+  --rb-text: #0f172a;
+  --rb-muted: #64748b;
+  --rb-sep: rgba(2, 6, 23, 0.06);
+
+  --ion-background-color: #ffffff;
 }
 
-/* Header con el mismo look azul (opcional) */
+/* Header consistente */
 .rb-header ion-toolbar {
-  --background: linear-gradient(135deg, #2563eb, #60a5fa);
+  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
   --color: #fff;
   --border-color: transparent;
+  --min-height: 56px;
 }
 
-/* Contenido blanco */
+/* Contenido */
 .news {
-  --background: #ffffff;
+  --background: #fff;
+  padding-bottom: 8px;
 }
 
-/* Cards con relieve suave sobre fondo blanco */
+/* Grid y columnas (espaciado cómodo en móvil) */
+.news ion-grid { --ion-grid-padding: 6px; }
+.news ion-col { padding: 10px; }
+
+/* === Card: relieve y legibilidad en pantallas pequeñas === */
 ion-card {
   background: #fff;
   border-radius: 16px;
-  border: 1px solid rgba(2, 6, 23, 0.06);
-  box-shadow: 0 10px 26px rgba(2, 6, 23, 0.08);
+  border: 1px solid var(--rb-sep);
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.10);
   overflow: hidden;
-  transition: transform .12s ease, box-shadow .12s ease;
-}
-ion-card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 14px 32px rgba(2, 6, 23, 0.10);
+  transition: transform .08s ease, box-shadow .12s ease, border-color .12s ease;
 }
 
+/* Feedback táctil (tap) */
+ion-card:active {
+  transform: scale(0.996);
+  box-shadow: 0 12px 28px rgba(2, 6, 23, 0.12);
+  border-color: rgba(37, 99, 235, 0.18);
+}
+
+/* Imagen arriba fija para móvil, más alta en tablet */
 .card-image-container {
   width: 100%;
-  height: 170px;
+  height: 200px;                 /* móvil */
   overflow: hidden;
   background: #f1f5f9;
+  border-bottom: 1px solid var(--rb-sep);
+}
+@media (min-width: 768px) {
+  .card-image-container { height: 230px; }  /* tablet+ */
 }
 .card-image {
   width: 100%;
@@ -42,16 +63,67 @@ ion-card:hover {
   object-fit: cover;
 }
 
-.card-title {
-  font-weight: 800;
-  color: #0f172a;
+/* Header limpio (sin superposiciones) */
+ion-card-header {
+  background: #fff;
+  padding: 12px 14px 8px;
+  border-bottom: 1px solid var(--rb-sep);
 }
+
+/* Título 2 líneas, tamaño cómodo en móvil */
+.card-title {
+  margin: 0 0 2px 0;
+  color: var(--rb-text);
+  font-weight: 800;
+  font-size: 17px;
+  line-height: 1.25;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;     /* mantiene el bloque compacto */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Meta */
 ion-card-subtitle {
-  color: #64748b;
+  color: var(--rb-muted);
+  font-weight: 600;
+  letter-spacing: .2px;
+  font-size: 12.5px;
+}
+
+/* Extracto 3 líneas, buena lectura */
+ion-card-content {
+  padding: 10px 14px 14px;
+}
+.card-excerpt {
+  color: #334155;
+  font-weight: 500;
+  font-size: 14.5px;
+  line-height: 1.4;
+  margin: 2px 0 0;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.card-excerpt-placeholder {
+  color: #94a3b8;
+  font-style: italic;
+  margin: 2px 0 0;
 }
 
 /* Estados */
 .loading, .empty {
   text-align: center;
   color: #475569;
+  padding: 20px 12px;
 }
+.loading p { margin-top: 8px; }
+
+/* Accesibilidad: menos animación si el usuario lo pide */
+@media (prefers-reduced-motion: reduce) {
+  ion-card { transition: none; }
+}
+

@@ -1,35 +1,108 @@
-/* src/app/detalle-noticia/detalle-noticia.page.scss */
+/* ===== Detalle de Noticia (mobile-first) ===== */
+:host {
+  color-scheme: light;
 
+  --rb-primary: #2563eb;
+  --rb-text: #0f172a;
+  --rb-muted: #64748b;
+  --rb-sep: rgba(2, 6, 23, 0.08);
+
+  --ion-background-color: #ffffff;
+  --ion-text-color: var(--rb-text);
+}
+
+/* Header consistente con el resto */
+ion-toolbar {
+  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
+  --color: #fff;
+  --border-color: transparent;
+  --min-height: 56px;
+}
+
+/* Fondo blanco */
+ion-content {
+  --background: #fff;
+}
+
+/* Portada: alto cómodo en móvil, más alto en tablet */
 .cover-image {
-    // La imagen de portada ocupa todo el ancho y tiene un alto fijo para el impacto visual
-    width: 100%; 
-    height: 250px; 
-    object-fit: cover; // Asegura que la imagen cubra el espacio sin distorsionarse
-    margin-bottom: 10px;
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+  border-bottom: 1px solid var(--rb-sep);
+}
+@media (min-width: 768px) {
+  .cover-image { height: 300px; }
 }
 
+/* Contenedores con ancho máximo para lectura agradable */
+ion-content .ion-padding,
+ion-content .ion-padding-horizontal {
+  max-width: 880px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Título */
 h1 {
-    font-size: 1.8em;
-    font-weight: bold;
-    margin-top: 0;
+  color: var(--rb-text);
+  font-size: 22px;         /* grande en móvil */
+  line-height: 1.25;
+  font-weight: 800;
+  margin: 12px 0 6px;
+}
+@media (min-width: 768px) {
+  h1 { font-size: 26px; }
 }
 
-p {
-    line-height: 1.6;
-    margin-bottom: 15px;
-    text-align: justify;
+/* Byline (autor/fecha) dentro del ion-text[color="medium"] */
+ion-text[color="medium"] p {
+  color: var(--rb-muted) !important;
+  margin: 4px 0 10px;
+  font-weight: 600;
+  letter-spacing: .2px;
 }
 
+/* Separador sutil */
 hr {
-    border: 0;
-    height: 1px;
-    background: var(--ion-color-step-200, #444);
-    margin: 20px 16px; 
+  border: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--rb-sep), transparent);
+  margin: 10px auto 14px;
+  max-width: 880px;
+}
+
+/* Párrafos del cuerpo */
+ion-content .ion-padding-horizontal p {
+  color: #334155;
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0 0 14px;
+  text-align: start; /* evita justificado demasiado apretado en móvil */
+}
+
+/* Card de imágenes dentro del contenido (las del *ngFor) */
+ion-content ion-card {
+  background: #fff;
+  border: 1px solid var(--rb-sep);
+  border-radius: 14px;
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.10);
+  overflow: hidden;
 }
 
 .content-image {
-    width: 100%;
-    height: auto; // Altura automática
-    display: block;
-    border-radius: 8px;
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Estados (cargando / vacío) */
+.ion-text-center p {
+  color: #475569;
+}
+
+/* Accesibilidad: menos animación si el usuario lo pide */
+@media (prefers-reduced-motion: reduce) {
+  .cover-image { transition: none; }
 }

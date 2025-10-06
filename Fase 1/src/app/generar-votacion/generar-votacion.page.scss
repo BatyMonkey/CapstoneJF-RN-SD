@@ -1,3 +1,4 @@
+/* ===== Crear Votación (look & feel unificado + legible) ===== */
 :host {
   color-scheme: light;
 
@@ -7,22 +8,23 @@
 
   --rb-bg: #f8fafc;
   --rb-text: #0f172a;
+  --rb-muted: #64748b;
 
   --ion-background-color: var(--rb-bg);
   --ion-text-color: var(--rb-text);
-
   --ion-item-background: #ffffff;
   --ion-card-background: #ffffff;
 }
 
-/* Header con gradiente */
+/* Header con gradiente consistente */
 .rb-header ion-toolbar {
   --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
   --color: #fff;
   --border-color: transparent;
+  --min-height: 56px;
 }
 
-/* Contenido */
+/* Página */
 .crear-votacion {
   --background: var(--rb-bg);
 
@@ -44,120 +46,150 @@
       color: var(--rb-text);
     }
     ion-card-subtitle {
-      color: #64748b;
+      color: var(--rb-muted);
       font-weight: 500;
     }
 
+    /* ===== Campos (ion-item) con relieve y buena legibilidad ===== */
     .field {
-      margin: 10px 0;
-      border-radius: 14px;
-      background: #fff;
-      border: 1px solid rgba(15, 23, 42, 0.08);
-      box-shadow: 0 6px 14px rgba(2, 6, 23, 0.06);
+      /* Caja blanca con borde y sombra */
       --background: #fff;
+      background: #fff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+      box-shadow: 0 8px 18px rgba(2, 6, 23, 0.06);
 
+      /* Espaciado cómodo (label stacked + control) */
+      --padding-start: 12px;
+      --inner-padding-end: 12px;
+      --inner-padding-top: 12px;
+      --inner-padding-bottom: 12px;
+      --min-height: auto;
+
+      margin: 10px 0;
+      transition: border-color 160ms ease, box-shadow 160ms ease;
+
+      /* Label visible y sin recortes */
       ion-label {
-        color: #475569;
-        font-weight: 600;
-        padding: 10px 12px 0 12px;
+        margin: 2px 4px 6px 2px;
+        line-height: 1.2;
+        color: #334155; /* gris oscuro legible */
+        font-weight: 700;
       }
 
-      ion-input,
-      ion-textarea,
+      /* Texto del control (input/textarea) */
+      ion-input::part(native),
+      ion-textarea::part(native) {
+        color: var(--rb-text);
+        background: #fff;
+        line-height: 1.25;
+        font-weight: 600;
+        padding: 8px 10px 10px; /* suficiente alto para no cortar texto */
+      }
+
+      /* Placeholders (visibles sin competir) */
+      ion-input::part(native)::placeholder,
+      ion-textarea::part(native)::placeholder {
+        color: #6b7280;
+        opacity: 1;
+      }
+
+      /* Datetime dentro de la caja */
       ion-datetime {
         --background: #fff;
         --color: var(--rb-text);
-        --padding-start: 12px;
-        --padding-end: 12px;
-        --padding-top: 6px;
-        --padding-bottom: 12px;
-        font-weight: 600;
-      }
-
-      ion-datetime {
+        --wheel-highlight-background: rgba(37, 99, 235, 0.08);
+        --wheel-fade-background-rgb: 255,255,255;
         border-radius: 12px;
       }
-    }
-  }
 
-  .dates-grid {
-    display: grid;
-    gap: 16px;
-  }
-
-  .dates-grid .date-col h3 {
-    margin: 0 0 6px 2px;
-    color: #334155;
-    font-weight: 700;
-    font-size: 14px;
-  }
-
-  @media (min-width: 700px) {
-    .dates-grid {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-
-  /* Opciones */
-  .options {
-    .option-row {
-      display: flex;
-      align-items: flex-end;
-      gap: 10px;
-      margin-bottom: 10px;
-
-      .badge {
-        min-width: 34px;
-        height: 34px;
-        border-radius: 10px;
-        display: grid;
-        place-items: center;
-        color: #fff;
-        font-weight: 800;
-        box-shadow: 0 6px 14px rgba(2, 6, 23, 0.08);
+      /* Foco accesible */
+      &.item-has-focus,
+      &:focus-within {
+        border-color: var(--rb-primary);
+        box-shadow:
+          0 0 0 3px rgba(37, 99, 235, 0.14),
+          0 8px 18px rgba(2, 6, 23, 0.06);
       }
+    }
 
-      .grow { flex: 1; }
+    /* Mensajes de error si usas ion-text[color="danger"] debajo */
+    ion-text[color="danger"] {
+      display: block;
+      margin: 4px 6px 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
 
-      .del-btn {
-        --padding-start: 6px;
-        --padding-end: 6px;
+    /* Acciones */
+    .actions {
+      margin-top: 16px;
+
+      ion-button {
+        border-radius: 12px;
+        box-shadow: 0 10px 18px var(--rb-primary-10);
+
+        &:active {
+          transform: translateY(1px);
+        }
       }
     }
   }
 
-  .option-actions {
+  /* Cabecera de opciones */
+  .options-header {
+    margin: 14px 2px 8px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-top: 6px;
+    gap: 10px;
 
-    .meta {
-      font-size: 12px;
+    h3 {
+      margin: 0;
+      font-weight: 800;
+      color: var(--rb-text);
+      font-size: 16px;
+      letter-spacing: 0.2px;
+    }
+
+    ion-button[fill="outline"] {
+      --border-color: var(--rb-primary-20);
+      --color: var(--rb-primary);
+      --ripple-color: var(--rb-primary);
+      --border-radius: 12px;
+      --box-shadow: 0 6px 14px var(--rb-primary-10);
     }
   }
 
-  .hint-chip {
-    margin-top: 10px;
-  }
+  /* Lista de opciones */
+  .options {
+    /* Cada opción es un ion-item.field ya estilizado arriba */
+    .option {
+      position: relative; /* para el botón de borrar */
+    }
 
-  .req {
-    color: #ef4444;
-    font-weight: 700;
+    /* Asegura que el botón de borrar quede cómodo a la derecha */
+    .option ion-button[slot="end"] {
+      margin-left: 8px;
+    }
   }
-
-  .err {
-    display: block;
-    margin: 8px 2px 0;
-    font-weight: 600;
-  }
-
-  .spacer { height: 72px; } /* hueco para el footer fijo */
 }
 
-/* Footer de acciones fijo */
+/* Footer de acciones fijo (si algún día lo usas) */
 .action-footer ion-toolbar {
   --background: #fff;
   --border-color: rgba(2, 6, 23, 0.08);
   box-shadow: 0 -8px 18px rgba(2, 6, 23, 0.06);
+}
+
+/* iOS: padding más agradable */
+.ios ion-item.field {
+  --padding-start: 12px;
+  --inner-padding-end: 12px;
+}
+
+/* Responsive: sombra un poco más liviana en móviles */
+@media (max-width: 480px) {
+  .crear-votacion .card .field {
+    box-shadow: 0 6px 12px rgba(2, 6, 23, 0.05);
+  }
 }

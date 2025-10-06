@@ -1,118 +1,241 @@
-:host {
-  /* Fuerza paleta clara y base consistente con otras pantallas */
-  color-scheme: light;
+/* Fuerza esquema claro y colores base */
+:host,
+:host-context(html) {
+  color-scheme: light !important;
   --rb-primary: #2563eb;
-  --rb-primary-10: rgba(37, 99, 235, 0.10);
-  --rb-primary-20: rgba(37, 99, 235, 0.20);
-  --rb-bg: #f8fafc;
-  --rb-text: #0f172a;
-
-  --ion-background-color: var(--rb-bg);
+  --rb-bg: #f5f7fb;     /* fondo página muy claro */
+  --rb-text: #0f172a;   /* texto principal oscuro */
+  --rb-muted: #475569;  /* subtítulos/labels */
   --ion-text-color: var(--rb-text);
-  --ion-item-background: #fff;
-  --ion-card-background: #fff;
+  --ion-background-color: var(--rb-bg);
+  --ion-item-background: #ffffff;
+  --ion-card-background: #ffffff;
 }
 
-/* Header con gradiente como el resto */
+/* Header igual que el resto (gradiente) */
 .rb-header ion-toolbar {
   --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
   --color: #fff;
   --border-color: transparent;
 }
 
-/* Página */
-.generar-proyecto {
-  --background: var(--rb-bg);
+/* Centrado opcional del contenido */
+.page-wrap { max-width: 960px; margin: 0 auto; }
 
-  .card {
+/* ===== Tarjetas blancas con relieve ===== */
+.card {
+  background: #fff;
+  border-radius: 18px;
+  border: 1px solid rgba(2, 6, 23, 0.08);
+  box-shadow: 0 12px 28px rgba(2, 6, 23, 0.10);
+  overflow: hidden;
+  margin-bottom: 16px;
+
+  ion-card-header {
     background: #fff;
-    border-radius: 18px;
-    border: 1px solid rgba(2, 6, 23, 0.06);
-    box-shadow: 0 10px 26px rgba(2, 6, 23, 0.08);
-    overflow: hidden;
-    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(2, 6, 23, 0.06);
+  }
+  ion-card-title { color: var(--rb-text); font-weight: 800; }
+  ion-card-subtitle { color: #64748b; font-weight: 600; }
+}
 
-    ion-card-header {
-      background: #fff;
-      border-bottom: 1px solid rgba(2, 6, 23, 0.06);
-    }
+/* Hero chip/nota */
+.note {
+  display: inline-block;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 6px 16px rgba(2, 6, 23, 0.06);
+  color: var(--rb-muted);
+}
 
-    ion-card-title {
-      font-weight: 800;
-      color: var(--rb-text);
-    }
+/* ===== Campos visibles (borde + sombra) ===== */
+.field {
+  margin: 10px 0;
+  border-radius: 14px;
+  background: #fff;
+  border: 1.5px solid #e2e8f0;                    /* borde sutil */
+  box-shadow: 0 6px 16px rgba(2, 6, 23, 0.06);     /* relieve suave */
 
-    ion-card-subtitle {
-      color: #64748b;
-      font-weight: 500;
-    }
+  /* asegura fondo blanco en el item */
+  --background: #fff;
+  --inner-background: #fff;
+  --min-height: 58px;
 
-    .field {
-      margin: 10px 0;
-      border-radius: 14px;
-      background: #fff;
-      border: 1px solid rgba(15, 23, 42, 0.08);
-      box-shadow: 0 6px 14px rgba(2, 6, 23, 0.06);
+  ion-label {
+    color: var(--rb-muted);
+    font-weight: 700;
+    padding: 10px 12px 0 12px;
+  }
 
-      /* Obliga fondo claro dentro del item */
-      --background: #fff;
-      --inner-background: #fff;
-      --min-height: 58px;
+  /* texto oscuro y placeholder legible en TODOS los controles */
+  ion-input,
+  ion-textarea,
+  ion-select {
+    --background: #fff;
+    --color: var(--rb-text);             /* texto del campo */
+    --placeholder-color: #94a3b8;        /* placeholder */
+    --padding-start: 12px;
+    --padding-end: 12px;
+    --padding-top: 6px;
+    --padding-bottom: 12px;
+    --highlight-color-focused: var(--rb-primary);
+    font-weight: 600;
+  }
 
-      ion-label {
-        color: #475569;
-        font-weight: 600;
-        padding: 10px 12px 0 12px;
-      }
+  /* algunos temas requieren tocar el host nativo */
+  ion-input::part(native),
+  ion-textarea::part(native) {
+    color: var(--rb-text);
+    background: #fff;
+  }
 
-      ion-input,
-      ion-textarea,
-      ion-select {
-        --background: #fff;
-        --color: var(--rb-text);
-        --padding-start: 12px;
-        --padding-end: 12px;
-        --padding-top: 6px;
-        --padding-bottom: 12px;
-        font-weight: 600;
-      }
-
-      /* Mejora de contraste en algunos temas */
-      ion-input::part(native),
-      ion-textarea::part(native),
-      ion-select::part(text) {
-        background: #fff;
-      }
-
-      &.invalid {
-        border-color: rgba(239, 68, 68, 0.35);
-        box-shadow: 0 6px 16px rgba(239, 68, 68, 0.12);
-      }
-    }
-
-    ion-note {
-      display: block;
-      margin: 4px 4px 0 8px;
-      font-size: 0.86rem;
-    }
-
-    .actions {
-      margin-top: 16px;
-
-      ion-button {
-        border-radius: 12px;
-        box-shadow: 0 10px 18px var(--rb-primary-10);
-
-        &:active {
-          transform: translateY(1px);
-        }
-      }
-    }
+  /* estados */
+  &:hover { border-color: #cbd5e1; }
+  &:focus-within {
+    border-color: var(--rb-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+  }
+  &.invalid {
+    border-color: rgba(239, 68, 68, 0.55);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.14);
   }
 }
 
-/* iOS pulido */
-.ios ion-item {
-  --padding-start: 12px;
-  --inner-padding-end: 12px;
+/* contador / notas de validación */
+ion-note {
+  display: block;
+  margin: 4px 6px 0 8px;
+  font-size: 0.86rem;
+}
+
+/* ===== Estado (soporta ion-select o ion-segment) ===== */
+
+/* Si usas ion-select (como en tu HTML actual) no necesitas nada más. 
+   Por si en el futuro cambias a ion-segment, te dejo estilos claros: */
+
+.estado-wrap {
+  padding: 10px 12px 14px;
+  border-radius: 14px;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  box-shadow: 0 6px 16px rgba(2, 6, 23, 0.06);
+}
+.estado-segment {
+  border-radius: 10px;
+  background: #f1f5f9;
+  padding: 4px;
+  box-shadow: inset 0 0 0 1px rgba(2, 6, 23, 0.06);
+}
+.estado-segment ion-segment-button {
+  --background: transparent;
+  --background-checked: var(--rb-primary);
+  --indicator-color: var(--rb-primary);
+  --color: #334155;
+  --color-checked: #ffffff;
+  min-height: 44px;
+  border-radius: 10px;
+  text-transform: none;
+  font-weight: 700;
+}
+
+/* Botones de acción */
+.actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+
+  ion-button {
+    border-radius: 12px;
+    box-shadow: 0 10px 18px rgba(37, 99, 235, 0.15);
+  }
+  ion-button:active { transform: translateY(1px); }
+}
+
+/* iOS padding fino */
+.ios ion-item { --padding-start: 12px; --inner-padding-end: 12px; }
+
+/* IMPORTANTE: sin modo oscuro para esta pantalla */
+@media (prefers-color-scheme: dark) {
+  :host {
+    --ion-background-color: #ffffff;
+    --ion-card-background: #ffffff;
+    --ion-item-background: #ffffff;
+    --ion-text-color: #0f172a;
+  }
+  /* ---------- FIX: labels cortados y campos legibles ---------- */
+
+/* Quita el alto mínimo agresivo y aumenta padding interno */
+.field {
+  /* Elimina/override cualquier min-height previo */
+  --min-height: auto;
+
+  /* Más aire arriba/abajo para stacked label + input */
+  --padding-start: 12px;      /* margen izquierdo del item */
+  --inner-padding-end: 12px;  /* margen derecho del contenido */
+  --inner-padding-top: 12px;  /* espacio superior dentro del item */
+  --inner-padding-bottom: 12px;
+
+  /* Borde/sombra como antes (se pueden dejar tal cual) */
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 6px 16px rgba(2, 6, 23, 0.06);
+}
+
+/* El label apilado necesita margen propio, no padding del item */
+.field ion-label {
+  padding: 0;                     /* quitamos el padding que tenías */
+  margin: 4px 4px 6px 2px;        /* un poquito de espacio sin comer altura */
+  line-height: 1.15;
+  color: var(--rb-muted);
+  font-weight: 700;
+  display: block;
+}
+
+/* Texto del input/textarea bien visible y con altura cómoda */
+.field ion-input,
+.field ion-textarea,
+.field ion-select {
+  --background: #fff;
+  --color: var(--rb-text);
+  --placeholder-color: #94a3b8;
+  --padding-start: 10px;
+  --padding-end: 10px;
+  --padding-top: 8px;             /* más alto el área de texto */
+  --padding-bottom: 10px;
+  font-weight: 600;
+}
+
+/* En algunos temas/material, forzamos el nativo para evitar “cortes” visuales */
+.field ion-input::part(native),
+.field ion-textarea::part(native) {
+  color: var(--rb-text);
+  background: #fff;
+  line-height: 1.25;
+}
+
+/* Textarea con altura mínima razonable cuando aún no crece */
+.field ion-textarea {
+  min-height: 110px;
+}
+
+/* Estados visuales (como antes) */
+.field:focus-within {
+  border-color: var(--rb-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+}
+.field.invalid {
+  border-color: rgba(239, 68, 68, 0.55);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.14);
+}
+
+/* Material Design (Android) suele ser el más sensible: un pelín más alto */
+.md .field {
+  --inner-padding-top: 14px;
+  --inner-padding-bottom: 14px;
+}
+
 }

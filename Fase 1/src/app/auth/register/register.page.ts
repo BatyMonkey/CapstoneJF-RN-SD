@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { IonicModule, ToastController } from '@ionic/angular';
-import { supabase } from '../../core/supabase.client';
+import { FormsModule, NgForm } from '@angular/forms';
+import { IonicModule, ToastController, AlertController } from '@ionic/angular';
+import { AuthService } from '../auth.service';
 
 @Component({
   standalone: true,
@@ -13,85 +13,129 @@ import { supabase } from '../../core/supabase.client';
   imports: [IonicModule, CommonModule, FormsModule],
 })
 export class RegisterPage {
-  nombre = '';
+  primer_nombre = '';
+  segundo_nombre = '';
+  primer_apellido = '';
+  segundo_apellido = '';
+  rut = '';
+  direccion = '';
+  telefono = '';
   email = '';
   password = '';
-  loading = false;
+  nombre = '';
 
-  // solo por si quieres mostrar también el error en la página
+  loading = false;
   errorMsg = '';
+  rutInvalido = false;
 
   constructor(
     private router: Router,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private alertCtrl: AlertController, // <-- agregado
+    private auth: AuthService
   ) {}
 
   private async toast(message: string, color: 'success' | 'danger' | 'warning' = 'success') {
     const t = await this.toastCtrl.create({
-      message,
-      color,
-      duration: 2800,
-      position: 'top',
+      message, color, duration: 2500, position: 'top',
       buttons: [{ text: 'OK', role: 'cancel' }],
     });
     await t.present();
   }
 
-  async register() {
+  private buildNombre(): string {
+    return [
+      this.primer_nombre?.trim(),
+      this.segundo_nombre?.trim(),
+      this.primer_apellido?.trim(),
+      this.segundo_apellido?.trim(),
+    ].filter(Boolean).join(' ');
+  }
+
+  private normalizaRut(v: string): string {
+    return (v || '').replace(/\./g, '').replace(/-/g, '').toUpperCase();
+  }
+
+  private validaRutDV(rut: string): boolean {
+    const v = this.normalizaRut(rut);
+    if (v.length < 2) return false;
+    const cuerpo = v.slice(0, -1);
+    const dv = v.slice(-1);
+    if (!/^\d+$/.test(cuerpo)) return false;
+
+    let suma = 0, multiplo = 2;
+    for (let i = cuerpo.length - 1; i >= 0; i--) {
+      suma += parseInt(cuerpo[i], 10) * multiplo;
+      multiplo = multiplo === 7 ? 2 : multiplo + 1;
+    }
+    const resto = 11 - (suma % 11);
+    const dvCalc = (resto === 11) ? '0' : (resto === 10) ? 'K' : String(resto);
+    return dv.toUpperCase() === dvCalc;
+  }
+
+  telefonoEsValido(): boolean {
+    const re = /^(\+?56)?\s?9\d{8}$/;
+    return re.test((this.telefono || '').trim());
+  }
+
+  onRutBlur() {
+    this.rutInvalido = !this.validaRutDV(this.rut);
+  }
+
+  // 🟢 nuevo helper para alert centrado
+  private async showSuccessAlert() {
+  const alert = await this.alertCtrl.create({
+    header: '¡Registro exitoso! 🎉',
+    subHeader: 'Tu cuenta fue creada correctamente',
+    message: 'Ya puedes iniciar sesión en RedBarrio 🏡',
+    buttons: [
+      {
+        text: 'OK',
+        cssClass: 'ok-button',
+        handler: () => this.router.navigateByUrl('/auth/login', { replaceUrl: true }),
+      },
+    ],
+    cssClass: 'custom-success-alert',
+    backdropDismiss: false,
+    mode: 'ios',
+  });
+  await alert.present();
+}
+
+
+
+
+
+  async register(f: NgForm) {
     this.loading = true;
     this.errorMsg = '';
 
     try {
-      // 1) Crear usuario en Auth
-      const { data, error } = await supabase.auth.signUp({
-        email: this.email.trim(),
-        password: this.password,
-        options: {
-          data: { full_name: this.nombre?.trim() || '' },
-        },
-      });
-
-      if (error) {
-        // Mensaje amable si el correo ya existe
-        const msg = /registered|exists|already/i.test(error.message)
-          ? 'Este correo ya está registrado. Intenta iniciar sesión.'
-          : error.message || 'No se pudo crear la cuenta.';
-        this.errorMsg = msg;
-        await this.toast(msg, 'danger');
+      // Validaciones
+      this.rutInvalido = !this.validaRutDV(this.rut);
+      if (this.rutInvalido || !this.telefonoEsValido() || !f.valid) {
+        await this.toast('Revisa los campos obligatorios.', 'warning');
+        this.loading = false;
         return;
       }
 
-      const authId = data.user?.id;
-      const hasSession = !!data.session;
+      this.nombre = this.buildNombre();
+      const res = await this.auth.signUp(this.email.trim(), this.password, this.nombre);
 
-      // 2) Si tu proyecto requiere confirmación por correo, no habrá sesión todavía
-      if (!hasSession) {
-        await this.toast('Te enviamos un correo para confirmar tu cuenta. Revisa tu bandeja ✉️', 'success');
-        // En este escenario no podemos insertar en tu tabla perfil por RLS.
-        // Lo haremos al primer login si así lo decides.
+      if (res.needsEmailConfirm) {
+        await this.toast('Te enviamos un correo para confirmar tu cuenta. Revisa tu bandeja ✉️');
         await this.router.navigateByUrl('/auth/login', { replaceUrl: true });
         return;
       }
 
-      // 3) Si hay sesión, insertamos en tu tabla `usuario`
-      if (!authId) throw new Error('No se obtuvo el ID de auth del usuario.');
+      // 🔹 mostramos el alert centrado
+      await this.showSuccessAlert();
 
-      const { error: insErr } = await supabase.from('usuario').insert({
-        user_id: authId,          // ajusta nombres de columnas a tu esquema
-        id_auth: authId,          // si existe en tu tabla
-        nombre: this.nombre,
-        correo: this.email,
-        creado_en: new Date().toISOString(), // si tu tabla lo tiene
-      });
-      if (insErr) {
-        // No bloqueamos el flujo, pero avisamos.
-        console.warn('No se pudo insertar en tabla usuario:', insErr);
-      }
-
-      await this.toast('Cuenta creada con éxito. ¡Ya puedes iniciar sesión! 🎉', 'success');
-      await this.router.navigateByUrl('/auth/login', { replaceUrl: true });
     } catch (e: any) {
-      const msg = e?.message ?? 'Error al registrar la cuenta.';
+      const raw = e?.message || 'No se pudo crear la cuenta.';
+      const msg = /registered|exists|already/i.test(raw)
+        ? 'Este correo ya está registrado. Intenta iniciar sesión.'
+        : raw;
       this.errorMsg = msg;
       await this.toast(msg, 'danger');
     } finally {
@@ -99,4 +143,5 @@ export class RegisterPage {
     }
   }
 }
+
 
