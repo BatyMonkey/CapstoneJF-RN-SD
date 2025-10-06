@@ -1,15 +1,22 @@
-/* Paleta suave celeste/azul */
-:host {
-  --rb-primary: #2563eb;
-  --rb-bg: #f8fafc;
-  --rb-text: #0f172a;
+/* ==========================================================
+   ===== ESTILOS UNIFICADOS (home.page.scss + noticias.page.scss)
+   ========================================================== */
 
-  /* Fondo claro garantizado */
+:host {
+  /* Paleta de Noticias (más completa) */
+  --rb-primary: #2563eb;
+  --rb-text: #0f172a;
+  --rb-muted: #64748b;
+  --rb-sep: rgba(2, 6, 23, 0.06);
+  --rb-bg: #f8fafc; /* Color de fondo de Home */
+
+  /* Colores base */
+  color-scheme: light;
   --ion-background-color: var(--rb-bg);
   --ion-text-color: var(--rb-text);
 }
 
-/* Header */
+/* Header consistente (tomado de noticias.page.scss) */
 .rb-header ion-toolbar {
   --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
   --color: #fff;
@@ -17,46 +24,166 @@
   --min-height: 56px;
 }
 
-/* Contenido principal */
+/* ==========================================================
+   ===== Estilos Específicos de HOME.PAGE
+   ========================================================== */
+
+/* Contenido principal de la Home */
 .home {
   --background: var(--rb-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: calc(100% - 56px);
+  /* Se eliminan 'display: flex', 'align-items: center', 'justify-content: center' 
+     para permitir que otros contenidos (como las noticias) fluyan normalmente 
+     dentro del ion-content, si no está en el hero */
+  /* Si el .hero no está dentro de un ion-content con clase 'home' y se usa el 
+     ion-padding news, se debe aplicar el centrado al .hero directamente */
+}
 
-  .hero {
-    text-align: center;
-    background: #fff;
-    border-radius: 18px;
-    padding: 28px 22px;
-    width: min(620px, 100%);
-    box-shadow:
-      0 8px 24px rgba(2, 6, 23, 0.06),
-      inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(2, 6, 23, 0.06);
+.hero {
+  text-align: center;
+  background: #fff;
+  border-radius: 18px;
+  padding: 28px 22px;
+  width: min(620px, 100%);
+  box-shadow:
+    0 8px 24px rgba(2, 6, 23, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(2, 6, 23, 0.06);
+  
+  /* ESTA ES LA REGLA CLAVE AÑADIDA PARA CENTRAR EL DIV */
+  margin: 0 auto; 
+  /* Si necesitas margen superior o inferior, ajusta el 0, por ejemplo: margin: 20px auto; */
 
-    h1 {
-      margin: 0 0 8px 0;
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--rb-text);
-    }
+  h1 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--rb-text);
+  }
 
-    p {
-      margin: 0;
-      color: #475569;
-    }
+  p {
+    margin: 0;
+    color: #475569;
   }
 }
 
-/* iOS pulido */
+
+/* iOS pulido (de home.page.scss) */
 .ios ion-item {
   --padding-start: 12px;
   --inner-padding-end: 12px;
 }
 
-/* ❗ IMPORTANTE:
-   El estilo del MENÚ global está solo en app.component.scss.
-   No dupliques reglas de ion-menu en páginas individuales.
-*/
+/* ❗ Nota de home.page.scss */
+/* El estilo del MENÚ global debería estar en app.component.scss. */
+
+/* ==========================================================
+   ===== Estilos Específicos de NOTICIAS.PAGE
+   ========================================================== */
+
+/* Contenido (si se muestra una lista de noticias en el home) */
+.news {
+  --background: #fff; /* Usa blanco para la sección de noticias */
+  padding-bottom: 8px;
+}
+
+/* Grid y columnas (espaciado cómodo en móvil) */
+.news ion-grid { --ion-grid-padding: 6px; }
+.news ion-col { padding: 10px; }
+
+/* === Card: relieve y legibilidad en pantallas pequeñas === */
+ion-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid var(--rb-sep);
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.10);
+  overflow: hidden;
+  transition: transform .08s ease, box-shadow .12s ease, border-color .12s ease;
+}
+
+/* Feedback táctil (tap) */
+ion-card:active {
+  transform: scale(0.996);
+  box-shadow: 0 12px 28px rgba(2, 6, 23, 0.12);
+  border-color: rgba(37, 99, 235, 0.18);
+}
+
+/* Imagen arriba fija para móvil, más alta en tablet */
+.card-image-container {
+  width: 100%;
+  height: 200px;                 /* móvil */
+  overflow: hidden;
+  background: #f1f5f9;
+  border-bottom: 1px solid var(--rb-sep);
+}
+@media (min-width: 768px) {
+  .card-image-container { height: 230px; }  /* tablet+ */
+}
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Header limpio (sin superposiciones) */
+ion-card-header {
+  background: #fff;
+  padding: 12px 14px 8px;
+  border-bottom: 1px solid var(--rb-sep);
+}
+
+/* Título 2 líneas, tamaño cómodo en móvil */
+.card-title {
+  margin: 0 0 2px 0;
+  color: var(--rb-text);
+  font-weight: 800;
+  font-size: 17px;
+  line-height: 1.25;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;     /* mantiene el bloque compacto */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Meta */
+ion-card-subtitle {
+  color: var(--rb-muted);
+  font-weight: 600;
+  letter-spacing: .2px;
+  font-size: 12.5px;
+}
+
+/* Extracto 3 líneas, buena lectura */
+ion-card-content {
+  padding: 10px 14px 14px;
+}
+.card-excerpt {
+  color: #334155;
+  font-weight: 500;
+  font-size: 14.5px;
+  line-height: 1.4;
+  margin: 2px 0 0;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.card-excerpt-placeholder {
+  color: #94a3b8;
+  font-style: italic;
+  margin: 2px 0 0;
+}
+
+/* Estados */
+.loading, .empty {
+  text-align: center;
+  color: #475569;
+  padding: 20px 12px;
+}
+.loading p { margin-top: 8px; }
+
+/* Accesibilidad: menos animación si el usuario lo pide */
+@media (prefers-reduced-motion: reduce) {
+  ion-card { transition: none; }
+}

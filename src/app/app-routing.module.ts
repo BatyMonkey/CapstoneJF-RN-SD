@@ -22,11 +22,6 @@ const routes: Routes = [
       import('./certificados/solicitar/solicitar.page').then(c => c.SolicitarCertificadoPage),
   },
   {
-    path: 'noticias',
-    loadComponent: () =>
-      import('./noticias/noticias.page').then(c => c.NoticiasPage),
-  },
-  {
     path: 'noticias/crear',
     loadComponent: () => import('./crear-noticia/crear-noticia.page').then(m => m.CrearNoticiaPage)
   },
@@ -64,12 +59,17 @@ const routes: Routes = [
         import('./generar-votacion/generar-votacion.page')
           .then(m => m.GenerarVotacionPage),
     },
+    {
+    path: 'perfil', // o /cuenta
+    // Agrega el AuthGuard para proteger el perfil
+    canActivate: [AuthGuard], 
+    loadComponent: () => import('./perfil/perfil.page').then(m => m.PerfilPage)
+  },
   {
   path: 'home',
   canActivate: [AuthGuard],
   loadComponent: () => import('./home/home.page').then(m => m.HomePage)
 },
-
   { path: '**', redirectTo: 'auth/login' },
 ];
 

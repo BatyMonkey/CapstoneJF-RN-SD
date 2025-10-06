@@ -1,0 +1,195 @@
+/* ===== Perfil de Usuario (Diseño Unificado) ===== */
+:host {
+  /* Paleta */
+  --rb-primary: #2563eb;
+  --rb-primary-10: rgba(37, 99, 235, 0.10);
+  --rb-primary-20: rgba(37, 99, 235, 0.20);
+
+  --rb-bg: #ffffff; /* FONDO BLANCO */
+  --rb-text: #0f172a;
+  --rb-muted: #64748b;
+
+  /* Fuerza esquema claro y fondo blanco */
+  color-scheme: light;
+  --ion-background-color: var(--rb-bg);
+  --ion-text-color: var(--rb-text);
+  --ion-item-background: #ffffff;
+  --ion-card-background: #ffffff;
+}
+
+/* Header con gradiente consistente */
+.rb-header ion-toolbar {
+  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
+  --color: #fff;
+  --border-color: transparent;
+  --min-height: 56px;
+}
+
+/* Contenido de la Página */
+.perfil-page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px;
+  --background: var(--rb-bg); /* Fondo de la página */
+
+  .card {
+    background: #fff;
+    border: 1px solid rgba(2, 6, 23, 0.06);
+    border-radius: 18px;
+    box-shadow: 0 10px 26px rgba(2, 6, 23, 0.08);
+    overflow: hidden;
+    margin-bottom: 24px;
+
+    ion-card-header {
+      background: #fff;
+      border-bottom: 1px solid rgba(2, 6, 23, 0.06);
+      padding-bottom: 12px;
+    }
+
+    ion-card-title {
+      font-weight: 800;
+      color: var(--rb-text);
+    }
+    ion-card-subtitle {
+      color: var(--rb-muted);
+      font-weight: 500;
+      margin-top: 6px;
+      display: block;
+    }
+    
+    ion-card-content {
+        padding-bottom: 24px;
+    }
+
+    /* ===== Campos Editables (.field) - Estilo Base Blanco ===== */
+    .field {
+      /* Caja blanca con relieve */
+      --background: #fff;
+      background: #fff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+      box-shadow: 0 8px 18px rgba(2, 6, 23, 0.06);
+
+      /* Espaciado */
+      --padding-start: 12px;
+      --inner-padding-end: 12px;
+      --inner-padding-top: 12px;
+      --inner-padding-bottom: 12px;
+      --min-height: auto;
+
+      margin: 14px 0;
+      transition: border-color 160ms ease, box-shadow 160ms ease;
+      
+      ion-label {
+        margin: 2px 4px 6px 2px;
+        line-height: 1.2;
+        color: #334155;
+        font-weight: 700;
+      }
+      
+      /* Texto del control (input) */
+      ion-input::part(native),
+      ion-textarea::part(native) {
+        color: var(--rb-text);
+        background: #fff; /* Fondo blanco para editables */
+        line-height: 1.25;
+        font-weight: 600;
+        padding: 8px 10px 10px;
+        caret-color: var(--rb-primary);
+      }
+
+      /* Placeholders */
+      ion-input::part(native)::placeholder,
+      ion-textarea::part(native)::placeholder {
+        color: #6b7280;
+        opacity: 1;
+      }
+
+      /* Foco accesible */
+      &.item-has-focus,
+      &:focus-within {
+        border-color: var(--rb-primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14), 0 8px 18px rgba(2, 6, 23, 0.06);
+      }
+    }
+
+    /* ===== Campos NO EDITABLES/ESTÁTICOS (Gris) ===== */
+    .field[disabled],
+    .field.is-static {
+        /* 1. Forzar Fondo gris claro en el ion-item */
+        --background: #f1f5f9 !important; 
+        background: #f1f5f9 !important;
+        
+        opacity: 0.95;
+        box-shadow: none;
+        border-color: #e2e8f0;
+        
+        ion-label {
+            color: var(--rb-muted) !important;
+            font-weight: 600;
+        }
+
+        /* 2. Forzar que el INPUT interno NO tenga fondo blanco */
+        ion-input::part(native),
+        ion-textarea::part(native) {
+            color: #334155 !important; 
+            font-weight: 500;
+            background: transparent !important; 
+        }
+    }
+
+
+    /* Mensajes de error */
+    ion-text[color="danger"] {
+      display: block;
+      margin: 4px 6px 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    /* Acciones */
+    .actions {
+      margin-top: 24px;
+      padding: 0 0 16px;
+
+      ion-button {
+        --border-radius: 14px;
+        --box-shadow: 0 10px 18px var(--rb-primary-10);
+        font-weight: 700;
+
+        &:active {
+          transform: translateY(1px);
+        }
+      }
+    }
+  }
+
+  /* Nota/Texto de estado de verificación */
+  .verification-status {
+      margin: 10px 0 20px;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-weight: 600;
+      
+      &.is-verified {
+          background: #dcfce7;
+          color: #16a34a; 
+          border: 1px solid #bbf7d0;
+      }
+      &.is-pending {
+          background: #fef9c3;
+          color: #eab308;
+          border: 1px solid #fde68a;
+      }
+  }
+}
+
+/* Responsive: sombra más ligera en móviles */
+@media (max-width: 480px) {
+  .perfil-page .card .field {
+    box-shadow: 0 6px 12px rgba(2, 6, 23, 0.05);
+  }
+  .perfil-page {
+      padding: 8px;
+  }
+}
