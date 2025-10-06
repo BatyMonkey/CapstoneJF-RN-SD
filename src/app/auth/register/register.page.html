@@ -9,7 +9,6 @@
       <ion-card-content>
         <form #f="ngForm" (ngSubmit)="register(f)">
 
-          <!-- Primer nombre (obligatorio) -->
           <ion-item lines="none">
             <ion-icon name="person-outline" slot="start" color="primary"></ion-icon>
             <ion-input
@@ -21,7 +20,6 @@
           </ion-item>
           <ion-note color="danger" *ngIf="f.submitted && !primer_nombre">Este campo es obligatorio.</ion-note>
 
-          <!-- Segundo nombre (opcional) -->
           <ion-item lines="none" style="margin-top:8px;">
             <ion-icon name="person-outline" slot="start" color="primary"></ion-icon>
             <ion-input
@@ -31,7 +29,6 @@
             </ion-input>
           </ion-item>
 
-          <!-- Primer apellido (obligatorio) -->
           <ion-item lines="none" style="margin-top:8px;">
             <ion-icon name="person-outline" slot="start" color="primary"></ion-icon>
             <ion-input
@@ -43,7 +40,6 @@
           </ion-item>
           <ion-note color="danger" *ngIf="f.submitted && !primer_apellido">Este campo es obligatorio.</ion-note>
 
-          <!-- Segundo apellido (opcional) -->
           <ion-item lines="none" style="margin-top:8px;">
             <ion-icon name="person-outline" slot="start" color="primary"></ion-icon>
             <ion-input
@@ -53,7 +49,6 @@
             </ion-input>
           </ion-item>
 
-          <!-- RUT (obligatorio + DV) -->
           <ion-item lines="none" style="margin-top:10px;">
             <ion-icon name="card-outline" slot="start" color="primary"></ion-icon>
             <ion-input
@@ -67,7 +62,6 @@
           <ion-note color="danger" *ngIf="f.submitted && !rut">Este campo es obligatorio.</ion-note>
           <ion-note color="danger" *ngIf="rut && rutInvalido">RUT inválido. Revisa el dígito verificador.</ion-note>
 
-          <!-- Dirección (opcional) -->
           <ion-item lines="none" style="margin-top:10px;">
             <ion-icon name="home-outline" slot="start" color="primary"></ion-icon>
             <ion-input
@@ -77,7 +71,6 @@
             </ion-input>
           </ion-item>
 
-          <!-- Teléfono (Chile) obligatorio -->
           <ion-item lines="none" style="margin-top:10px;">
             <ion-icon name="call-outline" slot="start" color="primary"></ion-icon>
             <ion-input
@@ -90,7 +83,6 @@
           <ion-note color="danger" *ngIf="f.submitted && !telefono">Este campo es obligatorio.</ion-note>
           <ion-note color="danger" *ngIf="telefono && !telefonoEsValido()">Formato de teléfono inválido (Chile).</ion-note>
 
-          <!-- Correo (obligatorio + formato) -->
           <ion-item lines="none" style="margin-top:10px;">
             <ion-icon name="mail-outline" slot="start" color="primary"></ion-icon>
             <ion-input
@@ -104,7 +96,6 @@
           </ion-item>
           <ion-note color="danger" *ngIf="f.submitted && !email">Este campo es obligatorio.</ion-note>
 
-          <!-- Contraseña (obligatorio) -->
           <ion-item lines="none" style="margin-top:10px;">
             <ion-icon name="lock-closed-outline" slot="start" color="primary"></ion-icon>
             <ion-input
@@ -121,12 +112,10 @@
             La contraseña debe tener al menos 6 caracteres.
           </ion-note>
 
-          <!-- Error general -->
           <ion-text color="danger" *ngIf="errorMsg" class="error" style="display:block;margin-top:8px;">
             {{ errorMsg }}
           </ion-text>
 
-          <!-- Botón -->
           <ion-button
             type="submit"
             expand="block"
@@ -138,6 +127,18 @@
             <ion-spinner slot="start" *ngIf="loading"></ion-spinner>
             {{ loading ? 'Creando…' : 'Registrarme' }}
           </ion-button>
+          
+          <ion-button
+            type="button" 
+            expand="block"
+            fill="clear"
+            color="medium" 
+            style="margin-top: 8px;"
+            (click)="goToLogin()"
+            [disabled]="loading">
+            Volver
+          </ion-button>
+          
         </form>
       </ion-card-content>
     </ion-card>

@@ -98,6 +98,15 @@ export class RegisterPage {
     });
     await alert.present();
   }
+  
+  /**
+   * 🚨 Método añadido para manejar el click del botón 'Volver' en el HTML.
+   * Redirige al login.
+   */
+  goToLogin() {
+    if (this.loading) return; // Evita la navegación si el registro está en proceso
+    this.router.navigateByUrl('/auth/login', { replaceUrl: true });
+  }
 
   async register(f: NgForm) {
     this.loading = true;
@@ -119,7 +128,7 @@ export class RegisterPage {
       const res = await this.auth.signUpFull({
         email: this.email.trim(),
         password: this.password,
-        nombre: this.buildNombre(),               // "Juan Andrés Pérez Soto"
+        nombre: this.buildNombre(), // "Juan Andrés Pérez Soto"
         primer_nombre: this.primer_nombre || null, // <-- importante
         segundo_nombre: this.segundo_nombre || null,
         primer_apellido: this.primer_apellido || null,
