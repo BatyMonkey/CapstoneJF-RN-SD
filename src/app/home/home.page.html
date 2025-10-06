@@ -48,11 +48,10 @@
                 
                 <ion-button 
                   *ngIf="esAdmin" 
-                  size="small" 
+                  size="block" 
                   color="danger" 
                   style="margin-left: 8px;"
-                  (click)="$event.stopPropagation(); confirmarYEliminarNoticia(noticia.id)">
-                  <ion-icon name="trash" slot="icon-only"></ion-icon>
+                  (click)="$event.stopPropagation(); confirmarYEliminarNoticia(noticia.id)">Eliminar
                 </ion-button>
             </div>
             
@@ -77,14 +76,13 @@
     <p>Sé el primero en crear una noticia usando el botón flotante.</p>
   </div>
   
-  <ion-fab 
-    *ngIf="esAdmin" 
-    slot="fixed" 
-    vertical="bottom" 
-    horizontal="end">
-    <ion-fab-button (click)="navegarACrearNoticia()">
-      <ion-icon name="create-outline"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+<ion-button 
+  *ngIf="esAdmin" 
+  (click)="navegarACrearNoticia()" 
+  class="fixed-action-button"
+  expand="block">
+  Nueva Noticia
+  <ion-icon name="add-circle-outline" slot="end"></ion-icon>
+</ion-button>
   
 </ion-content>

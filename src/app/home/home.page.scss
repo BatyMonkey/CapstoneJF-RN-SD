@@ -1,10 +1,11 @@
 /* ==========================================================
-   ===== ESTILOS UNIFICADOS (home.page.scss + noticias.page.scss)
+   ===== ESTILOS UNIFICADOS (General, Home, Noticias)
    ========================================================== */
 
 :host {
   /* Paleta de Noticias (más completa) */
   --rb-primary: #2563eb;
+  --rb-primary-10: rgba(37, 99, 235, 0.10); 
   --rb-text: #0f172a;
   --rb-muted: #64748b;
   --rb-sep: rgba(2, 6, 23, 0.06);
@@ -16,7 +17,7 @@
   --ion-text-color: var(--rb-text);
 }
 
-/* Header consistente (tomado de noticias.page.scss) */
+/* Header consistente */
 .rb-header ion-toolbar {
   --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
   --color: #fff;
@@ -31,11 +32,6 @@
 /* Contenido principal de la Home */
 .home {
   --background: var(--rb-bg);
-  /* Se eliminan 'display: flex', 'align-items: center', 'justify-content: center' 
-     para permitir que otros contenidos (como las noticias) fluyan normalmente 
-     dentro del ion-content, si no está en el hero */
-  /* Si el .hero no está dentro de un ion-content con clase 'home' y se usa el 
-     ion-padding news, se debe aplicar el centrado al .hero directamente */
 }
 
 .hero {
@@ -44,14 +40,13 @@
   border-radius: 18px;
   padding: 28px 22px;
   width: min(620px, 100%);
+  /* Sombreado más fuerte para destacar el Hero */
   box-shadow:
-    0 8px 24px rgba(2, 6, 23, 0.06),
+    0 10px 30px rgba(2, 6, 23, 0.10), 
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
   border: 1px solid rgba(2, 6, 23, 0.06);
   
-  /* ESTA ES LA REGLA CLAVE AÑADIDA PARA CENTRAR EL DIV */
   margin: 0 auto; 
-  /* Si necesitas margen superior o inferior, ajusta el 0, por ejemplo: margin: 20px auto; */
 
   h1 {
     margin: 0 0 8px 0;
@@ -73,16 +68,12 @@
   --inner-padding-end: 12px;
 }
 
-/* ❗ Nota de home.page.scss */
-/* El estilo del MENÚ global debería estar en app.component.scss. */
-
 /* ==========================================================
    ===== Estilos Específicos de NOTICIAS.PAGE
    ========================================================== */
 
-/* Contenido (si se muestra una lista de noticias en el home) */
 .news {
-  --background: #fff; /* Usa blanco para la sección de noticias */
+  --background: #fff; 
   padding-bottom: 8px;
 }
 
@@ -95,7 +86,10 @@ ion-card {
   background: #fff;
   border-radius: 16px;
   border: 1px solid var(--rb-sep);
-  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.10);
+  /* 💥 Sombreado doble para mayor profundidad (Solicitado) */
+  box-shadow: 
+    0 6px 16px rgba(2, 6, 23, 0.12), 
+    0 18px 30px rgba(2, 6, 23, 0.12);
   overflow: hidden;
   transition: transform .08s ease, box-shadow .12s ease, border-color .12s ease;
 }
@@ -103,20 +97,23 @@ ion-card {
 /* Feedback táctil (tap) */
 ion-card:active {
   transform: scale(0.996);
-  box-shadow: 0 12px 28px rgba(2, 6, 23, 0.12);
+  /* Ajustar sombra activa al nuevo estilo */
+  box-shadow: 
+    0 8px 18px rgba(2, 6, 23, 0.16),
+    0 18px 36px rgba(2, 6, 23, 0.20);
   border-color: rgba(37, 99, 235, 0.18);
 }
 
 /* Imagen arriba fija para móvil, más alta en tablet */
 .card-image-container {
   width: 100%;
-  height: 200px;                 /* móvil */
+  height: 200px; 
   overflow: hidden;
   background: #f1f5f9;
   border-bottom: 1px solid var(--rb-sep);
 }
 @media (min-width: 768px) {
-  .card-image-container { height: 230px; }  /* tablet+ */
+  .card-image-container { height: 230px; } 
 }
 .card-image {
   width: 100%;
@@ -140,7 +137,7 @@ ion-card-header {
   line-height: 1.25;
 
   display: -webkit-box;
-  -webkit-line-clamp: 2;     /* mantiene el bloque compacto */
+  -webkit-line-clamp: 2; 
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -186,4 +183,53 @@ ion-card-content {
 /* Accesibilidad: menos animación si el usuario lo pide */
 @media (prefers-reduced-motion: reduce) {
   ion-card { transition: none; }
+}
+
+
+/* ==========================================================
+   ===== ESTILOS DE BOTÓN DE ACCIÓN FIJO (Nueva Noticia)
+   ========================================================== */
+
+.fixed-action-button {
+  /* Fija el botón al fondo y derecha */
+  position: fixed;
+  bottom: 20px;   /* Margen desde el fondo */
+  right: 16px;    /* Margen desde la derecha */
+  z-index: 100;   /* Asegura que esté sobre otros elementos */
+
+  /* Estilo visual: cuadrado con esquinas suaves y texto */
+  height: 48px;
+  width: auto;
+  min-width: 140px; 
+  
+  /* Color y forma */
+  --background: var(--rb-primary);
+  --color: white;
+  --border-radius: 12px; 
+  --box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35); /* Sombra intensa para que flote */
+  
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  
+  /* Animación al hacer tap */
+  transition: transform 0.2s ease;
+  &:active {
+    transform: scale(0.98);
+  }
+
+  ion-icon {
+    font-size: 1.3em;
+    margin-inline-start: 8px;
+  }
+}
+
+/* Ajuste para pantallas más pequeñas si fuera necesario */
+@media (max-width: 480px) {
+  .fixed-action-button {
+    bottom: 12px;
+    right: 12px;
+    min-width: 120px;
+    height: 44px;
+    font-size: 0.9em;
+  }
 }
