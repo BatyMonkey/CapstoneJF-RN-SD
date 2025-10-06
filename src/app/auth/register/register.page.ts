@@ -31,7 +31,7 @@ export class RegisterPage {
   constructor(
     private router: Router,
     private toastCtrl: ToastController,
-    private alertCtrl: AlertController, // <-- agregado
+    private alertCtrl: AlertController,
     private auth: AuthService
   ) {}
 
@@ -78,33 +78,26 @@ export class RegisterPage {
     return re.test((this.telefono || '').trim());
   }
 
-  onRutBlur() {
-    this.rutInvalido = !this.validaRutDV(this.rut);
-  }
+  onRutBlur() { this.rutInvalido = !this.validaRutDV(this.rut); }
 
-  // 🟢 nuevo helper para alert centrado
   private async showSuccessAlert() {
-  const alert = await this.alertCtrl.create({
-    header: '¡Registro exitoso! 🎉',
-    subHeader: 'Tu cuenta fue creada correctamente',
-    message: 'Ya puedes iniciar sesión en RedBarrio 🏡',
-    buttons: [
-      {
-        text: 'OK',
-        cssClass: 'ok-button',
-        handler: () => this.router.navigateByUrl('/auth/login', { replaceUrl: true }),
-      },
-    ],
-    cssClass: 'custom-success-alert',
-    backdropDismiss: false,
-    mode: 'ios',
-  });
-  await alert.present();
-}
-
-
-
-
+    const alert = await this.alertCtrl.create({
+      header: '¡Registro exitoso! 🎉',
+      subHeader: 'Tu cuenta fue creada correctamente',
+      message: 'Ya puedes iniciar sesión en RedBarrio 🏡',
+      buttons: [
+        {
+          text: 'OK',
+          cssClass: 'ok-button',
+          handler: () => this.router.navigateByUrl('/auth/login', { replaceUrl: true }),
+        },
+      ],
+      cssClass: 'custom-success-alert',
+      backdropDismiss: false,
+      mode: 'ios',
+    });
+    await alert.present();
+  }
 
   async register(f: NgForm) {
     this.loading = true;
@@ -119,8 +112,22 @@ export class RegisterPage {
         return;
       }
 
+      // Nombre concatenado para la columna `nombre`
       this.nombre = this.buildNombre();
-      const res = await this.auth.signUp(this.email.trim(), this.password, this.nombre);
+
+      // Registro completo: persiste TODOS los campos (incluye primer_nombre)
+      const res = await this.auth.signUpFull({
+        email: this.email.trim(),
+        password: this.password,
+        nombre: this.buildNombre(),               // "Juan Andrés Pérez Soto"
+        primer_nombre: this.primer_nombre || null, // <-- importante
+        segundo_nombre: this.segundo_nombre || null,
+        primer_apellido: this.primer_apellido || null,
+        segundo_apellido: this.segundo_apellido || null,
+        rut: this.rut || null,
+        direccion: this.direccion || null,
+        telefono: this.telefono || null,
+      });
 
       if (res.needsEmailConfirm) {
         await this.toast('Te enviamos un correo para confirmar tu cuenta. Revisa tu bandeja ✉️');
@@ -128,7 +135,6 @@ export class RegisterPage {
         return;
       }
 
-      // 🔹 mostramos el alert centrado
       await this.showSuccessAlert();
 
     } catch (e: any) {
@@ -143,5 +149,3 @@ export class RegisterPage {
     }
   }
 }
-
-
