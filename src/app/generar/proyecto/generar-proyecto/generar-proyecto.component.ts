@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, AlertController } from '@ionic/angular';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { supabase } from '../../../core/supabase.client';
-import { AuthService } from '../../../auth/auth.service';
+import { supabase } from '../../../core/supabase.client'; // 👈 Ajusta si tu supabase.client está en otro path
+import { AuthService } from '../../../auth/auth.service';   // 👈 Ajusta el path si tu auth.service está en otra carpeta
 
 @Component({
   selector: 'app-generar-proyecto',
@@ -23,10 +23,11 @@ export class GenerarProyectoComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    // Inicializa el formulario sin campo editable de estado
+    // Inicializa el formulario
     this.proyectoForm = this.fb.group({
       titulo: ['', [Validators.required, Validators.minLength(5)]],
       descripcion: ['', [Validators.required, Validators.minLength(10)]],
+      estado: ['pendiente']
     });
 
     // Traer perfil del usuario autenticado
@@ -44,17 +45,17 @@ export class GenerarProyectoComponent implements OnInit {
         .from('proyecto')
         .insert([
           {
-            id_auth: this.perfil?.id_auth, // Usuario autenticado (administrador)
+            id_auth: this.perfil?.id_auth, // 👈 referencia al usuario administrador logueado
             titulo: this.proyectoForm.value.titulo,
             descripcion: this.proyectoForm.value.descripcion,
-            estado: 'pendiente', // 👈 Fijamos el valor directamente
+            estado: this.proyectoForm.value.estado,
           }
         ]);
 
       if (error) throw error;
 
       await this.showAlert('Éxito', 'Proyecto creado correctamente ✅');
-      this.proyectoForm.reset();
+      this.proyectoForm.reset({ estado: 'pendiente' });
     } catch (err: any) {
       await this.showAlert('Error', err.message || 'No se pudo crear el proyecto');
     }

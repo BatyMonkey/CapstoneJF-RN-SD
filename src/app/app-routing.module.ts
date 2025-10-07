@@ -22,11 +22,6 @@ const routes: Routes = [
       import('./certificados/solicitar/solicitar.page').then(c => c.SolicitarCertificadoPage),
   },
   {
-    path: 'noticias',
-    loadComponent: () =>
-      import('./noticias/noticias.page').then(c => c.NoticiasPage),
-  },
-  {
     path: 'noticias/crear',
     loadComponent: () => import('./crear-noticia/crear-noticia.page').then(m => m.CrearNoticiaPage)
   },
@@ -48,7 +43,6 @@ const routes: Routes = [
     path: 'solicitud',
     loadComponent: () => import('./solicitud/solicitud.page').then(m => m.SolicitudPage)
     },
-    
   {
       path: 'generar/proyecto',
       canActivate: [AuthGuard],
@@ -58,19 +52,24 @@ const routes: Routes = [
           .then(m => m.GenerarProyectoComponent),
     },
     {
-    path: 'inscripcion/proyecto',
-    canActivate: [AuthGuard],
-    data: { roles: ['vecino'] }, // 👈 Solo vecinos pueden acceder
-    loadComponent: () =>
-      import('./inscripcion/inscripcion-proyecto/inscripcion-proyecto.component')
-        .then(m => m.InscripcionProyectoComponent),
+      path: 'generar/votacion',
+      canActivate: [AuthGuard],
+      data: { roles: ['administrador'] },
+      loadComponent: () =>
+        import('./generar-votacion/generar-votacion.page')
+          .then(m => m.GenerarVotacionPage),
+    },
+    {
+    path: 'perfil', // o /cuenta
+    // Agrega el AuthGuard para proteger el perfil
+    canActivate: [AuthGuard], 
+    loadComponent: () => import('./perfil/perfil.page').then(m => m.PerfilPage)
   },
   {
   path: 'home',
   canActivate: [AuthGuard],
   loadComponent: () => import('./home/home.page').then(m => m.HomePage)
 },
-
   { path: '**', redirectTo: 'auth/login' },
 ];
 

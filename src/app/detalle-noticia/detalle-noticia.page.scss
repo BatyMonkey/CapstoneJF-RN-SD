@@ -1,113 +1,108 @@
-/* Paleta suave celeste/azul */
+/* ===== Detalle de Noticia (mobile-first) ===== */
 :host {
-  --rb-primary: #2563eb;
-  --rb-bg: #f8fafc;
-  --rb-text: #0f172a;
+  color-scheme: light;
 
-  /* Fondo claro garantizado */
-  --ion-background-color: var(--rb-bg);
+  --rb-primary: #2563eb;
+  --rb-text: #0f172a;
+  --rb-muted: #64748b;
+  --rb-sep: rgba(2, 6, 23, 0.08);
+
+  --ion-background-color: #ffffff;
   --ion-text-color: var(--rb-text);
 }
 
-/* Header (Aplica la clase .rb-header en el HTML) */
-.rb-header ion-toolbar {
+/* Header consistente con el resto */
+ion-toolbar {
   --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
   --color: #fff;
   --border-color: transparent;
   --min-height: 56px;
 }
 
-/* Fondo del Contenido */
+/* Fondo blanco */
 ion-content {
-  --background: var(--rb-bg);
+  --background: #fff;
 }
 
-.noticia-detalle-container {
-  background: var(--rb-bg);
-}
-
-// Estilo de la imagen principal (Hero)
-.image-hero-container {
+/* Portada: alto cómodo en móvil, más alto en tablet */
+.cover-image {
   width: 100%;
-  aspect-ratio: 16 / 9; 
+  height: 220px;
+  object-fit: cover;
+  display: block;
+  border-bottom: 1px solid var(--rb-sep);
+}
+@media (min-width: 768px) {
+  .cover-image { height: 300px; }
+}
+
+/* Contenedores con ancho máximo para lectura agradable */
+ion-content .ion-padding,
+ion-content .ion-padding-horizontal {
+  max-width: 880px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Título */
+h1 {
+  color: var(--rb-text);
+  font-size: 22px;         /* grande en móvil */
+  line-height: 1.25;
+  font-weight: 800;
+  margin: 12px 0 6px;
+}
+@media (min-width: 768px) {
+  h1 { font-size: 26px; }
+}
+
+/* Byline (autor/fecha) dentro del ion-text[color="medium"] */
+ion-text[color="medium"] p {
+  color: var(--rb-muted) !important;
+  margin: 4px 0 10px;
+  font-weight: 600;
+  letter-spacing: .2px;
+}
+
+/* Separador sutil */
+hr {
+  border: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--rb-sep), transparent);
+  margin: 10px auto 14px;
+  max-width: 880px;
+}
+
+/* Párrafos del cuerpo */
+ion-content .ion-padding-horizontal p {
+  color: #334155;
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0 0 14px;
+  text-align: start; /* evita justificado demasiado apretado en móvil */
+}
+
+/* Card de imágenes dentro del contenido (las del *ngFor) */
+ion-content ion-card {
+  background: #fff;
+  border: 1px solid var(--rb-sep);
+  border-radius: 14px;
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.10);
   overflow: hidden;
-
-  .image-hero {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; 
-    filter: brightness(0.95);
-  }
 }
 
-// Estilos de Título y Cuerpo
-.noticia-titulo {
-  font-size: 2.2rem;
-  font-weight: 700;
-  line-height: 1.2;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
-  color: var(--rb-text); // Usando el nuevo color de texto
+.content-image {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
-// Metadatos (Autor y Fecha)
-.noticia-metadata {
-  display: flex;
-  gap: 15px;
-  font-size: 0.9rem;
-  color: #475569; // Color de texto intermedio
-  
-  .autor-chip, .fecha-chip {
-    padding: 4px 0; // Se eliminan los fondos para mantener la limpieza del diseño
-    font-weight: 500;
-    color: #475569;
-  }
+/* Estados (cargando / vacío) */
+.ion-text-center p {
+  color: #475569;
 }
 
-// Estilo de los párrafos del cuerpo
-.parrafo-texto {
-  font-size: 1.1rem;
-  line-height: 1.7;
-  color: var(--rb-text); 
-  text-align: justify;
-  margin-bottom: 1.5rem;
-}
-
-.parrafo-vacio {
-    color: #94a3b8; // Color de texto claro
-    font-style: italic;
-}
-
-// ESTILO PARA EL NUEVO HR (SIMULANDO ion-divider)
-.noticia-divider {
-  border: none;
-  border-top: 1px solid #e2e8f0; // Línea muy clara
-  height: 0;
-  margin: 20px 0;
-}
-
-// Galería de imágenes secundarias
-.galeria-imagenes {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
-    gap: 15px;
-    margin-top: 15px;
-}
-
-.imagen-secundaria {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-// Ajustes para móviles
-@media (max-width: 576px) {
-  .noticia-titulo {
-    font-size: 1.8rem;
-  }
-  .parrafo-texto {
-    font-size: 1rem;
-  }
+/* Accesibilidad: menos animación si el usuario lo pide */
+@media (prefers-reduced-motion: reduce) {
+  .cover-image { transition: none; }
 }

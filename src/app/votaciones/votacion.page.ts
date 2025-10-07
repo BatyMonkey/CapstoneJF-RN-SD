@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { VotacionesService, Votacion, OpcionVotacion } from '../services/votaciones.service';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 @Component({
   selector: 'app-votacion',
