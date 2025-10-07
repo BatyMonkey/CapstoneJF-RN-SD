@@ -10,7 +10,7 @@ export interface Perfil {
   user_id: string;
   nombre: string;
   correo: string;
-  rol: 'vecino' | 'directorio' | 'admin';
+  rol: 'vecino' | 'directorio' | 'administrador';
   direccion?: string | null;
   rut?: string | null;
   telefono?: string | null;
@@ -23,7 +23,7 @@ export interface Perfil {
   primer_nombre: string | null;
 }
 
-type Rol = 'vecino' | 'directorio' | 'admin';
+type Rol = 'vecino' | 'directorio' | 'administrador';
 
 // Definición de los campos que PUEDE modificar el usuario
 export type PerfilUpdatePayload = Partial<{

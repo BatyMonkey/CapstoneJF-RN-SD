@@ -1,0 +1,81 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Espacios Comunitarios</ion-title>
+
+    <ion-buttons slot="end" *ngIf="isAdmin">
+      <ion-button (click)="irACrearEspacio()">
+        Nuevo Espacio
+      </ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="cargarEspacios($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Espacios Comunitarios</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="ion-padding">
+
+    <div *ngIf="isLoading">
+      <ion-list>
+        <ion-item *ngFor="let i of [1,2,3,4,5]">
+          <ion-avatar slot="start"><ion-skeleton-text animated></ion-skeleton-text></ion-avatar>
+          <ion-label>
+            <h3><ion-skeleton-text animated style="width: 70%;"></ion-skeleton-text></h3>
+            <p><ion-skeleton-text animated style="width: 90%;"></ion-skeleton-text></p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <ion-list *ngIf="!isLoading && espacios.length > 0">
+      <ion-list-header>
+        <ion-label>Espacios Disponibles ({{ espacios.length }})</ion-label>
+      </ion-list-header>
+
+      <ion-item *ngFor="let espacio of espacios" button detail>
+        <ion-icon name="business-outline" slot="start" color="primary"></ion-icon> 
+        
+        <ion-label>
+          <h2>{{ espacio.nombre }}</h2>
+          <p>{{ espacio.direccion_completa }}</p>
+          <p>Capacidad: {{ espacio.capacidad }} personas</p>
+        </ion-label>
+        
+        <ion-note slot="end" color="medium">{{ espacio.descripcion ? 'Detalle' : '' }}</ion-note>
+      </ion-item>
+    </ion-list>
+
+
+    <div *ngIf="!isLoading && espacios.length === 0 && !error" class="estado-vacio ion-text-center">
+      <ion-icon name="cube-outline" size="large" color="medium"></ion-icon>
+      <p>Aún no hay espacios registrados.</p>
+      
+      <ion-button 
+        *ngIf="isAdmin" 
+        (click)="irACrearEspacio()" 
+        fill="solid" 
+        color="primary">
+        Nuevo Espacio
+      </ion-button>
+    </div>
+
+    <div *ngIf="error" class="estado-error ion-text-center">
+      <ion-icon name="alert-circle-outline" size="large" color="danger"></ion-icon>
+      <p>{{ error }}</p>
+      <ion-button (click)="cargarEspacios()" fill="solid" color="danger">Reintentar</ion-button>
+    </div>
+
+  </div>
+</ion-content>

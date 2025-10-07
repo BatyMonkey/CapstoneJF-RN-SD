@@ -31,6 +31,10 @@
             <ion-icon slot="start" name="people-outline"></ion-icon>
             <ion-label>Votaciones</ion-label>
           </ion-item>
+          <ion-item button detail="false" (click)="go('/espacios')" *ngIf="!isActive('/espacios')">
+            <ion-icon slot="start" name="business-outline"></ion-icon>
+            <ion-label>Espacios Comunitarios</ion-label>
+          </ion-item>
 
           <!-- Admin -->
           <ion-list-header *ngIf="isAdmin">Administración</ion-list-header>

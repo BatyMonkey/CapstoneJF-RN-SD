@@ -1,0 +1,79 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/espacios"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Nuevo Espacio</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="ion-padding">
+
+    <form (ngSubmit)="crearEspacio()">
+      <ion-list-header>
+        <ion-label>Información Básica</ion-label>
+      </ion-list-header>
+
+      <ion-item>
+        <ion-input label="Nombre del Espacio" labelPlacement="floating" 
+                   [(ngModel)]="nombre" name="nombre" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-select label="Tipo de Espacio" labelPlacement="floating" 
+                    placeholder="Selecciona un tipo"
+                    [(ngModel)]="tipoSeleccionadoId" name="tipo" required>
+          <ion-select-option *ngFor="let tipo of tiposEspacio" [value]="tipo.id">
+            {{ tipo.nombre }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-input label="Capacidad (personas)" labelPlacement="floating" 
+                   type="number" [(ngModel)]="capacidad" name="capacidad" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-textarea label="Descripción" labelPlacement="floating" 
+                      rows="3" [(ngModel)]="descripcion" name="descripcion"></ion-textarea>
+      </ion-item>
+
+      <ion-list-header>
+        <ion-label>Ubicación</ion-label>
+      </ion-list-header>
+      
+      <ion-item>
+        <ion-input label="Dirección Completa" labelPlacement="floating" 
+                   placeholder="Ej: Calle Principal 123, Comuna, Región"
+                   [(ngModel)]="direccionCompleta" name="direccionCompleta" required></ion-input>
+      </ion-item>
+
+      <ion-item lines="none" *ngIf="direccionCompleta && !errorMsg">
+        <ion-icon name="pin" slot="start" color="medium"></ion-icon>
+        <ion-label>
+          Dirección a Guardar: <p>{{ direccionCompleta }}</p>
+          <ion-note>Se intentarán obtener las coordenadas al guardar.</ion-note>
+        </ion-label>
+      </ion-item>
+      
+      <ion-text color="danger" *ngIf="errorMsg">
+        <p>🚨 {{ errorMsg }}</p>
+      </ion-text>
+
+
+      <ion-button 
+        type="submit" 
+        expand="block" 
+        size="large" 
+        color="primary" 
+        style="margin-top: 25px;"
+        [disabled]="loading || !nombre || !capacidad || !direccionCompleta || tipoSeleccionadoId === null">
+        <ion-spinner slot="start" *ngIf="loading"></ion-spinner>
+        {{ loading ? 'Creando...' : 'Crear Espacio' }}
+      </ion-button>
+    </form>
+    
+  </div>
+</ion-content>

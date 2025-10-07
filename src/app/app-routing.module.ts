@@ -66,6 +66,15 @@ const routes: Routes = [
     loadComponent: () => import('./perfil/perfil.page').then(m => m.PerfilPage)
   },
   {
+    path: 'espacios',
+    loadComponent: () => import('./espacios/espacios.page').then(m => m.EspaciosPage)
+  },
+  {
+    path: 'espacios/crear',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./espacios/crear-espacios/crear-espacio.page').then(m => m.CrearEspacioPage)
+  },
+  {
   path: 'home',
   canActivate: [AuthGuard],
   loadComponent: () => import('./home/home.page').then(m => m.HomePage)
