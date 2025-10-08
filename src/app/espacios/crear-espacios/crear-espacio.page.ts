@@ -1,154 +1,106 @@
-// src/app/pages/espacios/crear-espacio/crear-espacio.page.ts
+// src/app/pages/espacios/crear-espacios/crear-espacio.page.ts
 
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { IonicModule, ToastController } from '@ionic/angular';
+import { 
+  FormGroup, 
+  FormControl, 
+  Validators, 
+  ReactiveFormsModule 
+} from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { EspaciosService } from 'src/app/services/espacios.service';
 
-// Declara Google como global (asumiendo que la API se carga en index.html)
-declare let google: any; 
-
-// 🚨 Definición de la estructura de la picklist
-interface TipoEspacio {
-  id: number;
-  nombre: string;
-}
+// Asumimos que tienes el servicio de Espacios y la interfaz Espacio
+import { EspaciosService, Espacio } from 'src/app/services/espacios.service';
 
 @Component({
   selector: 'app-crear-espacio',
   templateUrl: './crear-espacio.page.html',
   styleUrls: ['./crear-espacio.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule],
+  imports: [IonicModule, CommonModule, ReactiveFormsModule] 
 })
 export class CrearEspacioPage implements OnInit {
-  
-  // Datos del formulario
-  nombre = '';
-  descripcion: string | null = null;
-  capacidad: number | null = null;
-  
-  // 🚨 Propiedad para almacenar el ID numérico seleccionado
-  tipoSeleccionadoId: number | null = null; 
-  
-  direccionCompleta = ''; 
-  
-  ubicacionSeleccionada: { latitud: number, longitud: number } | null = null;
 
-  loading = false;
-  errorMsg = '';
+  // El FormGroup que controla todo el formulario
+  espacioForm!: FormGroup;
+
+  // Variables de estado
+  isSaving = false; 
+  error: string | null = null; 
   
-  // 🚨 Lista de tipos de espacio con sus IDs numéricos
-  tiposEspacio: TipoEspacio[] = [
+  // Datos para el ion-select (Tipo de Espacio)
+  tiposEspacio = [
     { id: 1, nombre: 'Cancha' },
     { id: 2, nombre: 'Sede' },
     { id: 3, nombre: 'Parque' },
   ];
 
   constructor(
-    private router: Router,
     private espaciosService: EspaciosService,
-    private toastCtrl: ToastController
-  ) {}
+    private router: Router
+  ) { }
 
   ngOnInit() {
-    // La API de Google Maps debe cargarse en index.html
+    this.initForm();
   }
 
   /**
-   * Usa Geocodificación directa para obtener coordenadas desde la dirección ingresada.
+   * Inicializa el FormGroup con todos los controles y validadores.
    */
-  async obtenerCoordenadas(): Promise<boolean> {
-    this.ubicacionSeleccionada = null;
-    this.errorMsg = '';
-
-    if (!this.direccionCompleta.trim()) {
-      this.errorMsg = 'Debes ingresar una dirección.';
-      return false;
-    }
-
-    if (typeof google === 'undefined' || !google.maps.Geocoder) {
-      this.errorMsg = 'Error interno: Google Maps API no está cargada correctamente.';
-      this.mostrarToast(this.errorMsg, 'danger');
-      return false;
-    }
-
-    const geocoder = new google.maps.Geocoder();
-
-    return new Promise((resolve) => {
-      geocoder.geocode({ 'address': this.direccionCompleta }, (results: any, status: any) => {
-        if (status === 'OK' && results[0]) {
-          const location = results[0].geometry.location;
-          this.ubicacionSeleccionada = {
-            latitud: location.lat(),
-            longitud: location.lng(),
-          };
-          resolve(true); 
-        } else {
-          this.errorMsg = 'Dirección no encontrada. Por favor, sé más específico o revisa la ortografía.';
-          this.mostrarToast(this.errorMsg, 'warning');
-          resolve(false);
-        }
-      });
+  initForm() {
+    this.espacioForm = new FormGroup({
+      nombre: new FormControl('', [Validators.required, Validators.maxLength(100)]),
+      // 💡 Inicializamos con el primer tipo (ID: 1) para evitar que inicie en null
+      tipo: new FormControl(1, [Validators.required]), 
+      capacidad: new FormControl(null),
+      descripcion: new FormControl(''),
+      direccion_completa: new FormControl('', [Validators.required]),
+      latitud: new FormControl(null),
+      longitud: new FormControl(null),
     });
   }
 
-  async crearEspacio() {
-    this.loading = true;
-    this.errorMsg = '';
+  // --- Getters para acceder fácilmente a los controles en el HTML/TS ---
 
-    // 1. Validar que se haya seleccionado un tipo
-    if (this.tipoSeleccionadoId === null) {
-      this.errorMsg = 'Debes seleccionar un tipo de espacio.';
-      this.mostrarToast(this.errorMsg, 'warning');
-      this.loading = false;
+  get latitud(): FormControl {
+    return this.espacioForm.get('latitud') as FormControl;
+  }
+
+  get longitud(): FormControl {
+    return this.espacioForm.get('longitud') as FormControl;
+  }
+
+
+  // --- Funcionalidad ---
+
+  /**
+   * Maneja el envío del formulario, llamando al servicio para guardar.
+   */
+  async guardarEspacio() {
+    if (this.espacioForm.invalid) {
+      this.espacioForm.markAllAsTouched();
       return;
     }
 
-    // 2. Obtener las coordenadas a partir de la dirección
-    const coordenadasObtenidas = await this.obtenerCoordenadas();
-
-    if (!coordenadasObtenidas || !this.ubicacionSeleccionada) {
-      this.loading = false;
-      return; 
-    }
+    this.isSaving = true;
+    this.error = null;
+    
+    // Convertimos el valor del formulario a un tipo Espacio (aunque es parcial)
+    const nuevoEspacio: Partial<Espacio> = this.espacioForm.value;
 
     try {
-      const nuevoEspacio = {
-        nombre: this.nombre,
-        descripcion: this.descripcion,
-        capacidad: this.capacidad,
-        
-        // 🚨 CAMBIO: Se inserta el ID numérico del tipo en la columna 'tipo'
-        tipo: this.tipoSeleccionadoId, 
-        
-        direccion_completa: this.direccionCompleta.trim(), 
-        latitud: this.ubicacionSeleccionada.latitud,
-        longitud: this.ubicacionSeleccionada.longitud,
-      };
-      
-      // Llamada al servicio para crear el registro en la base de datos
+      // 🚨 CORRECCIÓN: Llamamos al método correcto del servicio: crearNuevoEspacio
       await this.espaciosService.crearNuevoEspacio(nuevoEspacio);
-
-      await this.mostrarToast('Espacio creado con éxito!', 'success');
-      this.router.navigateByUrl('/espacios', { replaceUrl: true });
       
-    } catch (e: any) {
-      this.errorMsg = e.message || 'Error al crear el espacio.';
-      this.mostrarToast(this.errorMsg, 'danger');
-    } finally {
-      this.loading = false;
-    }
-  }
+      // Redirigir al listado de espacios
+      this.router.navigate(['/espacios']); 
 
-  private async mostrarToast(message: string, color: string) {
-    const toast = await this.toastCtrl.create({
-      message,
-      duration: 3000,
-      color,
-    });
-    toast.present();
+    } catch (e: any) {
+      this.error = e.message || 'Error al intentar guardar el espacio.';
+    } finally {
+      this.isSaving = false;
+    }
   }
 }

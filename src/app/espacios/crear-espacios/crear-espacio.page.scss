@@ -1,0 +1,216 @@
+/* src/app/pages/espacios/crear-espacio/crear-espacio.page.scss */
+
+/* ===== 1. FUERZA ESQUEMA CLARO Y VARIABLES BASE ===== */
+
+/* Fuerza esquema claro y colores base */
+:host,
+:host-context(html) {
+  color-scheme: light !important;
+  --rb-primary: #2563eb;
+  --rb-bg: #f5f7fb;  /* fondo página muy claro */
+  --rb-text: #0f172a; /* texto principal oscuro (negro) */
+  --rb-muted: #475569; /* subtítulos/labels */
+  --ion-text-color: var(--rb-text);
+  --ion-background-color: var(--rb-bg);
+  --ion-item-background: #ffffff;
+  --ion-card-background: #ffffff;
+}
+
+/* Header con gradiente (usando la clase .rb-header en ion-header) */
+.rb-header ion-toolbar {
+  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
+  --color: #fff;
+  --border-color: transparent;
+}
+
+/* Centrado opcional del contenido para pantallas grandes */
+.page-wrap { 
+  max-width: 960px; 
+  margin: 0 auto; 
+}
+
+/* ===== 2. ESTILOS DE TARJETAS Y TÍTULOS (Detalles y Ubicación) ===== */
+
+ion-card.card {
+  background: #fff;
+  border-radius: 18px;
+  border: 1px solid rgba(2, 6, 23, 0.08);
+  box-shadow: 0 12px 28px rgba(2, 6, 23, 0.10);
+  overflow: hidden;
+  margin-bottom: 20px;
+
+  ion-card-header {
+    background: #fff;
+    border-bottom: 1px solid rgba(2, 6, 23, 0.06);
+    padding-bottom: 8px;
+  }
+  
+  ion-card-title { 
+    color: var(--rb-text); 
+    font-weight: 800; 
+    font-size: 1.3rem;
+  }
+  
+  ion-card-subtitle { 
+    color: #64748b; 
+    font-weight: 600; 
+    margin-top: 4px;
+    font-size: 0.9rem;
+  }
+}
+
+/* ===== 3. ESTILOS PARA LOS CAMPOS DEL FORMULARIO (.field) ===== */
+
+/* Estilo que transforma el ion-item en un campo elevado */
+.field {
+  margin: 14px 0;
+  border-radius: 14px;
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 6px 16px rgba(2, 6, 23, 0.06); 
+  /* asegura fondo blanco en el item y padding interno */
+  --background: #fff;
+  --inner-background: #fff;
+  --min-height: auto; 
+  --padding-start: 12px; 
+  --inner-padding-end: 12px; 
+  --inner-padding-top: 12px; 
+  --inner-padding-bottom: 12px;
+
+  /* 🚀 ESTILO DEL TÍTULO/LABEL (Tipo de Espacio) */
+  ion-label {
+    color: var(--rb-muted);
+    font-weight: 700;
+    padding: 0; 
+    margin: 4px 4px 6px 2px;
+    display: block;
+  }
+
+  /* estilo general para inputs, textareas y selects */
+  ion-input,
+  ion-textarea,
+  ion-select {
+    --background: #fff;
+    --color: var(--rb-text); 
+    --placeholder-color: #94a3b8; 
+    --padding-end: 10px;
+    --padding-top: 8px; 
+    --padding-bottom: 10px;
+    --highlight-color-focused: var(--rb-primary);
+    font-weight: 600;
+  }
+  
+  /* Estilo específico para el texto seleccionado dentro del ion-select */
+  ion-select {
+    // Esto asegura que el texto seleccionado (Ej: "Cancha") sea oscuro y con buen peso.
+    font-weight: 600; 
+    color: var(--rb-text);
+  }
+
+  /* Textarea con altura mínima razonable */
+  ion-textarea {
+    min-height: 110px;
+  }
+
+  /* ESTADOS VISUALES */
+  &:hover { border-color: #cbd5e1; }
+  &:focus-within {
+    border-color: var(--rb-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+  }
+  &.invalid {
+    border-color: rgba(239, 68, 68, 0.55);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.14);
+  }
+}
+
+/* Nota de validación o contador */
+ion-note {
+  display: block;
+  margin: 4px 6px 0 8px;
+  font-size: 0.86rem;
+  color: var(--rb-muted);
+}
+
+/* ===== 4. ESTILOS DE BOTONES DE ACCIÓN ===== */
+
+.actions {
+  margin-top: 24px;
+  padding-bottom: 24px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+
+  ion-button {
+    border-radius: 12px;
+    font-weight: 700;
+    box-shadow: 0 10px 18px rgba(37, 99, 235, 0.15);
+  }
+  ion-button:active { 
+    transform: translateY(1px); 
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.1);
+  }
+}
+
+
+/* ===== 5. LIMPIEZA DEL MODO OSCURO ===== */
+
+@media (prefers-color-scheme: dark) {
+  :host {
+    --ion-background-color: var(--rb-bg);
+    --ion-card-background: #ffffff;
+    --ion-item-background: #ffffff;
+    --ion-text-color: var(--rb-text);
+  }
+  /* Forzamos que los campos se vean claros en modo oscuro */
+  .field {
+    border-color: #e2e8f0; 
+  }
+}
+
+/* ===== 6. CORRECCIÓN: Estilos para el Diálogo de ion-select (Overlay) ===== */
+
+/* Este selector apunta al diálogo (Alert) que se abre */
+/* Definiciones de color (deben existir) */
+:root {
+  --rb-primary: #2563eb;  /* Azul primario */
+  --rb-text: #0f172a; /* Negro/texto oscuro */
+}
+
+/* 🚀 SOLUCIÓN 2: FORZAR MODO CLARO EN DIÁLOGOS DE IONIC */
+
+/* Esta clase apunta al overlay global de los diálogos de alerta */
+.alert-md {
+  // 1. Forzar el fondo del diálogo a blanco
+  --background: #ffffff !important;
+  
+  // 2. Forzar el color del texto principal a oscuro
+  --color: var(--rb-text) !important; 
+}
+
+.alert-md .alert-wrapper {
+  // Asegura que el contenedor interno también use el fondo blanco
+  background: #ffffff !important;
+}
+
+/* 3. Estilos de las opciones (Cancha, Sede, Parque) */
+.alert-md .alert-radio-label {
+  color: var(--rb-text) !important;
+}
+
+/* 4. Estilos de los botones (CANCEL, OK) */
+.alert-md .alert-button {
+  color: var(--rb-primary) !important; 
+  font-weight: 600;
+}
+
+/* 5. Estilos para el círculo seleccionado */
+.alert-md .alert-radio-icon {
+  border-color: #cbd5e1 !important; /* Borde gris claro para el no seleccionado */
+}
+.alert-md .alert-radio-icon.alert-radio-checked {
+  border-color: var(--rb-primary) !important;
+}
+.alert-md .alert-radio-inner {
+  background: var(--rb-primary) !important;
+}

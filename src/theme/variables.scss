@@ -1,2 +1,22 @@
 // For information on how to create your own theme, please see:
 // http://ionicframework.com/docs/theming/
+
+:root {
+  // 🚀 VARIABLES BASE DE TU ESQUEMA DE COLOR
+  --rb-primary: #2563eb;  /* Azul primario */
+  --rb-text: #0f172a;  /* Negro/texto oscuro */
+  --rb-muted: #475569;  /* Gris/texto secundario */
+
+  // 🚀 ANULACIÓN DE VARIABLES GLOBALES DE IONIC (para asegurar el texto negro en Alerts/Popovers)
+  
+  // Estas variables controlan el color del texto en diálogos en modo claro
+  --ion-color-step-850: var(--rb-text) !important; 
+  --ion-text-color-step-850: var(--rb-text) !important;
+  
+  // Esto fuerza el fondo de la alerta a blanco
+  --ion-alert-background: #ffffff !important;
+
+  // Si usas modo oscuro, esto lo fuerza a claro
+  --ion-background-color: var(--rb-bg, #f5f7fb);
+  --ion-toolbar-background: #ffffff;
+}

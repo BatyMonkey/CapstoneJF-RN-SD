@@ -75,6 +75,10 @@ const routes: Routes = [
     loadComponent: () => import('./espacios/crear-espacios/crear-espacio.page').then(m => m.CrearEspacioPage)
   },
   {
+    path: 'espacios/:id',
+    loadComponent: () => import('./espacios/detalle-espacio/detalle-espacio.page').then(m => m.DetalleEspacioPage)
+  },
+  {
   path: 'home',
   canActivate: [AuthGuard],
   loadComponent: () => import('./home/home.page').then(m => m.HomePage)

@@ -2,60 +2,67 @@
 
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, ToastController } from '@ionic/angular';
-import { EspaciosService, Espacio } from 'src/app/services/espacios.service'; 
-import { AuthService } from 'src/app/auth/auth.service'; // 🚨 IMPORTA TU SERVICIO DE AUTENTICACIÓN
-import { Router } from '@angular/router'; // Necesario para la navegación
+import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
+import { Router, RouterModule } from '@angular/router'; // Importado: RouterModule
+
+// Importar el Servicio y la Interfaz Espacio
+import { EspaciosService, Espacio } from 'src/app/services/espacios.service';
+import { AuthService } from 'src/app/auth/auth.service'; 
 
 @Component({
   selector: 'app-espacios',
   templateUrl: './espacios.page.html',
   styleUrls: ['./espacios.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule],
+  // AGREGADO: Se incluye RouterModule aquí para que [routerLink] funcione
+  imports: [IonicModule, CommonModule, FormsModule, RouterModule] 
 })
 export class EspaciosPage implements OnInit {
+
+  // Variables de estado
   espacios: Espacio[] = [];
-  isLoading = true;
+  isLoading = false;
   error: string | null = null;
-  
-  // 🚨 NUEVA PROPIEDAD: Indica si el usuario es administrador
   isAdmin = false; 
+
+  // Mapeo de IDs numéricos a nombres de tipo
+  private tiposEspacioMap = new Map<number, string>([
+    [1, 'Cancha'],
+    [2, 'Sede'],
+    [3, 'Parque'],
+  ]);
 
   constructor(
     private espaciosService: EspaciosService,
-    private toastCtrl: ToastController,
-    private authService: AuthService, // 🚨 INYECTA AuthService
-    private router: Router
+    private router: Router,
+    private authService: AuthService 
   ) { }
 
-  async ngOnInit() {
-    await this.verificarRol(); // 🚨 Verifica el rol primero
+  ngOnInit() {
+    this.checkUserRole();
     this.cargarEspacios();
   }
-  
-  // 🚨 NUEVA FUNCIÓN: Obtiene el perfil y establece isAdmin
-  async verificarRol() {
-    const perfil = await this.authService.miPerfil();
-    this.isAdmin = perfil?.rol === 'administrador';
-  }
 
-  // NUEVA FUNCIÓN: Redirige al formulario de creación
-  irACrearEspacio() {
-    this.router.navigateByUrl('/espacios/crear'); // 🚨 Ajusta esta ruta a tu módulo de creación
+  async checkUserRole() {
+    try {
+        this.isAdmin = await this.authService.checkIfAdmin(); 
+    } catch (e) {
+        console.error("No se pudo determinar el rol del usuario:", e);
+        this.isAdmin = false;
+    }
   }
   
-  // ... [El resto de las funciones cargarEspacios y mostrarToast son las mismas]
   async cargarEspacios(event?: any) {
-    this.isLoading = true;
-    this.error = null;
-    // ... [cuerpo de la función cargarEspacios]
+    if (!event) {
+      this.isLoading = true;
+      this.error = null;
+    }
+
     try {
       this.espacios = await this.espaciosService.obtenerEspacios();
     } catch (e: any) {
-      const errorMessage = e.message || 'Error desconocido al cargar los espacios.';
-      this.error = errorMessage; 
-      this.mostrarToast(errorMessage, 'danger');
+      this.error = e.message || 'Error desconocido al cargar los espacios.';
       this.espacios = [];
     } finally {
       this.isLoading = false;
@@ -64,14 +71,34 @@ export class EspaciosPage implements OnInit {
       }
     }
   }
-
-  private async mostrarToast(message: string, color: string) {
-    const toast = await this.toastCtrl.create({
-      message,
-      duration: 3000,
-      color,
-    });
-    toast.present();
-  }
   
+  /**
+   * Convierte el ID numérico del tipo a su nombre en texto.
+   */
+  getTipoNombre(tipoId: number | string | undefined | null): string {
+    if (tipoId === undefined || tipoId === null) {
+        return 'N/A';
+    }
+    const idNumerico = parseInt(tipoId.toString(), 10);
+    
+    if (isNaN(idNumerico)) {
+        return 'N/A';
+    }
+    return this.tiposEspacioMap.get(idNumerico) || 'Desconocido';
+  }
+
+
+  /**
+   * Navega a la página de detalle usando el ID del espacio.
+   */
+  goToDetail(id: number) {
+    this.router.navigateByUrl(`/espacios/${id}`);
+  }
+
+  /**
+   * Navega a la página de creación de espacio.
+   */
+  irACrearEspacio() {
+    this.router.navigateByUrl('espacios/crear');
+  }
 }

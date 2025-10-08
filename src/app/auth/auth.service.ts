@@ -240,7 +240,7 @@ export class AuthService {
             .eq('id_auth', ses.user.id) 
             .single();
 
-        // PGRST116 significa "no hay filas" (normal si RLS está activo y no coincide)
+        // PGRST116 significa "no hay filas"
         if (error && error.code !== 'PGRST116') {
             console.error("Error al obtener perfil:", error);
             return null;
@@ -265,16 +265,14 @@ export class AuthService {
         const uid = ses.session?.user?.id;
         if (!uid) throw new Error('No hay sesión');
         
-        // 1. OBTENER el perfil actual para tener los valores fijos (primer_nombre, primer_apellido)
+        // 1. OBTENER el perfil actual
         const perfilActual = await this.miPerfil();
         if (!perfilActual) throw new Error('No se pudo obtener el perfil para actualizar el nombre completo.');
 
-        // 2. CONSTRUIR el nombre completo actualizado con la lógica de persistencia
+        // 2. CONSTRUIR el nombre completo actualizado
         const nuevoNombreCompleto = this.construirNombreCompleto(perfilActual, extras);
         
         // 3. Preparar el payload de actualización FINAL
-        // Esto solo enviará a la base de datos los campos de 'extras' (los modificados) 
-        // y el campo 'nombre' reconstruido.
         const updatePayload = {
             ...extras, 
             nombre: nuevoNombreCompleto, 
@@ -287,5 +285,26 @@ export class AuthService {
             .eq('id_auth', uid); 
 
         if (error) throw error;
+    }
+
+    /**
+     * 🚀 FUNCIÓN AÑADIDA: Verifica si el usuario actual tiene el rol 'administrador' o 'directorio'.
+     */
+    async checkIfAdmin(): Promise<boolean> {
+        try {
+            const perfil = await this.miPerfil();
+            
+            if (!perfil) {
+                // Si no hay perfil, no tiene permisos de administrador.
+                return false;
+            }
+
+            // Retorna true si el rol es 'administrador' o 'directorio'.
+            return perfil.rol === 'administrador' || perfil.rol === 'directorio';
+
+        } catch (e) {
+            console.error("Error al verificar el rol de administrador:", e);
+            return false;
+        }
     }
 }

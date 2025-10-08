@@ -35,3 +35,46 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+
+/* src/global.scss */
+
+/* 🚀 SOLUCIÓN FINAL: FORZAR MODO CLARO Y TEXTO NEGRO EN DIÁLOGOS DE ALERTA */
+
+/* 1. Definición general de colores para el diálogo (fondo blanco, texto oscuro) */
+.alert-md, .alert-ios {
+  --background: #ffffff !important;
+  --color: var(--rb-text) !important; 
+  --ion-background-color: #ffffff !important;
+}
+
+/* 2. Corrección principal: Forzar el color del texto de las opciones a NEGRO */
+.alert-md [role="radio"] .alert-radio-label,
+.alert-ios [role="radio"] .alert-radio-label {
+    color: var(--rb-text) !important;
+    opacity: 1 !important;  /* Desactiva la reducción de opacidad del modo oscuro */
+}
+
+/* 3. Estilos de los botones (CANCEL, OK) */
+.alert-button {
+  color: var(--rb-primary) !important; 
+  font-weight: 600;
+}
+
+/* 4. Estilos de los círculos de selección */
+.alert-radio-icon {
+  border-color: var(--rb-muted) !important;
+}
+.alert-radio-icon.alert-radio-checked {
+  border-color: var(--rb-primary) !important;
+}
+.alert-radio-inner {
+  background: var(--rb-primary) !important;
+}
+
+/* 5. Asegura que los contenedores internos también usen el fondo blanco */
+.alert-wrapper {
+    background: #ffffff !important;
+    --background: #ffffff !important;
+    --ion-background-color: #ffffff !important;
+}

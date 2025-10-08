@@ -3,13 +3,14 @@ import { supabase } from '../core/supabase.client';
 
 // 🚨 CORRECCIÓN 1: Cambiar 'ubicacion' por 'direccion_con' en la interfaz
 export interface Espacio {
-  id_espacio: number; 
+  id_espacio: number;
   nombre: string;
-  tipo: string; 
+  // 🚨 CORRECCIÓN 1: Asegúrate de que 'tipo' sea number.
+  tipo: number; 
   capacidad: number;
   descripcion: string | null;
-  creado_en: string;
-  actualizado_e: string | null;
+  creado_en: string; 
+  actualizado_en: string; 
   
   // 💡 ESTO DEBE COINCIDIR EXACTAMENTE CON TU BASE DE DATOS
   direccion_completa: string; 
@@ -70,5 +71,21 @@ export class EspaciosService {
     }
 
     return data;
+  }
+
+  async obtenerEspacioPorId(id: number): Promise<Espacio | null> {
+    const { data, error } = await supabase
+      .from('espacio')
+      .select('*')
+      .eq('id_espacio', id)
+      .single(); // Esperamos solo una fila
+
+    if (error && error.code !== 'PGRST116') { // PGRST116: No hay filas
+      console.error('Error al obtener espacio por ID:', error);
+      throw new Error(`No se pudo cargar el espacio: ${error.message}`);
+    }
+    
+    // Si no hay data, devolvemos null, si hay, lo casteamos
+    return (data as Espacio) || null;
   }
 }
