@@ -186,4 +186,9 @@ export class HomePage implements OnInit {
     // o simplemente confiar en que la página de creación de noticias acceda a esta misma variable/servicio.
     this.router.navigate(['noticias/crear']);
   }
+  
+  ionViewWillEnter() {
+    // Forzamos la recarga del estado y noticias para mostrar la última data
+    this.cargarEstadoYNoticias();
+  }
 }

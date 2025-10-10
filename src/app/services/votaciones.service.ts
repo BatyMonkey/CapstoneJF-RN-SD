@@ -37,7 +37,10 @@ export class VotacionesService {
   private supabase: SupabaseClient;
 
   constructor() {
-    this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
+    this.supabase = createClient(
+      environment.supabaseUrl,
+      environment.supabaseAnonKey
+    );
   }
 
   // --------- obtener votación + opciones (desde la VISTA con conteo) ----------
@@ -46,15 +49,20 @@ export class VotacionesService {
     opciones: OpcionVotacion[];
     miOpcionId?: string;
   }> {
-    const [{ data: votacion, error: e1 }, { data: opciones, error: e2 }] = await Promise.all([
-      this.supabase.from('votaciones').select('*').eq('id', votacionId).single(),
-      // 👇 usa la vista que devuelve el conteo real
-      this.supabase
-        .from('opciones_votacion_conteo')
-        .select('*')
-        .eq('votacion_id', votacionId)
-        .order('titulo', { ascending: true }),
-    ]);
+    const [{ data: votacion, error: e1 }, { data: opciones, error: e2 }] =
+      await Promise.all([
+        this.supabase
+          .from('votaciones')
+          .select('*')
+          .eq('id', votacionId)
+          .single(),
+        // 👇 usa la vista que devuelve el conteo real
+        this.supabase
+          .from('opciones_votacion_conteo')
+          .select('*')
+          .eq('votacion_id', votacionId)
+          .order('titulo', { ascending: true }),
+      ]);
     if (e1) throw e1;
     if (e2) throw e2;
 
@@ -100,7 +108,12 @@ export class VotacionesService {
       .channel(`votos-insert-${votacionId}`)
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'votos', filter: `votacion_id=eq.${votacionId}` },
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'votos',
+          filter: `votacion_id=eq.${votacionId}`,
+        },
         (payload) => handler(payload as any)
       )
       .subscribe();
@@ -109,13 +122,13 @@ export class VotacionesService {
   desuscribir(channel: RealtimeChannel) {
     this.supabase.removeChannel(channel);
   }
-  
+
   async listarVotacionesActivas(): Promise<Votacion[]> {
     const nowIso = new Date().toISOString();
 
     const { data, error } = await this.supabase
       .from('votaciones')
-      .select('*')
+      .select('*') // O los campos necesarios
       .lte('fecha_inicio', nowIso)
       .gte('fecha_fin', nowIso)
       .order('fecha_fin', { ascending: true });
@@ -124,47 +137,53 @@ export class VotacionesService {
     return (data ?? []) as Votacion[];
   }
   async crearVotacionConOpciones(input: {
-  titulo: string;
-  descripcion?: string;
-  fecha_inicio: string; // ISO
-  fecha_fin: string;    // ISO
-  opciones: string[];   // títulos
-}): Promise<string> {
-  // 1) Usuario autenticado
-  const { data: { user }, error: authErr } = await this.supabase.auth.getUser();
-  if (authErr) throw authErr;
-  if (!user) throw new Error('Debes iniciar sesión');
+    titulo: string;
+    descripcion?: string;
+    fecha_inicio: string; // ISO
+    fecha_fin: string; // ISO
+    opciones: string[]; // títulos
+  }): Promise<string> {
+    // 1) Usuario autenticado
+    const {
+      data: { user },
+      error: authErr,
+    } = await this.supabase.auth.getUser();
+    if (authErr) throw authErr;
+    if (!user) throw new Error('Debes iniciar sesión');
 
-  // 2) Insert votación
-  const { data: vot, error: e1 } = await this.supabase
-    .from('votaciones')
-    .insert([{
-      titulo: input.titulo,
-      descripcion: input.descripcion ?? null,
-      fecha_inicio: input.fecha_inicio,
-      fecha_fin: input.fecha_fin,
-      creado_por: user.id,            // RLS: tu política debe permitirlo
-    }])
-    .select('id')
-    .single();
+    // 2) Insert votación
+    const { data: vot, error: e1 } = await this.supabase
+      .from('votaciones')
+      .insert([
+        {
+          titulo: input.titulo,
+          descripcion: input.descripcion ?? null,
+          fecha_inicio: input.fecha_inicio,
+          fecha_fin: input.fecha_fin,
+          creado_por: user.id, // RLS: tu política debe permitirlo
+        },
+      ])
+      .select('id')
+      .single();
 
-  if (e1) throw e1;
-  const votacionId = vot.id as string;
+    if (e1) throw e1;
+    const votacionId = vot.id as string;
 
-  // 3) Insert opciones (mínimo 2)
-  const limpias = input.opciones.map(t => t.trim()).filter(Boolean);
-  if (limpias.length < 2) throw new Error('Agrega al menos dos opciones');
+    // 3) Insert opciones (mínimo 2)
+    const limpias = input.opciones.map((t) => t.trim()).filter(Boolean);
+    if (limpias.length < 2) throw new Error('Agrega al menos dos opciones');
 
-  const { error: e2 } = await this.supabase
-    .from('opciones_votacion')        // usa el nombre exacto de tu tabla
-    .insert(limpias.map(t => ({
-      votacion_id: votacionId,
-      titulo: t,
-    })));
+    const { error: e2 } = await this.supabase
+      .from('opciones_votacion') // usa el nombre exacto de tu tabla
+      .insert(
+        limpias.map((t) => ({
+          votacion_id: votacionId,
+          titulo: t,
+        }))
+      );
 
-  if (e2) throw e2;
+    if (e2) throw e2;
 
-  return votacionId;
-}
-
+    return votacionId;
+  }
 }
