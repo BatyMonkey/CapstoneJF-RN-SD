@@ -1,4 +1,3 @@
-// src/app/solicitud/solicitud.page.ts
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonicModule, AlertController } from '@ionic/angular';
@@ -24,31 +23,18 @@ export class SolicitudPage {
     private alertCtrl: AlertController
   ) {
     this.solicitudForm = this.fb.group({
-      // Por ahora solo usaremos "reserva"
-      tipo: ['reserva', Validators.required],
       descripcion: [''],
-
-      // Datos de espacio (requeridos para reserva)
       espacio_nombre: ['', Validators.required],
       espacio_tipo: ['', Validators.required],
       espacio_capacidad: [null, [Validators.required, Validators.min(1)]],
-
-      // Datos de evento (requeridos para reserva)
       evento_titulo: ['', Validators.required],
       evento_descripcion: [''],
-      evento_inicio: ['', Validators.required], // ISO string desde ion-datetime
-      evento_fin: ['', Validators.required],    // ISO string desde ion-datetime
+      evento_inicio: ['', Validators.required],
+      evento_fin: ['', Validators.required],
     });
   }
 
-  // 🚀 Enviar solicitud (Reserva de espacio/terreno)
   async enviarSolicitud() {
-    // Solo permitimos "reserva" en esta versión
-    if (this.solicitudForm.get('tipo')?.value !== 'reserva') {
-      await this.mostrarAlerta('Información', 'Por ahora solo está habilitada la opción "Reserva de espacio/terreno".');
-      return;
-    }
-
     if (this.solicitudForm.invalid) {
       await this.mostrarAlerta('Formulario incompleto', 'Debes llenar todos los campos obligatorios.');
       return;
@@ -64,8 +50,7 @@ export class SolicitudPage {
       evento_fin,
     } = this.solicitudForm.value;
 
-    // Validación simple de rango de fechas
-    if (evento_inicio && evento_fin && new Date(evento_fin) < new Date(evento_inicio)) {
+    if (new Date(evento_fin) < new Date(evento_inicio)) {
       await this.mostrarAlerta('Fechas inválidas', 'La fecha de término debe ser posterior a la de inicio.');
       return;
     }
@@ -73,14 +58,13 @@ export class SolicitudPage {
     this.submitting = true;
 
     try {
-      // 🆔 UID directo de auth (auth.users.id)
       const uid = await this.auth.miUID();
       if (!uid) {
         await this.mostrarAlerta('Sesión', 'Debes iniciar sesión para registrar una reserva.');
         return;
       }
 
-      // 1) Crear ESPACIO
+      // 🧱 Crear espacio
       const { data: esp, error: eEsp } = await supabase
         .from('espacio')
         .insert({
@@ -90,61 +74,82 @@ export class SolicitudPage {
         })
         .select('id_espacio')
         .single();
-
       if (eEsp) throw eEsp;
 
-      // 2) Crear EVENTO
+      // 🧱 Crear evento
       const { data: eve, error: eEve } = await supabase
         .from('evento')
         .insert({
           titulo: evento_titulo,
           descripcion: evento_descripcion,
-          fecha_inicio: evento_inicio, // ISO string ok para timestamptz
+          fecha_inicio: evento_inicio,
           fecha_fin: evento_fin,
         })
         .select('id_evento')
         .single();
-
       if (eEve) throw eEve;
 
-      // 3) Crear RESERVA (usando auth.users.id)
-      const { error: eRes } = await supabase
-        .from('reserva')
+      // 🧱 Crear orden de pago
+      const monto = 1500;
+      const { data: orden, error: eOrden } = await supabase
+        .from('orden_pago')
         .insert({
-          id_auth: uid,                // 👈 FK a auth.users.id
-          id_espacio: esp.id_espacio,
+          id_auth: uid,
           id_evento: eve.id_evento,
-          fecha: new Date().toISOString(),
-        });
+          id_espacio: esp.id_espacio,
+          monto,
+          estado: 'pendiente',
+        })
+        .select('id_orden')
+        .single();
+      if (eOrden) throw eOrden;
 
-      if (eRes) throw eRes;
+      // 🚀 Llamar función Supabase (Transbank Sandbox)
+      const payload = {
+        buyOrder: `ORD-${orden.id_orden}`,
+        sessionId: uid.substring(0, 61),
+        amount: monto,
+      };
 
-      await this.mostrarAlerta('Éxito', 'Tu reserva fue registrada correctamente ✅');
+      console.log('🚀 Enviando payload a Transbank:', payload);
 
-      // Reiniciar solo para reserva
-      this.solicitudForm.reset({
-        tipo: 'reserva',
-        descripcion: '',
-        espacio_nombre: '',
-        espacio_tipo: '',
-        espacio_capacidad: null,
-        evento_titulo: '',
-        evento_descripcion: '',
-        evento_inicio: '',
-        evento_fin: '',
-      });
+      const resp = await fetch(
+        'https://sovnabbbubapqxziubuh.functions.supabase.co/transbank-simular',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const result = await resp.json();
+      console.log('✅ Resultado Transbank:', result);
+
+      if (!result?.token) {
+        console.error('❌ Respuesta inválida:', result);
+        throw new Error('Transbank no devolvió token válido.');
+      }
+
+      // 💾 Guardar token en orden
+      await supabase
+        .from('orden_pago')
+        .update({
+          token_ws: result.token,
+          tbk_order_id: payload.buyOrder,
+        })
+        .eq('id_orden', orden.id_orden);
+
+      // 🌐 Redirigir a interfaz de pago sandbox
+      window.location.href = `${result.url}?token_ws=${result.token}`;
     } catch (err: any) {
-      console.error('❌ Error al crear la reserva:', err);
-      const msg =
-        err?.message ??
-        (typeof err === 'string' ? err : 'Hubo un error al registrar tu reserva.');
+      console.error('❌ Error al generar la solicitud con pago:', err);
+      const msg = err?.message ?? 'Hubo un error al generar el pago.';
       await this.mostrarAlerta('Error', msg);
     } finally {
       this.submitting = false;
     }
   }
 
-  // Helper para mostrar alertas
   async mostrarAlerta(header: string, message: string) {
     const alert = await this.alertCtrl.create({
       header,

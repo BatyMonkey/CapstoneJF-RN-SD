@@ -1,8 +1,6 @@
-// src/app/auth/auth.service.ts
-
 import { Injectable } from '@angular/core';
 import { supabase } from '../core/supabase.client';
-import { Session } from '@supabase/supabase-js'; 
+import { Session } from '@supabase/supabase-js';
 
 export interface Perfil {
   id_usuario: string;
@@ -21,31 +19,30 @@ export interface Perfil {
   primer_apellido?: string | null;
   segundo_apellido?: string | null;
   primer_nombre: string | null;
+  fecha_nacimiento?: string | null;
+  sexo?: 'M' | 'F' | null;
 }
 
 type Rol = 'vecino' | 'directorio' | 'administrador';
 
-// Definición de los campos que PUEDE modificar el usuario
-export type PerfilUpdatePayload = Partial<{
-  segundo_nombre: string | null;
-  segundo_apellido: string | null;
-  telefono: string | null;
-}>;
-
-// Usamos este tipo para el registro inicial, que es más amplio
-type RegisterExtras = PerfilUpdatePayload & Partial<{
+export type RegisterExtras = Partial<{
   primer_nombre: string | null;
+  segundo_nombre: string | null;
   primer_apellido: string | null;
+  segundo_apellido: string | null;
   rut: string | null;
   direccion: string | null;
+  telefono: string | null;
   rol: Rol;
   verificado: boolean;
+  fecha_nacimiento: string | null;
+  sexo: 'M' | 'F' | null;
 }>;
 
 export type RegisterPayload = {
   email: string;
   password: string;
-  nombre: string; // Este campo será calculado/sobrescrito
+  nombre?: string;
   primer_nombre?: string | null;
   segundo_nombre?: string | null;
   primer_apellido?: string | null;
@@ -53,6 +50,8 @@ export type RegisterPayload = {
   rut?: string | null;
   direccion?: string | null;
   telefono?: string | null;
+  fecha_nacimiento?: string | null;
+  sexo?: 'M' | 'F' | null;
 };
 
 const PENDING_KEY = 'rb_pending_full';
@@ -60,251 +59,190 @@ const PENDING_KEY = 'rb_pending_full';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-    // 🎯 FUNCIÓN 1: Construye el nombre para la ACTUALIZACIÓN (usando datos actuales y nuevos)
-    private construirNombreCompleto(perfil: Perfil, payload: PerfilUpdatePayload): string {
-        // Obtenemos los valores fijos del perfil (primer_nombre, primer_apellido)
-        const pNombre = perfil.primer_nombre || '';
-        const pApellido = perfil.primer_apellido || '';
-        
-        // Obtenemos los valores actualizables: si vienen en payload, úsalos; si no, usa los del perfil.
-        const sNombre = payload.segundo_nombre ?? perfil.segundo_nombre ?? '';
-        const sApellido = payload.segundo_apellido ?? perfil.segundo_apellido ?? '';
+  private construirNombreCompleto(perfil: Perfil, extras: Partial<RegisterExtras>): string {
+    const pNombre = perfil.primer_nombre || '';
+    const sNombre = extras.segundo_nombre ?? perfil.segundo_nombre ?? '';
+    const pApellido = perfil.primer_apellido || '';
+    const sApellido = extras.segundo_apellido ?? perfil.segundo_apellido ?? '';
+    return [pNombre, sNombre, pApellido, sApellido].filter(n => n?.trim()).join(' ');
+  }
 
-        // Orden estricto: Primer Nombre + Segundo Nombre + Primer Apellido + Segundo Apellido
-        return [pNombre, sNombre, pApellido, sApellido]
-            .filter(n => n?.trim())
-            .join(' ');
+  private construirNombreRegistro(payload: RegisterPayload): string {
+    const pNombre = payload.primer_nombre || '';
+    const sNombre = payload.segundo_nombre || '';
+    const pApellido = payload.primer_apellido || '';
+    const sApellido = payload.segundo_apellido || '';
+    return [pNombre, sNombre, pApellido, sApellido].filter(n => n?.trim()).join(' ');
+  }
+
+  async signUpFull(payload: RegisterPayload): Promise<{ needsEmailConfirm: boolean }> {
+    const { email, password, ...extras } = payload;
+
+    const nombreCompleto = payload.nombre?.trim() || this.construirNombreRegistro(payload);
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { full_name: nombreCompleto } },
+    });
+    if (error) throw error;
+
+    const { data: sessionData } = await supabase.auth.getSession();
+    const uid = sessionData.session?.user.id ?? data.user?.id ?? null;
+
+    if (!sessionData.session) {
+      localStorage.setItem(PENDING_KEY, JSON.stringify({ nombre: nombreCompleto, extras }));
+      return { needsEmailConfirm: true };
     }
 
-    // 🎯 FUNCIÓN 2: Construye el nombre completo para el REGISTRO inicial
-    private construirNombreRegistro(extras: RegisterPayload): string {
-        const pNombre = extras.primer_nombre || '';
-        const sNombre = extras.segundo_nombre || '';
-        const pApellido = extras.primer_apellido || '';
-        const sApellido = extras.segundo_apellido || '';
+    if (!uid) throw new Error('No se obtuvo el ID de auth del usuario.');
 
-        // Orden estricto: Primer Nombre + Segundo Nombre + Primer Apellido + Segundo Apellido
-        return [pNombre, sNombre, pApellido, sApellido]
-            .filter(n => n?.trim())
-            .join(' ');
-    }
+    const nowIso = new Date().toISOString();
+    const fullRow = {
+      id_auth: uid,
+      user_id: uid,
+      nombre: nombreCompleto,
+      correo: email.toLowerCase().trim(),
+      rol: 'vecino' as Rol,
+      verificado: false,
+      creado_en: nowIso,
+      actualizado_en: nowIso,
+      primer_nombre: extras.primer_nombre ?? null,
+      segundo_nombre: extras.segundo_nombre ?? null,
+      primer_apellido: extras.primer_apellido ?? null,
+      segundo_apellido: extras.segundo_apellido ?? null,
+      rut: extras.rut ?? null,
+      direccion: extras.direccion ?? null,
+      telefono: extras.telefono ?? null,
+      fecha_nacimiento: extras.fecha_nacimiento ?? null,
+      sexo: extras.sexo ?? null,
+    };
 
+    const { error: upsertError } = await supabase
+      .from('usuario')
+      .upsert(fullRow, { onConflict: 'id_auth' });
 
-    /**
-     * Registra usuario en Auth y realiza upsert en public.usuario.
-     */
-    async signUpFull(payload: RegisterPayload): Promise<{ needsEmailConfirm: boolean }> {
-      const { email, password, ...extras } = payload;
-      
-      // Construir el nombre completo para guardar
-      const nombreCompleto = this.construirNombreRegistro(payload);
+    if (upsertError) throw upsertError;
 
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { full_name: nombreCompleto.trim() } },
-      });
-      if (error) throw error;
-  
-      const { data: sessionData } = await supabase.auth.getSession();
-      const uid = sessionData.session?.user.id ?? data.user?.id ?? null;
-  
-      if (!sessionData.session) {
-        localStorage.setItem(PENDING_KEY, JSON.stringify({ nombre: nombreCompleto, extras }));
-        return { needsEmailConfirm: true };
+    return { needsEmailConfirm: false };
+  }
+
+  async ensureUsuarioRow(nombre?: string | null): Promise<void> {
+    const { data: ses } = await supabase.auth.getSession();
+    const uid = ses.session?.user?.id;
+    const email = ses.session?.user?.email;
+    if (!uid || !email) return;
+
+    const nowIso = new Date().toISOString();
+    const row: Record<string, any> = {
+      id_auth: uid,
+      user_id: uid,
+      rol: 'vecino',
+      verificado: false,
+      actualizado_en: nowIso,
+      creado_en: nowIso,
+    };
+
+    if (nombre?.trim()) row['nombre'] = nombre.trim();
+    if (email) row['correo'] = email.toLowerCase().trim();
+
+    const { error } = await supabase
+      .from('usuario')
+      .upsert(row, { onConflict: 'id_auth' });
+
+    if (error) console.warn('ensureUsuarioRow upsert warning:', error);
+  }
+
+  async signIn(email: string, password: string) {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+
+    const pendingRaw = localStorage.getItem(PENDING_KEY);
+    if (pendingRaw) {
+      try {
+        const pending = JSON.parse(pendingRaw) as { nombre?: string | null; extras?: RegisterExtras };
+        await this.ensureUsuarioRow(pending?.nombre ?? null);
+        if (pending?.extras) {
+          await this.updateUsuarioExtras(pending.extras);
+        }
+      } finally {
+        localStorage.removeItem(PENDING_KEY);
       }
-  
-      if (!uid) throw new Error('No se obtuvo el ID de auth del usuario.');
-  
-      const nowIso = new Date().toISOString();
-      const fullRow = {
-        id_auth: uid,
-        user_id: uid, 
-        nombre: nombreCompleto.trim(), // Nombre completo correcto y persistente
-        correo: email.toLowerCase().trim(),
-        rol: 'vecino' as Rol,
-        verificado: false,
-        creado_en: nowIso,
-        actualizado_en: nowIso,
-        // CRÍTICO: Guardar los campos separados
-        primer_nombre: (extras.primer_nombre ?? null) as string | null,
-        segundo_nombre: (extras.segundo_nombre ?? null) as string | null,
-        primer_apellido: (extras.primer_apellido ?? null) as string | null,
-        segundo_apellido: (extras.segundo_apellido ?? null) as string | null,
-        rut: (extras.rut ?? null) as string | null,
-        direccion: (extras.direccion ?? null) as string | null,
-        telefono: (extras.telefono ?? null) as string | null,
-      };
-  
-      const { error: upsertError } = await supabase
-        .from('usuario')
-        .upsert(fullRow, { onConflict: 'id_auth' }); 
-  
-      if (upsertError) throw upsertError;
-  
-      return { needsEmailConfirm: false };
+    } else {
+      try { await this.ensureUsuarioRow(); } catch {}
     }
 
-    /**
-     * Garantiza que exista una fila en la tabla 'usuario' para el usuario logueado.
-     */
-    async ensureUsuarioRow(nombre?: string | null): Promise<void> {
-        const { data: ses } = await supabase.auth.getSession();
-        const uid = ses.session?.user?.id;
-        const email = ses.session?.user?.email;
-        if (!uid || !email) return;
+    return data;
+  }
 
-        const nowIso = new Date().toISOString();
+  async signOut() {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+  }
 
-        const row: Record<string, any> = {
-            id_auth: uid,
-            user_id: uid,
-            rol: 'vecino',
-            verificado: false,
-            actualizado_en: nowIso,
-            creado_en: nowIso,
-        };
-        if (nombre && nombre.trim()) row['nombre'] = nombre.trim();
-        if (email) row['correo'] = email.toLowerCase().trim();
+  async session(): Promise<Session | null> {
+    const { data } = await supabase.auth.getSession();
+    return data.session ?? null;
+  }
 
-        const { error } = await supabase
-            .from('usuario')
-            .upsert(row, { onConflict: 'id_auth' });
+  onAuthChange(callback: (event: string) => void) {
+    supabase.auth.onAuthStateChange((event) => callback(event));
+  }
 
-        if (error) console.warn('ensureUsuarioRow upsert warning:', error);
+  async miPerfil(): Promise<Perfil | null> {
+    const ses = await this.session();
+    if (!ses?.user) return null;
+    const { data, error } = await supabase
+      .from('usuario')
+      .select('*')
+      .eq('id_auth', ses.user.id)
+      .single();
+
+    if (error) {
+      console.error("Error al obtener perfil:", error);
+      return null;
     }
 
-    /**
-     * Inicia sesión y maneja datos pendientes de registro.
-     */
-    async signIn(email: string, password: string) {
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+    return data as Perfil;
+  }
 
-        const pendingRaw = localStorage.getItem(PENDING_KEY);
-        if (pendingRaw) {
-            try {
-                const pending = JSON.parse(pendingRaw) as { nombre?: string | null; extras?: RegisterExtras };
-                await this.ensureUsuarioRow(pending?.nombre ?? null);
-                
-                if (pending?.extras) {
-                    const updatePayload: PerfilUpdatePayload = {
-                        segundo_nombre: pending.extras.segundo_nombre ?? null,
-                        segundo_apellido: pending.extras.segundo_apellido ?? null,
-                        telefono: pending.extras.telefono ?? null,
-                    };
-                    await this.updateUsuarioExtras(updatePayload);
-                }
-            } finally {
-                localStorage.removeItem(PENDING_KEY);
-            }
-        } else {
-            try { await this.ensureUsuarioRow(); } catch {}
-        }
+  async miUID(): Promise<string | null> {
+    const ses = await this.session();
+    return ses?.user?.id ?? null;
+  }
 
-        return data;
+  async updateUsuarioExtras(extras: RegisterExtras) {
+    const { data: ses } = await supabase.auth.getSession();
+    const uid = ses.session?.user?.id;
+    if (!uid) throw new Error('No hay sesión');
+
+    const perfil = await this.miPerfil();
+    if (!perfil) throw new Error('No se pudo obtener el perfil para actualizar.');
+
+    const nuevoNombre = this.construirNombreCompleto(perfil, extras);
+
+    const payload: Record<string, any> = {
+      ...extras,
+      nombre: nuevoNombre,
+      actualizado_en: new Date().toISOString(),
+    };
+
+    const { error } = await supabase
+      .from('usuario')
+      .update(payload)
+      .eq('id_auth', uid);
+
+    if (error) throw error;
+  }
+
+  async checkIfAdmin(): Promise<boolean> {
+    try {
+      const perfil = await this.miPerfil();
+      return perfil?.rol === 'administrador' || perfil?.rol === 'directorio';
+    } catch (e) {
+      console.error("Error al verificar el rol de administrador:", e);
+      return false;
     }
-
-    /**
-     * Cierra la sesión de Supabase.
-     */
-    async signOut() {
-        const { error } = await supabase.auth.signOut();
-        if (error) throw error;
-    }
-
-    /**
-     * Obtiene la sesión actual.
-     */
-    async session(): Promise<Session | null> {
-        const { data } = await supabase.auth.getSession();
-        return data.session ?? null;
-    }
-
-    /**
-     * Suscribe a cambios de autenticación.
-     */
-    onAuthChange(callback: (event: string) => void) {
-        supabase.auth.onAuthStateChange((event) => callback(event));
-    }
-
-    /**
-     * Obtiene la fila del perfil de la tabla 'usuario' para el usuario actual.
-     */
-    async miPerfil(): Promise<Perfil | null> {
-        const ses = await this.session();
-        if (!ses?.user) return null;
-        const { data, error } = await supabase
-            .from('usuario')
-            .select('*')
-            .eq('id_auth', ses.user.id) 
-            .single();
-
-        // PGRST116 significa "no hay filas"
-        if (error && error.code !== 'PGRST116') {
-            console.error("Error al obtener perfil:", error);
-            return null;
-        }
-        
-        return data as Perfil;
-    }
-
-    /**
-     * Obtiene el ID de Supabase Auth del usuario actual.
-     */
-    async miUID(): Promise<string | null> {
-        const ses = await this.session();
-        return ses?.user?.id ?? null;
-    }
-
-    /**
-     * Actualiza las columnas extras del usuario, reconstruyendo el nombre completo.
-     */
-    async updateUsuarioExtras(extras: PerfilUpdatePayload) {
-        const { data: ses } = await supabase.auth.getSession();
-        const uid = ses.session?.user?.id;
-        if (!uid) throw new Error('No hay sesión');
-        
-        // 1. OBTENER el perfil actual
-        const perfilActual = await this.miPerfil();
-        if (!perfilActual) throw new Error('No se pudo obtener el perfil para actualizar el nombre completo.');
-
-        // 2. CONSTRUIR el nombre completo actualizado
-        const nuevoNombreCompleto = this.construirNombreCompleto(perfilActual, extras);
-        
-        // 3. Preparar el payload de actualización FINAL
-        const updatePayload = {
-            ...extras, 
-            nombre: nuevoNombreCompleto, 
-            actualizado_en: new Date().toISOString(),
-        };
-
-        const { error } = await supabase
-            .from('usuario')
-            .update(updatePayload)
-            .eq('id_auth', uid); 
-
-        if (error) throw error;
-    }
-
-    /**
-     * 🚀 FUNCIÓN AÑADIDA: Verifica si el usuario actual tiene el rol 'administrador' o 'directorio'.
-     */
-    async checkIfAdmin(): Promise<boolean> {
-        try {
-            const perfil = await this.miPerfil();
-            
-            if (!perfil) {
-                // Si no hay perfil, no tiene permisos de administrador.
-                return false;
-            }
-
-            // Retorna true si el rol es 'administrador' o 'directorio'.
-            return perfil.rol === 'administrador' || perfil.rol === 'directorio';
-
-        } catch (e) {
-            console.error("Error al verificar el rol de administrador:", e);
-            return false;
-        }
-    }
+  }
 }
+

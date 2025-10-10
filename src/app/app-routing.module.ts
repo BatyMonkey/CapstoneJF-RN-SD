@@ -18,8 +18,20 @@ const routes: Routes = [
   },
   {
     path: 'solicitar',
+    canActivate: [AuthGuard],
     loadComponent: () =>
       import('./certificados/solicitar/solicitar.page').then(c => c.SolicitarCertificadoPage),
+  },
+  {
+    path: 'pago-retorno',
+    loadComponent: () =>
+      import('./pago-retorno/pago-retorno.page').then((m) => m.PagoRetornoPage),
+  },
+  {
+    path: 'noticias',
+    canActivate: [AuthGuard],
+    loadComponent: () =>
+      import('./noticias/noticias.page').then(c => c.NoticiasPage),
   },
   {
     path: 'noticias/crear',
@@ -43,6 +55,12 @@ const routes: Routes = [
     path: 'solicitud',
     loadComponent: () => import('./solicitud/solicitud.page').then(m => m.SolicitudPage)
     },
+    {
+      path: 'perfil', // o /cuenta
+      // Agrega el AuthGuard para proteger el perfil
+      canActivate: [AuthGuard], 
+      loadComponent: () => import('./perfil/perfil.page').then(m => m.PerfilPage)
+    },
   {
       path: 'generar/proyecto',
       canActivate: [AuthGuard],
@@ -52,6 +70,19 @@ const routes: Routes = [
           .then(m => m.GenerarProyectoComponent),
     },
     {
+      path: 'espacios',
+      loadComponent: () => import('./espacios/espacios.page').then(m => m.EspaciosPage)
+    },
+    {
+      path: 'espacios/crear',
+      canActivate: [AuthGuard],
+      loadComponent: () => import('./espacios/crear-espacios/crear-espacio.page').then(m => m.CrearEspacioPage)
+    },
+    {
+      path: 'espacios/:id',
+      loadComponent: () => import('./espacios/detalle-espacio/detalle-espacio.page').then(m => m.DetalleEspacioPage)
+    },
+    {
       path: 'generar/votacion',
       canActivate: [AuthGuard],
       data: { roles: ['administrador'] },
@@ -59,30 +90,12 @@ const routes: Routes = [
         import('./generar-votacion/generar-votacion.page')
           .then(m => m.GenerarVotacionPage),
     },
-    {
-    path: 'perfil', // o /cuenta
-    // Agrega el AuthGuard para proteger el perfil
-    canActivate: [AuthGuard], 
-    loadComponent: () => import('./perfil/perfil.page').then(m => m.PerfilPage)
-  },
-  {
-    path: 'espacios',
-    loadComponent: () => import('./espacios/espacios.page').then(m => m.EspaciosPage)
-  },
-  {
-    path: 'espacios/crear',
-    canActivate: [AuthGuard],
-    loadComponent: () => import('./espacios/crear-espacios/crear-espacio.page').then(m => m.CrearEspacioPage)
-  },
-  {
-    path: 'espacios/:id',
-    loadComponent: () => import('./espacios/detalle-espacio/detalle-espacio.page').then(m => m.DetalleEspacioPage)
-  },
   {
   path: 'home',
   canActivate: [AuthGuard],
   loadComponent: () => import('./home/home.page').then(m => m.HomePage)
 },
+
   { path: '**', redirectTo: 'auth/login' },
 ];
 

@@ -1,29 +1,21 @@
-// src/app/app.module.ts
-
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
-// 🚨 Importar las nuevas funciones de configuración
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'; 
-// Ya no necesitamos importar HttpClientModule
-
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 
-import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
 
 @NgModule({
-  //declarations: [AppComponent],
+  // ⛔️ No declares componentes standalone
+  declarations: [],
   imports: [
-    BrowserModule, 
-    IonicModule.forRoot(), 
+    BrowserModule,
+    IonicModule.forRoot(),
     AppRoutingModule,
+    AppComponent, // ✅ importa el root standalone
   ],
-  providers: [
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    
-    provideHttpClient(withInterceptorsFromDi()), 
-  ],
-  bootstrap: [AppComponent],
+  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  bootstrap: [AppComponent], // ✅ bootstrapea el standalone
 })
 export class AppModule {}

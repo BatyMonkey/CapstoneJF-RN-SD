@@ -55,7 +55,7 @@
         <ion-button
           expand="block"
           fill="clear"
-          (click)="goToRegister()"
+          [routerLink]="['/auth/register']"
           [disabled]="loading"
           style="border-radius:12px;">
           Crear cuenta
