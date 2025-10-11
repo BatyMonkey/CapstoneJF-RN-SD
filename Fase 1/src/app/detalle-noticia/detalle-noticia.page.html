@@ -1,0 +1,54 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/noticias"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalle de Noticia</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  
+  <div *ngIf="estaCargando" class="ion-text-center ion-padding">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando detalle de noticia...</p>
+  </div>
+
+  <div *ngIf="!estaCargando && noticia">
+    
+    <div *ngIf="noticia.url_foto && noticia.url_foto.length > 0">
+        <img [src]="noticia.url_foto[0]" class="cover-image" alt="Imagen de Portada de la Noticia">
+    </div>
+
+    <div class="ion-padding">
+        <h1>{{ noticia.titulo }}</h1>
+        
+        <ion-text color="medium">
+            <p class="ion-margin-bottom">
+                Autor: <strong>{{ noticia.nombre_autor || 'Anónimo' }}</strong> | {{ formatearFecha(noticia.fecha_creacion) }}
+            </p>
+        </ion-text>
+    </div>
+    
+    <hr>
+
+    <div *ngFor="let item of contenidoMixto" class="ion-padding-horizontal">
+      
+      <p *ngIf="item.type === 'parrafo'">{{ item.value }}</p>
+
+      <ion-card *ngIf="item.type === 'foto'" class="ion-margin-vertical">
+        <img [src]="item.value" class="content-image" alt="Imagen de contenido"/>
+      </ion-card>
+      
+    </div>
+    
+    <div class="ion-padding"></div>
+    
+  </div>
+
+  <div *ngIf="!estaCargando && !noticia" class="ion-text-center ion-padding">
+    <h2>Noticia no encontrada</h2>
+    <p>Lo sentimos, no pudimos cargar el detalle de la noticia. Por favor, verifica el ID.</p>
+  </div>
+
+</ion-content>
