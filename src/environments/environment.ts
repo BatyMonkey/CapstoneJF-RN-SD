@@ -8,7 +8,7 @@ export const environment = {
   supabaseUrl: 'https://sovnabbbubapqxziubuh.supabase.co',
   supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNvdm5hYmJidWJhcHF4eml1YnVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg3NTY0NzcsImV4cCI6MjA3NDMzMjQ3N30.eQoxa8NkXwHwpSM03bB2gEJj9EZ0FxK3-nY3SJe5iiE'
 };
-
+/* a
 /*
  * For easier debugging in development mode, you can import the following file
  * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
