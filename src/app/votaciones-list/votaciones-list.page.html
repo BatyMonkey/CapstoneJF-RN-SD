@@ -1,0 +1,33 @@
+<ion-header class="rb-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Votaciones activas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding vot-list" [fullscreen]="true">
+  <ion-text color="danger" *ngIf="errorMsg">{{ errorMsg }}</ion-text>
+
+  <div class="ion-text-center" *ngIf="cargando">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <ion-card class="card" *ngFor="let v of votaciones" (click)="irDetalle(v)" button>
+    <ion-card-header>
+      <ion-card-title>{{ v.titulo }}</ion-card-title>
+      <ion-card-subtitle *ngIf="v.descripcion">{{ v.descripcion }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-chip color="primary" outline="true">
+        <ion-icon name="time-outline"></ion-icon>
+        <ion-label>Termina en: {{ tiempoRestante(v.fecha_fin) }}</ion-label>
+      </ion-chip>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-text color="medium" *ngIf="!cargando && !votaciones.length">
+    <p class="empty">No hay votaciones activas en este momento.</p>
+  </ion-text>
+</ion-content>

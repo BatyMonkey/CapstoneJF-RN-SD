@@ -1,0 +1,15 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Confirmación de Pago</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+
+  <p *ngIf="!loading">{{ mensaje }}</p>
+
+  <ion-button expand="block" color="success" routerLink="/home" *ngIf="!loading">
+    VOLVER AL INICIO
+  </ion-button>
+</ion-content>

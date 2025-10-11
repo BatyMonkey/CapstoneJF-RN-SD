@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Reserva de Espacio/Terreno</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="solicitudForm" (ngSubmit)="enviarSolicitud()">
+
+    <!-- Descripción general -->
+    <ion-item>
+      <ion-label position="floating">Descripción</ion-label>
+      <ion-textarea formControlName="descripcion"></ion-textarea>
+    </ion-item>
+
+    <!-- Campos del Espacio -->
+    <ion-item>
+      <ion-label position="floating">Nombre del Espacio</ion-label>
+      <ion-input formControlName="espacio_nombre"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Tipo de Espacio</ion-label>
+      <ion-input formControlName="espacio_tipo"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Capacidad</ion-label>
+      <ion-input type="number" formControlName="espacio_capacidad"></ion-input>
+    </ion-item>
+
+    <!-- Campos del Evento -->
+    <ion-item>
+      <ion-label position="floating">Título del Evento</ion-label>
+      <ion-input formControlName="evento_titulo"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Descripción del Evento</ion-label>
+      <ion-textarea formControlName="evento_descripcion"></ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Fecha de Inicio</ion-label>
+      <ion-datetime formControlName="evento_inicio" presentation="date-time"></ion-datetime>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Fecha de Término</ion-label>
+      <ion-datetime formControlName="evento_fin" presentation="date-time"></ion-datetime>
+    </ion-item>
+
+    <!-- Botón principal -->
+    <ion-button expand="block" type="submit" [disabled]="solicitudForm.invalid" color="success">
+      💳 Pagar Arriendo
+    </ion-button>
+
+  </form>
+</ion-content>
