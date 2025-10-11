@@ -1,0 +1,72 @@
+<ion-header class="rb-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Votación</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding votacion" [fullscreen]="true">
+  <ion-text color="danger" *ngIf="errorMsg" class="err">{{ errorMsg }}</ion-text>
+
+  <div class="ion-text-center" *ngIf="cargando">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <ng-container *ngIf="!cargando && votacion">
+    <ion-card class="card">
+      <ion-card-header>
+        <ion-card-title>{{ votacion.titulo }}</ion-card-title>
+        <ion-card-subtitle *ngIf="votacion.descripcion">
+          {{ votacion.descripcion }}
+        </ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="status">
+          <ion-chip [color]="bloqueada ? 'medium' : 'primary'" [outline]="true">
+            <ion-icon name="time-outline"></ion-icon>
+            <ion-label>{{ etiquetaTiempo() }}</ion-label>
+          </ion-chip>
+
+          <ion-badge color="tertiary" class="total" *ngIf="totalVotos">
+            Total: {{ totalVotos }}
+          </ion-badge>
+        </div>
+
+        <ion-list class="opciones" lines="none">
+          <ion-item
+            class="opcion"
+            *ngFor="let op of opciones; trackBy: trackByOp"
+            [class.seleccionada]="miOpcionId === op.id"
+            [style.--pct]="pct(op)"
+          >
+            <ion-label class="label">
+              <div class="top">
+                <h2 class="titulo">{{ op.titulo }}</h2>
+                <span class="pct-badge">{{ percent(op) }}%</span>
+              </div>
+
+              <div class="bar">
+                <div class="fill"></div>
+              </div>
+
+              <p class="meta">Votos: {{ op.total_votos }}</p>
+            </ion-label>
+
+            <ion-button
+              slot="end"
+              [disabled]="!!miOpcionId || bloqueada"
+              (click)="votar(op)"
+            >
+              {{ miOpcionId ? (miOpcionId === op.id ? 'Votado' : 'Votar') : 'Votar' }}
+            </ion-button>
+          </ion-item>
+        </ion-list>
+
+        <ion-note color="success" *ngIf="miOpcionId">¡Voto registrado!</ion-note>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
+</ion-content>

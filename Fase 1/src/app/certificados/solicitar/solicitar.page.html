@@ -1,0 +1,89 @@
+<ion-header class="rb-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <!-- Debe coincidir con menuId="mainMenu" del app.component.html -->
+      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Solicitar Certificado</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding solicitar" [fullscreen]="true">
+  <!-- Saludo -->
+  <ion-card class="card hero">
+    <ion-card-header>
+      <ion-card-title>¡Hola{{ displayName ? (', ' + displayName) : '' }}!</ion-card-title>
+      <ion-card-subtitle>Genera y gestiona tus certificados</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Completa los datos y elige si quieres <strong>descargar</strong> el PDF o <strong>enviarlo por correo</strong>.</p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Formulario -->
+  <ion-card class="card">
+    <ion-card-header>
+      <ion-card-title>Emisión</ion-card-title>
+      <ion-card-subtitle>Datos del certificado</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-list lines="none">
+        <!-- Correo destino (prellenado) -->
+        <ion-item class="field">
+          <ion-label position="stacked">Correo destino</ion-label>
+          <ion-input
+            [(ngModel)]="emailDestino"
+            name="emailDestino"
+            type="email">
+          </ion-input>
+        </ion-item>
+
+        <!-- Lugar y fecha -->
+        <ion-item class="field">
+          <ion-label position="stacked">Lugar y fecha (opcional)</ion-label>
+          <ion-input
+            [(ngModel)]="placeAndDate"
+            name="placeAndDate"
+            placeholder="Santiago, 02/10/2025">
+          </ion-input>
+        </ion-item>
+      </ion-list>
+
+      <div class="actions">
+        <ion-button expand="block" (click)="emitirDescargar()" [disabled]="loading">
+          <ion-spinner slot="start" *ngIf="loading"></ion-spinner>
+          {{ loading ? 'Generando...' : 'Generar y Descargar' }}
+        </ion-button>
+
+        <ion-button expand="block" color="secondary" (click)="emitirEnviar()" [disabled]="loading">
+          <ion-spinner slot="start" *ngIf="loading"></ion-spinner>
+          {{ loading ? 'Generando...' : 'Generar y Enviar por correo' }}
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Historial -->
+  <ion-card class="card history" *ngIf="certificados?.length">
+    <ion-card-header>
+      <ion-card-title>Mis certificados</ion-card-title>
+    </ion-card-header>
+
+    <ion-list lines="full">
+      <ion-item *ngFor="let c of certificados">
+        <ion-label>
+          <h2>Certificado #{{ c.id }}</h2>
+          <p>Emitido: {{ c.created_at | date:'short' }}</p>
+        </ion-label>
+        <ion-button *ngIf="c.pdf_url" fill="clear" [href]="c.pdf_url" target="_blank">
+          Ver PDF
+        </ion-button>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+
+  <ion-text color="medium" *ngIf="!certificados?.length">
+    <p class="empty">Aún no tienes certificados emitidos.</p>
+  </ion-text>
+</ion-content>

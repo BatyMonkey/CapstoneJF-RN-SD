@@ -1,0 +1,145 @@
+<ion-content class="ion-padding" fullscreen>
+  <div class="wrap">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title color="primary">Registro de vecino</ion-card-title>
+        <ion-card-subtitle>Completa tus datos</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <form #f="ngForm" (ngSubmit)="register(f)">
+
+          <!-- Primer nombre (obligatorio) -->
+          <ion-item lines="none">
+            <ion-icon name="person-outline" slot="start" color="primary"></ion-icon>
+            <ion-input
+              placeholder="Primer nombre"
+              name="primer_nombre"
+              [(ngModel)]="primer_nombre"
+              required>
+            </ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="f.submitted && !primer_nombre">Este campo es obligatorio.</ion-note>
+
+          <!-- Segundo nombre (opcional) -->
+          <ion-item lines="none" style="margin-top:8px;">
+            <ion-icon name="person-outline" slot="start" color="primary"></ion-icon>
+            <ion-input
+              placeholder="Segundo nombre (opcional)"
+              name="segundo_nombre"
+              [(ngModel)]="segundo_nombre">
+            </ion-input>
+          </ion-item>
+
+          <!-- Primer apellido (obligatorio) -->
+          <ion-item lines="none" style="margin-top:8px;">
+            <ion-icon name="person-outline" slot="start" color="primary"></ion-icon>
+            <ion-input
+              placeholder="Primer apellido"
+              name="primer_apellido"
+              [(ngModel)]="primer_apellido"
+              required>
+            </ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="f.submitted && !primer_apellido">Este campo es obligatorio.</ion-note>
+
+          <!-- Segundo apellido (opcional) -->
+          <ion-item lines="none" style="margin-top:8px;">
+            <ion-icon name="person-outline" slot="start" color="primary"></ion-icon>
+            <ion-input
+              placeholder="Segundo apellido (opcional)"
+              name="segundo_apellido"
+              [(ngModel)]="segundo_apellido">
+            </ion-input>
+          </ion-item>
+
+          <!-- RUT (obligatorio + DV) -->
+          <ion-item lines="none" style="margin-top:10px;">
+            <ion-icon name="card-outline" slot="start" color="primary"></ion-icon>
+            <ion-input
+              placeholder="RUT (ej: 12.345.678-5)"
+              name="rut"
+              [(ngModel)]="rut"
+              required
+              (ionBlur)="onRutBlur()">
+            </ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="f.submitted && !rut">Este campo es obligatorio.</ion-note>
+          <ion-note color="danger" *ngIf="rut && rutInvalido">RUT inválido. Revisa el dígito verificador.</ion-note>
+
+          <!-- Dirección (opcional) -->
+          <ion-item lines="none" style="margin-top:10px;">
+            <ion-icon name="home-outline" slot="start" color="primary"></ion-icon>
+            <ion-input
+              placeholder="Dirección"
+              name="direccion"
+              [(ngModel)]="direccion">
+            </ion-input>
+          </ion-item>
+
+          <!-- Teléfono (Chile) obligatorio -->
+          <ion-item lines="none" style="margin-top:10px;">
+            <ion-icon name="call-outline" slot="start" color="primary"></ion-icon>
+            <ion-input
+              placeholder="Teléfono (ej: +56 9XXXXXXXX o 9XXXXXXXX)"
+              name="telefono"
+              [(ngModel)]="telefono"
+              required>
+            </ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="f.submitted && !telefono">Este campo es obligatorio.</ion-note>
+          <ion-note color="danger" *ngIf="telefono && !telefonoEsValido()">Formato de teléfono inválido (Chile).</ion-note>
+
+          <!-- Correo (obligatorio + formato) -->
+          <ion-item lines="none" style="margin-top:10px;">
+            <ion-icon name="mail-outline" slot="start" color="primary"></ion-icon>
+            <ion-input
+              type="email"
+              autocomplete="email"
+              placeholder="Correo"
+              name="email"
+              [(ngModel)]="email"
+              required>
+            </ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="f.submitted && !email">Este campo es obligatorio.</ion-note>
+
+          <!-- Contraseña (obligatorio) -->
+          <ion-item lines="none" style="margin-top:10px;">
+            <ion-icon name="lock-closed-outline" slot="start" color="primary"></ion-icon>
+            <ion-input
+              type="password"
+              autocomplete="new-password"
+              placeholder="Contraseña (mínimo 6 caracteres)"
+              name="password"
+              [(ngModel)]="password"
+              required
+              minlength="6">
+            </ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="f.submitted && (!password || password.length < 6)">
+            La contraseña debe tener al menos 6 caracteres.
+          </ion-note>
+
+          <!-- Error general -->
+          <ion-text color="danger" *ngIf="errorMsg" class="error" style="display:block;margin-top:8px;">
+            {{ errorMsg }}
+          </ion-text>
+
+          <!-- Botón -->
+          <ion-button
+            type="submit"
+            expand="block"
+            size="large"
+            color="primary"
+            class="cta"
+            style="margin-top:16px;"
+            [disabled]="loading">
+            <ion-spinner slot="start" *ngIf="loading"></ion-spinner>
+            {{ loading ? 'Creando…' : 'Registrarme' }}
+          </ion-button>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
