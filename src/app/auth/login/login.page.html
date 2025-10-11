@@ -60,6 +60,18 @@
           style="border-radius:12px;">
           Crear cuenta
         </ion-button>
+        
+        <div style="text-align: center; margin-top: 10px;">
+            <ion-button 
+                fill="clear" 
+                size="small" 
+                color="medium"
+                class="recovery-button"
+                (click)="requestPasswordRecovery()"
+                [disabled]="loading || loadingRecovery">
+                Recuperar Contraseña
+            </ion-button>
+        </div>
       </ion-card-content>
     </ion-card>
   </div>

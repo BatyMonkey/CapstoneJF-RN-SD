@@ -1,9 +1,15 @@
+// src/app/votacion/votacion.page.ts
+
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { ViewWillEnter, IonicModule, ToastController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
-import { VotacionesService, Votacion, OpcionVotacion } from '../services/votaciones.service';
+import {
+  VotacionesService,
+  Votacion,
+  OpcionVotacion,
+} from '../services/votaciones.service';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 @Component({
@@ -11,9 +17,9 @@ import { SupabaseClient } from '@supabase/supabase-js';
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule],
   templateUrl: './votacion.page.html',
-  styleUrls: ['./votacion.page.scss']
+  styleUrls: ['./votacion.page.scss'],
 })
-export class VotacionPage implements OnInit, OnDestroy {
+export class VotacionPage implements OnInit, OnDestroy, ViewWillEnter {
   id!: string;
   cargando = true;
   errorMsg = '';
@@ -38,18 +44,21 @@ export class VotacionPage implements OnInit, OnDestroy {
     await this.cargar();
 
     // Realtime: incrementa el conteo cuando entran votos nuevos
-    this.canalVotos = this.votosSvc.suscribirVotosInsertados(this.id, (payload) => {
-      const nuevo = (payload as any).new;
-      const opcionId = nuevo?.opcion_id as string | undefined;
-      if (!opcionId) return;
-      const i = this.opciones.findIndex(o => o.id === opcionId);
-      if (i >= 0) {
-        this.opciones[i] = {
-          ...this.opciones[i],
-          total_votos: (this.opciones[i].total_votos ?? 0) + 1
-        };
+    this.canalVotos = this.votosSvc.suscribirVotosInsertados(
+      this.id,
+      (payload) => {
+        const nuevo = (payload as any).new;
+        const opcionId = nuevo?.opcion_id as string | undefined;
+        if (!opcionId) return;
+        const i = this.opciones.findIndex((o) => o.id === opcionId);
+        if (i >= 0) {
+          this.opciones[i] = {
+            ...this.opciones[i],
+            total_votos: (this.opciones[i].total_votos ?? 0) + 1,
+          };
+        }
       }
-    });
+    );
   }
 
   ngOnDestroy(): void {
@@ -117,9 +126,12 @@ export class VotacionPage implements OnInit, OnDestroy {
   private formatMs(ms: number): string {
     if (ms <= 0) return '0s';
     let s = Math.floor(ms / 1000);
-    const d = Math.floor(s / 86400); s %= 86400;
-    const h = Math.floor(s / 3600);  s %= 3600;
-    const m = Math.floor(s / 60);    s %= 60;
+    const d = Math.floor(s / 86400);
+    s %= 86400;
+    const h = Math.floor(s / 3600);
+    s %= 3600;
+    const m = Math.floor(s / 60);
+    s %= 60;
     if (d) return `${d}d ${h}h ${m}m`;
     if (h) return `${h}h ${m}m ${s}s`;
     return `${m}m ${s}s`;
@@ -127,21 +139,41 @@ export class VotacionPage implements OnInit, OnDestroy {
 
   async votar(opcion: OpcionVotacion) {
     if (!this.votacion) return;
-    if (this.miOpcionId) { this.errorMsg = 'Ya emitiste tu voto en esta votación'; return; }
-    if (this.bloqueada)  { this.errorMsg = 'La votación no está activa'; return; }
+    if (this.miOpcionId) {
+      this.errorMsg = 'Ya emitiste tu voto en esta votación';
+      return;
+    }
+    if (this.bloqueada) {
+      this.errorMsg = 'La votación no está activa';
+      return;
+    }
     this.errorMsg = '';
 
     // Optimista
-    const idx = this.opciones.findIndex(o => o.id === opcion.id);
+    const idx = this.opciones.findIndex((o) => o.id === opcion.id);
     const anterior = idx >= 0 ? this.opciones[idx].total_votos : 0;
-    if (idx >= 0) this.opciones[idx] = { ...this.opciones[idx], total_votos: anterior + 1 };
+    if (idx >= 0)
+      this.opciones[idx] = { ...this.opciones[idx], total_votos: anterior + 1 };
 
     try {
       await this.votosSvc.votar(this.votacion.id, opcion.id);
       this.miOpcionId = opcion.id;
     } catch (e: any) {
-      if (idx >= 0) this.opciones[idx] = { ...this.opciones[idx], total_votos: anterior };
+      if (idx >= 0)
+        this.opciones[idx] = { ...this.opciones[idx], total_votos: anterior };
       this.errorMsg = e?.message ?? 'No se pudo registrar tu voto';
     }
+  }
+
+  /**
+   * 🚨 FUNCIÓN CORREGIDA: Aplica el retraso de 0.6s antes de la carga de datos.
+   */
+  ionViewWillEnter() {
+    this.cargando = true; 
+    
+    // 🚀 DELAY DE 600ms: Da tiempo al servidor para que el voto/data se refleje.
+    setTimeout(() => {
+      this.cargar(); // Llama a la función de carga principal
+    }, 600);
   }
 }

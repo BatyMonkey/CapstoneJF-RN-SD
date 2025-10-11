@@ -94,3 +94,34 @@ ion-text[color="danger"] {
     border-color: rgba(255, 255, 255, 0.08);
   }
 }
+
+/* ===== Estilos para el botón de Recuperar Contraseña ===== */
+.recovery-button {
+  /* Anula cualquier box-shadow o efecto de borde */
+  --box-shadow: none !important;
+  border: none !important;
+  /* Asegura que no se vea como un botón activo principal */
+  font-weight: 500;
+}
+
+/* Estilos para el botón de Recuperar Contraseña (si lo tienes) */
+.recovery-button {
+  --box-shadow: none !important;
+  border: none !important;
+  font-weight: 500;
+}
+
+/* 🚀 NUEVA REGLA: Elimina el box-shadow de los botones con fill="clear" */
+/* Esto afectará tanto al botón de "Recuperar Contraseña" como al de "Volver a Iniciar Sesión" */
+ion-button[fill="clear"] {
+  --box-shadow: none !important;
+}
+
+/* Si quieres que los botones clear tengan un color de texto más claro o específico */
+ion-button[fill="clear"][color="medium"] {
+    color: var(--ion-color-medium-shade, #737373) !important; /* Color predeterminado de 'medium' de Ionic */
+    --background-hover: transparent !important; /* Evita que cambie de color al pasar el ratón */
+    --background-focused: transparent !important;
+    --background-activated: transparent !important;
+}
+

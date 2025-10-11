@@ -58,13 +58,17 @@ const PENDING_KEY = 'rb_pending_full';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-
-  private construirNombreCompleto(perfil: Perfil, extras: Partial<RegisterExtras>): string {
+  private construirNombreCompleto(
+    perfil: Perfil,
+    extras: Partial<RegisterExtras>
+  ): string {
     const pNombre = perfil.primer_nombre || '';
     const sNombre = extras.segundo_nombre ?? perfil.segundo_nombre ?? '';
     const pApellido = perfil.primer_apellido || '';
     const sApellido = extras.segundo_apellido ?? perfil.segundo_apellido ?? '';
-    return [pNombre, sNombre, pApellido, sApellido].filter(n => n?.trim()).join(' ');
+    return [pNombre, sNombre, pApellido, sApellido]
+      .filter((n) => n?.trim())
+      .join(' ');
   }
 
   private construirNombreRegistro(payload: RegisterPayload): string {
@@ -72,13 +76,18 @@ export class AuthService {
     const sNombre = payload.segundo_nombre || '';
     const pApellido = payload.primer_apellido || '';
     const sApellido = payload.segundo_apellido || '';
-    return [pNombre, sNombre, pApellido, sApellido].filter(n => n?.trim()).join(' ');
+    return [pNombre, sNombre, pApellido, sApellido]
+      .filter((n) => n?.trim())
+      .join(' ');
   }
 
-  async signUpFull(payload: RegisterPayload): Promise<{ needsEmailConfirm: boolean }> {
+  async signUpFull(
+    payload: RegisterPayload
+  ): Promise<{ needsEmailConfirm: boolean }> {
     const { email, password, ...extras } = payload;
 
-    const nombreCompleto = payload.nombre?.trim() || this.construirNombreRegistro(payload);
+    const nombreCompleto =
+      payload.nombre?.trim() || this.construirNombreRegistro(payload);
 
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -91,7 +100,10 @@ export class AuthService {
     const uid = sessionData.session?.user.id ?? data.user?.id ?? null;
 
     if (!sessionData.session) {
-      localStorage.setItem(PENDING_KEY, JSON.stringify({ nombre: nombreCompleto, extras }));
+      localStorage.setItem(
+        PENDING_KEY,
+        JSON.stringify({ nombre: nombreCompleto, extras })
+      );
       return { needsEmailConfirm: true };
     }
 
@@ -154,13 +166,19 @@ export class AuthService {
   }
 
   async signIn(email: string, password: string) {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
     if (error) throw error;
 
     const pendingRaw = localStorage.getItem(PENDING_KEY);
     if (pendingRaw) {
       try {
-        const pending = JSON.parse(pendingRaw) as { nombre?: string | null; extras?: RegisterExtras };
+        const pending = JSON.parse(pendingRaw) as {
+          nombre?: string | null;
+          extras?: RegisterExtras;
+        };
         await this.ensureUsuarioRow(pending?.nombre ?? null);
         if (pending?.extras) {
           await this.updateUsuarioExtras(pending.extras);
@@ -169,7 +187,9 @@ export class AuthService {
         localStorage.removeItem(PENDING_KEY);
       }
     } else {
-      try { await this.ensureUsuarioRow(); } catch {}
+      try {
+        await this.ensureUsuarioRow();
+      } catch {}
     }
 
     return data;
@@ -199,7 +219,7 @@ export class AuthService {
       .single();
 
     if (error) {
-      console.error("Error al obtener perfil:", error);
+      console.error('Error al obtener perfil:', error);
       return null;
     }
 
@@ -217,7 +237,8 @@ export class AuthService {
     if (!uid) throw new Error('No hay sesión');
 
     const perfil = await this.miPerfil();
-    if (!perfil) throw new Error('No se pudo obtener el perfil para actualizar.');
+    if (!perfil)
+      throw new Error('No se pudo obtener el perfil para actualizar.');
 
     const nuevoNombre = this.construirNombreCompleto(perfil, extras);
 
@@ -240,9 +261,37 @@ export class AuthService {
       const perfil = await this.miPerfil();
       return perfil?.rol === 'administrador' || perfil?.rol === 'directorio';
     } catch (e) {
-      console.error("Error al verificar el rol de administrador:", e);
+      console.error('Error al verificar el rol de administrador:', e);
       return false;
     }
   }
-}
 
+  async sendPasswordResetLink(email: string): Promise<void> {
+    // 🚨 NOTA: La URL debe ser la dirección completa (localhost:port/ruta) de tu componente.
+    const redirectUrl = 'http://localhost:8100/auth/recuperar-contrasena';
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      // 🚨 CORRECCIÓN CLAVE: Esto asegura que el email apunte al lugar correcto en tu app.
+      redirectTo: redirectUrl,
+    });
+
+    if (error) {
+      // Manejo de errores (ej: correo no encontrado)
+      if (error.message.includes('not found')) {
+        throw new Error('No se encontró una cuenta con ese correo.');
+      }
+      throw error;
+    }
+  }
+
+  async updateUser(attributes: {
+    password?: string;
+    data?: object;
+  }): Promise<void> {
+    const { error } = await supabase.auth.updateUser(attributes);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+  }
+}

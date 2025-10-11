@@ -90,6 +90,10 @@ const routes: Routes = [
         import('./generar-votacion/generar-votacion.page')
           .then(m => m.GenerarVotacionPage),
     },
+    {
+      path: 'auth/recuperar-contrasena',
+      loadComponent: () => import('./auth/update-password/update-password.page').then(m => m.UpdatePasswordPage)
+    },
   {
   path: 'home',
   canActivate: [AuthGuard],
