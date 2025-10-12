@@ -1,161 +1,171 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IonicModule, AlertController } from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
-import { supabase } from '../core/supabase.client';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { IonicModule, AlertController, ToastController } from '@ionic/angular';
+import { EspaciosService } from '../services/espacios.service';
 import { AuthService } from '../auth/auth.service';
+import { supabase } from '../core/supabase.client';
+import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Component({
-  standalone: true,
   selector: 'app-solicitud',
   templateUrl: './solicitud.page.html',
   styleUrls: ['./solicitud.page.scss'],
-  imports: [IonicModule, CommonModule, ReactiveFormsModule],
+  standalone: true,
+  imports: [
+    CommonModule,
+    IonicModule,
+    ReactiveFormsModule
+  ]
 })
-export class SolicitudPage {
+export class SolicitudPage implements OnInit {
   solicitudForm: FormGroup;
-  submitting = false;
+  espaciosDisponibles: any[] = [];
 
   constructor(
     private fb: FormBuilder,
-    private auth: AuthService,
-    private alertCtrl: AlertController
+    private espaciosService: EspaciosService,
+    private authService: AuthService,
+    private alertCtrl: AlertController,
+    private toastCtrl: ToastController,
+    private router: Router
   ) {
     this.solicitudForm = this.fb.group({
+      id_espacio: ['', Validators.required],
       descripcion: [''],
-      espacio_nombre: ['', Validators.required],
-      espacio_tipo: ['', Validators.required],
-      espacio_capacidad: [null, [Validators.required, Validators.min(1)]],
       evento_titulo: ['', Validators.required],
-      evento_descripcion: [''],
+      evento_descripcion: ['', Validators.required],
       evento_inicio: ['', Validators.required],
-      evento_fin: ['', Validators.required],
+      evento_fin: ['', Validators.required]
     });
   }
 
+  async ngOnInit() {
+    await this.cargarEspaciosDisponibles();
+  }
+
+  /** Cargar espacios creados por el administrador */
+  async cargarEspaciosDisponibles() {
+    try {
+      const data = await this.espaciosService.obtenerEspacios();
+      this.espaciosDisponibles = data || [];
+    } catch (err) {
+      console.error('Error cargando espacios:', err);
+      this.espaciosDisponibles = [];
+    }
+  }
+
+  /** Enviar solicitud y procesar pago */
   async enviarSolicitud() {
-    if (this.solicitudForm.invalid) {
-      await this.mostrarAlerta('Formulario incompleto', 'Debes llenar todos los campos obligatorios.');
+    if (this.solicitudForm.invalid) return;
+
+    const formData = this.solicitudForm.value;
+    const session = await this.authService.session();
+    const idUsuario = session?.user?.id || null;
+
+    if (!idUsuario) {
+      this.mostrarAlerta('Error', 'No se pudo obtener el usuario autenticado.');
       return;
     }
-
-    const {
-      espacio_nombre,
-      espacio_tipo,
-      espacio_capacidad,
-      evento_titulo,
-      evento_descripcion,
-      evento_inicio,
-      evento_fin,
-    } = this.solicitudForm.value;
-
-    if (new Date(evento_fin) < new Date(evento_inicio)) {
-      await this.mostrarAlerta('Fechas inválidas', 'La fecha de término debe ser posterior a la de inicio.');
-      return;
-    }
-
-    this.submitting = true;
 
     try {
-      const uid = await this.auth.miUID();
-      if (!uid) {
-        await this.mostrarAlerta('Sesión', 'Debes iniciar sesión para registrar una reserva.');
-        return;
-      }
-
-      // 🧱 Crear espacio
-      const { data: esp, error: eEsp } = await supabase
-        .from('espacio')
-        .insert({
-          nombre: espacio_nombre,
-          tipo: espacio_tipo,
-          capacidad: Number(espacio_capacidad),
-        })
-        .select('id_espacio')
-        .single();
-      if (eEsp) throw eEsp;
-
-      // 🧱 Crear evento
-      const { data: eve, error: eEve } = await supabase
+      // 1️⃣ Crear evento
+      const { data: eventoData, error: eventoError } = await supabase
         .from('evento')
-        .insert({
-          titulo: evento_titulo,
-          descripcion: evento_descripcion,
-          fecha_inicio: evento_inicio,
-          fecha_fin: evento_fin,
-        })
-        .select('id_evento')
+        .insert([{
+          titulo: formData.evento_titulo,
+          descripcion: formData.evento_descripcion,
+          fecha_inicio: formData.evento_inicio,
+          fecha_fin: formData.evento_fin
+        }])
+        .select()
         .single();
-      if (eEve) throw eEve;
 
-      // 🧱 Crear orden de pago
-      const monto = 1500;
-      const { data: orden, error: eOrden } = await supabase
+      if (eventoError) throw eventoError;
+
+      // 2️⃣ Crear reserva
+      const espacioId = Number(formData.id_espacio);
+      const { data: reservaData, error: reservaError } = await supabase
+        .from('reserva')
+        .insert([{
+          id_espacio: espacioId,
+          id_evento: eventoData.id_evento,
+          id_auth: idUsuario,
+          fecha: new Date().toISOString(),
+          creado_en: new Date().toISOString()
+        }])
+        .select()
+        .single();
+
+      if (reservaError) throw reservaError;
+
+      // 3️⃣ Generar orden de pago local
+      const { data: ordenData, error: ordenError } = await supabase
         .from('orden_pago')
-        .insert({
-          id_auth: uid,
-          id_evento: eve.id_evento,
-          id_espacio: esp.id_espacio,
-          monto,
+        .insert([{
+          id_auth: idUsuario,
+          id_evento: eventoData.id_evento,
+          id_espacio: espacioId,
+          monto: 1500,
           estado: 'pendiente',
-        })
-        .select('id_orden')
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }])
+        .select()
         .single();
-      if (eOrden) throw eOrden;
 
-      // 🚀 Llamar función Supabase (Transbank Sandbox)
-      const payload = {
-        buyOrder: `ORD-${orden.id_orden}`,
-        sessionId: uid.substring(0, 61),
-        amount: monto,
-      };
+      if (ordenError) throw ordenError;
 
-      console.log('🚀 Enviando payload a Transbank:', payload);
-
-      const resp = await fetch(
-        'https://sovnabbbubapqxziubuh.functions.supabase.co/transbank-simular',
+      // 4️⃣ Simular pago Transbank
+      const response = await fetch(
+        `${environment.supabaseUrl}/functions/v1/transbank-simular`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id_reserva: reservaData.id_reserva,
+            monto: 1500,
+            descripcion: `Pago arriendo espacio #${espacioId}`,
+            return_url: 'http://localhost:8100/pago-retorno'
+          })
         }
       );
 
-      const result = await resp.json();
-      console.log('✅ Resultado Transbank:', result);
+      if (!response.ok) throw new Error('Error al iniciar simulación de pago');
 
-      if (!result?.token) {
-        console.error('❌ Respuesta inválida:', result);
-        throw new Error('Transbank no devolvió token válido.');
+      const simData = await response.json();
+
+      if (simData.url && simData.token) {
+        // ✅ Redirigir a Transbank sandbox
+        window.location.href = `${simData.url}?token_ws=${simData.token}`;
+      } else {
+        throw new Error('No se recibió token o URL de Transbank.');
       }
 
-      // 💾 Guardar token en orden
-      await supabase
-        .from('orden_pago')
-        .update({
-          token_ws: result.token,
-          tbk_order_id: payload.buyOrder,
-        })
-        .eq('id_orden', orden.id_orden);
-
-      // 🌐 Redirigir a interfaz de pago sandbox
-      window.location.href = `${result.url}?token_ws=${result.token}`;
-    } catch (err: any) {
-      console.error('❌ Error al generar la solicitud con pago:', err);
-      const msg = err?.message ?? 'Hubo un error al generar el pago.';
-      await this.mostrarAlerta('Error', msg);
-    } finally {
-      this.submitting = false;
+    } catch (error) {
+      console.error('Error al enviar solicitud:', error);
+      this.mostrarAlerta('Error', 'No se pudo completar la reserva ni el pago.');
     }
   }
 
-  async mostrarAlerta(header: string, message: string) {
+  private async mostrarAlerta(header: string, message: string) {
     const alert = await this.alertCtrl.create({
       header,
       message,
-      buttons: ['OK'],
+      buttons: ['OK']
     });
     await alert.present();
+  }
+
+  private async mostrarToast(message: string) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 2500,
+      color: 'success'
+    });
+    toast.present();
   }
 }
