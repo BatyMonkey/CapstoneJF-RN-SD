@@ -88,6 +88,7 @@ export class HomePage implements OnInit {
       await this.cargarNoticias();
   }
 
+
   async cargarEstadoUsuario() {
       try {
           const { data: { user } } = await this.supabase.auth.getUser();

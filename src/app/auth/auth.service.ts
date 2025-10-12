@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { supabase } from '../core/supabase.client';
 import { Session } from '@supabase/supabase-js';
+import { Capacitor } from '@capacitor/core'; // ✅ IMPORTANTE: lo usas en sendPasswordResetLink
 
 export interface Perfil {
   id_usuario: string;
@@ -99,6 +100,7 @@ export class AuthService {
     const { data: sessionData } = await supabase.auth.getSession();
     const uid = sessionData.session?.user.id ?? data.user?.id ?? null;
 
+    // Si requiere verificación de email: guardamos datos para completar luego
     if (!sessionData.session) {
       localStorage.setItem(
         PENDING_KEY,
@@ -172,6 +174,7 @@ export class AuthService {
     });
     if (error) throw error;
 
+    // Si previamente estaba pendiente (por verificación de email), completa el perfil
     const pendingRaw = localStorage.getItem(PENDING_KEY);
     if (pendingRaw) {
       try {
@@ -266,30 +269,28 @@ export class AuthService {
     }
   }
 
+  /** Envía correo de recuperación con deep link en móvil y localhost en web. */
   async sendPasswordResetLink(email: string): Promise<void> {
-    // 🚨 NOTA: La URL debe ser la dirección completa (localhost:port/ruta) de tu componente.
-    const redirectUrl = 'http://localhost:8100/auth/recuperar-contrasena';
+    const redirectUrl ='myapp://auth/reset';
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      // 🚨 CORRECCIÓN CLAVE: Esto asegura que el email apunte al lugar correcto en tu app.
       redirectTo: redirectUrl,
     });
 
     if (error) {
-      // Manejo de errores (ej: correo no encontrado)
-      if (error.message.includes('not found')) {
+      if (error.message?.includes('not found')) {
         throw new Error('No se encontró una cuenta con ese correo.');
       }
       throw error;
     }
   }
 
+  /** Actualiza atributos del usuario autenticado (ej. password). */
   async updateUser(attributes: {
     password?: string;
     data?: object;
   }): Promise<void> {
     const { error } = await supabase.auth.updateUser(attributes);
-
     if (error) {
       throw new Error(error.message);
     }

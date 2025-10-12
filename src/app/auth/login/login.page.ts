@@ -77,7 +77,8 @@ export class LoginPage {
       await this.mostrarToast(successMsg, 'success');
       
     } catch (e: any) {
-      console.error('Error de recuperación:', e);
+      console.error('Error de recuperación:', e.message, e);
+
       this.errorMsg = 'Error al procesar la solicitud. Verifica el correo e intenta de nuevo.';
       await this.mostrarToast(this.errorMsg, 'danger');
     } finally {
