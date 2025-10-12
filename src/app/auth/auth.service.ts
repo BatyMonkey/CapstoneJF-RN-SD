@@ -20,8 +20,7 @@ export interface Perfil {
   primer_apellido?: string | null;
   segundo_apellido?: string | null;
   primer_nombre: string | null;
-  fecha_nacimiento?: string | null;
-  sexo?: 'M' | 'F' | null;
+  url_foto_perfil?: string | null; 
 }
 
 type Rol = 'vecino' | 'directorio' | 'administrador';
@@ -38,6 +37,14 @@ export type RegisterExtras = Partial<{
   verificado: boolean;
   fecha_nacimiento: string | null;
   sexo: 'M' | 'F' | null;
+}>;
+
+export type PerfilUpdatePayload = Partial<{
+  segundo_nombre: string | null;
+  segundo_apellido: string | null;
+  telefono: string | null;
+  // 🚨 Asegurar que el payload acepte la URL
+  url_foto_perfil: string | null; 
 }>;
 
 export type RegisterPayload = {
@@ -260,14 +267,19 @@ export class AuthService {
   }
 
   async checkIfAdmin(): Promise<boolean> {
-    try {
-      const perfil = await this.miPerfil();
-      return perfil?.rol === 'administrador' || perfil?.rol === 'directorio';
-    } catch (e) {
-      console.error('Error al verificar el rol de administrador:', e);
-      return false;
+        try {
+            const perfil = await this.miPerfil();
+            
+            if (!perfil) return false;
+            
+            // 🚨 Esta es la línea que fallaba si el tipo era incorrecto
+            return perfil.rol === 'administrador' || perfil.rol === 'directorio';
+
+        } catch (e) {
+            console.error("Error al verificar el rol de administrador:", e);
+            return false;
+        }
     }
-  }
 
   /** Envía correo de recuperación con deep link en móvil y localhost en web. */
   async sendPasswordResetLink(email: string): Promise<void> {
