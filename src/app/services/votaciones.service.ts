@@ -1,11 +1,10 @@
+import { Injectable } from '@angular/core';
+import { supabase } from '../core/supabase.client';
 import {
-  createClient,
-  SupabaseClient,
   RealtimePostgresInsertPayload,
   RealtimeChannel,
 } from '@supabase/supabase-js';
-import { environment } from 'src/environments/environment';
-import { Injectable } from '@angular/core';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 export interface Votacion {
   id: string;
@@ -14,14 +13,16 @@ export interface Votacion {
   fecha_inicio: string;
   fecha_fin: string;
   creado_por: string;
+  estado?: 'programada' | 'activa' | 'finalizada' | string;
 }
 
 export interface OpcionVotacion {
   id: string;
   votacion_id: string;
   titulo: string;
-  descripcion?: string;
-  total_votos: number;
+  descripcion?: string | null;
+  total_votos?: number;
+  image_url?: string | null;
 }
 
 export interface Voto {
@@ -34,16 +35,45 @@ export interface Voto {
 
 @Injectable({ providedIn: 'root' })
 export class VotacionesService {
-  private supabase: SupabaseClient;
+  constructor() {}
 
-  constructor() {
-    this.supabase = createClient(
-      environment.supabaseUrl,
-      environment.supabaseAnonKey
-    );
+  // ============= MEDIA (cámara/galería + upload) =============
+  async pickPhoto(): Promise<{ blob: Blob; ext: string; previewDataUrl: string }> {
+    const photo = await Camera.getPhoto({
+      quality: 80,
+      allowEditing: false,
+      source: CameraSource.Prompt,
+      resultType: CameraResultType.DataUrl,
+    });
+    if (!photo?.dataUrl) throw new Error('No se obtuvo imagen');
+    const ext = (photo.format || 'jpg').toLowerCase();
+    const blob = await this.dataUrlToBlob(photo.dataUrl, this.extToMime(ext));
+    return { blob, ext, previewDataUrl: photo.dataUrl };
   }
 
-  // --------- obtener votación + opciones (desde la VISTA con conteo) ----------
+  async uploadOptionImage(blob: Blob, ext: string, userId?: string): Promise<string> {
+    const fileName = `${userId || 'admin'}/${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from('votaciones').upload(fileName, blob, {
+      contentType: blob.type,
+      upsert: true,
+    });
+    if (error) throw error;
+    const { data } = supabase.storage.from('votaciones').getPublicUrl(fileName);
+    return data.publicUrl;
+  }
+
+  private async dataUrlToBlob(dataUrl: string, mime: string): Promise<Blob> {
+    const res = await fetch(dataUrl);
+    const buf = await res.arrayBuffer();
+    return new Blob([buf], { type: mime });
+  }
+  private extToMime(ext: string): string {
+    if (ext === 'png') return 'image/png';
+    if (ext === 'gif') return 'image/gif';
+    return 'image/jpeg';
+  }
+
+  // --------- obtener votación + opciones (desde la vista con conteo) ----------
   async obtenerVotacionConOpciones(votacionId: string): Promise<{
     votacion: Votacion;
     opciones: OpcionVotacion[];
@@ -51,13 +81,8 @@ export class VotacionesService {
   }> {
     const [{ data: votacion, error: e1 }, { data: opciones, error: e2 }] =
       await Promise.all([
-        this.supabase
-          .from('votaciones')
-          .select('*')
-          .eq('id', votacionId)
-          .single(),
-        // 👇 usa la vista que devuelve el conteo real
-        this.supabase
+        supabase.from('votaciones').select('*').eq('id', votacionId).single(),
+        supabase
           .from('opciones_votacion_conteo')
           .select('*')
           .eq('votacion_id', votacionId)
@@ -67,15 +92,15 @@ export class VotacionesService {
     if (e2) throw e2;
 
     let miOpcionId: string | undefined;
-    const { data: authUser } = await this.supabase.auth.getUser();
+    const { data: authUser } = await supabase.auth.getUser();
     if (authUser.user) {
-      const { data: voto } = await this.supabase
+      const { data: voto } = await supabase
         .from('votos')
         .select('opcion_id')
         .eq('votacion_id', votacionId)
         .eq('usuario_id', authUser.user.id)
         .maybeSingle();
-      if (voto) miOpcionId = (voto as any).opcion_id;
+      if (voto?.opcion_id) miOpcionId = voto.opcion_id as string;
     }
 
     return {
@@ -87,24 +112,23 @@ export class VotacionesService {
 
   // --------- votar ----------
   async votar(votacionId: string, opcionId: string): Promise<void> {
-    const { data: authUser } = await this.supabase.auth.getUser();
+    const { data: authUser } = await supabase.auth.getUser();
     if (!authUser.user) throw new Error('Debes iniciar sesión para votar');
 
-    const { error } = await this.supabase.from('votos').insert({
+    const { error } = await supabase.from('votos').insert({
       votacion_id: votacionId,
       opcion_id: opcionId,
       usuario_id: authUser.user.id,
-    } as Partial<Voto>);
-
+    });
     if (error) throw error;
   }
 
-  // --------- Realtime: INSERT en votos (para reflejar votos nuevos) ----------
+  // --------- realtime INSERT en votos ----------
   suscribirVotosInsertados(
     votacionId: string,
     handler: (payload: RealtimePostgresInsertPayload<Voto>) => void
   ): RealtimeChannel {
-    return this.supabase
+    return supabase
       .channel(`votos-insert-${votacionId}`)
       .on(
         'postgres_changes',
@@ -114,74 +138,93 @@ export class VotacionesService {
           table: 'votos',
           filter: `votacion_id=eq.${votacionId}`,
         },
-        (payload) => handler(payload as any)
+        (payload) => handler(payload as RealtimePostgresInsertPayload<Voto>)
       )
       .subscribe();
   }
 
   desuscribir(channel: RealtimeChannel) {
-    this.supabase.removeChannel(channel);
+    supabase.removeChannel(channel);
   }
 
+  // --------- listar activas ----------
   async listarVotacionesActivas(): Promise<Votacion[]> {
-    const nowIso = new Date().toISOString();
-
-    const { data, error } = await this.supabase
+    const { data, error } = await supabase
       .from('votaciones')
-      .select('*') // O los campos necesarios
-      .lte('fecha_inicio', nowIso)
-      .gte('fecha_fin', nowIso)
+      .select('*')
+      .eq('estado', 'activa')
       .order('fecha_fin', { ascending: true });
-
     if (error) throw error;
     return (data ?? []) as Votacion[];
   }
+
+  // --------- listar finalizadas ----------
+  async listarVotacionesFinalizadas(): Promise<Votacion[]> {
+    const { data, error } = await supabase
+      .from('votaciones')
+      .select('*')
+      .eq('estado', 'finalizada')
+      .order('fecha_fin', { ascending: false });
+    if (error) throw error;
+    return (data || []) as Votacion[];
+  }
+
+  // --------- crear votación con opciones (soporta descripcion + image_url) ----------
   async crearVotacionConOpciones(input: {
     titulo: string;
     descripcion?: string;
     fecha_inicio: string; // ISO
-    fecha_fin: string; // ISO
-    opciones: string[]; // títulos
+    fecha_fin: string;    // ISO
+    opciones: Array<
+      string |
+      { titulo: string; descripcion?: string | null; image_url?: string | null }
+    >;
   }): Promise<string> {
-    // 1) Usuario autenticado
     const {
       data: { user },
       error: authErr,
-    } = await this.supabase.auth.getUser();
+    } = await supabase.auth.getUser();
     if (authErr) throw authErr;
     if (!user) throw new Error('Debes iniciar sesión');
 
-    // 2) Insert votación
-    const { data: vot, error: e1 } = await this.supabase
+    const { data: vot, error: e1 } = await supabase
       .from('votaciones')
-      .insert([
-        {
-          titulo: input.titulo,
-          descripcion: input.descripcion ?? null,
-          fecha_inicio: input.fecha_inicio,
-          fecha_fin: input.fecha_fin,
-          creado_por: user.id, // RLS: tu política debe permitirlo
-        },
-      ])
+      .insert([{
+        titulo: input.titulo,
+        descripcion: input.descripcion ?? null,
+        fecha_inicio: input.fecha_inicio,
+        fecha_fin: input.fecha_fin,
+        creado_por: user.id,
+      }])
       .select('id')
       .single();
-
     if (e1) throw e1;
+
     const votacionId = vot.id as string;
 
-    // 3) Insert opciones (mínimo 2)
-    const limpias = input.opciones.map((t) => t.trim()).filter(Boolean);
+    // normaliza opciones
+    const limpias = input.opciones
+      .map((o) =>
+        typeof o === 'string'
+          ? { titulo: o.trim(), descripcion: null, image_url: null }
+          : {
+              titulo: (o.titulo ?? '').trim(),
+              descripcion: (o.descripcion ?? null) as string | null,
+              image_url: (o.image_url ?? null) as string | null,
+            }
+      )
+      .filter((o) => o.titulo.length > 0);
+
     if (limpias.length < 2) throw new Error('Agrega al menos dos opciones');
 
-    const { error: e2 } = await this.supabase
-      .from('opciones_votacion') // usa el nombre exacto de tu tabla
-      .insert(
-        limpias.map((t) => ({
-          votacion_id: votacionId,
-          titulo: t,
-        }))
-      );
-
+    const { error: e2 } = await supabase.from('opciones_votacion').insert(
+      limpias.map((o) => ({
+        votacion_id: votacionId,
+        titulo: o.titulo,
+        descripcion: o.descripcion,
+        image_url: o.image_url,
+      }))
+    );
     if (e2) throw e2;
 
     return votacionId;

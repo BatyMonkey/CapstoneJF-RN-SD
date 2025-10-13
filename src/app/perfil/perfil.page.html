@@ -23,31 +23,6 @@
 
       <ion-card-content>
         
-        <div class="profile-photo-container ion-text-center ion-padding-bottom">
-            <img 
-                [src]="perfilActual?.url_foto_perfil || 'assets/default_avatar.svg'" 
-                alt="Foto de perfil" 
-                class="profile-avatar"
-            >
-            
-            <input type="file" 
-                   #fileInput 
-                   (change)="onFileSelected($event)" 
-                   accept="image/png, image/jpeg" 
-                   style="display: none;">
-                   
-            <ion-button 
-                fill="clear" 
-                size="small" 
-                (click)="fileInput.click()"
-                [disabled]="isUploading || isSaving"
-                style="margin-top: 8px;">
-                <ion-icon name="camera-outline" slot="start"></ion-icon>
-                {{ fotoFile ? 'Cambiar (' + fotoFile.name.substring(0, 15) + '...)' : 'Seleccionar Foto' }}
-                <ion-spinner *ngIf="isUploading" name="dots"></ion-spinner>
-            </ion-button>
-        </div>
-        
         <div class="verification-status is-pending" *ngIf="perfilActual && !perfilActual.verificado">
             Tu cuenta aún no ha sido verificada.
         </div>
@@ -133,10 +108,9 @@
             <ion-button 
               type="submit" 
               expand="block" 
-              [disabled]="perfilForm.invalid || (!perfilForm.dirty && !fotoFile) || isSaving || isUploading">
-              <span *ngIf="!isSaving && !isUploading">Guardar Cambios</span>
-              <span *ngIf="isSaving || isUploading">Guardando...</span>
-              <ion-spinner *ngIf="isSaving || isUploading" name="dots"></ion-spinner>
+              [disabled]="perfilForm.invalid || !perfilForm.dirty || isSaving">
+              <span *ngIf="!isSaving">Guardar Cambios</span>
+              <ion-spinner *ngIf="isSaving" name="dots"></ion-spinner>
             </ion-button>
           </div>
         </form>
