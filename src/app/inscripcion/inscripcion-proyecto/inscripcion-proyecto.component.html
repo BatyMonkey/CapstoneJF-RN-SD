@@ -1,0 +1,93 @@
+<ion-header class="rb-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/inscripcion/proyectos"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ isActividad ? 'Detalle de la Actividad' : 'Detalle del Proyecto' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" *ngIf="proyecto">
+  <div class="page-wrap ion-padding">
+
+    <ion-card class="card">
+      <ion-card-header>
+        <ion-card-title>{{ proyecto.titulo }}</ion-card-title>
+        <ion-card-subtitle>
+          Publicado: {{ proyecto.fecha | date:'dd/MM/yyyy HH:mm' }}
+          <ng-container *ngIf="isActividad"> • Cupos: {{ cuposRestantes }} / {{ proyecto.cupos_total }}</ng-container>
+        </ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="imagen-container" *ngIf="proyecto.imagen_url; else noImagen">
+          <ion-img [src]="proyecto.imagen_url" class="imagen-proyecto"></ion-img>
+        </div>
+        <ng-template #noImagen>
+          <div class="placeholder">
+            <ion-icon name="image-outline" class="placeholder-icon"></ion-icon>
+            <p>Sin imagen disponible</p>
+          </div>
+        </ng-template>
+
+        <p class="descripcion">
+          {{ proyecto.descripcion }}
+        </p>
+
+        <!-- Fechas de actividad -->
+        <ion-list *ngIf="isActividad">
+          <ion-item>
+            <ion-label>
+              <h3>Inicio</h3>
+              <p>{{ proyecto.fecha_inicio | date:'dd/MM/yyyy HH:mm' }}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <h3>Término</h3>
+              <p>{{ proyecto.fecha_fin | date:'dd/MM/yyyy HH:mm' }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="card">
+      <ion-card-header>
+        <ion-card-title>Inscribirse</ion-card-title>
+        <ion-card-subtitle>
+          {{ isActividad ? 'Te sumaremos a la actividad si hay cupos disponibles' : 'Cuéntanos por qué quieres participar' }}
+        </ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <form [formGroup]="inscripcionForm" (ngSubmit)="enviarPostulacion()">
+          <ion-item>
+            <ion-label position="stacked">{{ isActividad ? 'Comentario (opcional)' : 'Motivación' }}</ion-label>
+            <ion-textarea
+              formControlName="descripcion"
+              autoGrow="true"
+              [placeholder]="isActividad ? 'Comentario breve' : 'Explica tu interés en este proyecto'">
+            </ion-textarea>
+          </ion-item>
+
+          <ion-button
+            expand="block"
+            type="submit"
+            [disabled]="inscripcionForm.invalid || isSubmitting || (isActividad && (sinCupos || yaInscrito))"
+            color="primary">
+            <ng-container *ngIf="isSubmitting">Enviando...</ng-container>
+            <ng-container *ngIf="!isSubmitting">
+              {{ isActividad ? (yaInscrito ? 'Ya inscrito' : (sinCupos ? 'Sin cupos' : 'Inscribirse a la actividad')) : 'Inscribirse' }}
+            </ng-container>
+          </ion-button>
+
+          <!-- Mensajes de estado para actividad -->
+          <ion-note color="danger" *ngIf="isActividad && sinCupos">No hay cupos disponibles.</ion-note>
+          <ion-note color="medium" *ngIf="isActividad && yaInscrito">Ya estás inscrito en esta actividad.</ion-note>
+        </form>
+      </ion-card-content>
+    </ion-card>
+
+  </div>
+</ion-content>
