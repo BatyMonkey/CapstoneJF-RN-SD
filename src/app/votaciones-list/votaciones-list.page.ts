@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { VotacionesService, Votacion } from '../services/votaciones.service';
 
@@ -11,10 +11,17 @@ import { VotacionesService, Votacion } from '../services/votaciones.service';
   templateUrl: './votaciones-list.page.html',
   styleUrls: ['./votaciones-list.page.scss'],
 })
-export class VotacionesListPage implements OnInit, OnDestroy {
-  cargando = true;
-  errorMsg = '';
-  votaciones: Votacion[] = [];
+export class VotacionesListPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
+  cargandoActivas = true;
+  cargandoFinalizadas = true;
+  errorActivas = '';
+  errorFinalizadas = '';
+
+  activas: Votacion[] = [];
+  finalizadas: Votacion[] = [];
+
+  /** Controla qué acordeón está abierto. undefined = todos cerrados */
+  accordionValue: string | undefined = undefined;
 
   now = Date.now();
   private timer?: any;
@@ -23,22 +30,41 @@ export class VotacionesListPage implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.timer = setInterval(() => (this.now = Date.now()), 1000);
-    await this.cargar();
+    await this.cargarTodo();
+  }
+
+  ionViewWillEnter() {
+    this.accordionValue = undefined;
+  }
+
+  ionViewWillLeave() {
+    this.accordionValue = undefined;
   }
 
   ngOnDestroy(): void {
     if (this.timer) clearInterval(this.timer);
   }
 
-  async cargar() {
-    this.cargando = true;
-    this.errorMsg = '';
+  async cargarTodo(event?: any) {
+    this.cargandoActivas = true;
+    this.cargandoFinalizadas = true;
+    this.errorActivas = '';
+    this.errorFinalizadas = '';
+
     try {
-      this.votaciones = await this.votosSvc.listarVotacionesActivas();
+      const [a, f] = await Promise.all([
+        this.votosSvc.listarVotacionesActivas(),
+        this.votosSvc.listarVotacionesFinalizadas?.() ?? this.votosSvc.listarVotacionesActivas(),
+      ]);
+      this.activas = a || [];
+      this.finalizadas = f || [];
     } catch (e: any) {
-      this.errorMsg = e?.message ?? 'No se pudieron cargar las votaciones.';
+      this.errorActivas = e?.message ?? 'No se pudieron cargar las votaciones activas.';
+      this.errorFinalizadas = e?.message ?? 'No se pudieron cargar las votaciones finalizadas.';
     } finally {
-      this.cargando = false;
+      this.cargandoActivas = false;
+      this.cargandoFinalizadas = false;
+      if (event) event.target.complete?.();
     }
   }
 
@@ -57,4 +83,6 @@ export class VotacionesListPage implements OnInit, OnDestroy {
     if (h > 0) return `${h}h ${m}m ${s}s`;
     return `${m}m ${s}s`;
   }
+
+  trackById(_i: number, v: Votacion) { return v.id; }
 }

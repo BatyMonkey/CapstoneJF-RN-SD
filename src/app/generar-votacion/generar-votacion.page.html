@@ -23,12 +23,8 @@
 
         <ion-item class="field">
           <ion-label position="stacked">Descripción (opcional)</ion-label>
-          <ion-textarea
-            autoGrow="true"
-            rows="3"
-            [(ngModel)]="descripcion"
-            placeholder="Describe brevemente el propósito de esta votación">
-          </ion-textarea>
+          <ion-textarea autoGrow="true" rows="3" [(ngModel)]="descripcion"
+            placeholder="Describe brevemente el propósito de esta votación"></ion-textarea>
         </ion-item>
 
         <ion-item class="field">
@@ -50,9 +46,31 @@
         </div>
 
         <div class="options">
-          <ion-item class="field option" *ngFor="let o of opciones; let i = index">
-            <ion-label position="stacked">Opción {{ i + 1 }}</ion-label>
-            <ion-input [(ngModel)]="o.titulo" placeholder="Texto de la opción"></ion-input>
+          <ion-item class="field option op-card" *ngFor="let o of opciones; let i = index">
+            <ion-label position="stacked">Título de la opción</ion-label>
+            <ion-input [(ngModel)]="o.titulo" placeholder="Ej: Iluminación de calles"></ion-input>
+
+            <ion-label position="stacked" class="ion-margin-top">Descripción</ion-label>
+            <ion-textarea [(ngModel)]="o.descripcion" autoGrow="true" rows="2"
+              placeholder="Detalle breve de la opción"></ion-textarea>
+
+            <div class="ion-margin-top img-row">
+              <ion-button size="small" (click)="pickImage(i)" [disabled]="loading">
+                <ion-icon slot="start" name="image-outline"></ion-icon>
+                Agregar / cambiar foto
+              </ion-button>
+              <ion-button size="small" color="medium" fill="outline"
+                (click)="removeImage(i)" *ngIf="o.previewDataUrl || o.image_url" [disabled]="loading">
+                Quitar foto
+              </ion-button>
+            </div>
+
+            <!-- Contenedor de imagen de alto fijo para uniformidad -->
+            <div class="img-box" *ngIf="o.previewDataUrl || o.image_url">
+              <img [src]="o.previewDataUrl || o.image_url"
+                   style="width:100%;height:100%;object-fit:cover;border-radius:8px;" />
+            </div>
+
             <ion-button slot="end" fill="clear" color="danger"
               (click)="removeOpcion(i)" [disabled]="opciones.length <= 2 || loading" aria-label="Eliminar opción">
               <ion-icon name="trash-outline"></ion-icon>
@@ -73,4 +91,25 @@
       </div>
     </ion-card-content>
   </ion-card>
+
+  <!-- estilos mínimos inline para uniformidad visual -->
+  <style>
+    .options .op-card {
+      align-items: stretch;
+      --inner-padding-end: 0; /* que el botón de borrar no achique el contenido */
+    }
+    .img-row {
+      display: flex;
+      gap: .5rem;
+      align-items: center;
+    }
+    .img-box {
+      margin-top: .5rem;
+      width: 100%;
+      height: 160px;           /* alto fijo para que todas queden iguales */
+      border-radius: 8px;
+      overflow: hidden;
+      background: #f3f4f6;     /* placeholder gris */
+    }
+  </style>
 </ion-content>

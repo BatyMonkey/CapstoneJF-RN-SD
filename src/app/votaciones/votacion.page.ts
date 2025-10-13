@@ -1,5 +1,3 @@
-// src/app/votacion/votacion.page.ts
-
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -9,8 +7,9 @@ import {
   VotacionesService,
   Votacion,
   OpcionVotacion,
+  Voto,
 } from '../services/votaciones.service';
-import { SupabaseClient } from '@supabase/supabase-js';
+import { RealtimeChannel, RealtimePostgresInsertPayload } from '@supabase/supabase-js';
 
 @Component({
   selector: 'app-votacion',
@@ -28,14 +27,19 @@ export class VotacionPage implements OnInit, OnDestroy, ViewWillEnter {
   opciones: OpcionVotacion[] = [];
   miOpcionId?: string;
 
-  private canalVotos?: any;
+  private canalVotos?: RealtimeChannel;
 
   now = Date.now();
   private timer?: any;
 
+  // Viewer de imagen
+  viewerOpen = false;
+  viewerUrl?: string;
+
   constructor(
     private route: ActivatedRoute,
-    private votosSvc: VotacionesService
+    private votosSvc: VotacionesService,
+    private toastCtrl: ToastController
   ) {}
 
   async ngOnInit() {
@@ -46,9 +50,8 @@ export class VotacionPage implements OnInit, OnDestroy, ViewWillEnter {
     // Realtime: incrementa el conteo cuando entran votos nuevos
     this.canalVotos = this.votosSvc.suscribirVotosInsertados(
       this.id,
-      (payload) => {
-        const nuevo = (payload as any).new;
-        const opcionId = nuevo?.opcion_id as string | undefined;
+      (payload: RealtimePostgresInsertPayload<Voto>) => {
+        const opcionId = payload.new?.opcion_id as string | undefined;
         if (!opcionId) return;
         const i = this.opciones.findIndex((o) => o.id === opcionId);
         if (i >= 0) {
@@ -66,6 +69,11 @@ export class VotacionPage implements OnInit, OnDestroy, ViewWillEnter {
     if (this.timer) clearInterval(this.timer);
   }
 
+  ionViewWillEnter() {
+    this.cargando = true;
+    setTimeout(() => this.cargar(), 600);
+  }
+
   private async cargar() {
     this.cargando = true;
     this.errorMsg = '';
@@ -76,30 +84,38 @@ export class VotacionPage implements OnInit, OnDestroy, ViewWillEnter {
       this.miOpcionId = resp.miOpcionId;
     } catch (e: any) {
       this.errorMsg = e?.message ?? 'No se pudo cargar la votación';
+      console.error('Error cargar votación:', e);
     } finally {
       this.cargando = false;
     }
   }
 
-  /** Total de votos sumando todas las opciones */
+  // ⬇️ Handler para pull-to-refresh
+  async handleRefresh(ev: CustomEvent) {
+    try {
+      await this.cargar();
+    } finally {
+      // completa la animación del refresher
+      const target = ev?.target as HTMLIonRefresherElement | undefined;
+      target?.complete?.();
+    }
+  }
+
   get totalVotos(): number {
     return this.opciones.reduce((acc, o) => acc + (o?.total_votos ?? 0), 0);
   }
 
-  /** Porcentaje (0–100) como número redondeado para mostrar en texto/badge */
   percent(op: OpcionVotacion): number {
     const total = this.totalVotos;
     if (!total) return 0;
     const p = ((op?.total_votos ?? 0) * 100) / total;
-    return Math.round(p); // entero; cambia a Math.round(p * 10) / 10 si quieres 1 decimal
+    return Math.round(p);
   }
 
-  /** Cadena "NN%" para la variable CSS --pct (barra de progreso) */
   pct(op: OpcionVotacion): string {
     return `${this.percent(op)}%`;
   }
 
-  /** Mejor rendimiento en *ngFor */
   trackByOp(_: number, op: OpcionVotacion) {
     return op.id;
   }
@@ -140,40 +156,63 @@ export class VotacionPage implements OnInit, OnDestroy, ViewWillEnter {
   async votar(opcion: OpcionVotacion) {
     if (!this.votacion) return;
     if (this.miOpcionId) {
-      this.errorMsg = 'Ya emitiste tu voto en esta votación';
+      await this.mostrarToast('Ya emitiste tu voto en esta votación', 'danger');
       return;
     }
     if (this.bloqueada) {
-      this.errorMsg = 'La votación no está activa';
+      await this.mostrarToast('La votación no está activa', 'warning');
       return;
     }
-    this.errorMsg = '';
 
     // Optimista
     const idx = this.opciones.findIndex((o) => o.id === opcion.id);
-    const anterior = idx >= 0 ? this.opciones[idx].total_votos : 0;
-    if (idx >= 0)
-      this.opciones[idx] = { ...this.opciones[idx], total_votos: anterior + 1 };
+    const anterior = idx >= 0 ? (this.opciones[idx].total_votos ?? 0) : 0;
+    if (idx >= 0) {
+      this.opciones[idx] = {
+        ...this.opciones[idx],
+        total_votos: anterior + 1,
+      };
+    }
 
     try {
       await this.votosSvc.votar(this.votacion.id, opcion.id);
       this.miOpcionId = opcion.id;
+      await this.mostrarToast('Voto registrado correctamente ✅', 'success');
     } catch (e: any) {
-      if (idx >= 0)
-        this.opciones[idx] = { ...this.opciones[idx], total_votos: anterior };
-      this.errorMsg = e?.message ?? 'No se pudo registrar tu voto';
+      if (idx >= 0) {
+        this.opciones[idx] = {
+          ...this.opciones[idx],
+          total_votos: anterior,
+        };
+      }
+      console.error('Error al votar:', e);
+      await this.mostrarToast(
+        e?.message ?? 'No se pudo registrar tu voto',
+        'danger'
+      );
     }
   }
 
-  /**
-   * 🚨 FUNCIÓN CORREGIDA: Aplica el retraso de 0.6s antes de la carga de datos.
-   */
-  ionViewWillEnter() {
-    this.cargando = true; 
-    
-    // 🚀 DELAY DE 600ms: Da tiempo al servidor para que el voto/data se refleje.
-    setTimeout(() => {
-      this.cargar(); // Llama a la función de carga principal
-    }, 600);
+  openImage(url?: string | null) {
+    if (!url) return;
+    this.viewerUrl = url;
+    this.viewerOpen = true;
+  }
+  closeViewer() {
+    this.viewerOpen = false;
+    this.viewerUrl = undefined;
+  }
+
+  private async mostrarToast(
+    message: string,
+    color: 'success' | 'danger' | 'warning'
+  ) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 3000,
+      position: 'top',
+      color,
+    });
+    await toast.present();
   }
 }
