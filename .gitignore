@@ -9,12 +9,4 @@
 /hooks # (Asumido en proyectos Ionic/Angular)
 node_modules/
 redbarrio/node_modules/
-# Ignorar todos los archivos listados
-
-# Excepción: La carpeta 'src' y todo su contenido NO se ignora.
-# Por lo tanto, no se incluye ninguna línea para '/src'.
-tsconfig.json
-*.pdf
-*.pdf
-Fase 1/Evidencias grupales/1.4_APT122_FormativaFase1.docx.pdf
-.eslintrc.json
+.angular/cache
