@@ -1,0 +1,75 @@
+<ion-header [translucent]="true" class="rb-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
+    </ion-buttons>
+    
+    <ion-title>Nuestros Espacios</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  
+  <div class="page-wrap ion-padding">
+    
+    <div *ngIf="isLoading" class="ion-text-center ion-padding">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Cargando lista de espacios...</p>
+    </div>
+
+    <ng-container *ngIf="!isLoading && espacios?.length">
+      
+      <ion-card 
+        *ngFor="let espacio of espacios" 
+        class="card" 
+        button="true" 
+        detail="false"
+        (click)="goToDetail(espacio.id_espacio)" 
+      >
+        <ion-card-header>
+          <ion-card-title>{{ espacio.nombre }}</ion-card-title>
+          <ion-card-subtitle>{{ espacio.direccion_completa || 'Dirección no especificada' }}</ion-card-subtitle>
+        </ion-card-header>
+        
+        <ion-card-content>
+          <ion-grid>
+            <ion-row>
+              <ion-col size="6">
+                <p><strong>Tipo:</strong> {{ getTipoNombre(espacio.tipo) }}</p>
+              </ion-col>
+              <ion-col size="6" class="ion-text-end">
+                <p><strong>Capacidad:</strong> {{ espacio.capacidad }}</p>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+          
+          <p class="ion-padding-top-sm ion-text-start ion-text-sm">
+            {{ espacio.descripcion ? (espacio.descripcion.length > 50 ? espacio.descripcion.substring(0, 50) + '...' : espacio.descripcion) : 'Sin descripción' }}
+          </p>
+        </ion-card-content>
+      </ion-card>
+
+    </ng-container>
+
+    <div *ngIf="!isLoading && !espacios?.length" class="ion-text-center ion-padding">
+      <p>No se encontraron espacios disponibles.</p>
+      <ion-button *ngIf="isAdmin" (click)="irACrearEspacio()" fill="solid" size="large">
+        Crear Nuevo Espacio
+      </ion-button>
+    </div>
+
+  </div>
+  
+  <ion-fab *ngIf="isAdmin" slot="fixed" vertical="bottom" horizontal="end">
+    <ion-button 
+      (click)="irACrearEspacio()" 
+      class="fab-squared-button" 
+      color="primary" 
+      fill="solid"
+    >
+      <ion-icon name="add-outline" slot="start"></ion-icon>
+      Nuevo Espacio
+    </ion-button>
+  </ion-fab>
+
+</ion-content>

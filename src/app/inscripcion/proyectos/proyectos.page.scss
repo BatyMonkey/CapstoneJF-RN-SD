@@ -1,0 +1,154 @@
+/* ===== 1. FUERZA ESQUEMA CLARO Y VARIABLES BASE ===== */
+
+:host,
+:host-context(html) {
+  color-scheme: light !important;
+
+  /* Colores base idénticos al módulo de Espacios */
+  --rb-primary: #2563eb;
+  --rb-bg: #f5f7fb;
+  --rb-text: #0f172a;
+  --rb-muted: #475569;
+
+  --ion-text-color: var(--rb-text);
+  --ion-background-color: var(--rb-bg);
+  --ion-item-background: #ffffff;
+  --ion-card-background: #ffffff;
+}
+
+/* ===== 2. HEADER CON GRADIENTE ===== */
+
+.rb-header ion-toolbar {
+  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
+  --color: #fff;
+  --border-color: transparent;
+}
+
+ion-title {
+  font-weight: 700;
+}
+
+/* ===== 3. CONTENEDOR GENERAL ===== */
+
+.page-wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding-top: 1px;
+}
+
+/* ===== 4. TARJETAS ===== */
+
+ion-card.card {
+  background: #fff;
+  border-radius: 18px;
+  border: 1px solid rgba(2, 6, 23, 0.08);
+  box-shadow: 0 12px 28px rgba(2, 6, 23, 0.10);
+  overflow: hidden;
+  margin-bottom: 16px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 14px 30px rgba(2, 6, 23, 0.15);
+  }
+
+  &:active {
+    transform: translateY(1px);
+    box-shadow: 0 8px 24px rgba(2, 6, 23, 0.08);
+  }
+
+  ion-card-header {
+    background: #fff;
+    border-bottom: 1px solid rgba(2, 6, 23, 0.06);
+    padding-bottom: 8px;
+  }
+
+  ion-card-title {
+    color: var(--rb-text);
+    font-weight: 800;
+    font-size: 1.3rem;
+  }
+
+  ion-card-subtitle {
+    color: #64748b;
+    font-weight: 600;
+    margin-top: 4px;
+    font-size: 0.9rem;
+  }
+}
+
+/* ===== 5. CONTENIDO DE TARJETAS ===== */
+
+ion-card-content {
+  p {
+    margin: 4px 0;
+    color: var(--rb-text);
+    line-height: 1.4;
+    font-size: 0.95rem;
+    text-align: justify;
+  }
+
+  strong {
+    color: var(--rb-muted);
+    font-weight: 600;
+  }
+}
+
+/* ===== 6. SPINNER Y TEXTOS DE CARGA ===== */
+
+ion-spinner {
+  margin-bottom: 6px;
+}
+
+.ion-text-center p {
+  color: var(--rb-muted);
+  font-size: 0.95rem;
+}
+
+/* ===== 7. LIMPIEZA MODO OSCURO ===== */
+
+@media (prefers-color-scheme: dark) {
+  :host {
+    --ion-background-color: var(--rb-bg);
+    --ion-card-background: #ffffff;
+    --ion-item-background: #ffffff;
+    --ion-text-color: var(--rb-text);
+  }
+}
+
+.card-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.text-section {
+  flex: 1;
+  min-width: 0;
+}
+
+.text-section p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--ion-color-dark);
+}
+
+.text-section .fecha {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--ion-color-medium);
+}
+
+.image-section {
+  flex-shrink: 0;
+}
+
+.thumbnail-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
