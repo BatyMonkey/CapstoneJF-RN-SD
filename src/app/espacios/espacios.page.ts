@@ -99,6 +99,6 @@ export class EspaciosPage implements OnInit {
    * Navega a la página de creación de espacio.
    */
   irACrearEspacio() {
-    this.router.navigateByUrl('espacios/crear');
+    this.router.navigateByUrl('espacio/crear');
   }
 }

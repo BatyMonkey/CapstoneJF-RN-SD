@@ -26,10 +26,10 @@
   <div *ngIf="espacio && !isLoading">
     
     <ion-card class="card">
+      <ion-img *ngIf="espacio.imagen_url" [src]="espacio.imagen_url" alt="Imagen del espacio" style="width: 100%; height: 220px; object-fit: cover;"></ion-img>
       <ion-card-header>
         <ion-card-title>{{ espacio.nombre }}</ion-card-title>
       </ion-card-header>
-
       <ion-card-content>
         <ion-grid>
           <ion-row>
@@ -41,7 +41,6 @@
             </ion-col>
           </ion-row>
         </ion-grid>
-        
         <h3 class="ion-padding-top">Descripción</h3>
         <p>{{ espacio.descripcion || 'Sin descripción detallada.' }}</p>
       </ion-card-content>

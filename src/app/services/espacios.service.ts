@@ -17,6 +17,7 @@ export interface Espacio {
   
   latitud: number;
   longitud: number;
+  imagen_url?: string | null; // URL de la imagen asociada al espacio
 }
 
 @Injectable({
@@ -61,6 +62,7 @@ export class EspaciosService {
           direccion_completa: espacioData.direccion_completa,
           latitud: espacioData.latitud,
           longitud: espacioData.longitud,
+          imagen_url: espacioData.imagen_url || null, // Guardar la URL de la imagen
         }
       ])
       .select();

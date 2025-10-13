@@ -66,6 +66,27 @@
       
       <ion-card class="card">
         <ion-card-header>
+          <ion-card-title>Imagen del Espacio</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item class="field" lines="none">
+            <ion-label position="stacked">Imagen</ion-label>
+            <input
+              type="file"
+              accept="image/*"
+              (change)="onFileSelected($event)"
+              class="ion-padding-top"
+            >
+          </ion-item>
+          
+          <div *ngIf="imageUrl" class="ion-padding-top">
+            <img [src]="imageUrl" alt="Preview" style="max-width: 100%; border-radius: 8px;">
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="card">
+        <ion-card-header>
           <ion-card-title>Ubicación</ion-card-title>
         </ion-card-header>
         <ion-card-content>

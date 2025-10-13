@@ -8,6 +8,14 @@
 </ion-header>
 
 <ion-content class="ion-padding votacion" [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content
+      pullingText="Desliza para refrescar"
+      refreshingSpinner="crescent"
+      refreshingText="Actualizando...">
+    </ion-refresher-content>
+  </ion-refresher>
+
   <ion-text color="danger" *ngIf="errorMsg" class="err">{{ errorMsg }}</ion-text>
 
   <div class="ion-text-center" *ngIf="cargando">
@@ -48,9 +56,21 @@
                 <span class="pct-badge">{{ percent(op) }}%</span>
               </div>
 
-              <div class="bar">
-                <div class="fill"></div>
-              </div>
+              <p class="desc" *ngIf="op.descripcion" style="margin:4px 0 8px 0;">
+                {{ op.descripcion }}
+              </p>
+
+              <div class="bar"><div class="fill"></div></div>
+
+              <button
+                class="img-box"
+                *ngIf="op.image_url"
+                type="button"
+                (click)="openDetail(op)"
+                aria-label="Ver detalle de la opción"
+              >
+                <img [src]="op.image_url" alt="Imagen opción" />
+              </button>
 
               <p class="meta">Votos: {{ op.total_votos }}</p>
             </ion-label>
@@ -69,4 +89,151 @@
       </ion-card-content>
     </ion-card>
   </ng-container>
+
+  <ion-modal
+    [isOpen]="detailOpen"
+    (didDismiss)="closeDetail()"
+    [backdropDismiss]="true"
+    [showBackdrop]="true"
+    cssClass="op-dialog"
+  >
+    <ng-template>
+      <ng-container *ngIf="selectedOp as sop">
+        <div class="dialog-overlay" (click)="closeDetail()">
+          <ion-card class="dialog-card" (click)="$event.stopPropagation()">
+            <div class="detail-img" *ngIf="sop.image_url">
+              <img [src]="sop.image_url" alt="Imagen opción" />
+            </div>
+
+            <ion-card-header>
+              <ion-card-title>{{ sop.titulo }}</ion-card-title>
+              <ion-card-subtitle *ngIf="sop.descripcion">
+                {{ sop.descripcion }}
+              </ion-card-subtitle>
+            </ion-card-header>
+
+            <ion-card-content>
+              <div class="detail-stats">
+                <ion-badge color="primary">{{ percent(sop) }}%</ion-badge>
+                <ion-badge color="medium">Votos: {{ sop.total_votos || 0 }}</ion-badge>
+              </div>
+
+              <div class="bar big">
+                <div class="fill" [style.width.%]="percent(sop)"></div>
+              </div>
+
+              <ion-button
+                expand="block"
+                [disabled]="!!miOpcionId || bloqueada"
+                (click)="votar(sop)"
+              >
+                {{ miOpcionId ? (miOpcionId === sop.id ? 'Votado' : 'Votar') : 'Votar' }}
+              </ion-button>
+            </ion-card-content>
+          </ion-card>
+        </div>
+      </ng-container>
+    </ng-template>
+  </ion-modal>
+
+  <style>
+    .img-box{
+      margin-top:.5rem;
+      width:100%;
+      aspect-ratio:16/9;
+      border-radius:8px;
+      overflow:hidden;
+      padding:0;
+      border:none;
+      background:#f3f4f6;
+    }
+    .img-box img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .bar{ margin:8px 0 6px 0; height:8px; border-radius:6px; background:#e5e7eb; overflow:hidden; }
+    .bar .fill{ height:100%; background: var(--ion-color-primary); width: var(--pct); transition: width .25s ease; }
+    .bar.big{ height:12px; border-radius:10px; }
+    .detail-stats{ display:flex; gap:.5rem; align-items:center; margin-bottom:.5rem; }
+
+    .op-dialog{
+      --backdrop-opacity: 0;
+      --background: transparent;
+      --box-shadow: none;
+      --ion-background-color: transparent;
+    }
+
+    ion-modal.op-dialog::part(backdrop){
+      background: transparent !important;
+      pointer-events: auto !important;
+    }
+
+    .op-dialog .modal-shadow{ display:none !important; }
+    .op-dialog .ion-overlay-wrapper{ background:transparent !important; }
+
+    .op-dialog .modal-wrapper{
+      position: fixed !important;
+      inset: 0 !important;
+      background: transparent !important;
+      display: grid !important;
+      place-items: center !important;
+      padding: 16px !important;
+      box-shadow: none !important;
+    }
+
+    .op-dialog .modal-wrapper .ion-page{
+      background: transparent !important;
+      color-scheme: light;
+    }
+    .op-dialog ion-content{ --background: transparent !important; }
+
+    .dialog-overlay{
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: transparent;
+      z-index: 1;
+    }
+
+    .dialog-card{
+      width: min(560px, 92vw);
+      max-height: 85vh;
+      border-radius: 16px;
+      overflow: hidden auto;
+      background: var(--ion-background-color, #fff);
+      box-shadow: 0 10px 30px rgba(0,0,0,.12);
+      pointer-events: auto;
+    }
+
+    .dialog-card ion-card-header,
+    .dialog-card ion-card-content{
+      background: #fff !important;
+    }
+
+    .detail-img{ width:100%; aspect-ratio:16/9; overflow:hidden; background:#000; }
+    .detail-img img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+    ion-modal.op-dialog::part(content),
+    .op-dialog .ion-overlay-wrapper,
+    .op-dialog .modal-wrapper,
+    .op-dialog .modal-wrapper > .ion-page,
+    .op-dialog ion-content {
+      border-radius: 16px !important;
+      overflow: hidden !important;
+      background: transparent !important;
+    }
+
+    .dialog-card,
+    ion-modal.op-dialog::part(content){
+      -webkit-mask-image: -webkit-radial-gradient(white, black);
+    }
+
+    .op-dialog ion-content{
+      overscroll-behavior: contain;
+    }
+  </style>
 </ion-content>

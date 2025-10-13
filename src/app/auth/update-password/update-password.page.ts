@@ -1,17 +1,16 @@
-// src/app/auth/update-password/update-password.page.ts
-
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { IonicModule, ToastController } from '@ionic/angular';
-import { AuthService } from '../auth.service'; // Asumo la ruta del servicio
+import { AuthService } from '../auth.service';
+import { supabase } from '../../core/supabase.client';
 
 @Component({
   standalone: true,
   selector: 'app-update-password',
   templateUrl: './update-password.page.html',
-  styleUrls: ['../login/login.page.scss'], // 🚨 Reutilizamos los estilos de login
+  styleUrls: ['../login/login.page.scss'], // reutilizas estilo de login
   imports: [IonicModule, CommonModule, FormsModule],
 })
 export class UpdatePasswordPage implements OnInit {
@@ -20,7 +19,7 @@ export class UpdatePasswordPage implements OnInit {
 
   loading = false;
   errorMsg = '';
-  successMsg = ''; // Para mostrar el éxito antes de redirigir
+  successMsg = '';
 
   constructor(
     private auth: AuthService,
@@ -28,8 +27,12 @@ export class UpdatePasswordPage implements OnInit {
     private toastCtrl: ToastController
   ) {}
 
-  ngOnInit() {
-    // Al cargarse, este componente asume que Supabase ya ha detectado el token de recuperación
+  async ngOnInit() {
+    // Validación temprana: si no hay sesión, el cambio fallará.
+    const { data: s } = await supabase.auth.getSession();
+    if (!s.session) {
+      this.errorMsg = 'No se detectó sesión de recuperación. Abre nuevamente el enlace del correo desde este dispositivo.';
+    }
   }
 
   async updatePassword(form: NgForm) {
@@ -40,8 +43,7 @@ export class UpdatePasswordPage implements OnInit {
       if (this.newPassword !== this.confirmPassword) {
         this.errorMsg = 'Las contraseñas no coinciden.';
       } else {
-        this.errorMsg =
-          'Por favor, completa la contraseña (mínimo 6 caracteres).';
+        this.errorMsg = 'Por favor, completa la contraseña (mínimo 6 caracteres).';
       }
       return;
     }
@@ -49,20 +51,24 @@ export class UpdatePasswordPage implements OnInit {
     this.loading = true;
 
     try {
-      // 🚨 Supabase actualiza la contraseña del usuario logueado actualmente
+      // Garantiza sesión antes de actualizar
+      const { data: s } = await supabase.auth.getSession();
+      if (!s.session) {
+        this.errorMsg = 'No se detectó sesión de recuperación. Abre nuevamente el enlace del correo desde este dispositivo.';
+        await this.mostrarToast(this.errorMsg, 'danger');
+        this.loading = false;
+        return;
+      }
+
       await this.auth.updateUser({ password: this.newPassword });
 
       this.successMsg = '¡Contraseña actualizada con éxito! Redirigiendo...';
-
-      // Mostrar toast de éxito y redirigir al login
       await this.mostrarToast(this.successMsg, 'success');
-
-      // Redirigir al login para que el usuario ingrese con la nueva contraseña
-      this.router.navigateByUrl('/auth/login', { replaceUrl: true });
+      await this.router.navigateByUrl('/auth/login', { replaceUrl: true });
     } catch (e: any) {
       console.error('Error al actualizar contraseña:', e);
-      this.errorMsg =
-        e?.message ?? 'Ocurrió un error al intentar cambiar la contraseña.';
+      this.errorMsg = e?.message ?? 'Ocurrió un error al intentar cambiar la contraseña.';
+      await this.mostrarToast(this.errorMsg, 'danger');
     } finally {
       this.loading = false;
     }
@@ -80,7 +86,6 @@ export class UpdatePasswordPage implements OnInit {
 
   goToLogin() {
     if (this.loading) return;
-    // Redirige al login para que el usuario pueda ingresar con su nueva contraseña
     this.router.navigateByUrl('/auth/login', { replaceUrl: true });
   }
 }
