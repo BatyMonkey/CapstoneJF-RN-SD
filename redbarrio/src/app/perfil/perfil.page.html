@@ -1,0 +1,162 @@
+<ion-header class="rb-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mi Perfil</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()" color="light">
+        <ion-icon name="log-out-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="perfil-page">
+
+    <ion-card class="card ion-no-margin">
+      <ion-card-header>
+        <ion-card-title>Datos Personales</ion-card-title>
+        <ion-card-subtitle>Información básica y de contacto.</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        
+        <div class="profile-photo-container ion-text-center ion-padding-bottom">
+            <img 
+                [src]="perfilActual?.url_foto_perfil || 'assets/default_avatar.svg'" 
+                alt="Foto de perfil" 
+                class="profile-avatar"
+            >
+            
+            <input type="file" 
+                   #fileInput 
+                   (change)="onFileSelected($event)" 
+                   accept="image/png, image/jpeg" 
+                   style="display: none;">
+                   
+            <ion-button 
+                fill="clear" 
+                size="small" 
+                (click)="fileInput.click()"
+                [disabled]="isUploading || isSaving"
+                style="margin-top: 8px;">
+                <ion-icon name="camera-outline" slot="start"></ion-icon>
+                {{ fotoFile ? 'Cambiar (' + fotoFile.name.substring(0, 15) + '...)' : 'Seleccionar Foto' }}
+                <ion-spinner *ngIf="isUploading" name="dots"></ion-spinner>
+            </ion-button>
+        </div>
+        
+        <div class="verification-status is-pending" *ngIf="perfilActual && !perfilActual.verificado">
+            Tu cuenta aún no ha sido verificada.
+        </div>
+        
+        <form [formGroup]="perfilForm" (ngSubmit)="guardarCambios()">
+
+          <ion-item lines="none" class="field is-static" [disabled]="true">
+            <ion-input
+              label="Nombre Completo"
+              labelPlacement="stacked"
+              placeholder="Cargando..."
+              [value]="perfilActual?.nombre || 'N/A'"
+              readonly>
+            </ion-input>
+          </ion-item>
+          
+          <ion-item lines="none" class="field is-static" [disabled]="true">
+            <ion-input
+              label="Primer Nombre"
+              labelPlacement="stacked"
+              placeholder="Cargando..."
+              [value]="perfilActual?.primer_nombre || 'N/A'"
+              readonly>
+            </ion-input>
+          </ion-item>
+
+          <ion-item lines="none" class="field is-static" [disabled]="true">
+            <ion-input
+              label="Primer Apellido"
+              labelPlacement="stacked"
+              placeholder="Cargando..."
+              [value]="perfilActual?.primer_apellido || 'N/A'"
+              readonly>
+            </ion-input>
+          </ion-item>
+
+          <ion-item lines="none" class="field">
+            <ion-input
+              label="Segundo Nombre"
+              labelPlacement="stacked"
+              formControlName="segundo_nombre"
+              placeholder="Segundo nombre (Opcional)">
+            </ion-input>
+          </ion-item>
+
+          <ion-item lines="none" class="field">
+            <ion-input
+              label="Segundo Apellido"
+              labelPlacement="stacked"
+              formControlName="segundo_apellido"
+              placeholder="Segundo apellido (Opcional)">
+            </ion-input>
+          </ion-item>
+          
+          <ion-item lines="none" class="field">
+            <ion-input
+              label="Teléfono"
+              labelPlacement="stacked"
+              formControlName="telefono"
+              placeholder="Ej: +56912345678"
+              type="tel">
+            </ion-input>
+          </ion-item>
+
+          <ion-text color="danger" *ngIf="perfilForm.get('telefono')?.errors && (perfilForm.get('telefono')?.dirty || perfilForm.get('telefono')?.touched)">
+              <p *ngIf="perfilForm.get('telefono')?.errors?.['pattern']">
+                  El formato de teléfono debe ser: **(+56) 9XXXXXXXX** (ej: +56912345678 o 912345678).
+              </p>
+          </ion-text>
+
+
+          <ion-item lines="none" class="field is-static" [disabled]="true">
+            <ion-input
+              label="Correo Electrónico"
+              labelPlacement="stacked"
+              placeholder="Cargando..."
+              [value]="perfilActual?.correo || 'N/A'"
+              readonly>
+            </ion-input>
+          </ion-item>
+
+          <div class="actions">
+            <ion-button 
+              type="submit" 
+              expand="block" 
+              [disabled]="perfilForm.invalid || (!perfilForm.dirty && !fotoFile) || isSaving || isUploading">
+              <span *ngIf="!isSaving && !isUploading">Guardar Cambios</span>
+              <span *ngIf="isSaving || isUploading">Guardando...</span>
+              <ion-spinner *ngIf="isSaving || isUploading" name="dots"></ion-spinner>
+            </ion-button>
+          </div>
+        </form>
+      </ion-card-content>
+    </ion-card>
+    
+    <ion-card class="card ion-no-margin">
+        <ion-card-header>
+            <ion-card-title>Información Adicional</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+            <ion-item lines="none" class="field is-static" [disabled]="true">
+                <ion-input
+                  label="Rol de Usuario"
+                  labelPlacement="stacked"
+                  [value]="perfilActual?.rol || 'vecino'"
+                  readonly>
+                </ion-input>
+            </ion-item>
+        </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

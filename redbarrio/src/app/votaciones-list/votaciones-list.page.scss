@@ -1,0 +1,136 @@
+:host {
+  color-scheme: light;
+
+  /* Mantén la misma paleta que en el detalle */
+  --rb-primary: #2563eb;
+  --rb-primary-10: rgba(37, 99, 235, 0.10);
+  --rb-primary-20: rgba(37, 99, 235, 0.20);
+  --rb-bg: #f8fafc;
+  --rb-text: #0f172a;
+
+  --ion-background-color: var(--rb-bg);
+  --ion-text-color: var(--rb-text);
+}
+
+/* Header gradient consistente */
+.rb-header ion-toolbar {
+  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
+  --color: #fff;
+  --border-color: transparent;
+}
+
+/* Separación entre cajas */
+.section {
+  margin-bottom: 18px;
+}
+
+/* Header de cada acordeón (claro, no oscuro) */
+.section-header {
+  --background: #ffffff;
+  --color: var(--rb-text);
+  --padding-start: 14px;
+  --padding-end: 12px;
+  --min-height: 56px;
+  border: 1px solid rgba(2, 6, 23, 0.06);
+  border-radius: 14px;
+  box-shadow: 0 10px 22px rgba(2, 6, 23, 0.06);
+
+  ion-icon[slot="start"] {
+    font-size: 20px;
+    margin-right: 8px;
+    opacity: .9;
+  }
+
+  ion-label {
+    font-weight: 700;
+    letter-spacing: .2px;
+  }
+
+  .count {
+    --background: rgba(2, 6, 23, 0.10);
+    --color: #111827;
+    height: 24px;
+    border-radius: 999px;
+    padding: 0 10px;
+    font-size: 12px;
+
+    &.primary {
+      --background: var(--rb-primary-10);
+      --color: var(--rb-text);
+      font-weight: 700;
+    }
+  }
+}
+
+/* Contenido desplegado: fondo igual al resto de la app */
+.section-content {
+  padding: 10px 2px 2px;
+  background: transparent;
+}
+
+/* Estado de carga */
+.loading {
+  display: grid;
+  place-items: center;
+  padding: 18px 0;
+}
+
+/* Tarjetas igual que en la vista de detalle */
+.card {
+  background: #fff;
+  border-radius: 18px;
+  border: 1px solid rgba(2, 6, 23, 0.06);
+  box-shadow: 0 10px 26px rgba(2, 6, 23, 0.08);
+  overflow: hidden;
+  margin: 12px 4px;
+
+  ion-card-header {
+    background: #fff;
+    border-bottom: 1px solid rgba(2, 6, 23, 0.06);
+
+    .card-title {
+      font-weight: 800;
+      color: var(--rb-text);
+    }
+
+    .card-subtitle {
+      color: #64748b;
+      font-weight: 500;
+    }
+  }
+
+  ion-card-content {
+    padding-top: 12px;
+
+    .meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #f3f4f6;
+      color: #475569;
+      font-weight: 600;
+
+      ion-icon { font-size: 18px; opacity: .9; }
+
+      &.primary {
+        background: var(--rb-primary-10);
+        color: var(--rb-text);
+        border: 1px solid var(--rb-primary-20);
+      }
+    }
+  }
+}
+
+.empty {
+  text-align: center;
+  margin: 18px 0 6px;
+}
+
+/* iOS pequeños ajustes */
+.ios .section-header {
+  --min-height: 52px;
+  --padding-start: 12px;
+  --padding-end: 10px;
+}

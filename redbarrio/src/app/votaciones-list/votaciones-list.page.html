@@ -1,0 +1,106 @@
+<ion-header class="rb-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Votaciones</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding vot-list" [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="cargarTodo($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- ============ ACTIVAS ============ -->
+  <section class="section">
+    <!-- Prop + evento (sin two-way) -->
+    <ion-accordion-group
+      [value]="accordionValue"
+      (ionChange)="accordionValue = $event.detail.value">
+      <ion-accordion value="activas">
+        <ion-item slot="header" lines="none" class="section-header" button detail>
+          <ion-icon slot="start" name="flame-outline"></ion-icon>
+          <ion-label>Votaciones activas</ion-label>
+          <ion-chip slot="end" class="count primary">{{ activas.length }}</ion-chip>
+        </ion-item>
+
+        <div slot="content" class="section-content">
+          <ion-text color="danger" *ngIf="errorActivas">{{ errorActivas }}</ion-text>
+
+          <div class="loading" *ngIf="cargandoActivas">
+            <ion-spinner name="crescent"></ion-spinner>
+          </div>
+
+          <ng-container *ngIf="!cargandoActivas">
+            <ion-card class="card" *ngFor="let v of activas; trackBy: trackById" (click)="irDetalle(v)" button>
+              <ion-card-header>
+                <ion-card-title class="card-title">{{ v.titulo }}</ion-card-title>
+                <ion-card-subtitle class="card-subtitle" *ngIf="v.descripcion">
+                  {{ v.descripcion }}
+                </ion-card-subtitle>
+              </ion-card-header>
+
+              <ion-card-content>
+                <div class="meta primary">
+                  <ion-icon name="time-outline"></ion-icon>
+                  <span>Termina en: {{ tiempoRestante(v.fecha_fin) }}</span>
+                </div>
+              </ion-card-content>
+            </ion-card>
+
+            <ion-text color="medium" *ngIf="!activas.length">
+              <p class="empty">No hay votaciones activas en este momento.</p>
+            </ion-text>
+          </ng-container>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+  </section>
+
+  <!-- ============ FINALIZADAS ============ -->
+  <section class="section">
+    <!-- Usa el mismo control para que al abrir uno se cierre el otro -->
+    <ion-accordion-group
+      [value]="accordionValue"
+      (ionChange)="accordionValue = $event.detail.value">
+      <ion-accordion value="finalizadas">
+        <ion-item slot="header" lines="none" class="section-header" button detail>
+          <ion-icon slot="start" name="checkmark-done-outline"></ion-icon>
+          <ion-label>Votaciones finalizadas</ion-label>
+          <ion-chip slot="end" class="count">{{ finalizadas.length }}</ion-chip>
+        </ion-item>
+
+        <div slot="content" class="section-content">
+          <ion-text color="danger" *ngIf="errorFinalizadas">{{ errorFinalizadas }}</ion-text>
+
+          <div class="loading" *ngIf="cargandoFinalizadas">
+            <ion-spinner name="crescent"></ion-spinner>
+          </div>
+
+          <ng-container *ngIf="!cargandoFinalizadas">
+            <ion-card class="card" *ngFor="let v of finalizadas; trackBy: trackById" (click)="irDetalle(v)" button>
+              <ion-card-header>
+                <ion-card-title class="card-title">{{ v.titulo }}</ion-card-title>
+                <ion-card-subtitle class="card-subtitle" *ngIf="v.descripcion">
+                  {{ v.descripcion }}
+                </ion-card-subtitle>
+              </ion-card-header>
+
+              <ion-card-content>
+                <div class="meta">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  <span>Finalizó: {{ v.fecha_fin | date:'medium' }}</span>
+                </div>
+              </ion-card-content>
+            </ion-card>
+
+            <ion-text color="medium" *ngIf="!finalizadas.length">
+              <p class="empty">No hay votaciones finalizadas.</p>
+            </ion-text>
+          </ng-container>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+  </section>
+</ion-content>
