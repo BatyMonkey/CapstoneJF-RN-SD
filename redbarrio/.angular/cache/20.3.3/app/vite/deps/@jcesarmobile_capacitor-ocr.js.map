@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../../../node_modules/@jcesarmobile/capacitor-ocr/dist/esm/index.js"],
+  "sourcesContent": ["import { registerPlugin } from '@capacitor/core';\nconst Ocr = registerPlugin('Ocr');\nexport * from './definitions';\nexport { Ocr };\n"],
+  "mappings": ";;;;;;AACA,IAAM,MAAM,eAAe,KAAK;",
+  "names": []
+}

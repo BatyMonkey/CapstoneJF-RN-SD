@@ -1,15 +1,21 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Confirmación de Pago</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content class="ion-padding">
-  <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+  <div *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>{{ mensaje }}</p>
+  </div>
 
-  <p *ngIf="!loading">{{ mensaje }}</p>
+  <div *ngIf="!loading">
+    <h2>{{ mensaje }}</h2>
 
-  <ion-button expand="block" color="success" routerLink="/home" *ngIf="!loading">
-    VOLVER AL INICIO
-  </ion-button>
+    <div *ngIf="detalles">
+      <p><strong>Estado:</strong> {{ detalles.estado }}</p>
+      <p><strong>Monto:</strong> ${{ detalles.monto }}</p>
+      <p><strong>Tipo de pago:</strong> {{ detalles.tipoPago }}</p>
+      <p><strong>Código autorización:</strong> {{ detalles.codigoAutorizacion }}</p>
+    </div>
+
+    <ion-button routerLink="/home" expand="block" color="primary">
+      Volver al inicio
+    </ion-button>
+  </div>
 </ion-content>
