@@ -7,7 +7,8 @@
 /www
 /platforms # (Asumido en proyectos Ionic/Angular)
 /hooks # (Asumido en proyectos Ionic/Angular)
-
+node_modules/
+redbarrio/node_modules/
 # Ignorar todos los archivos listados
 .browserslistrc
 .editorconfig
