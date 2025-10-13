@@ -1,7 +1,7 @@
 import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL = 'https://sovnabbbubapqxziubuh.supabase.co';
@@ -11,13 +11,14 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 @Component({
   selector: 'app-pago-retorno',
   standalone: true,
-  imports: [CommonModule, IonicModule],
+  imports: [CommonModule, IonicModule, RouterModule],
   templateUrl: './pago-retorno.page.html',
   styleUrls: ['./pago-retorno.page.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PagoRetornoPage implements OnInit {
   mensaje: string = 'Procesando pago...';
+  detalles: any = null;
   loading = true;
 
   constructor(private route: ActivatedRoute) {}
@@ -26,31 +27,65 @@ export class PagoRetornoPage implements OnInit {
     await this.confirmarPago();
   }
 
+  /** 🔄 Confirmar pago al volver de Transbank */
   async confirmarPago() {
-    const token = this.route.snapshot.queryParamMap.get('token_ws');
-    if (!token) {
-      this.mensaje = 'Token no encontrado.';
+    const token_ws = this.route.snapshot.queryParamMap.get('token_ws');
+    if (!token_ws) {
+      this.mensaje = '⚠️ No se encontró el token del pago.';
       this.loading = false;
       return;
     }
 
     try {
+      // ✅ Llamamos al Edge Function transbank-confirm
       const { data, error } = await supabase.functions.invoke('transbank-confirm', {
-        body: { token },
+        body: { token_ws },
       });
 
       this.loading = false;
 
       if (error) {
-        console.error('Error en Supabase:', error);
+        console.error('Error Supabase:', error);
         this.mensaje = '❌ Error al confirmar el pago.';
         return;
       }
 
-      if (data?.status === 'AUTHORIZED' && data?.response_code === 0) {
-        this.mensaje = '✅ Pago autorizado correctamente.';
+      // ✅ Si el pago fue autorizado
+      if (data?.status === 'AUTHORIZED') {
+        this.mensaje = '✅ Pago realizado con éxito.';
+        this.detalles = {
+          estado: 'Pagado',
+          codigoAutorizacion: data.authorization_code,
+          tipoPago: data.payment_type_code,
+          monto: data.amount,
+        };
+
+        // 💾 Actualizamos token_ws en la tabla orden_pago (opcional si aún no está registrado)
+        await supabase
+          .from('orden_pago')
+          .update({
+            token_ws: token_ws,
+            estado: 'pagado',
+            updated_at: new Date().toISOString(),
+          })
+          .eq('token_ws', token_ws);
+
       } else {
-        this.mensaje = '❌ Pago rechazado o no autorizado.';
+        this.mensaje = '❌ El pago fue rechazado o no autorizado.';
+        this.detalles = {
+          estado: 'Rechazado',
+          codigoAutorizacion: data?.authorization_code ?? 'N/A',
+          tipoPago: data?.payment_type_code ?? 'N/A',
+          monto: data?.amount ?? 0,
+        };
+
+        await supabase
+          .from('orden_pago')
+          .update({
+            estado: 'rechazado',
+            updated_at: new Date().toISOString(),
+          })
+          .eq('token_ws', token_ws);
       }
     } catch (err) {
       console.error('Error general:', err);

@@ -1,0 +1,83 @@
+<ion-header [translucent]="true" class="rb-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Proyectos y Actividades</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="page-wrap ion-padding">
+
+    <!-- 🔹 Filtro de tipo -->
+    <ion-segment [(ngModel)]="filtro" (ionChange)="filtrarListado()" value="todos">
+      <ion-segment-button value="todos">
+        <ion-label>Todos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="proyectos">
+        <ion-label>Proyectos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="actividades">
+        <ion-label>Actividades</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <!-- 🔄 Estado de carga -->
+    <div *ngIf="isLoading" class="ion-text-center ion-padding">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Cargando elementos...</p>
+    </div>
+
+    <!-- ✅ Listado -->
+    <ng-container *ngIf="!isLoading && elementos?.length">
+      <ion-card
+        *ngFor="let item of elementosFiltrados"
+        class="card"
+        button="true"
+        detail="false"
+        (click)="verDetalle(item)">
+        
+        <ion-card-header>
+          <ion-card-title>
+            {{ item.titulo }}
+            <ion-badge
+              slot="end"
+              color="{{ item.tipo === 'actividad' ? 'success' : 'primary' }}"
+              style="margin-left: 6px;">
+              {{ item.tipo === 'actividad' ? 'Actividad' : 'Proyecto' }}
+            </ion-badge>
+          </ion-card-title>
+          <ion-card-subtitle>
+            {{ item.fecha | date:'dd/MM/yyyy HH:mm' }}
+          </ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="card-content">
+            <div class="text-section">
+              <p class="ion-text-justify">
+                {{ item.descripcion.length > 100
+                    ? (item.descripcion | slice:0:100) + '...'
+                    : item.descripcion }}
+              </p>
+              <small class="fecha">
+                {{ item.fecha | date:'dd/MM/yyyy HH:mm' }}
+              </small>
+            </div>
+
+            <div class="image-section" *ngIf="item.imagen_url">
+              <ion-img [src]="item.imagen_url" alt="imagen"
+                class="thumbnail-img">
+              </ion-img>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </ng-container>
+
+    <div *ngIf="!isLoading && !elementos?.length" class="ion-text-center ion-padding">
+      <p>No hay elementos disponibles para mostrar.</p>
+    </div>
+
+  </div>
+</ion-content>
