@@ -10,20 +10,6 @@
 node_modules/
 redbarrio/node_modules/
 # Ignorar todos los archivos listados
-.browserslistrc
-.editorconfig
-.eslintrc.js
-.gitignore # Si quieres que tu .gitignore no sea trakeado
-angular.json
-capacitor.config.ts
-ionic.config.json
-karma.conf.js
-package.json
-package-lock.json
-requirements*.txt
-tsconfig.app.json
-tsconfig.config.json
-tsconfig.spec.json
 
 # Excepción: La carpeta 'src' y todo su contenido NO se ignora.
 # Por lo tanto, no se incluye ninguna línea para '/src'.
