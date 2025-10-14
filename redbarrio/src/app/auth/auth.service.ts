@@ -27,6 +27,7 @@ export interface Perfil {
   fecha_nacimiento?: string | null;
   sexo?: 'M' | 'F' | null;
   url_foto_perfil?: string | null;
+  url_boleta_servicio?: string | null; // << opcional si quieres leerlo
 }
 
 type Rol = 'vecino' | 'directorio' | 'administrador';
@@ -44,6 +45,7 @@ export type RegisterExtras = Partial<{
   fecha_nacimiento: string | null;
   sexo: 'M' | 'F' | null;
   url_foto_perfil: string | null;
+  url_boleta_servicio: string | null; // << NUEVO
 }>;
 
 export type RegisterPayload = {
@@ -59,6 +61,7 @@ export type RegisterPayload = {
   telefono?: string | null;
   fecha_nacimiento?: string | null;
   sexo?: 'M' | 'F' | null;
+  url_boleta_servicio?: string | null; // << NUEVO
 };
 
 const PENDING_KEY = 'rb_pending_full';
@@ -74,7 +77,6 @@ export class AuthService {
   private perfilCache: Perfil | null = null;
 
   constructor() {
-    // 🔄 Mantiene la sesión activa tras reload o navegación
     supabase.auth.onAuthStateChange((_event, session) => {
       this.currentSession = session;
       if (session?.user?.id) {
@@ -210,7 +212,6 @@ export class AuthService {
       await this.ensureUsuarioRow();
     }
 
-    // Guarda el perfil en caché local
     const perfil = await this.miPerfil();
     if (perfil) this.setUsuarioForzado(perfil);
 
@@ -324,7 +325,7 @@ export class AuthService {
   }
 
   // ==========================================================
-  // 🧰 Modo desarrollo (persistencia local de usuario)
+  // 🧰 Modo desarrollo
   // ==========================================================
 
   getUsuarioForzado(): Perfil | null {

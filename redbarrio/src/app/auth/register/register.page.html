@@ -18,6 +18,40 @@
           Mantén la cédula plana, con buena luz y sin reflejos.
         </ion-note>
 
+        <!-- Uploader de boleta (mismo look que "Escanear cédula") -->
+        <div style="margin-top:8px;"></div>
+
+        <input
+          #inpBoleta
+          type="file"
+          accept="image/*,application/pdf"
+          hidden
+          (change)="onBoletaPicked($event)"
+        />
+
+        <div class="boleta-uploader">
+          <ion-button
+            class="cta"
+            expand="block"
+            fill="outline"
+            color="primary"
+            (click)="triggerBoleta(inpBoleta)"
+            [disabled]="loading">
+            <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
+            {{ boletaFile ? 'Cambiar boleta de servicios' : 'Subir boleta de servicios' }}
+          </ion-button>
+
+          <ion-text *ngIf="boletaFile">
+            <small>{{ boletaFile?.name || '' }}</small>
+          </ion-text>
+
+          <!-- Eliminado el botón "Confirmar subida" -->
+        </div>
+
+        <ion-note color="medium" style="display:block;margin-top:6px;">
+          Formatos: JPG/PNG o PDF. Se subirá automáticamente al registrarte.
+        </ion-note>
+
         <form #f="ngForm" (ngSubmit)="register(f)" autocomplete="on" novalidate>
 
           <!-- Primer nombre -->
