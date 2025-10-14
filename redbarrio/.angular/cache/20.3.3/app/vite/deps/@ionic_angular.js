@@ -64,13 +64,6 @@ import {
   bootstrapLazy
 } from "./chunk-ALXP5TSD.js";
 import {
-  MaxValidator,
-  MinValidator,
-  NG_VALIDATORS,
-  NG_VALUE_ACCESSOR,
-  NgControl
-} from "./chunk-N52XZBH5.js";
-import {
   ActivatedRoute,
   ChildrenOutletContexts,
   NavigationStart,
@@ -79,6 +72,13 @@ import {
   RouterLink,
   UrlSerializer
 } from "./chunk-LJPS7NX5.js";
+import {
+  MaxValidator,
+  MinValidator,
+  NG_VALIDATORS,
+  NG_VALUE_ACCESSOR,
+  NgControl
+} from "./chunk-N52XZBH5.js";
 import "./chunk-LYZ2RRMW.js";
 import "./chunk-KIMTXNSS.js";
 import {

@@ -50,14 +50,6 @@
                         | {{ noticia.fecha_creacion | date:'shortDate' }}
                     </span>
                 </ion-card-subtitle>
-                
-                <ion-button 
-                  *ngIf="esAdmin" 
-                  size="block" 
-                  color="danger" 
-                  style="margin-left: 8px;"
-                  (click)="$event.stopPropagation(); confirmarYEliminarNoticia(noticia.id)">Eliminar
-                </ion-button>
             </div>
             
           </ion-card-header>
@@ -80,13 +72,4 @@
     <h2>No hay noticias disponibles</h2>
     <p>Sé el primero en crear una noticia usando el botón flotante.</p>
   </div>
-  
-<ion-button 
-  *ngIf="esAdmin" 
-  (click)="navegarACrearNoticia()" 
-  class="fixed-action-button"
-  expand="block">
-  Nueva Noticia
-  <ion-icon name="add-circle-outline" slot="end"></ion-icon>
-</ion-button>
 </ion-content>

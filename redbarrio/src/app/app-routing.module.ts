@@ -30,12 +30,6 @@ const routes: Routes = [
       import('./pago-retorno/pago-retorno.page').then((m) => m.PagoRetornoPage),
   },
   {
-    path: 'noticias',
-    canActivate: [AuthGuard],
-    loadComponent: () =>
-      import('./noticias/noticias.page').then((c) => c.NoticiasPage),
-  },
-  {
     path: 'noticias/crear',
     loadComponent: () =>
       import('./crear-noticia/crear-noticia.page').then(
