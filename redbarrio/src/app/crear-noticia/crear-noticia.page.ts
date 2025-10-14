@@ -4,10 +4,12 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms'; 
 import { Router, RouterModule } from '@angular/router';
+import { NoticiasService } from '../services/noticias';
 
 // Vuelve la inicialización directa del cliente
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js'; 
 import { environment } from 'src/environments/environment';
+import { supabase as globalSupabase } from '../core/supabase.client';
 
 import { IonicModule } from '@ionic/angular';
 
@@ -39,7 +41,7 @@ export class CrearNoticiaPage implements OnInit {
   MAX_PARRAFOS = MAX_PARRAFOS;
   MAX_IMAGENES = MAX_IMAGENES;
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(private fb: FormBuilder, private router: Router, private noticiasService: NoticiasService) {
     // Inicialización directa del cliente (versión funcional)
     this.supabase = createClient(
       environment.supabaseUrl,
@@ -113,7 +115,20 @@ export class CrearNoticiaPage implements OnInit {
     this.usuarioAutenticado = user;
 
     if (!user) {
-      // Redirige al login si no hay usuario (aunque el router ya lo haría)
+      // Intentamos usar el perfil forzado persistido localmente (modo desarrollo)
+      try {
+        const perfilLocal = this.noticiasService.getUsuarioForzado?.() ?? null;
+        if (perfilLocal) {
+          // Construimos un objeto minimal de User con el id esperado por el resto del código
+          this.usuarioAutenticado = { id: (perfilLocal.id_auth || perfilLocal.user_id) } as any;
+          this.nombreAutor = perfilLocal.nombre || 'Autor Desconocido';
+          return;
+        }
+      } catch {
+        // ignore and fall through to redirect
+      }
+
+      // Redirige al login si no hay usuario ni perfil forzado
       this.router.navigate(['/login']);
       return;
     }
@@ -147,8 +162,33 @@ export class CrearNoticiaPage implements OnInit {
   // --- Subida de Múltiples Imágenes ---
 
   async subirImagenes(): Promise<string[] | null> {
+    // Verificamos que haya un usuario autenticado real en Supabase.
+    const fullSession = await globalSupabase.auth.getSession();
+    const session = fullSession.data.session;
     const user = this.usuarioAutenticado;
-    if (!user) return null;
+
+    // Diagnostics: log session, forced profile and user so we can see why uploads fail at runtime
+    try {
+      const perfilForzado = this.noticiasService?.getUsuarioForzado?.() ?? null;
+      console.debug('[crear-noticia] Supabase getSession result:', fullSession);
+      console.debug('[crear-noticia] usuarioAutenticado:', user);
+      console.debug('[crear-noticia] perfil forzado (local):', perfilForzado);
+    } catch (e) {
+      console.debug('[crear-noticia] error al leer perfil forzado:', e);
+    }
+
+    if (!session) {
+      // Si no hay sesión, indicamos claramente que las subidas requieren inicio de sesión real.
+      console.warn('Intento de subir imágenes sin sesión Supabase activa. Perfil forzado presente:', this.noticiasService?.getUsuarioForzado?.());
+      alert('No hay una sesión activa en Supabase. Para subir imágenes debes iniciar sesión. Si estás en modo desarrollo y usas un perfil forzado, inicia sesión real para habilitar Storage.');
+      return null;
+    }
+
+    if (!user) {
+      console.warn('Usuario nulo en subirImagenes despite active session');
+      alert('No se pudo determinar el usuario para la subida de imágenes. Inicia sesión y vuelve a intentarlo.');
+      return null;
+    }
 
     this.estaSubiendoImagen = true;
     const urls: string[] = [];
@@ -170,17 +210,29 @@ export class CrearNoticiaPage implements OnInit {
             user.id
           }/noticias/${Date.now()}_${i}_${file.name.replace(/ /g, '_')}`;
 
-          const { error } = await this.supabase.storage
-            .from(IMAGES_BUCKET)
-            .upload(filePath, file);
+          // Usamos el cliente global (que comparte sesión) para tener la misma auth
+          const uploadResp = await globalSupabase.storage.from(IMAGES_BUCKET).upload(filePath, file);
+          console.debug('[crear-noticia] upload response for', filePath, uploadResp);
 
-          if (error) throw error;
+          if (uploadResp.error) {
+            console.error('Supabase upload error for', filePath, uploadResp.error);
+            alert('Error subiendo imágenes: ' + (uploadResp.error.message || JSON.stringify(uploadResp.error)));
+            this.estaSubiendoImagen = false;
+            return null;
+          }
 
-          const { data: publicUrlData } = this.supabase.storage
-            .from(IMAGES_BUCKET)
-            .getPublicUrl(filePath);
+          const publicUrlResp = await globalSupabase.storage.from(IMAGES_BUCKET).getPublicUrl(filePath);
+          console.debug('[crear-noticia] getPublicUrl response for', filePath, publicUrlResp);
 
-          urls.push(publicUrlData.publicUrl);
+          const publicUrl = publicUrlResp?.data?.publicUrl;
+          if (!publicUrl) {
+            console.error('No public URL returned for', filePath, publicUrlResp);
+            alert('No se pudo obtener la URL pública de la imagen.');
+            this.estaSubiendoImagen = false;
+            return null;
+          }
+
+          urls.push(publicUrl);
         }
       }
       this.estaSubiendoImagen = false;
@@ -241,9 +293,8 @@ export class CrearNoticiaPage implements OnInit {
     // 4. Insertar en la base de datos
     try {
       // Necesitas castear a 'any' o definir una interfaz DB para evitar errores de tipo si usas typescript estricto con Supabase
-      const { error } = await this.supabase
-        .from('noticias')
-        .insert(nuevaNoticia as any);
+      // Use the shared globalSupabase client so the persisted session (if any) is used
+      const { error } = await globalSupabase.from('noticias').insert(nuevaNoticia as any);
 
       if (error) {
         console.error('Error al guardar noticia en Supabase:', error);

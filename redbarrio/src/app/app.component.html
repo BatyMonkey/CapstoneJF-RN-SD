@@ -69,6 +69,15 @@
             <ion-icon slot="start" name="list-circle-outline"></ion-icon>
             <ion-label>Generar votación</ion-label>
           </ion-item>
+          <ion-item
+            button
+            detail="false"
+            (click)="go('/noticias/crear')"
+            *ngIf="isAdmin && !isActive('/noticias/crear')"
+          >
+            <ion-icon slot="start" name="list-circle-outline"></ion-icon>
+            <ion-label>Generar noticia</ion-label>
+          </ion-item>
         </ion-menu-toggle>
       </ion-list>
 

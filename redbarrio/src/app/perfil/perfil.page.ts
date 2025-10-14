@@ -193,27 +193,28 @@ export class PerfilPage implements OnInit {
     this.isSaving = true;
     
     try {
-        let fotoUrl: string | null = null;
-        
-        // 1. Subir foto si hay un archivo seleccionado
-        if (this.fotoFile) {
-            fotoUrl = await this.subirYActualizarFoto();
-            if (!fotoUrl) {
-                this.isSaving = false;
-                return; // Falla si la subida falla
-            }
-        }
+    let fotoUrl: string | null = null;
 
-        // 2. Preparar el payload de actualización
-        const formPayload = this.perfilForm.getRawValue();
-        
-        // 3. Crear el payload final combinando datos del formulario y la URL de la foto
-        const finalPayload: PerfilUpdatePayload = {
-            segundo_nombre: formPayload.segundo_nombre || null,
-            segundo_apellido: formPayload.segundo_apellido || null,
-            telefono: formPayload.telefono || null,
-            url_foto_perfil: fotoUrl // Añade la nueva URL (será null si no se subió foto)
-        };
+    // 1. Subir foto si hay un archivo seleccionado
+    if (this.fotoFile) {
+      fotoUrl = await this.subirYActualizarFoto();
+      if (!fotoUrl) {
+        this.isSaving = false;
+        return; // Falla si la subida falla
+      }
+    }
+
+    // 2. Preparar el payload de actualización
+    const formPayload = this.perfilForm.getRawValue();
+
+    // 3. Crear el payload final combinando datos del formulario y la URL de la foto
+    // Si no se subió una nueva foto, preservamos la URL existente en el perfil
+    const finalPayload: PerfilUpdatePayload = {
+      segundo_nombre: formPayload.segundo_nombre || null,
+      segundo_apellido: formPayload.segundo_apellido || null,
+      telefono: formPayload.telefono || null,
+      url_foto_perfil: fotoUrl ?? this.perfilActual?.url_foto_perfil ?? null,
+    };
         
         // 4. Llamar al servicio para actualizar los datos
         await this.authService.updateUsuarioExtras(finalPayload);

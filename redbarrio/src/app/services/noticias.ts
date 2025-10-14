@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from 'src/environments/environment';
+import { Perfil } from '../auth/auth.service';
 
 // Define una interfaz para tus noticias
 export interface Noticia {
@@ -19,6 +20,7 @@ export interface Noticia {
 })
 export class NoticiasService {
   private supabase: SupabaseClient;
+  private perfilCache: Perfil | null = null;
   private readonly TABLE_VIEW = 'noticias_con_autor';
   private readonly TABLE_NAME = 'noticias'; // Tabla real para INSERT
   private readonly BUCKET_NAME = 'noticias-bucket'; 
@@ -43,6 +45,26 @@ export class NoticiasService {
       console.error("Error al obtener el usuario de Supabase:", error);
       return null;
     }
+  }
+
+  // Métodos para persistir un usuario "forzado" localmente (modo desarrollo)
+  getUsuarioForzado(): Perfil | null {
+    try {
+      const perfilCache = this.perfilCache;
+      if (perfilCache) return perfilCache;
+
+      const perfilLocal = localStorage.getItem('rb_usuario_activo');
+      if (perfilLocal) return JSON.parse(perfilLocal) as Perfil;
+
+      return null;
+    } catch {
+      return null;
+    }
+  }
+
+  setUsuarioForzado(perfil: Perfil) {
+    this.perfilCache = perfil;
+    localStorage.setItem('rb_usuario_activo', JSON.stringify(perfil));
   }
 
   /**
