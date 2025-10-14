@@ -8,7 +8,8 @@ import {
   fetchBaseTemplateBytes,
   getMyUserData,
   fillCertificate,
-  uploadAndRegister,
+  createCertRecord,
+  uploadPdfForRecord,
   downloadBlob,
 } from '../../core/certificado';
 import { environment } from 'src/environments/environment';
@@ -32,40 +33,49 @@ export class SolicitarCertificadoPage implements OnInit {
     await this.cargarHistorial();
   }
 
-  /** Prellenar el email y nombre del usuario autenticado */
-private async prefillUserInfo() {
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      if (user.email) this.emailDestino = user.email;
-
-      const meta = (user.user_metadata ?? {}) as Record<string, any>;
-      const metaName = meta['full_name'] || meta['name'] || null;
-      if (metaName) this.displayName = metaName;
-    }
-
-    // Fallback a tu tabla de perfil / datos
-    const who = await getMyUserData().catch(() => null as any);
-    if (!this.emailDestino && who?.correo) this.emailDestino = who.correo;
-    if (!this.displayName && (who?.full_name || who?.nombre)) {
-      this.displayName = who.full_name || who.nombre;
-    }
-  } catch {
-    // Silencioso
+  private nombreCompleto(pn?: string|null, sn?: string|null, pa?: string|null, sa?: string|null) {
+    return [pn, sn, pa, sa].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
   }
-}
+  private monthNameEs(m: number) {
+    return ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][m];
+  }
+  private normalizaRut(rut: string) {
+    if (!rut) return rut;
+    const clean = rut.replace(/[^0-9kK]/g, '').toUpperCase();
+    if (clean.length < 2) return rut;
+    const dv = clean.slice(-1);
+    const num = clean.slice(0, -1);
+    let out = ''; let i = 0;
+    for (let j = num.length - 1; j >= 0; j--) {
+      out = num[j] + out; i++;
+      if (i === 3 && j > 0) { out = '.' + out; i = 0; }
+    }
+    return `${out}-${dv}`;
+  }
 
+  private async prefillUserInfo() {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        if (user.email) this.emailDestino = user.email;
+        const meta = (user.user_metadata ?? {}) as Record<string, any>;
+        const metaName = meta['full_name'] || meta['name'] || null;
+        if (metaName) this.displayName = metaName;
+      }
+      const who = await getMyUserData().catch(() => null as any);
+      if (!this.emailDestino && who?.correo) this.emailDestino = who.correo;
+      if (!this.displayName && (who?.full_name || who?.nombre)) {
+        this.displayName = who.full_name || who.nombre;
+      }
+    } catch {/* silent */}
+  }
 
   private async callN8nWebhook(payload: {
-    to: string;
-    pdf_url: string;
-    filename?: string;
-    subject?: string;
+    to: string; pdf_url: string; filename?: string; subject?: string;
   }) {
     const url = environment.N8N_WEBHOOK_URL;
     const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
     if (!res.ok) throw new Error(await res.text());
@@ -76,36 +86,59 @@ private async prefillUserInfo() {
     const { data: session } = await supabase.auth.getSession();
     const uid = session?.session?.user?.id;
     if (!uid) return;
-
     const { data, error } = await supabase
       .from('certificados')
       .select('*')
       .eq('user_id', uid)
       .order('created_at', { ascending: false });
-
     if (!error && data) this.certificados = data;
   }
 
+  private buildVars(who: any) {
+    const now = new Date();
+    const nombre =
+      this.nombreCompleto(
+        who?.primer_nombre, who?.segundo_nombre,
+        who?.primer_apellido, who?.segundo_apellido
+      ) || (who?.full_name || who?.nombre || '');
+
+    return {
+      nombre_completo: nombre,
+      rut: this.normalizaRut(who?.rut || who?.run || ''),
+      direccion: who?.direccion || who?.address || '',
+      destino_presentacion: this.placeAndDate || '',
+      dia_emision: now.getDate(),
+      mes_emision: this.monthNameEs(now.getMonth()),
+      anio_emision: now.getFullYear(),
+    };
+  }
+
+  /* ========== DESCARGAR ========== */
   async emitirDescargar() {
     try {
       this.loading = true;
 
-      const [baseBytes, who] = await Promise.all([
-        fetchBaseTemplateBytes(),
-        getMyUserData()
-      ]);
+      const who = await getMyUserData();
+      const baseMeta = {
+        ...who,
+        destino_presentacion: this.placeAndDate || '',
+        fecha_emision: new Date().toISOString(),
+        render: 'pdf-lib'
+      };
 
-      const blob = await fillCertificate(baseBytes, {
-        full_name: who.full_name,
-        run: who.run,
-        address: who.address,
-        placeAndDate: this.placeAndDate || ''
-      });
+      // 1) PRE-CREAR registro para obtener el ID real
+      const { id } = await createCertRecord(baseMeta);
 
-      const meta = { ...who, placeAndDate: this.placeAndDate || '' };
-      const saved = await uploadAndRegister(blob, meta);
+      // 2) Generar PDF con el ID impreso como “Original N°”
+      const baseBytes = await fetchBaseTemplateBytes();
+      const vars = { ...this.buildVars(who), folio: String(id) };
+      const blob = await fillCertificate(baseBytes, vars);
 
-      downloadBlob(blob, `certificado-${saved.id}.pdf`);
+      // 3) Subir y actualizar URL
+      const { pdf_url } = await uploadPdfForRecord(id, blob);
+
+      // 4) Descargar localmente y refrescar historial
+      downloadBlob(blob, `certificado-${id}.pdf`);
       await this.cargarHistorial();
     } catch (e: any) {
       console.error(e);
@@ -115,6 +148,7 @@ private async prefillUserInfo() {
     }
   }
 
+  /* ========== ENVIAR POR CORREO ========== */
   async emitirEnviar() {
     try {
       if (!this.emailDestino) {
@@ -123,26 +157,27 @@ private async prefillUserInfo() {
       }
       this.loading = true;
 
-      const [baseBytes, who] = await Promise.all([
-        fetchBaseTemplateBytes(),
-        getMyUserData()
-      ]);
+      const who = await getMyUserData();
+      const baseMeta = {
+        ...who,
+        destino_presentacion: this.placeAndDate || '',
+        fecha_emision: new Date().toISOString(),
+        render: 'pdf-lib'
+      };
 
-      const blob = await fillCertificate(baseBytes, {
-        full_name: who.full_name,
-        run: who.run,
-        address: who.address,
-        placeAndDate: this.placeAndDate || ''
-      });
+      const { id } = await createCertRecord(baseMeta);
 
-      const meta = { ...who, placeAndDate: this.placeAndDate || '' };
-      const saved = await uploadAndRegister(blob, meta);
+      const baseBytes = await fetchBaseTemplateBytes();
+      const vars = { ...this.buildVars(who), folio: String(id) };
+      const blob = await fillCertificate(baseBytes, vars);
+
+      const { pdf_url } = await uploadPdfForRecord(id, blob);
 
       await this.callN8nWebhook({
         to: this.emailDestino,
         subject: 'Certificado emitido',
-        pdf_url: saved.pdf_url,
-        filename: `certificado-${saved.id}.pdf`
+        pdf_url,
+        filename: `certificado-${id}.pdf`
       });
 
       alert('Correo enviado correctamente ✅');

@@ -1,7 +1,6 @@
 <ion-header class="rb-header">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <!-- Debe coincidir con menuId="mainMenu" del app.component.html -->
       <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
     </ion-buttons>
     <ion-title>Solicitar Certificado</ion-title>
@@ -29,24 +28,14 @@
 
     <ion-card-content>
       <ion-list lines="none">
-        <!-- Correo destino (prellenado) -->
         <ion-item class="field">
           <ion-label position="stacked">Correo destino</ion-label>
-          <ion-input
-            [(ngModel)]="emailDestino"
-            name="emailDestino"
-            type="email">
-          </ion-input>
+          <ion-input [(ngModel)]="emailDestino" name="emailDestino" type="email"></ion-input>
         </ion-item>
 
-        <!-- Lugar y fecha -->
         <ion-item class="field">
-          <ion-label position="stacked">Lugar y fecha (opcional)</ion-label>
-          <ion-input
-            [(ngModel)]="placeAndDate"
-            name="placeAndDate"
-            placeholder="Santiago, 02/10/2025">
-          </ion-input>
+          <ion-label position="stacked">Destino de presentación (opcional)</ion-label>
+          <ion-input [(ngModel)]="placeAndDate" name="placeAndDate" placeholder="Postulación a beneficio municipal"></ion-input>
         </ion-item>
       </ion-list>
 
