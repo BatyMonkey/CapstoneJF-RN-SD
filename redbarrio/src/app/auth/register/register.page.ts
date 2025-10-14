@@ -7,12 +7,13 @@ import { AuthService } from '../auth.service';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Capacitor } from '@capacitor/core';
 import { OcrMlkitService } from '../../services/ocr-mlkit.service';
+import { supabase } from '../../core/supabase.client';
 
 @Component({
-  standalone: true,
   selector: 'app-register',
   templateUrl: './register.page.html',
   styleUrls: ['./register.page.scss'],
+  standalone: true,
   imports: [IonicModule, CommonModule, FormsModule],
 })
 export class RegisterPage {
@@ -38,6 +39,10 @@ export class RegisterPage {
   rutInvalido = false;
   scanning = false;
 
+  // Boleta de servicios
+  boletaFile: File | null = null;
+  boletaUrl: string | null = null;
+
   constructor(
     private router: Router,
     private toastCtrl: ToastController,
@@ -47,51 +52,78 @@ export class RegisterPage {
   ) {}
 
   // =========================
-  // OCR (on-device). En web: no hace nada para evitar crash.
+  // OCR (on-device)
   // =========================
   async scanCedula() {
-    try {
-      // En navegador evitamos llamar a plugins nativos
-      if (Capacitor.getPlatform() === 'web') {
-        await this.toast('El escaneo funciona en dispositivo (Android/iOS).', 'warning');
-        return;
-      }
+  try {
+    // ✅ En web/PC: abrir selector de archivo y pasar a OCR
+    if (Capacitor.getPlatform() === 'web') {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*'; // si tu OCR soporta PDF, puedes usar: 'image/*,application/pdf'
+      input.onchange = async (e: any) => {
+        const file: File | undefined = e?.target?.files?.[0];
+        if (!file) return;
 
-      this.scanning = true;
+        const url = URL.createObjectURL(file);
+        try {
+          const res = await this.ocr.recognizeSmart(url);
+          this.fillFromOcr(res);
 
-      const photo = await Camera.getPhoto({
-        source: CameraSource.Prompt,
-        resultType: CameraResultType.Uri,   // file URL para plugin nativo
-        quality: 85,
-        allowEditing: false,
-        promptLabelPhoto: 'Galería',
-        promptLabelPicture: 'Cámara',
-      });
+          if (this.rut) this.rut = this.formatRutDisplay(this.rut);
+          this.rutInvalido = !this.validaRutDV(this.rut);
+          this.nombre = this.buildNombre();
 
-      const fileUrl = photo?.path || photo?.webPath;
-      if (!fileUrl) throw new Error('No image');
-
-      // 1) OCR
-      const res = await this.ocr.recognizeSmart(fileUrl);
-
-      // 2) Autollenado inmediato
-      this.fillFromOcr(res);
-
-      // 3) Normaliza RUN y nombre
-      if (this.rut) this.rut = this.formatRutDisplay(this.rut);
-      this.rutInvalido = !this.validaRutDV(this.rut);
-      this.nombre = this.buildNombre();
-
-      await this.toast('Datos autocompletados desde la cédula ✨');
-    } catch (e: any) {
-      console.error('❌ OCR ML Kit error:', e?.message || e);
-      await this.toast(
-        e?.message ? `OCR falló: ${e.message}` : 'No se pudo leer la cédula. Intenta con mejor luz/enfoque.',
-        'warning'
-      );
-    } finally {
-      this.scanning = false;
+          await this.toast('Datos autocompletados desde imagen local ✨');
+        } catch (err: any) {
+          console.error('❌ OCR (web) error:', err?.message || err);
+          await this.toast(err?.message || 'No se pudo leer la imagen. Intenta otra.', 'warning');
+        } finally {
+          URL.revokeObjectURL(url);
+        }
+      };
+      input.click();
+      return;
     }
+
+    // ✅ En dispositivo (Android/iOS): usar Cámara/Galería vía Capacitor
+    this.scanning = true;
+
+    const photo = await Camera.getPhoto({
+      source: CameraSource.Prompt,
+      resultType: CameraResultType.Uri,
+      quality: 85,
+      allowEditing: false,
+      promptLabelPhoto: 'Galería',
+      promptLabelPicture: 'Cámara',
+    });
+
+    const fileUrl = photo?.path || photo?.webPath;
+    if (!fileUrl) throw new Error('No image');
+
+    const res = await this.ocr.recognizeSmart(fileUrl);
+    this.fillFromOcr(res);
+
+    if (this.rut) this.rut = this.formatRutDisplay(this.rut);
+    this.rutInvalido = !this.validaRutDV(this.rut);
+    this.nombre = this.buildNombre();
+
+    await this.toast('Datos autocompletados desde la cédula ✨');
+  } catch (e: any) {
+    console.error('❌ OCR ML Kit error:', e?.message || e);
+    await this.toast(
+      e?.message ? `OCR falló: ${e.message}` : 'No se pudo leer la cédula. Intenta con mejor luz/enfoque.',
+      'warning'
+    );
+  } finally {
+    this.scanning = false;
+  }
+}
+
+
+  // Dispara el input file desde el botón (evita usar 'document' en el template)
+  triggerBoleta(inputEl: HTMLInputElement) {
+    if (inputEl) inputEl.click();
   }
 
   private fillFromOcr(res: {
@@ -110,6 +142,63 @@ export class RegisterPage {
     if (res.segundoApellido) this.segundo_apellido = res.segundoApellido ?? '';
     if (res.fechaNacimiento) this.fecha_nacimiento = res.fechaNacimiento;
     if (res.sexo) this.sexo = res.sexo;
+  }
+
+  // =========================
+  // Boleta de servicios
+  // =========================
+  onBoletaPicked(ev: Event) {
+    const input = ev.target as HTMLInputElement;
+    const file = input.files?.[0] || null;
+    this.boletaFile = file;
+    this.boletaUrl = null; // reset hasta subir en register()
+  }
+
+  private async uploadBoleta(file: File): Promise<string | null> {
+    try {
+      if (!file.size) throw new Error('El archivo está vacío.');
+      if (file.size > 50 * 1024 * 1024) throw new Error('El archivo supera 50MB.');
+
+      const BUCKET = 'boletas'; // nombre exacto del bucket
+      const safeEmail = (this.email || 'sin-email')
+        .replace(/[^a-z0-9@._-]/gi, '_')
+        .toLowerCase();
+
+      const extGuess = (file.name.split('.').pop() || '').toLowerCase();
+      const ext = extGuess || (file.type?.includes('pdf') ? 'pdf' : 'jpg');
+      const filename = `boleta_${Date.now()}.${ext}`;
+      const path = `${safeEmail}/${filename}`; // sin "/" inicial
+
+      const { error: upErr } = await supabase.storage
+        .from(BUCKET)
+        .upload(path, file, {
+          upsert: true,
+          cacheControl: '3600',
+          contentType: file.type || (ext === 'pdf' ? 'application/pdf' : 'image/jpeg'),
+        });
+
+      if (upErr) {
+        const msg = /permission|policy/i.test(upErr.message)
+          ? 'Permiso denegado al subir. Revisa las políticas del bucket "boletas".'
+          : /not found/i.test(upErr.message)
+          ? 'Bucket "boletas" no encontrado.'
+          : upErr.message;
+        throw new Error(msg);
+      }
+
+      // Si el bucket es público:
+      const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
+      return data.publicUrl;
+
+      // Si fuera privado:
+      // const { data: signed } = await supabase.storage.from(BUCKET).createSignedUrl(path, 60 * 60 * 24);
+      // return signed?.signedUrl || null;
+
+    } catch (e: any) {
+      console.error('Upload boleta error:', e?.message || e);
+      await this.toast(e?.message || 'No se pudo subir la boleta. Intenta nuevamente.', 'danger');
+      return null;
+    }
   }
 
   // =========================
@@ -177,57 +266,68 @@ export class RegisterPage {
   // Registro
   // =========================
   async register(f: NgForm) {
-  this.loading = true;
-  this.errorMsg = '';
+    this.loading = true;
+    this.errorMsg = '';
 
-  try {
-    this.rutInvalido = !this.validaRutDV(this.rut);
-    if (this.rutInvalido || !this.telefonoEsValido() || !f.valid) {
-      await this.toast('Revisa los campos obligatorios.', 'warning');
+    try {
+      this.rutInvalido = !this.validaRutDV(this.rut);
+      if (this.rutInvalido || !this.telefonoEsValido() || !f.valid) {
+        await this.toast('Revisa los campos obligatorios.', 'warning');
+        this.loading = false;
+        return;
+      }
+
+      // Exigir boleta y subir ahora
+      if (!this.boletaFile) {
+        await this.toast('Debes subir una boleta de servicios para continuar.', 'warning');
+        this.loading = false;
+        return;
+      }
+      const url = await this.uploadBoleta(this.boletaFile);
+      if (!url) {
+        this.loading = false;
+        return;
+      }
+      this.boletaUrl = url;
+
+      this.nombre = this.buildNombre();
+
+      const res = await this.auth.signUpFull({
+        email: this.email.trim(),
+        password: this.password,
+        nombre: this.nombre,
+        primer_nombre: this.primer_nombre || null,
+        segundo_nombre: this.segundo_nombre || null,
+        primer_apellido: this.primer_apellido || null,
+        segundo_apellido: this.segundo_apellido || null,
+        rut: this.rut || null,
+        direccion: this.direccion || null,
+        telefono: this.telefono || null,
+        fecha_nacimiento: this.fecha_nacimiento || null,
+        sexo: this.sexo || null,
+        url_boleta_servicio: this.boletaUrl || null, // << nuevo campo
+      });
+
+      if (typeof (this.auth as any).signOut === 'function') {
+        await (this.auth as any).signOut();
+      }
+
+      if (res?.needsEmailConfirm) {
+        await this.toast('Cuenta creada. Revisa tu correo para confirmar.');
+      } else {
+        await this.toast('Cuenta creada. Inicia sesión para continuar.');
+      }
+
+      await this.router.navigateByUrl('/auth/login', { replaceUrl: true });
+    } catch (e: any) {
+      const raw = e?.message || 'No se pudo crear la cuenta.';
+      const msg = /registered|exists|already/i.test(raw)
+        ? 'Este correo ya está registrado.'
+        : raw;
+      this.errorMsg = msg;
+      await this.toast(msg, 'danger');
+    } finally {
       this.loading = false;
-      return;
     }
-
-    this.nombre = this.buildNombre();
-
-    const res = await this.auth.signUpFull({
-      email: this.email.trim(),
-      password: this.password,
-      nombre: this.nombre,
-      primer_nombre: this.primer_nombre || null,
-      segundo_nombre: this.segundo_nombre || null,
-      primer_apellido: this.primer_apellido || null,
-      segundo_apellido: this.segundo_apellido || null,
-      rut: this.rut || null,
-      direccion: this.direccion || null,
-      telefono: this.telefono || null,
-      // nuevos
-      fecha_nacimiento: this.fecha_nacimiento || null,
-      sexo: this.sexo || null,
-    });
-
-    // 👇 independientemente de lo que devuelva el backend:
-    // forzamos cerrar sesión (por si el endpoint autentica) y vamos a login
-    if (typeof (this.auth as any).signOut === 'function') {
-      await (this.auth as any).signOut();
-    }
-
-    if (res?.needsEmailConfirm) {
-      await this.toast('Cuenta creada. Revisa tu correo para confirmar.');
-    } else {
-      await this.toast('Cuenta creada. Inicia sesión para continuar.');
-    }
-
-    await this.router.navigateByUrl('/auth/login', { replaceUrl: true });
-  } catch (e: any) {
-    const raw = e?.message || 'No se pudo crear la cuenta.';
-    const msg = /registered|exists|already/i.test(raw)
-      ? 'Este correo ya está registrado.'
-      : raw;
-    this.errorMsg = msg;
-    await this.toast(msg, 'danger');
-  } finally {
-    this.loading = false;
   }
-}
 }
