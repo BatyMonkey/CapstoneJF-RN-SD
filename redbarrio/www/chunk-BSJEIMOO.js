@@ -1,0 +1,1 @@
+import{a as e}from"./chunk-CGH6KSUE.js";import{vb as t}from"./chunk-JZTRD5FY.js";var o=t(e.supabaseUrl,e.supabaseAnonKey,{auth:{storageKey:"rb_auth",autoRefreshToken:!0,persistSession:!0,detectSessionInUrl:!0}});export{o as a};

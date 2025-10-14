@@ -1,0 +1,91 @@
+<ion-header [translucent]="true" class="rb-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/espacios"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ espacio?.nombre || 'Detalle del Espacio' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <div *ngIf="isLoading" class="ion-padding ion-text-center">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando detalles del espacio...</p>
+  </div>
+
+  <div *ngIf="error" class="ion-padding">
+    <ion-card color="danger">
+      <ion-card-header>
+        <ion-card-title>Error</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>{{ error }}</ion-card-content>
+    </ion-card>
+  </div>
+
+  <div *ngIf="espacio && !isLoading">
+    
+    <ion-card class="card">
+      <ion-img *ngIf="espacio.imagen_url" [src]="espacio.imagen_url" alt="Imagen del espacio" style="width: 100%; height: 220px; object-fit: cover;"></ion-img>
+      <ion-card-header>
+        <ion-card-title>{{ espacio.nombre }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="6">
+              <p><strong>Tipo:</strong> {{ tipoNombre }}</p>
+            </ion-col>
+            <ion-col size="6">
+              <p><strong>Capacidad:</strong> {{ espacio.capacidad }} personas</p>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <h3 class="ion-padding-top">Descripción</h3>
+        <p>{{ espacio.descripcion || 'Sin descripción detallada.' }}</p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="card">
+      <ion-card-header>
+        <ion-card-title>Ubicación</ion-card-title>
+        <ion-card-subtitle>{{ espacio.direccion_completa }}</ion-card-subtitle>
+      </ion-card-header>
+      
+      <div 
+        *ngIf="staticMapUrl"
+        class="map-button-container"
+        (click)="openInExternalMap()" 
+      >
+        <img 
+          [src]="staticMapUrl" 
+          alt="Toca el mapa para navegar" 
+          class="map-image-clickable" 
+        >
+        
+        <div class="map-overlay-text">
+          <ion-icon name="navigate-circle" size="large"></ion-icon>
+          <p>Toca el mapa para Navegar con GPS</p>
+        </div>
+      </div>
+      
+      <div *ngIf="!staticMapUrl" class="ion-padding ion-text-center">
+        <p>Ubicación y mapa no disponible.</p>
+      </div>
+
+      <ion-card-content class="ion-padding-top">
+          <p><strong>Coordenadas:</strong></p>
+          <ion-note>Latitud: {{ espacio.latitud }}</ion-note><br>
+          <ion-note>Longitud: {{ espacio.longitud }}</ion-note>
+          
+          <p class="ion-padding-top"><strong>Registro:</strong></p>
+          <ion-note>Creado: {{ espacio.creado_en | date: 'dd/MM/yyyy HH:mm' }}</ion-note><br>
+
+          <ion-note>Actualizado: {{ espacio.actualizado_en | date: 'dd/MM/yyyy HH:mm' }}</ion-note>
+      </ion-card-content>
+      
+    </ion-card>
+
+  </div>
+  
+</ion-content>
