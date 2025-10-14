@@ -8,7 +8,7 @@ import { Router, RouterModule } from '@angular/router'; // Importado: RouterModu
 
 // Importar el Servicio y la Interfaz Espacio
 import { EspaciosService, Espacio } from 'src/app/services/espacios.service';
-import { AuthService } from 'src/app/auth/auth.service'; 
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-espacios',
@@ -16,7 +16,7 @@ import { AuthService } from 'src/app/auth/auth.service';
   styleUrls: ['./espacios.page.scss'],
   standalone: true,
   // AGREGADO: Se incluye RouterModule aquí para que [routerLink] funcione
-  imports: [IonicModule, CommonModule, FormsModule, RouterModule] 
+  imports: [IonicModule, CommonModule, FormsModule, RouterModule]
 })
 export class EspaciosPage implements OnInit {
 
@@ -24,7 +24,7 @@ export class EspaciosPage implements OnInit {
   espacios: Espacio[] = [];
   isLoading = false;
   error: string | null = null;
-  isAdmin = false; 
+  isAdmin = false;
 
   // Mapeo de IDs numéricos a nombres de tipo
   private tiposEspacioMap = new Map<number, string>([
@@ -36,23 +36,33 @@ export class EspaciosPage implements OnInit {
   constructor(
     private espaciosService: EspaciosService,
     private router: Router,
-    private authService: AuthService 
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
     this.checkUserRole();
-    this.cargarEspacios();
+    this.cargar();
+  }
+
+  ionViewWillEnter() {
+    this.isLoading = true;
+    setTimeout(() => this.cargar(), 600);
+  }
+
+  // small wrapper so refresher and lifecycle match other pages
+  private async cargar() {
+    await this.cargarEspacios();
   }
 
   async checkUserRole() {
     try {
-        this.isAdmin = await this.authService.checkIfAdmin(); 
+      this.isAdmin = await this.authService.checkIfAdmin();
     } catch (e) {
-        console.error("No se pudo determinar el rol del usuario:", e);
-        this.isAdmin = false;
+      console.error("No se pudo determinar el rol del usuario:", e);
+      this.isAdmin = false;
     }
   }
-  
+
   async cargarEspacios(event?: any) {
     if (!event) {
       this.isLoading = true;
@@ -71,18 +81,18 @@ export class EspaciosPage implements OnInit {
       }
     }
   }
-  
+
   /**
    * Convierte el ID numérico del tipo a su nombre en texto.
    */
   getTipoNombre(tipoId: number | string | undefined | null): string {
     if (tipoId === undefined || tipoId === null) {
-        return 'N/A';
+      return 'N/A';
     }
     const idNumerico = parseInt(tipoId.toString(), 10);
-    
+
     if (isNaN(idNumerico)) {
-        return 'N/A';
+      return 'N/A';
     }
     return this.tiposEspacioMap.get(idNumerico) || 'Desconocido';
   }
@@ -100,5 +110,14 @@ export class EspaciosPage implements OnInit {
    */
   irACrearEspacio() {
     this.router.navigateByUrl('espacio/crear');
+  }
+  async handleRefresh(ev: CustomEvent) {
+    try {
+      // Call the normal cargar method pattern used in other pages
+      await this.cargarEspacios();
+    } finally {
+      // Match votacion: complete via ev.target.complete()
+      (ev.target as HTMLIonRefresherElement)?.complete?.();
+    }
   }
 }
