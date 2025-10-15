@@ -1,5 +1,5 @@
 # Ignorar directorios
-/.angular
+redbarrio/.angular
 /android
 /node_modules
 /supabase
