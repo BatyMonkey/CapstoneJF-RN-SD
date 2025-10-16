@@ -1,7 +1,7 @@
 import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { IonicModule, AlertController } from '@ionic/angular';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL = 'https://sovnabbbubapqxziubuh.supabase.co';
@@ -21,7 +21,11 @@ export class PagoRetornoPage implements OnInit {
   detalles: any = null;
   loading = true;
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private alertCtrl: AlertController
+  ) {}
 
   async ngOnInit() {
     await this.confirmarPago();
@@ -37,7 +41,6 @@ export class PagoRetornoPage implements OnInit {
     }
 
     try {
-      // ✅ Llamamos al Edge Function transbank-confirm
       const { data, error } = await supabase.functions.invoke('transbank-confirm', {
         body: { token_ws },
       });
@@ -50,7 +53,6 @@ export class PagoRetornoPage implements OnInit {
         return;
       }
 
-      // ✅ Si el pago fue autorizado
       if (data?.status === 'AUTHORIZED') {
         this.mensaje = '✅ Pago realizado con éxito.';
         this.detalles = {
@@ -59,17 +61,6 @@ export class PagoRetornoPage implements OnInit {
           tipoPago: data.payment_type_code,
           monto: data.amount,
         };
-
-        // 💾 Actualizamos token_ws en la tabla orden_pago (opcional si aún no está registrado)
-        await supabase
-          .from('orden_pago')
-          .update({
-            token_ws: token_ws,
-            estado: 'pagado',
-            updated_at: new Date().toISOString(),
-          })
-          .eq('token_ws', token_ws);
-
       } else {
         this.mensaje = '❌ El pago fue rechazado o no autorizado.';
         this.detalles = {
@@ -78,15 +69,20 @@ export class PagoRetornoPage implements OnInit {
           tipoPago: data?.payment_type_code ?? 'N/A',
           monto: data?.amount ?? 0,
         };
-
-        await supabase
-          .from('orden_pago')
-          .update({
-            estado: 'rechazado',
-            updated_at: new Date().toISOString(),
-          })
-          .eq('token_ws', token_ws);
       }
+
+      const alert = await this.alertCtrl.create({
+        header: 'Resultado del Pago',
+        message: this.mensaje,
+        buttons: [
+          {
+            text: 'Volver al inicio',
+            handler: () => this.router.navigate(['/home']),
+          },
+        ],
+      });
+
+      await alert.present();
     } catch (err) {
       console.error('Error general:', err);
       this.loading = false;
