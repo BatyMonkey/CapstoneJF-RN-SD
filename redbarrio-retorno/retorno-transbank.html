@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Procesando pago...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body { font-family: system-ui, sans-serif; text-align: center; margin-top: 4rem; color: #333; }
+      .loader { border: 6px solid #f3f3f3; border-top: 6px solid #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 1rem auto; }
+      @keyframes spin { 0% { transform: rotate(0deg) } 100% { transform: rotate(360deg) } }
+      .msg { margin-top: 1rem; font-size: 1.1rem; }
+      .error { color: #e11d48; }
+      .ok { color: #16a34a; }
+      button { padding:10px 20px; border:none; background:#3b82f6; color:#fff; border-radius:6px; }
+    </style>
+  </head>
+  <body>
+    <div class="loader"></div>
+    <h3 id="titulo">Procesando pago...</h3>
+    <p class="msg" id="mensaje">Confirmando transacción con Transbank...</p>
+
+    <p>
+      <button id="btnVolver" style="display:none;">Volver a la app</button>
+    </p>
+
+    <script>
+      (async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const token_ws = urlParams.get("token_ws");
+
+        const btn = document.getElementById("btnVolver");
+        btn.onclick = () => {
+          window.location.href = "capacitor://localhost/pago-retorno" + window.location.search;
+        };
+
+        if (!token_ws) {
+          document.getElementById("mensaje").innerText = "No se encontró token_ws.";
+          document.getElementById("mensaje").className = "msg error";
+          btn.style.display = "inline-block";
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            "https://sovnabbbubapqxziubuh.supabase.co/functions/v1/transbank-confirm",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ token_ws }),
+            }
+          );
+
+          const data = await response.json();
+          console.log("Respuesta confirm:", data);
+
+          let estado = "rechazado";
+          if (data?.status === "AUTHORIZED" || data?.estado === "pagado") {
+            estado = "pagado";
+          }
+
+          document.getElementById("mensaje").innerText =
+            estado === "pagado"
+              ? "✅ Pago realizado con éxito. Redirigiendo a la app..."
+              : "❌ Pago rechazado. Redirigiendo a la app...";
+          document.getElementById("mensaje").className =
+            estado === "pagado" ? "msg ok" : "msg error";
+
+          setTimeout(() => {
+            window.location.href =
+              "capacitor://localhost/pago-retorno?token_ws=" + encodeURIComponent(token_ws);
+          }, 1200);
+        } catch (error) {
+          console.error("Error confirmando:", error);
+          document.getElementById("mensaje").innerText =
+            "⚠️ Error al confirmar el pago. Puedes volver a la app y revisar el estado.";
+          document.getElementById("mensaje").className = "msg error";
+          btn.style.display = "inline-block";
+        }
+      })();
+    </script>
+  </body>
+</html>
