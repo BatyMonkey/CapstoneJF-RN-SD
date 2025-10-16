@@ -7,11 +7,14 @@ const TBK_API_KEY_SECRET =
 const TBK_URL =
   "https://webpay3gint.transbank.cl/rswebpaytransaction/api/webpay/v1.2/transactions";
 
-// 🧩 Helper CORS
+// 🌍 URL pública del HTML intermedio (Netlify)
+const RETURN_URL = "https://redbarrio.netlify.app/retorno-transbank.html";
+
+// 🌐 Helper CORS
 function corsHeaders() {
   return {
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
     "Access-Control-Allow-Headers": "*",
     "Content-Type": "application/json",
   };
@@ -19,59 +22,54 @@ function corsHeaders() {
 
 // 🚀 Servidor principal
 serve(async (req: Request) => {
-  // ✅ Manejo de preflight CORS
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders() });
   }
 
-  // ❌ Solo se permite POST
   if (req.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Método no permitido. Usa POST." }), {
-      status: 405,
-      headers: corsHeaders(),
-    });
+    return new Response(
+      JSON.stringify({ error: "Método no permitido. Usa POST." }),
+      { status: 405, headers: corsHeaders() }
+    );
   }
 
   try {
     const body = await req.json().catch(() => ({}));
-    let { id_reserva, monto, descripcion, return_url } = body;
+    const { id_reserva, monto, descripcion } = body;
 
-    // 🔎 Validar campos requeridos
+    // 🔎 Validaciones básicas
     if (!id_reserva || !monto || !descripcion) {
       return new Response(
-        JSON.stringify({ error: "Faltan parámetros requeridos", body }),
-        { status: 400, headers: corsHeaders() },
+        JSON.stringify({ error: "Faltan parámetros requeridos" }),
+        { status: 400, headers: corsHeaders() }
       );
     }
 
-    // 💰 Validar monto
     const amount = Math.trunc(Number(monto));
     if (!Number.isFinite(amount) || amount <= 0) {
       return new Response(
         JSON.stringify({ error: "Monto inválido (>0 CLP)" }),
-        { status: 400, headers: corsHeaders() },
+        { status: 400, headers: corsHeaders() }
       );
     }
 
-    // 🧠 Limpiar y preparar los campos
+    // 🧾 Generar identificadores válidos
     const buyOrder = `RB-${id_reserva}-${Date.now()}`;
-
-    // ⚙️ Transbank exige session_id sin espacios ni símbolos especiales
     const cleanSessionId = (descripcion ?? "ReservaRedBarrio")
-      .replace(/[^a-zA-Z0-9_-]/g, "") // permite solo letras, números, _ y -
+      .replace(/[^a-zA-Z0-9_-]/g, "")
       .substring(0, 61);
 
-    // 🧾 Crear payload
+    // 📦 Payload a enviar a Transbank
     const payload = {
       buy_order: buyOrder,
       session_id: cleanSessionId,
       amount,
-      return_url: return_url ?? "http://localhost:8100/pago-retorno",
+      return_url: RETURN_URL,
     };
 
-    console.log("📦 Enviando payload limpio a Transbank:", payload);
+    console.log("📤 Payload enviado a Transbank:", payload);
 
-    // 🚀 Enviar solicitud a Transbank
+    // 🔗 Crear transacción en Transbank
     const response = await fetch(TBK_URL, {
       method: "POST",
       headers: {
@@ -85,30 +83,35 @@ serve(async (req: Request) => {
     const result = await response.json().catch(() => ({}));
     console.log("🧾 Respuesta Transbank:", response.status, result);
 
-    // ⚠️ Manejar error desde Transbank
+    // ⚠️ Validar respuesta
     if (!response.ok || !result?.token) {
       return new Response(
-        JSON.stringify({ error: "Transbank rechazó la transacción (init).", detalle: result }),
-        { status: 400, headers: corsHeaders() },
+        JSON.stringify({
+          error: "Transbank rechazó la transacción (init).",
+          detalle: result,
+        }),
+        { status: 400, headers: corsHeaders() }
       );
     }
 
-    // ✅ Respuesta válida
+    // ✅ Éxito: devolver URL de redirección al frontend
     return new Response(
       JSON.stringify({
         url: "https://webpay3gint.transbank.cl/webpayserver/initTransaction",
         token: result.token,
+        return_url: RETURN_URL,
+        buy_order: buyOrder,
       }),
-      { status: 200, headers: corsHeaders() },
+      { status: 200, headers: corsHeaders() }
     );
   } catch (err: any) {
-    console.error("❌ Error general Transbank:", err);
+    console.error("❌ Error general Transbank Simular:", err);
     return new Response(
       JSON.stringify({
         error: "Error interno",
         detalle: err?.message ?? String(err),
       }),
-      { status: 500, headers: corsHeaders() },
+      { status: 500, headers: corsHeaders() }
     );
   }
 });

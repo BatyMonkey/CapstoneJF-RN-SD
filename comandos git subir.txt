@@ -1,0 +1,62 @@
+📌 Instructivo para subir la carpeta redbarrio (que contiene src y supabase) a GitHub
+🔹 1. Ir a la carpeta de trabajo
+
+Abre Git Bash y ejecuta:
+
+cd /c/Users/raul.DESKTOP-EBPF0ML/Desktop/REDBARRIO
+
+
+Clona el repositorio remoto (si no lo tienes descargado):
+
+git clone https://github.com/BatyMonkey/CapstoneJF-RN-SD.git
+
+
+Luego entra a la carpeta del repositorio clonado:
+
+cd CapstoneJF-RN-SD
+
+🔹 2. Crear una nueva rama para tus cambios
+
+Crea una nueva rama con un nombre representativo, por ejemplo:
+
+git checkout -b feature/update-redbarrio
+
+🔹 3. Copiar la carpeta redbarrio completa al repositorio
+
+Copia todo el contenido de la carpeta redbarrio (que está dentro de tu escritorio) hacia el repositorio clonado:
+
+cp -r ../redbarrio/* ./
+
+
+(Si necesitas incluir archivos ocultos como .env, .gitignore o .gitkeep, agrega también:)
+
+cp -r ../redbarrio/.* ./ 2>/dev/null || true
+
+🔹 4. Agregar y confirmar los cambios
+git add .
+git commit -m "feat: actualización completa de carpeta redbarrio"
+
+🔹 5. Subir la rama a GitHub
+git push -u origin feature/update-redbarrio
+
+🔹 6. Crear el Merge Request (Pull Request)
+
+Abre tu navegador y entra al repositorio:
+👉 https://github.com/BatyMonkey/CapstoneJF-RN-SD
+
+GitHub mostrará un mensaje como:
+
+Compare & pull request para la rama feature/update-redbarrio.
+
+Haz clic en Compare & pull request, agrega una breve descripción (por ejemplo:
+“Actualización completa de la carpeta redbarrio”),
+y pulsa Create pull request.
+
+Luego haz clic en Merge pull request → Confirm merge.
+
+🔹 7. Eliminar la carpeta residual del clon local (opcional)
+
+Una vez que hayas hecho el merge y no necesites el clon local:
+
+cd ..
+rm -rf CapstoneJF-RN-SD

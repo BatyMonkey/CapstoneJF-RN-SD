@@ -1,0 +1,70 @@
+🧭 Instructivo Git Bash: Descarga selectiva de carpeta redbarrio
+🔹 1. Abrir Git Bash
+
+Presiona Inicio → busca “Git Bash” → Enter.
+
+🔹 2. Posicionarte en la carpeta destino
+
+Ejecuta:
+
+cd "C:/Users/raul.DESKTOP-EBPF0ML/Desktop/REDBARRIO"
+
+
+✅ Verifica tu ubicación con:
+
+pwd
+
+
+Deberías ver:
+
+/c/Users/raul.DESKTOP-EBPF0ML/Desktop/REDBARRIO
+
+🔹 3. Clonar el repositorio en modo “sparse” (descarga parcial)
+
+Esto te permite bajar solo una carpeta específica sin traer todo el repositorio.
+
+Ejecuta los siguientes comandos uno por uno 👇
+
+# Clona sin descargar archivos todavía
+git clone --no-checkout https://github.com/BatyMonkey/CapstoneJF-RN-SD.git temp-repo
+
+# Entra al repositorio temporal
+cd temp-repo
+
+# Activa el modo sparse-checkout (descarga selectiva)
+git sparse-checkout init --cone
+
+🔹 4. Indicar la carpeta que quieres descargar
+git sparse-checkout set redbarrio
+
+🔹 5. Descargar los archivos seleccionados
+git checkout main
+
+
+Esto descargará solo la carpeta redbarrio del repositorio.
+
+🔹 6. Mover la carpeta a tu destino final
+mv redbarrio ../
+
+🔹 7. Eliminar el repositorio temporal
+
+Sal del directorio y elimina el clon temporal:
+
+cd ..
+rm -rf temp-repo
+
+✅ Resultado final
+
+Tu estructura de carpetas quedará así:
+
+C:\Users\raul.DESKTOP-EBPF0ML\Desktop\REDBARRIO
+│
+└── redbarrio
+    ├── src
+    ├── supabase
+    ├── assets
+    ├── environments
+    └── ...
+
+
+Solo se descargará la carpeta redbarrio, sin los archivos ni carpetas externas del repositorio.
