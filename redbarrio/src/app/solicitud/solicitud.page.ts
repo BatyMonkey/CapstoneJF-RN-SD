@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonicModule, AlertController, ToastController } from '@ionic/angular';
+import { IonicModule, AlertController, ToastController, LoadingController } from '@ionic/angular';
 import { EspaciosService } from '../services/espacios.service';
 import { AuthService } from '../auth/auth.service';
 import { supabase } from '../core/supabase.client';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { Browser } from '@capacitor/browser';
 
 @Component({
   selector: 'app-solicitud',
@@ -29,6 +30,7 @@ export class SolicitudPage implements OnInit {
     private authService: AuthService,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
+    private loadingCtrl: LoadingController,
     private router: Router
   ) {
     this.solicitudForm = this.fb.group({
@@ -68,6 +70,12 @@ export class SolicitudPage implements OnInit {
       this.mostrarAlerta('Error', 'No se pudo obtener el usuario autenticado.');
       return;
     }
+
+    const loading = await this.loadingCtrl.create({
+      message: 'Procesando solicitud...',
+      spinner: 'crescent'
+    });
+    await loading.present();
 
     try {
       // 1️⃣ Crear evento
@@ -122,14 +130,11 @@ export class SolicitudPage implements OnInit {
         `${environment.supabaseUrl}/functions/v1/transbank-simular`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             id_reserva: reservaData.id_reserva,
             monto: 1500,
-            descripcion: `Pago arriendo espacio #${espacioId}`,
-            return_url: 'http://localhost:8100/pago-retorno'
+            descripcion: `Pago arriendo espacio #${espacioId}`
           })
         }
       );
@@ -139,14 +144,19 @@ export class SolicitudPage implements OnInit {
       const simData = await response.json();
 
       if (simData.url && simData.token) {
-        // ✅ Redirigir a Transbank sandbox
-        window.location.href = `${simData.url}?token_ws=${simData.token}`;
+        // ✅ Abrir simulador de pago en el navegador interno
+        await Browser.open({
+          url: `${simData.url}?token_ws=${simData.token}`,
+          presentationStyle: 'fullscreen'
+        });
       } else {
         throw new Error('No se recibió token o URL de Transbank.');
       }
 
+      await loading.dismiss();
     } catch (error) {
       console.error('Error al enviar solicitud:', error);
+      await loading.dismiss();
       this.mostrarAlerta('Error', 'No se pudo completar la reserva ni el pago.');
     }
   }

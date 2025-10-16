@@ -1,20 +1,30 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Pago WebPay</ion-title>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content class="ion-padding">
-  <div *ngIf="loading">
-    <ion-spinner name="crescent"></ion-spinner>
-    <p>{{ mensaje }}</p>
+  <div *ngIf="loading" class="ion-text-center">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p class="ion-margin-top">{{ mensaje }}</p>
   </div>
 
   <div *ngIf="!loading">
-    <h2>{{ mensaje }}</h2>
+    <ion-card class="ion-text-center" [color]="detalles?.estado === 'Pagado' ? 'success' : 'danger'">
+      <ion-card-header>
+        <ion-card-title>{{ mensaje }}</ion-card-title>
+      </ion-card-header>
 
-    <div *ngIf="detalles">
-      <p><strong>Estado:</strong> {{ detalles.estado }}</p>
-      <p><strong>Monto:</strong> ${{ detalles.monto }}</p>
-      <p><strong>Tipo de pago:</strong> {{ detalles.tipoPago }}</p>
-      <p><strong>Código autorización:</strong> {{ detalles.codigoAutorizacion }}</p>
-    </div>
+      <ion-card-content *ngIf="detalles">
+        <p><strong>Estado:</strong> {{ detalles.estado }}</p>
+        <p><strong>Monto:</strong> ${{ detalles.monto }}</p>
+        <p><strong>Tipo de pago:</strong> {{ detalles.tipoPago }}</p>
+        <p><strong>Código autorización:</strong> {{ detalles.codigoAutorizacion }}</p>
+      </ion-card-content>
+    </ion-card>
 
-    <ion-button routerLink="/home" expand="block" color="primary">
+    <ion-button expand="block" color="medium" routerLink="/home">
       Volver al inicio
     </ion-button>
   </div>
