@@ -28,15 +28,37 @@
         const urlParams = new URLSearchParams(window.location.search);
         const token_ws = urlParams.get("token_ws");
 
+        const PKG = "io.ionic.starter"; // ⬅️ Reemplaza por tu applicationId real si difiere
+        const DL_SCHEME = "redbarrio";
+        const DL_HOST = "app";
+        const DL_PATH = "/pago-retorno";
+
         const btn = document.getElementById("btnVolver");
         btn.onclick = () => {
-          window.location.href = "capacitor://localhost/pago-retorno" + window.location.search;
+          // Deep link manual desde botón
+          const dl = `${DL_SCHEME}://${DL_HOST}${DL_PATH}?token_ws=${encodeURIComponent(token_ws || "")}`;
+          window.location.href = dl;
         };
+
+        function goDeepLink() {
+          const dl = `${DL_SCHEME}://${DL_HOST}${DL_PATH}?token_ws=${encodeURIComponent(token_ws || "")}`;
+          window.location.href = dl;
+        }
+
+        function goIntentFallback() {
+          // Intent URI fallback (Android)
+          const intent = `intent://${DL_HOST}${DL_PATH}?token_ws=${encodeURIComponent(token_ws || "")}#Intent;scheme=${DL_SCHEME};package=${PKG};end`;
+          window.location.href = intent;
+        }
+
+        function showButton() {
+          btn.style.display = "inline-block";
+        }
 
         if (!token_ws) {
           document.getElementById("mensaje").innerText = "No se encontró token_ws.";
           document.getElementById("mensaje").className = "msg error";
-          btn.style.display = "inline-block";
+          showButton();
           return;
         }
 
@@ -50,7 +72,10 @@
             }
           );
 
-          const data = await response.json();
+          // Si la función retorna 4xx/5xx, intenta parsear igual; si falla, lanza error
+          let data = null;
+          try { data = await response.json(); } catch(_) {}
+
           console.log("Respuesta confirm:", data);
 
           let estado = "rechazado";
@@ -65,18 +90,31 @@
           document.getElementById("mensaje").className =
             estado === "pagado" ? "msg ok" : "msg error";
 
+          // 🔁 Redirección robusta:
+          // 1) Intentar deep link nativo
+          // 2) Si no abre, fallback a Intent URI
+          // 3) Si aun así no abre, mostrar botón "Volver a la app"
           setTimeout(() => {
-            window.location.href =
-              "capacitor://localhost/pago-retorno?token_ws=" + encodeURIComponent(token_ws);
-          }, 1200);
+            goDeepLink();
+            // Si el deep link no es manejado, este setTimeout se ejecutará igual:
+            setTimeout(() => {
+              goIntentFallback();
+              // Si tampoco se maneja el Intent, ofrecer botón
+              setTimeout(() => {
+                showButton();
+              }, 1500);
+            }, 1200);
+          }, 400);
+
         } catch (error) {
           console.error("Error confirmando:", error);
           document.getElementById("mensaje").innerText =
             "⚠️ Error al confirmar el pago. Puedes volver a la app y revisar el estado.";
           document.getElementById("mensaje").className = "msg error";
-          btn.style.display = "inline-block";
+          showButton();
         }
       })();
     </script>
   </body>
 </html>
+
