@@ -2,117 +2,184 @@
 <html lang="es">
   <head>
     <meta charset="utf-8" />
-    <title>Procesando pago...</title>
+    <title>Procesando pago…</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-      body { font-family: system-ui, sans-serif; text-align: center; margin-top: 4rem; color: #333; }
-      .loader { border: 6px solid #f3f3f3; border-top: 6px solid #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 1rem auto; }
+      :root {
+        --primary: #3b82f6;
+        --ok: #16a34a;
+        --error: #e11d48;
+        --text: #333;
+        --muted: #6b7280;
+      }
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 4rem 1.25rem 2rem;
+        color: var(--text);
+        background: #fafafa;
+      }
+      h3 { margin: 0.5rem 0 0.25rem; font-weight: 700; }
+      .loader {
+        border: 6px solid #f3f3f3;
+        border-top: 6px solid var(--primary);
+        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        animation: spin 0.9s linear infinite;
+        margin: 0 auto 0.75rem;
+      }
       @keyframes spin { 0% { transform: rotate(0deg) } 100% { transform: rotate(360deg) } }
-      .msg { margin-top: 1rem; font-size: 1.1rem; }
-      .error { color: #e11d48; }
-      .ok { color: #16a34a; }
-      button { padding:10px 20px; border:none; background:#3b82f6; color:#fff; border-radius:6px; }
+      .msg { margin: 0.5rem auto 1rem; font-size: 1.05rem; color: var(--muted); max-width: 680px; }
+      .msg.ok { color: var(--ok); }
+      .msg.error { color: var(--error); }
+      button {
+        padding: 10px 18px;
+        border: none;
+        background: var(--primary);
+        color: #fff;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        cursor: pointer;
+      }
+      button[disabled] { opacity: 0.6; cursor: default; }
+      .wrap {
+        max-width: 880px;
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 12px;
+        padding: 2rem 1.25rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+      }
+      .muted { color: var(--muted); font-size: 0.9rem; }
     </style>
   </head>
   <body>
-    <div class="loader"></div>
-    <h3 id="titulo">Procesando pago...</h3>
-    <p class="msg" id="mensaje">Confirmando transacción con Transbank...</p>
+    <div class="wrap">
+      <div class="loader" aria-hidden="true"></div>
+      <h3 id="titulo">Procesando pago…</h3>
+      <p class="msg" id="mensaje">Confirmando transacción con el proveedor de pago…</p>
 
-    <p>
-      <button id="btnVolver" style="display:none;">Volver a la app</button>
-    </p>
+      <p>
+        <button id="btnVolver" style="display:none;">Volver a la aplicación</button>
+      </p>
+
+      <p class="muted" id="nota" style="display:none;">
+        Si no se produce la redirección automática, utilice el botón para regresar a la aplicación.
+      </p>
+    </div>
 
     <script>
       (async () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const token_ws = urlParams.get("token_ws");
-
-        const PKG = "io.ionic.starter"; // ⬅️ Reemplaza por tu applicationId real si difiere
+        // ====== Configuración de deep link ======
+        const PKG = "io.ionic.starter"; // Reemplazar si el applicationId difiere
         const DL_SCHEME = "redbarrio";
         const DL_HOST = "app";
         const DL_PATH = "/pago-retorno";
 
-        const btn = document.getElementById("btnVolver");
-        btn.onclick = () => {
-          // Deep link manual desde botón
-          const dl = `${DL_SCHEME}://${DL_HOST}${DL_PATH}?token_ws=${encodeURIComponent(token_ws || "")}`;
-          window.location.href = dl;
-        };
+        // Delays parametrizados
+        const DELAY_DEEP_LINK = 450;   // ms antes de intentar abrir deep link
+        const DELAY_INTENT    = 1200;  // ms antes de intentar Intent fallback (solo Android)
+        const DELAY_SHOW_BTN  = 1800;  // ms antes de mostrar el botón manual
 
-        function goDeepLink() {
-          const dl = `${DL_SCHEME}://${DL_HOST}${DL_PATH}?token_ws=${encodeURIComponent(token_ws || "")}`;
-          window.location.href = dl;
+        // Detección de plataforma
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        const isIOS     = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+        // Utilidades
+        const $ = (id) => document.getElementById(id);
+
+        function getTokenFromQuery() {
+          const p = new URLSearchParams(window.location.search);
+          return p.get("token_ws") || p.get("token") || p.get("TBK_TOKEN") || "";
         }
 
-        function goIntentFallback() {
-          // Intent URI fallback (Android)
-          const intent = `intent://${DL_HOST}${DL_PATH}?token_ws=${encodeURIComponent(token_ws || "")}#Intent;scheme=${DL_SCHEME};package=${PKG};end`;
-          window.location.href = intent;
+        function deepLinkUrl(token) {
+          return `${DL_SCHEME}://${DL_HOST}${DL_PATH}?token_ws=${encodeURIComponent(token || "")}`;
+        }
+
+        function intentUrl(token) {
+          return `intent://${DL_HOST}${DL_PATH}?token_ws=${encodeURIComponent(token || "")}#Intent;scheme=${DL_SCHEME};package=${PKG};end`;
         }
 
         function showButton() {
-          btn.style.display = "inline-block";
+          $("btnVolver").style.display = "inline-block";
+          $("nota").style.display = "block";
         }
 
+        async function confirmPayment(token) {
+          // Confirmación con timeout para evitar esperas indefinidas
+          const controller = new AbortController();
+          const to = setTimeout(() => controller.abort(), 8000); // 8s
+          try {
+            const resp = await fetch(
+              "https://sovnabbbubapqxziubuh.supabase.co/functions/v1/transbank-confirm",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token_ws: token }),
+                signal: controller.signal
+              }
+            );
+            clearTimeout(to);
+            let data = null;
+            try { data = await resp.json(); } catch (_) {}
+
+            const ok = data?.status === "AUTHORIZED" || data?.estado === "pagado";
+            return { ok, data };
+          } catch (err) {
+            clearTimeout(to);
+            return { ok: false, error: String(err) };
+          }
+        }
+
+        // ====== Lógica principal ======
+        const token_ws = getTokenFromQuery();
+        const btn = $("btnVolver");
+        btn.onclick = () => {
+          window.location.replace(deepLinkUrl(token_ws));
+        };
+
         if (!token_ws) {
-          document.getElementById("mensaje").innerText = "No se encontró token_ws.";
-          document.getElementById("mensaje").className = "msg error";
+          $("mensaje").innerText = "No se encontró el parámetro de token de la transacción.";
+          $("mensaje").className = "msg error";
           showButton();
           return;
         }
 
-        try {
-          const response = await fetch(
-            "https://sovnabbbubapqxziubuh.supabase.co/functions/v1/transbank-confirm",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ token_ws }),
-            }
-          );
+        $("titulo").innerText = "Procesando pago…";
+        $("mensaje").innerText = "Confirmando transacción con el proveedor de pago…";
 
-          // Si la función retorna 4xx/5xx, intenta parsear igual; si falla, lanza error
-          let data = null;
-          try { data = await response.json(); } catch(_) {}
+        const { ok } = await confirmPayment(token_ws);
 
-          console.log("Respuesta confirm:", data);
+        $("mensaje").innerText = ok
+          ? "Pago realizado correctamente. Redirigiendo a la aplicación…"
+          : "Pago rechazado o no confirmado. Redirigiendo a la aplicación…";
+        $("mensaje").className = ok ? "msg ok" : "msg error";
 
-          let estado = "rechazado";
-          if (data?.status === "AUTHORIZED" || data?.estado === "pagado") {
-            estado = "pagado";
-          }
+        // Redirección robusta:
+        // 1) Intentar Deep Link
+        // 2) En Android, Intent URI como fallback
+        // 3) Botón manual como último recurso
+        setTimeout(() => {
+          window.location.replace(deepLinkUrl(token_ws));
 
-          document.getElementById("mensaje").innerText =
-            estado === "pagado"
-              ? "✅ Pago realizado con éxito. Redirigiendo a la app..."
-              : "❌ Pago rechazado. Redirigiendo a la app...";
-          document.getElementById("mensaje").className =
-            estado === "pagado" ? "msg ok" : "msg error";
-
-          // 🔁 Redirección robusta:
-          // 1) Intentar deep link nativo
-          // 2) Si no abre, fallback a Intent URI
-          // 3) Si aun así no abre, mostrar botón "Volver a la app"
-          setTimeout(() => {
-            goDeepLink();
-            // Si el deep link no es manejado, este setTimeout se ejecutará igual:
+          if (isAndroid) {
             setTimeout(() => {
-              goIntentFallback();
-              // Si tampoco se maneja el Intent, ofrecer botón
+              window.location.replace(intentUrl(token_ws));
+
               setTimeout(() => {
                 showButton();
-              }, 1500);
-            }, 1200);
-          }, 400);
-
-        } catch (error) {
-          console.error("Error confirmando:", error);
-          document.getElementById("mensaje").innerText =
-            "⚠️ Error al confirmar el pago. Puedes volver a la app y revisar el estado.";
-          document.getElementById("mensaje").className = "msg error";
-          showButton();
-        }
+              }, Math.max(0, DELAY_SHOW_BTN - DELAY_INTENT));
+            }, DELAY_INTENT);
+          } else {
+            // iOS / otros navegadores (no existe Intent fallback)
+            setTimeout(() => {
+              showButton();
+            }, Math.max(0, DELAY_SHOW_BTN - DELAY_DEEP_LINK));
+          }
+        }, DELAY_DEEP_LINK);
       })();
     </script>
   </body>
