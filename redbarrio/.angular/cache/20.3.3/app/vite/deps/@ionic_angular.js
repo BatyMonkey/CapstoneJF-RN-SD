@@ -1,13 +1,13 @@
 import {
   menuController
-} from "./chunk-4WEMEU7P.js";
+} from "./chunk-YJYYGSEK.js";
 import {
   getTimeGivenProgression
 } from "./chunk-34QX6F67.js";
 import {
   IonicSafeString,
   setupConfig
-} from "./chunk-N24SJTXV.js";
+} from "./chunk-OWOOU7VT.js";
 import {
   actionSheetController,
   alertController,
@@ -16,23 +16,29 @@ import {
   pickerController,
   popoverController,
   toastController
-} from "./chunk-GLHFVQHJ.js";
-import "./chunk-CCSUFG5J.js";
+} from "./chunk-B3OFUUJV.js";
+import "./chunk-KUZZZZQT.js";
 import {
   openURL
 } from "./chunk-ZWYZ2NSP.js";
 import {
+  createGesture
+} from "./chunk-Z3OEOVFM.js";
+import "./chunk-QA2SYHF5.js";
+import "./chunk-FXJHFXDF.js";
+import {
   iosTransitionAnimation
-} from "./chunk-RIJ7ZOUN.js";
+} from "./chunk-6UQU3GWC.js";
 import {
   mdTransitionAnimation
-} from "./chunk-UTUNQVJQ.js";
+} from "./chunk-J7ZKOBYP.js";
 import {
   getIonPageElement
-} from "./chunk-KGCUZFT7.js";
+} from "./chunk-Y6FJFSJ2.js";
 import {
   createAnimation as createAnimation2
-} from "./chunk-NTNOC4F3.js";
+} from "./chunk-S4Q23B2F.js";
+import "./chunk-LCMILTBF.js";
 import "./chunk-RA57Z6D3.js";
 import "./chunk-LTAFKWUM.js";
 import {
@@ -52,17 +58,11 @@ import {
   getPlatforms,
   initialize,
   isPlatform
-} from "./chunk-DXIZOXSL.js";
-import "./chunk-2QSFQOVL.js";
-import {
-  createGesture
-} from "./chunk-Z3OEOVFM.js";
-import "./chunk-QA2SYHF5.js";
-import "./chunk-TCUDET6F.js";
-import "./chunk-LCMILTBF.js";
+} from "./chunk-J42IWAJW.js";
+import "./chunk-GGRQ5HQ3.js";
 import {
   bootstrapLazy
-} from "./chunk-ALXP5TSD.js";
+} from "./chunk-THQAVDZS.js";
 import {
   MaxValidator,
   MinValidator,
@@ -78,9 +78,8 @@ import {
   Router,
   RouterLink,
   UrlSerializer
-} from "./chunk-LJPS7NX5.js";
-import "./chunk-LYZ2RRMW.js";
-import "./chunk-KIMTXNSS.js";
+} from "./chunk-Y6KMK7BQ.js";
+import "./chunk-YBXHZPW5.js";
 import {
   CommonModule,
   Location,
@@ -88,6 +87,7 @@ import {
   NgIf,
   NgTemplateOutlet
 } from "./chunk-ORVGVXJZ.js";
+import "./chunk-KIMTXNSS.js";
 import "./chunk-4X6VR2I6.js";
 import {
   APP_INITIALIZER,
@@ -155,10 +155,10 @@ import {
   ɵɵtemplate,
   ɵɵviewQuery
 } from "./chunk-O3TFJGNF.js";
+import "./chunk-UQGLAMHP.js";
 import {
   fromEvent
 } from "./chunk-576P5TAG.js";
-import "./chunk-UQGLAMHP.js";
 import {
   BehaviorSubject,
   Subject,
