@@ -113,6 +113,23 @@ export class SolicitarCertificadoPage implements OnInit {
     };
   }
 
+  /* ===== Helpers de sanitización (no alteran tu flujo) ===== */
+  private sanitizeStr(s: any): string {
+    const v = (s == null) ? '' : String(s);
+    let out = v.normalize('NFC');             // fusiona base+diacrítico
+    out = out.replace(/\p{M}/gu, '');         // elimina marcas combinantes (incluye U+0307)
+    out = out.replace(/[\u200B-\u200D\uFEFF]/g, ''); // invisibles
+    return out;
+  }
+  private sanitizeVars<T extends Record<string, any>>(o: T): T {
+    const out: any = {};
+    for (const k of Object.keys(o)) {
+      const val = o[k];
+      out[k] = (typeof val === 'string') ? this.sanitizeStr(val) : val;
+    }
+    return out as T;
+  }
+
   /* ========== DESCARGAR ========== */
   async emitirDescargar() {
     try {
@@ -131,7 +148,7 @@ export class SolicitarCertificadoPage implements OnInit {
 
       // 2) Generar PDF con el ID impreso como “Original N°”
       const baseBytes = await fetchBaseTemplateBytes();
-      const vars = { ...this.buildVars(who), folio: String(id) };
+      const vars = this.sanitizeVars({ ...this.buildVars(who), folio: String(id) });
       const blob = await fillCertificate(baseBytes, vars);
 
       // 3) Subir y actualizar URL
@@ -168,7 +185,7 @@ export class SolicitarCertificadoPage implements OnInit {
       const { id } = await createCertRecord(baseMeta);
 
       const baseBytes = await fetchBaseTemplateBytes();
-      const vars = { ...this.buildVars(who), folio: String(id) };
+      const vars = this.sanitizeVars({ ...this.buildVars(who), folio: String(id) });
       const blob = await fillCertificate(baseBytes, vars);
 
       const { pdf_url } = await uploadPdfForRecord(id, blob);
@@ -190,3 +207,4 @@ export class SolicitarCertificadoPage implements OnInit {
     }
   }
 }
+

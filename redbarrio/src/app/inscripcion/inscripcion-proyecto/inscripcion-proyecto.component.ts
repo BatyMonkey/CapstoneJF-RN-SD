@@ -57,7 +57,7 @@ export class InscripcionProyectoComponent implements OnInit {
     });
   }
 
-  // ✅ Valida y restaura sesión (no redirige en modo desarrollo)
+  
   async validarSesion() {
     try {
       const ses = await this.auth.waitForActiveSession();
@@ -80,7 +80,7 @@ export class InscripcionProyectoComponent implements OnInit {
     }
   }
 
-  // ✅ Cargar datos del proyecto o actividad
+
   async cargarDatos() {
     const loading = await this.loadingCtrl.create({
       message: 'Cargando información...',
@@ -119,7 +119,7 @@ export class InscripcionProyectoComponent implements OnInit {
     }
   }
 
-  // ✅ Verifica cupos y si ya está inscrito
+
   async verificarEstadoActividad() {
     if (!this.idActividad || !this.perfil) return;
 
@@ -140,7 +140,7 @@ export class InscripcionProyectoComponent implements OnInit {
     this.sinCupos = this.cuposRestantes <= 0;
   }
 
-  // ✅ Enviar inscripción o postulación (corrigido)
+ 
   async enviarPostulacion() {
     this.isSubmitting = true;
 
@@ -164,7 +164,7 @@ export class InscripcionProyectoComponent implements OnInit {
         const { error } = await supabase.from('actividad_inscripcion').insert([
           {
             id_actividad: this.idActividad,
-            id_auth: userId, // ✅ usar ID de sesión activo
+            id_auth: userId, // 
             estado: 'pendiente',
             comentario: comentario ?? null,
             fecha: now,
@@ -175,7 +175,7 @@ export class InscripcionProyectoComponent implements OnInit {
         const { error } = await supabase.from('proyecto_postulacion').insert([
           {
             id_proyecto: this.idProyecto,
-            id_auth: userId, // ✅ usar ID de sesión activo
+            id_auth: userId, // 
             descripcion: comentario ?? null,
             estado: 'pendiente',
             fecha: now,
@@ -187,9 +187,16 @@ export class InscripcionProyectoComponent implements OnInit {
 
       await this.mostrarAlerta('Éxito', 'Tu inscripción se ha enviado correctamente.');
       this.router.navigate(['/inscripcion/proyectos']);
-    } catch (err) {
-      console.error('Error al enviar inscripción:', err);
-      await this.mostrarAlerta('Error', 'No se pudo enviar la inscripción.');
+    } catch (err: any) {
+      // 🔍 Console log detallado para ver el error real de Supabase
+      console.error('Error al enviar inscripción (raw):', err);
+      const detail =
+        err?.message ||
+        err?.error_description ||
+        err?.hint ||
+        (typeof err === 'object' ? JSON.stringify(err) : String(err));
+
+      await this.mostrarAlerta('Error', `No se pudo enviar la inscripción.\n\n${detail}`);
     } finally {
       this.isSubmitting = false;
       loading.dismiss();

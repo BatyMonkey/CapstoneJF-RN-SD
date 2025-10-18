@@ -1,20 +1,40 @@
-<ion-content class="ion-padding">
-  <div *ngIf="loading">
-    <ion-spinner name="crescent"></ion-spinner>
-    <p>{{ mensaje }}</p>
+<ion-header class="rb-header">
+  <ion-toolbar>
+    <ion-title>Pago WebPay</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding webpay" [fullscreen]="true">
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-box fade-in">
+    <ion-spinner name="crescent" class="spinner"></ion-spinner>
+    <p class="ion-margin-top">{{ mensaje }}</p>
   </div>
 
-  <div *ngIf="!loading">
-    <h2>{{ mensaje }}</h2>
+  <!-- Resultado -->
+  <div *ngIf="!loading" class="fade-in">
+    <ion-card class="card pop-in" [color]="detalles?.estado === 'Pagado' ? 'success' : 'danger'">
+      <ion-card-header>
+        <ion-card-title>{{ mensaje }}</ion-card-title>
+      </ion-card-header>
 
-    <div *ngIf="detalles">
-      <p><strong>Estado:</strong> {{ detalles.estado }}</p>
-      <p><strong>Monto:</strong> ${{ detalles.monto }}</p>
-      <p><strong>Tipo de pago:</strong> {{ detalles.tipoPago }}</p>
-      <p><strong>Código autorización:</strong> {{ detalles.codigoAutorizacion }}</p>
-    </div>
+      <ion-card-content *ngIf="detalles">
+        <div class="status-row">
+          <ion-chip [color]="detalles?.estado === 'Pagado' ? 'success' : 'danger'" outline="true">
+            <ion-icon [name]="detalles?.estado === 'Pagado' ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+            <ion-label>{{ detalles.estado }}</ion-label>
+          </ion-chip>
+        </div>
 
-    <ion-button routerLink="/home" expand="block" color="primary">
+        <div class="kv">
+          <p><strong>Monto:</strong> ${{ detalles.monto }}</p>
+          <p><strong>Tipo de pago:</strong> {{ detalles.tipoPago }}</p>
+          <p><strong>Código autorización:</strong> {{ detalles.codigoAutorizacion }}</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-button expand="block" color="medium" routerLink="/home" class="slide-up">
       Volver al inicio
     </ion-button>
   </div>
