@@ -1,22 +1,44 @@
 import {
   menuController
-} from "./chunk-CZFWYUU6.js";
+} from "./chunk-YJYYGSEK.js";
 import {
   getTimeGivenProgression
 } from "./chunk-34QX6F67.js";
 import {
   IonicSafeString,
   setupConfig
-} from "./chunk-CUH6GMVR.js";
+} from "./chunk-OWOOU7VT.js";
+import {
+  actionSheetController,
+  alertController,
+  loadingController,
+  modalController,
+  pickerController,
+  popoverController,
+  toastController
+} from "./chunk-B3OFUUJV.js";
+import "./chunk-KUZZZZQT.js";
+import {
+  openURL
+} from "./chunk-ZWYZ2NSP.js";
+import {
+  createGesture
+} from "./chunk-Z3OEOVFM.js";
+import "./chunk-QA2SYHF5.js";
+import "./chunk-FXJHFXDF.js";
 import {
   iosTransitionAnimation
-} from "./chunk-DCHPC5LD.js";
+} from "./chunk-6UQU3GWC.js";
 import {
   mdTransitionAnimation
-} from "./chunk-C3WFNMUB.js";
+} from "./chunk-J7ZKOBYP.js";
 import {
   getIonPageElement
-} from "./chunk-UTT2D423.js";
+} from "./chunk-Y6FJFSJ2.js";
+import {
+  createAnimation as createAnimation2
+} from "./chunk-S4Q23B2F.js";
+import "./chunk-LCMILTBF.js";
 import "./chunk-RA57Z6D3.js";
 import "./chunk-LTAFKWUM.js";
 import {
@@ -33,43 +55,14 @@ import {
   printIonWarning
 } from "./chunk-67MFLVOH.js";
 import {
-  actionSheetController,
-  alertController,
-  loadingController,
-  modalController,
-  pickerController,
-  popoverController,
-  toastController
-} from "./chunk-K5YLQFNC.js";
-import "./chunk-XSBUYYBY.js";
-import {
-  openURL
-} from "./chunk-ZWYZ2NSP.js";
-import {
-  createAnimation as createAnimation2
-} from "./chunk-T644AZSS.js";
-import {
   getPlatforms,
   initialize,
   isPlatform
-} from "./chunk-4PBVZOOX.js";
-import "./chunk-RPVHMIOS.js";
-import {
-  createGesture
-} from "./chunk-Z3OEOVFM.js";
-import "./chunk-QA2SYHF5.js";
-import "./chunk-LKVRIHHX.js";
-import "./chunk-LCMILTBF.js";
+} from "./chunk-J42IWAJW.js";
+import "./chunk-GGRQ5HQ3.js";
 import {
   bootstrapLazy
-} from "./chunk-NLF736SX.js";
-import {
-  MaxValidator,
-  MinValidator,
-  NG_VALIDATORS,
-  NG_VALUE_ACCESSOR,
-  NgControl
-} from "./chunk-N52XZBH5.js";
+} from "./chunk-THQAVDZS.js";
 import {
   ActivatedRoute,
   ChildrenOutletContexts,
@@ -79,6 +72,13 @@ import {
   RouterLink,
   UrlSerializer
 } from "./chunk-LJPS7NX5.js";
+import {
+  MaxValidator,
+  MinValidator,
+  NG_VALIDATORS,
+  NG_VALUE_ACCESSOR,
+  NgControl
+} from "./chunk-N52XZBH5.js";
 import "./chunk-LYZ2RRMW.js";
 import "./chunk-KIMTXNSS.js";
 import {
@@ -155,10 +155,10 @@ import {
   ɵɵtemplate,
   ɵɵviewQuery
 } from "./chunk-O3TFJGNF.js";
+import "./chunk-UQGLAMHP.js";
 import {
   fromEvent
 } from "./chunk-576P5TAG.js";
-import "./chunk-UQGLAMHP.js";
 import {
   BehaviorSubject,
   Subject,

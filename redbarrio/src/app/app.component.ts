@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, MenuController, Platform } from '@ionic/angular';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
@@ -7,6 +7,7 @@ import { AuthService } from './auth/auth.service';
 import { supabase } from './core/supabase.client';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { App } from '@capacitor/app';
+import { Browser } from '@capacitor/browser';
 
 @Component({
   selector: 'app-root',
@@ -25,7 +26,8 @@ export class AppComponent {
     private router: Router,
     private menu: MenuController,
     private auth: AuthService,
-    private platform: Platform
+    private platform: Platform,
+    private ngZone: NgZone
   ) {
     this.currentUrl = this.router.url || '';
     this.refrescarRol();
@@ -162,7 +164,7 @@ export class AppComponent {
         console.warn('Deep link sin tokens ni code. No se pudo establecer sesión.');
       }
 
-      await this.router.navigateByUrl('/auth/recuperar-contrasena', { replaceUrl: true });
+      // Otros esquemas/URLs ignorados
     } catch (e) {
       console.error('Deep link parse error', e);
     }
