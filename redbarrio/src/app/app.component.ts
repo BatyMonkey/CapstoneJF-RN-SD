@@ -83,9 +83,7 @@ export class AppComponent {
         this.isAdmin = false;
         return;
       }
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         this.isAdmin = false;
         return;
@@ -113,11 +111,9 @@ export class AppComponent {
     } catch {}
   }
 
-  /**
-   * Deep links soportados:
-   *  - redbarrio://app/pago-retorno?token_ws=...
-   *  - capacitor://localhost/pago-retorno?token_ws=...  (fallback/legacy)
-   *  - myapp://auth/reset?type=recovery&access_token=...&refresh_token=...
+  /** Deep links:
+   * myapp://auth/reset?type=recovery&access_token=...&refresh_token=...
+   * capacitor://localhost/pago-retorno?token_ws=...
    */
   private setupDeepLinks() {
     // App abierta desde cero
@@ -135,50 +131,37 @@ export class AppComponent {
     try {
       const u = new URL(rawUrl);
 
-      // === 🔹 CASO PAGO (nuevo esquema): redbarrio://app/pago-retorno?token_ws=...
-      if (
-        (u.protocol === 'redbarrio:' && u.host === 'app' && u.pathname.startsWith('/pago-retorno')) ||
-        // === 🔹 CASO PAGO (legacy): capacitor://localhost/pago-retorno?token_ws=...
-        (u.protocol === 'capacitor:' && u.host === 'localhost' && u.pathname === '/pago-retorno')
-      ) {
-        const token = u.searchParams.get('token_ws') || '';
-        // Cierra la Custom Tab si se usó @capacitor/browser
-        try {
-          await Browser.close();
-        } catch {}
-        // Vuelve al router de Angular dentro del zone
-        this.ngZone.run(() => {
-          this.router.navigate(['/pago-retorno'], {
+      // === 🔹 CASO 1: flujo de Transbank ===
+      if (u.protocol === 'capacitor:' && u.pathname === '/pago-retorno') {
+        const token = u.searchParams.get('token_ws');
+        if (token) {
+          console.log('💳 Redirigiendo a pago-retorno con token:', token);
+          await this.router.navigate(['/pago-retorno'], {
             queryParams: { token_ws: token },
             replaceUrl: true,
           });
-        });
-        return;
+          return;
+        }
       }
 
-      // === 🔹 CASO AUTH SUPABASE (mantener compatibilidad): myapp://auth/...
-      if (u.protocol === 'myapp:' && u.host === 'auth') {
-        const q = u.searchParams;
-        const hashParams = new URLSearchParams(u.hash?.startsWith('#') ? u.hash.slice(1) : u.hash);
-        const getParam = (k: string) => q.get(k) ?? hashParams.get(k);
+      // === 🔹 CASO 2: flujo de autenticación (ya existente) ===
+      if (u.protocol !== 'myapp:' || u.host !== 'auth') return;
 
-        const type = getParam('type');
-        const access_token = getParam('access_token');
-        const refresh_token = getParam('refresh_token');
-        const code = getParam('code');
+      const q = u.searchParams;
+      const hashParams = new URLSearchParams(u.hash?.startsWith('#') ? u.hash.slice(1) : u.hash);
+      const getParam = (k: string) => q.get(k) ?? hashParams.get(k);
 
-        if (type === 'recovery' && access_token && refresh_token) {
-          await supabase.auth.setSession({ access_token, refresh_token });
-        } else if (code) {
-          await supabase.auth.exchangeCodeForSession(code);
-        } else {
-          console.warn('Deep link sin tokens ni code. No se pudo establecer sesión.');
-        }
+      const type = getParam('type');
+      const access_token  = getParam('access_token');
+      const refresh_token = getParam('refresh_token');
+      const code          = getParam('code');
 
-        this.ngZone.run(() => {
-          this.router.navigateByUrl('/auth/recuperar-contrasena', { replaceUrl: true });
-        });
-        return;
+      if (type === 'recovery' && access_token && refresh_token) {
+        await supabase.auth.setSession({ access_token, refresh_token });
+      } else if (code) {
+        await supabase.auth.exchangeCodeForSession(code);
+      } else {
+        console.warn('Deep link sin tokens ni code. No se pudo establecer sesión.');
       }
 
       // Otros esquemas/URLs ignorados
