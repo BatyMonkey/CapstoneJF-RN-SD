@@ -64,6 +64,13 @@ import {
   bootstrapLazy
 } from "./chunk-THQAVDZS.js";
 import {
+  MaxValidator,
+  MinValidator,
+  NG_VALIDATORS,
+  NG_VALUE_ACCESSOR,
+  NgControl
+} from "./chunk-N52XZBH5.js";
+import {
   ActivatedRoute,
   ChildrenOutletContexts,
   NavigationStart,
@@ -72,13 +79,6 @@ import {
   RouterLink,
   UrlSerializer
 } from "./chunk-LJPS7NX5.js";
-import {
-  MaxValidator,
-  MinValidator,
-  NG_VALIDATORS,
-  NG_VALUE_ACCESSOR,
-  NgControl
-} from "./chunk-N52XZBH5.js";
 import "./chunk-LYZ2RRMW.js";
 import "./chunk-KIMTXNSS.js";
 import {
@@ -155,10 +155,10 @@ import {
   ɵɵtemplate,
   ɵɵviewQuery
 } from "./chunk-O3TFJGNF.js";
-import "./chunk-UQGLAMHP.js";
 import {
   fromEvent
 } from "./chunk-576P5TAG.js";
+import "./chunk-UQGLAMHP.js";
 import {
   BehaviorSubject,
   Subject,

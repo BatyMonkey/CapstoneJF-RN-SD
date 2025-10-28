@@ -27,3 +27,29 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+allprojects {
+    tasks.withType(JavaCompile).configureEach {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
+// Force Java toolchain for all JavaCompile tasks to avoid mismatched source/releases
+subprojects {
+    tasks.withType(JavaCompile).configureEach {
+        // Ensure source/target compatibility
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+
+        // Attempt to use Gradle Java toolchain to compile with Java 17 when available
+        try {
+            javaCompiler = javaToolchains.compilerFor {
+                languageVersion = JavaLanguageVersion.of(17)
+            }
+        } catch(Exception e) {
+            // Gradle version or environment may not support toolchains on every task; ignore failure
+            logger.info("Java toolchain configuration skipped: ${e.message}")
+        }
+    }
+}
