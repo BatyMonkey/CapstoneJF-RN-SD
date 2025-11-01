@@ -1,0 +1,130 @@
+<ion-header [translucent]="true" class="rb-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Dashboard Vecinal</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <ion-refresher slot="fixed" (ionRefresh)="cargarMetricas()" pullMin="80" pullMax="150">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="dashboard-wrapper">
+
+    <!-- Segmento de filtros -->
+    <ion-segment [(ngModel)]="filtroTipo" (ionChange)="filtrarPorTipo(filtroTipo)" class="dashboard-segment">
+      <ion-segment-button value="Todos">Todos</ion-segment-button>
+      <ion-segment-button value="Ingreso">Ingresos</ion-segment-button>
+      <ion-segment-button value="Gasto">Gastos</ion-segment-button>
+    </ion-segment>
+
+    <!-- Resumen financiero -->
+    <ion-card class="dashboard-card">
+      <ion-card-header>
+        <ion-card-title>Resumen Financiero</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item lines="none">
+          <ion-label>💰 Ingresos</ion-label>
+          <ion-note color="success">${{ totalIngresos | number:'1.0-0' }}</ion-note>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label>💸 Gastos</ion-label>
+          <ion-note color="danger">${{ totalGastos | number:'1.0-0' }}</ion-note>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label>📊 Balance</ion-label>
+          <ion-note color="medium">${{ balance | number:'1.0-0' }}</ion-note>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- KPIs globales -->
+    <ion-card class="dashboard-card kpi-card">
+      <ion-card-header>
+        <ion-card-title>Indicadores Generales</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="6">
+              <ion-item lines="none">
+                <ion-icon name="document-text-outline" color="primary" slot="start"></ion-icon>
+                <ion-label>Certificados</ion-label>
+                <ion-note color="primary" slot="end">{{ totalCertificados }}</ion-note>
+              </ion-item>
+            </ion-col>
+            <ion-col size="6">
+              <ion-item lines="none">
+                <ion-icon name="home-outline" color="tertiary" slot="start"></ion-icon>
+                <ion-label>Reservas</ion-label>
+                <ion-note color="tertiary" slot="end">{{ totalReservas }}</ion-note>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Gráfico 1: Distribución por Categoría -->
+    <ion-card class="dashboard-card">
+      <ion-card-header>
+        <ion-card-title>Distribución por Categoría</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="dashboard-chart-container">
+          <canvas baseChart [data]="chartDataCategoria" [type]="'doughnut'"></canvas>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Gráfico 2: Ingresos vs Gastos -->
+    <ion-card class="dashboard-card">
+      <ion-card-header>
+        <ion-card-title>Ingresos vs Gastos (Mensual)</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="dashboard-chart-container">
+          <canvas baseChart [data]="chartDataIngresosGastos" [type]="'bar'"></canvas>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Gráfico 3: Top Categorías -->
+    <ion-card class="dashboard-card">
+      <ion-card-header>
+        <ion-card-title>{{ tituloTopCategorias }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="dashboard-chart-container">
+          <canvas baseChart [data]="chartDataTopCategorias" [type]="'bar'"></canvas>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Movimientos recientes -->
+    <ion-card class="dashboard-card movimientos-card">
+      <ion-card-header>
+        <ion-card-title>Movimientos recientes</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list lines="none">
+          <ion-item *ngFor="let m of metricas">
+            <ion-label>
+              <h2>{{ m.nombre_item }}</h2>
+              <p>{{ m.categoria }} — {{ m.tipo_fondo }}</p>
+              <p>{{ m.fecha | date:'dd/MM/yyyy' }}</p>
+            </ion-label>
+            <ion-note [color]="m.tipo_transaccion === 'Ingreso' ? 'success' : 'danger'" slot="end">
+              {{ m.tipo_transaccion === 'Ingreso' ? '+' : '-' }}${{ m.monto | number:'1.0-0' }}
+            </ion-note>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+  </div>
+</ion-content>

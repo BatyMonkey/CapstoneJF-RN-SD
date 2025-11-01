@@ -7,7 +7,7 @@ import { AuthService } from '../auth.service';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Capacitor } from '@capacitor/core';
 import { OcrMlkitService } from '../../services/ocr-mlkit.service';
-import { supabase } from '../../core/supabase.client';
+import { SupabaseService } from 'src/app/services/supabase.service';
 
 @Component({
   selector: 'app-register',
@@ -48,7 +48,8 @@ export class RegisterPage {
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
     private auth: AuthService,
-    private ocr: OcrMlkitService
+    private ocr: OcrMlkitService,
+    private supabaseService: SupabaseService
   ) {}
 
   // =========================
@@ -169,7 +170,7 @@ export class RegisterPage {
       const filename = `boleta_${Date.now()}.${ext}`;
       const path = `${safeEmail}/${filename}`; // sin "/" inicial
 
-      const { error: upErr } = await supabase.storage
+      const { error: upErr } = await this.supabaseService.client.storage
         .from(BUCKET)
         .upload(path, file, {
           upsert: true,
@@ -187,7 +188,7 @@ export class RegisterPage {
       }
 
       // Si el bucket es público:
-      const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
+      const { data } = await this.supabaseService.client.storage.from(BUCKET).getPublicUrl(path);
       return data.publicUrl;
 
       // Si fuera privado:

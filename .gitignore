@@ -1,13 +1,62 @@
-# Ignorar directorios
-redbarrio/.angular
-/android
-/node_modules
-/supabase
-/.vscode
-/www
-/platforms # (Asumido en proyectos Ionic/Angular)
-/hooks # (Asumido en proyectos Ionic/Angular)
+# ==========================================
+# 🧱 Node & Angular / Ionic
+# ==========================================
 node_modules/
-redbarrio/node_modules/
-.angular/cache
-redbarrio/.angular/cache/20.3.3/app/.tsbuildinfo
+package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Angular cache & build artifacts
+.angular/
+.angular/cache/
+.angular/cache/**
+dist/
+tmp/
+out-tsc/
+coverage/
+www/
+
+# Ionic build artifacts
+.platforms/
+.plugins/
+
+# Capacitor / Cordova build folders
+android/
+ios/
+build/
+app/build/
+app/release/
+app/debug/
+
+# ==========================================
+# ⚙️ IDEs / Editors
+# ==========================================
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# ==========================================
+# 🧪 Environment & Secrets
+# ==========================================
+.env
+.env.local
+.env.development.local
+.env.production.local
+.env.test.local
+
+# ==========================================
+# 🧰 Miscellaneous
+# ==========================================
+.DS_Store
+Thumbs.db
+*.log
+*.tsbuildinfo
+*.tgz
+
+# ==========================================
+# 🔒 Optional: ignore Capacitor config backup files
+# ==========================================
+capacitor.config.json.bak

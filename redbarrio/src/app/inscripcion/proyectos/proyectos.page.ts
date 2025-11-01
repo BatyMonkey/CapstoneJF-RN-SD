@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { IonicModule, LoadingController, AlertController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
-import { supabase } from 'src/app/core/supabase.client';
+import { SupabaseService } from 'src/app/services/supabase.service';
 import { AuthService, Perfil } from 'src/app/auth/auth.service';
 
 @Component({
@@ -24,7 +24,8 @@ export class ProyectosPage implements OnInit {
     private auth: AuthService,
     private router: Router,
     private loadingCtrl: LoadingController,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private supabaseService: SupabaseService
   ) {}
 
   async ngOnInit() {
@@ -66,8 +67,8 @@ export class ProyectosPage implements OnInit {
 
     try {
       const [proyectosRes, actividadesRes] = await Promise.all([
-        supabase.from('proyecto').select('*'),
-        supabase.from('actividad').select('*'),
+        this.supabaseService.client.from('proyecto').select('*'),
+        this.supabaseService.client.from('actividad').select('*'),
       ]);
 
       if (proyectosRes.error) throw proyectosRes.error;

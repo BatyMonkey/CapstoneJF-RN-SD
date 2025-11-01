@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Solicitudes de Vecinos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+
+  <!-- 🌀 Cargando -->
+  <div *ngIf="cargando" class="ion-text-center ion-padding">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p class="texto-cargando">Cargando solicitudes...</p>
+  </div>
+
+  <!-- ✅ Lista de solicitudes pendientes -->
+  <ion-list *ngIf="!cargando && solicitudes.length > 0">
+    <ion-item *ngFor="let solicitud of solicitudes" lines="inset">
+      <ion-label>
+        <h2>{{ solicitud.nombre || 'Nombre no disponible' }}</h2>
+        <p>{{ solicitud.correo }}</p>
+        <div class="direccion" *ngIf="solicitud.direccion">
+          <ion-icon name="home-outline"></ion-icon>
+          <span>{{ solicitud.direccion }}</span>
+        </div>
+        <ion-chip color="warning" *ngIf="solicitud.status === 'pendiente'">
+          <ion-label>Pendiente</ion-label>
+        </ion-chip>
+      </ion-label>
+
+      <!-- 🔘 Botones de acción -->
+      <ion-buttons slot="end">
+        <ion-button color="success" fill="solid" [disabled]="solicitud.procesando"
+          (click)="cambiarEstado(solicitud, 'activo')">
+          Aprobar
+        </ion-button>
+
+        <ion-button color="danger" fill="solid" [disabled]="solicitud.procesando"
+          (click)="cambiarEstado(solicitud, 'rechazado')">
+          Rechazar
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-list>
+
+  <!-- 🚫 Sin solicitudes pendientes -->
+  <div *ngIf="!cargando && solicitudes.length === 0" class="ion-text-center ion-padding">
+    <ion-icon name="checkmark-done-circle-outline" color="medium" size="large"></ion-icon>
+    <p class="ion-text-center ion-margin-top">
+      No hay solicitudes pendientes
+    </p>
+  </div>
+</ion-content>

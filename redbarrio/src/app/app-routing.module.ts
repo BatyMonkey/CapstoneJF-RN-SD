@@ -78,6 +78,10 @@ const routes: Routes = [
       ).then((m) => m.GenerarProyectoComponent),
   },
   {
+  path: 'dashboard',
+  loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent)
+  },
+  {
     path: 'espacios',
     loadComponent: () =>
       import('./espacios/espacios.page').then((m) => m.EspaciosPage),
