@@ -10,3 +10,4 @@ redbarrio/.angular
 node_modules/
 redbarrio/node_modules/
 .angular/cache
+redbarrio/.angular/cache/20.3.3/app/.tsbuildinfo
