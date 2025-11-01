@@ -78,6 +78,10 @@ const routes: Routes = [
       ).then((m) => m.GenerarProyectoComponent),
   },
   {
+  path: 'dashboard',
+  loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent)
+  },
+  {
     path: 'espacios',
     loadComponent: () =>
       import('./espacios/espacios.page').then((m) => m.EspaciosPage),
@@ -114,15 +118,6 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'admin/solicitudes',
-    canActivate: [AuthGuard],
-    data: { roles: ['administrador'] },
-    loadComponent: () =>
-      import('./admin/solicitudes/solicitudes.page').then(
-        (m) => m.SolicitudesPage
-      ),
-  },
-  {
     path: 'inscripcion',
     children: [
       {
@@ -141,6 +136,7 @@ const routes: Routes = [
       },
     ],
   },
+
   {
     path: 'home',
     canActivate: [AuthGuard],
