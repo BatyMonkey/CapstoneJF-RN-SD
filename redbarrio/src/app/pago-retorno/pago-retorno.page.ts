@@ -2,11 +2,7 @@ import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, AlertController } from '@ionic/angular';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { createClient } from '@supabase/supabase-js';
-
-const SUPABASE_URL = 'https://sovnabbbubapqxziubuh.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNvdm5hYmJidWJhcHF4eml1YnVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg3NTY0NzcsImV4cCI6MjA3NDMzMjQ3N30.eQoxa8NkXwHwpSM03bB2gEJj9EZ0FxK3-nY3SJe5iiE';
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+import { SupabaseService } from 'src/app/services/supabase.service'; // 👈 importa tu servicio
 
 @Component({
   selector: 'app-pago-retorno',
@@ -24,11 +20,21 @@ export class PagoRetornoPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private supabaseService: SupabaseService // 👈 usa el servicio global
   ) {}
 
   async ngOnInit() {
-    await this.confirmarPago();
+    // ✅ Usa la instancia global del servicio
+    const { data, error } = await this.supabaseService
+      .from('pagos')
+      .select('*');
+
+    if (error) {
+      console.error('Error al obtener pagos:', error);
+    } else {
+      console.log('Pagos obtenidos:', data);
+    }
   }
 
   /** 🔄 Confirmar pago al volver de Transbank */
@@ -41,9 +47,12 @@ export class PagoRetornoPage implements OnInit {
     }
 
     try {
-      const { data, error } = await supabase.functions.invoke('transbank-confirm', {
-        body: { token_ws },
-      });
+      const { data, error } = await this.supabaseService.client.functions.invoke(
+        'transbank-confirm',
+        {
+          body: { token_ws },
+        }
+      );
 
       this.loading = false;
 

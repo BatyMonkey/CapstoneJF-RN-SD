@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { IonicModule, AlertController, LoadingController } from '@ionic/angular';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { supabase } from 'src/app/core/supabase.client';
+import { SupabaseService } from 'src/app/services/supabase.service';
 import { AuthService, Perfil } from 'src/app/auth/auth.service';
 
 @Component({
@@ -33,7 +33,8 @@ export class InscripcionProyectoComponent implements OnInit {
     private router: Router,
     private auth: AuthService,
     private alertCtrl: AlertController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private supabaseService: SupabaseService
   ) {}
 
   async ngOnInit() {
@@ -89,7 +90,7 @@ export class InscripcionProyectoComponent implements OnInit {
     await loading.present();
 
     try {
-      const { data: actividad } = await supabase
+      const { data: actividad } = await this.supabaseService.client
         .from('actividad')
         .select('*')
         .eq('id_actividad', this.idActividad)
@@ -101,7 +102,7 @@ export class InscripcionProyectoComponent implements OnInit {
         await this.verificarEstadoActividad();
         console.log('✅ Actividad cargada:', actividad);
       } else {
-        const { data: proyecto } = await supabase
+        const { data: proyecto } = await this.supabaseService.client
           .from('proyecto')
           .select('*')
           .eq('id_proyecto', this.idProyecto)
@@ -123,12 +124,12 @@ export class InscripcionProyectoComponent implements OnInit {
   async verificarEstadoActividad() {
     if (!this.idActividad || !this.perfil) return;
 
-    const { count } = await supabase
+    const { count } = await this.supabaseService.client
       .from('actividad_inscripcion')
       .select('*', { count: 'exact', head: true })
       .eq('id_actividad', this.idActividad);
 
-    const { data: inscripcionExistente } = await supabase
+    const { data: inscripcionExistente } = await this.supabaseService.client
       .from('actividad_inscripcion')
       .select('id_actividad')
       .eq('id_actividad', this.idActividad)
@@ -161,7 +162,7 @@ export class InscripcionProyectoComponent implements OnInit {
       const now = new Date().toISOString();
 
       if (this.isActividad && this.idActividad) {
-        const { error } = await supabase.from('actividad_inscripcion').insert([
+        const { error } = await this.supabaseService.client.from('actividad_inscripcion').insert([
           {
             id_actividad: this.idActividad,
             id_auth: userId, // 
@@ -172,7 +173,7 @@ export class InscripcionProyectoComponent implements OnInit {
         ]);
         if (error) throw error;
       } else if (this.idProyecto) {
-        const { error } = await supabase.from('proyecto_postulacion').insert([
+        const { error } = await this.supabaseService.client.from('proyecto_postulacion').insert([
           {
             id_proyecto: this.idProyecto,
             id_auth: userId, // 

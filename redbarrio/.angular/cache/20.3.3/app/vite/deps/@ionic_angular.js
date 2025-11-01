@@ -1,13 +1,13 @@
 import {
   menuController
-} from "./chunk-YJYYGSEK.js";
+} from "./chunk-63HNC7K5.js";
 import {
   getTimeGivenProgression
 } from "./chunk-34QX6F67.js";
 import {
   IonicSafeString,
   setupConfig
-} from "./chunk-OWOOU7VT.js";
+} from "./chunk-NKENZDD4.js";
 import {
   actionSheetController,
   alertController,
@@ -16,28 +16,24 @@ import {
   pickerController,
   popoverController,
   toastController
-} from "./chunk-B3OFUUJV.js";
-import "./chunk-KUZZZZQT.js";
+} from "./chunk-E2UXIPR4.js";
+import "./chunk-RP3HP3GY.js";
 import {
   openURL
 } from "./chunk-ZWYZ2NSP.js";
-import {
-  createGesture
-} from "./chunk-Z3OEOVFM.js";
-import "./chunk-QA2SYHF5.js";
-import "./chunk-FXJHFXDF.js";
+import "./chunk-4LDBG557.js";
 import {
   iosTransitionAnimation
-} from "./chunk-6UQU3GWC.js";
+} from "./chunk-SBAYHDUJ.js";
 import {
   mdTransitionAnimation
-} from "./chunk-J7ZKOBYP.js";
+} from "./chunk-MHNOHRM7.js";
 import {
   getIonPageElement
-} from "./chunk-Y6FJFSJ2.js";
+} from "./chunk-22D6OJ3I.js";
 import {
   createAnimation as createAnimation2
-} from "./chunk-S4Q23B2F.js";
+} from "./chunk-2X4DEYMV.js";
 import "./chunk-LCMILTBF.js";
 import "./chunk-RA57Z6D3.js";
 import "./chunk-LTAFKWUM.js";
@@ -58,18 +54,15 @@ import {
   getPlatforms,
   initialize,
   isPlatform
-} from "./chunk-J42IWAJW.js";
-import "./chunk-GGRQ5HQ3.js";
+} from "./chunk-OAREROME.js";
+import "./chunk-3UAQNBCT.js";
 import {
   bootstrapLazy
-} from "./chunk-THQAVDZS.js";
+} from "./chunk-5TIJP5C4.js";
 import {
-  MaxValidator,
-  MinValidator,
-  NG_VALIDATORS,
-  NG_VALUE_ACCESSOR,
-  NgControl
-} from "./chunk-N52XZBH5.js";
+  createGesture
+} from "./chunk-Z3OEOVFM.js";
+import "./chunk-QA2SYHF5.js";
 import {
   ActivatedRoute,
   ChildrenOutletContexts,
@@ -81,6 +74,13 @@ import {
 } from "./chunk-LJPS7NX5.js";
 import "./chunk-LYZ2RRMW.js";
 import "./chunk-KIMTXNSS.js";
+import {
+  MaxValidator,
+  MinValidator,
+  NG_VALIDATORS,
+  NG_VALUE_ACCESSOR,
+  NgControl
+} from "./chunk-N52XZBH5.js";
 import {
   CommonModule,
   Location,
