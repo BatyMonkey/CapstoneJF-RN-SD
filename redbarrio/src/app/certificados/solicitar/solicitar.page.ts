@@ -68,7 +68,7 @@ export class SolicitarCertificadoPage implements OnInit {
   private async prefillUserInfo() {
     try {
       // ✅ ahora usamos el cliente del servicio
-      const { data: { user } } = await this.supabaseService.auth().getUser();
+      const { data: { user } } = await this.supabaseService.auth.getUser();
 
       if (user) {
         if (user.email) this.emailDestino = user.email;
@@ -99,7 +99,7 @@ export class SolicitarCertificadoPage implements OnInit {
   }
 
   async cargarHistorial() {
-    const { data: session } = await this.supabaseService.auth().getSession(); // ✅
+    const { data: session } = await this.supabaseService.auth.getSession(); // ✅
     const uid = session?.session?.user?.id;
     if (!uid) return;
 

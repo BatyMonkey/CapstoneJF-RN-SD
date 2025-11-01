@@ -160,7 +160,7 @@ export class CrearNoticiaPage implements OnInit {
 
   async subirImagenes(): Promise<string[] | null> {
     // Verificamos que haya un usuario autenticado real en Supabase.
-    const fullSession = await this.supabaseService.auth().getSession();
+    const fullSession = await this.supabaseService.auth.getSession();
     const session = fullSession.data.session;
     const user = this.usuarioAutenticado;
 

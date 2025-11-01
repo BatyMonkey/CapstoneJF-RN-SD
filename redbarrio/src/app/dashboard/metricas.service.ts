@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { supabase } from '../core/supabase.client';
+import { SupabaseService } from 'src/app/services/supabase.service';
 
 export interface Metrica {
   id_transaccion: number;
@@ -19,11 +19,11 @@ export interface Metrica {
   providedIn: 'root'
 })
 export class MetricasService {
-  constructor() {}
+  constructor(private supabaseService: SupabaseService) {}
 
   // 📊 Obtiene todas las métricas vecinales
   async getMetricas() {
-    const { data, error } = await supabase
+    const { data, error } = await this.supabaseService.client
       .from('metricas_vecinales')
       .select('*')
       .order('fecha', { ascending: false });
@@ -33,7 +33,7 @@ export class MetricasService {
 
   // 📈 Calcula totales de ingresos, gastos y balance
   async getTotales() {
-    const { data, error } = await supabase
+    const { data, error } = await this.supabaseService.client
       .from('metricas_vecinales')
       .select('tipo_transaccion, monto');
 
@@ -56,14 +56,14 @@ export class MetricasService {
 
   // 👇 Agrega estos métodos dentro de la clase MetricasService
   async getTotalCertificados() {
-    const { count, error } = await supabase
+    const { count, error } = await this.supabaseService.client
       .from('certificados')
       .select('*', { count: 'exact', head: true }); // ✅ modo conteo sin traer datos
     return { totalCertificados: count || 0, error };
   }
 
   async getTotalReservas() {
-    const { count, error } = await supabase
+    const { count, error } = await this.supabaseService.client
       .from('reserva')
       .select('*', { count: 'exact', head: true });
     return { totalReservas: count || 0, error };

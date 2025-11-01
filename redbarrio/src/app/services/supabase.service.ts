@@ -9,7 +9,10 @@ export class SupabaseService {
   private supabase: SupabaseClient;
 
   constructor() {
-    this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
+    this.supabase = createClient(
+      environment.supabaseUrl,
+      environment.supabaseAnonKey
+    );
   }
 
   /** Acceso directo al cliente si es necesario */
@@ -17,8 +20,8 @@ export class SupabaseService {
     return this.supabase;
   }
 
-  /** Wrapper de auth */
-  auth() {
+  /** ✅ Auth ahora es getter (no función) */
+  get auth() {
     return this.supabase.auth;
   }
 

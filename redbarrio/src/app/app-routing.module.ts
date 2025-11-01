@@ -138,6 +138,16 @@ const routes: Routes = [
   },
 
   {
+    path: 'admin/solicitudes',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador'] },
+    loadComponent: () =>
+      import('./admin/solicitudes/solicitudes.page').then(
+        (m) => m.SolicitudesPage
+      ),
+  },
+
+  {
     path: 'home',
     canActivate: [AuthGuard],
     loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
