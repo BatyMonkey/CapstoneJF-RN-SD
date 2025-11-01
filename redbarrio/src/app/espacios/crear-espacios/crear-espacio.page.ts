@@ -7,7 +7,7 @@ import { IonicModule, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { EspaciosService } from 'src/app/services/espacios.service';
 import { HttpClientModule } from '@angular/common/http';
-import { supabase } from 'src/app/core/supabase.client';
+import { SupabaseService } from 'src/app/services/supabase.service';
 // 🚀 IMPORTS CLAVE PARA FORMULARIOS REACTIVOS
 import { 
   FormGroup, 
@@ -55,7 +55,7 @@ export class CrearEspacioPage implements OnInit {
   imageUrl: string | null = null;
   
   // Usar el cliente Supabase compartido que mantiene la sesión de la app
-  private supabase = supabase;
+  private supabase = this.supabaseService.client;
   
   // Propiedades derivadas (la latitud/longitud en el HTML usan los getters)
   ubicacionSeleccionada: { latitud: number, longitud: number } | null = null;
@@ -68,6 +68,7 @@ export class CrearEspacioPage implements OnInit {
     private espaciosService: EspaciosService,
     private toastCtrl: ToastController,
     private http: HttpClient, // Inyección de HttpClient
+    private supabaseService: SupabaseService
   ) {
     this.tiposEspacio = [
       { id: 1, nombre: 'Cancha' },

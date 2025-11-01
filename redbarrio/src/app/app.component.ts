@@ -4,7 +4,7 @@ import { IonicModule, MenuController, Platform } from '@ionic/angular';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AuthService } from './auth/auth.service';
-import { supabase } from './core/supabase.client';
+import { SupabaseService } from 'src/app/services/supabase.service';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { App } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
@@ -27,7 +27,8 @@ export class AppComponent {
     private menu: MenuController,
     private auth: AuthService,
     private platform: Platform,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private supabaseService: SupabaseService
   ) {
     this.currentUrl = this.router.url || '';
     this.refrescarRol();
@@ -83,12 +84,12 @@ export class AppComponent {
         this.isAdmin = false;
         return;
       }
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await this.supabaseService.client.auth.getUser();
       if (!user) {
         this.isAdmin = false;
         return;
       }
-      const { data: perfil, error } = await supabase
+      const { data: perfil, error } = await this.supabaseService.client
         .from('usuario')
         .select('rol')
         .eq('user_id', user.id)
@@ -157,9 +158,9 @@ export class AppComponent {
       const code          = getParam('code');
 
       if (type === 'recovery' && access_token && refresh_token) {
-        await supabase.auth.setSession({ access_token, refresh_token });
+        await this.supabaseService.client.auth.setSession({ access_token, refresh_token });
       } else if (code) {
-        await supabase.auth.exchangeCodeForSession(code);
+        await this.supabaseService.client.auth.exchangeCodeForSession(code);
       } else {
         console.warn('Deep link sin tokens ni code. No se pudo establecer sesión.');
       }

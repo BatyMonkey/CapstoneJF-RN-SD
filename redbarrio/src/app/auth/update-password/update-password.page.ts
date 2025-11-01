@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { AuthService } from '../auth.service';
-import { supabase } from '../../core/supabase.client';
+import { SupabaseService } from 'src/app/services/supabase.service';
 
 @Component({
   standalone: true,
@@ -24,12 +24,13 @@ export class UpdatePasswordPage implements OnInit {
   constructor(
     private auth: AuthService,
     private router: Router,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private supabaseService: SupabaseService
   ) {}
 
   async ngOnInit() {
     // Validación temprana: si no hay sesión, el cambio fallará.
-    const { data: s } = await supabase.auth.getSession();
+    const { data: s } = await this.supabaseService.client.auth.getSession();
     if (!s.session) {
       this.errorMsg = 'No se detectó sesión de recuperación. Abre nuevamente el enlace del correo desde este dispositivo.';
     }
@@ -52,7 +53,7 @@ export class UpdatePasswordPage implements OnInit {
 
     try {
       // Garantiza sesión antes de actualizar
-      const { data: s } = await supabase.auth.getSession();
+      const { data: s } = await this.supabaseService.client.auth.getSession();
       if (!s.session) {
         this.errorMsg = 'No se detectó sesión de recuperación. Abre nuevamente el enlace del correo desde este dispositivo.';
         await this.mostrarToast(this.errorMsg, 'danger');

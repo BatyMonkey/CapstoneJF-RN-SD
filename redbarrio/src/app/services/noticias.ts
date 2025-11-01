@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from 'src/environments/environment';
 import { Perfil } from '../auth/auth.service';
+import { SupabaseService } from './supabase.service';
 
 // Define una interfaz para tus noticias
 export interface Noticia {
@@ -25,11 +26,8 @@ export class NoticiasService {
   private readonly TABLE_NAME = 'noticias'; // Tabla real para INSERT
   private readonly BUCKET_NAME = 'noticias-bucket'; 
 
-  constructor() {
-    this.supabase = createClient(
-      environment.supabaseUrl,
-      environment.supabaseAnonKey
-    );
+  constructor(private supabaseService: SupabaseService) {
+    this.supabase = this.supabaseService.client;
   }
 
   /**

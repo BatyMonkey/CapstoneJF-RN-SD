@@ -114,6 +114,15 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'admin/solicitudes',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador'] },
+    loadComponent: () =>
+      import('./admin/solicitudes/solicitudes.page').then(
+        (m) => m.SolicitudesPage
+      ),
+  },
+  {
     path: 'inscripcion',
     children: [
       {
@@ -132,7 +141,6 @@ const routes: Routes = [
       },
     ],
   },
-
   {
     path: 'home',
     canActivate: [AuthGuard],
