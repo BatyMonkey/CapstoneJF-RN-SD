@@ -1,0 +1,55 @@
+<ion-header class="rb-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Gestiones Administrativas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="gestiones-container">
+    <h1>Panel de Gestiones</h1>
+    <p>Selecciona la gestión que deseas administrar:</p>
+
+    <!-- Generar Proyecto -->
+    <ion-button
+      expand="block"
+      shape="round"
+      routerLink="/generar/proyecto"
+      routerDirection="forward">
+      <ion-icon name="briefcase-outline" slot="start"></ion-icon>
+      Generar Proyecto
+    </ion-button>
+
+    <!-- Generar Votación -->
+    <ion-button
+      expand="block"
+      shape="round"
+      routerLink="/generar/votacion"
+      routerDirection="forward">
+      <ion-icon name="checkmark-done-outline" slot="start"></ion-icon>
+      Generar Votación
+    </ion-button>
+
+    <!-- Generar Noticia -->
+    <ion-button
+      expand="block"
+      shape="round"
+      routerLink="/noticias/crear"
+      routerDirection="forward">
+      <ion-icon name="newspaper-outline" slot="start"></ion-icon>
+      Generar Noticia
+    </ion-button>
+
+    <!-- Registros de Vecinos -->
+    <ion-button
+      expand="block"
+      shape="round"
+      routerLink="/admin/solicitudes"
+      routerDirection="forward">
+      <ion-icon name="people-outline" slot="start"></ion-icon>
+      Registros de Vecinos
+    </ion-button>
+  </div>
+</ion-content>
