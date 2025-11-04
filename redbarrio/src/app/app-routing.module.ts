@@ -141,8 +141,6 @@ const routes: Routes = [
       },
     ],
   },
-<<<<<<< Updated upstream
-=======
   {
     path: 'admin/gestiones',
     loadComponent: () =>
@@ -159,7 +157,6 @@ const routes: Routes = [
       ),
   },
 
->>>>>>> Stashed changes
   {
     path: 'home',
     canActivate: [AuthGuard],
