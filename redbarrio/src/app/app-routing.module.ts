@@ -141,6 +141,25 @@ const routes: Routes = [
       },
     ],
   },
+<<<<<<< Updated upstream
+=======
+  {
+    path: 'admin/gestiones',
+    loadComponent: () =>
+      import('./admin/gestiones/gestiones.page').then((m) => m.GestionesPage),
+  },
+
+  {
+    path: 'admin/solicitudes',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador'] },
+    loadComponent: () =>
+      import('./admin/solicitudes/solicitudes.page').then(
+        (m) => m.SolicitudesPage
+      ),
+  },
+
+>>>>>>> Stashed changes
   {
     path: 'home',
     canActivate: [AuthGuard],
