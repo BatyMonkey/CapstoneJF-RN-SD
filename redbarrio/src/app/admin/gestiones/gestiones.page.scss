@@ -1,0 +1,237 @@
+/* ==========================================================
+   ===== ESTILOS UNIFICADOS (Gestiones Admin)
+   ========================================================== */
+
+:host {
+  /* Paleta base coherente con Home / Noticias */
+  --rb-primary: #2563eb;
+  --rb-primary-10: rgba(37, 99, 235, 0.10);
+  --rb-text: #0f172a;
+  --rb-muted: #64748b;
+  --rb-sep: rgba(2, 6, 23, 0.06);
+  --rb-bg: #f8fafc;
+
+  color-scheme: light;
+  --ion-background-color: var(--rb-bg);
+  --ion-text-color: var(--rb-text);
+}
+
+/* ==========================================================
+   ===== Header consistente con el resto del sistema
+   ========================================================== */
+.rb-header ion-toolbar {
+  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
+  --color: #fff;
+  --border-color: transparent;
+  --min-height: 56px;
+}
+
+/* ==========================================================
+   ===== Estructura principal del módulo
+   ========================================================== */
+ion-content {
+  --background: var(--rb-bg);
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Contenedor central con sombra estilo “Hero” */
+.gestiones-container {
+  background: #fff;
+  border-radius: 18px;
+  padding: 30px 24px;
+  width: min(600px, 100%);
+  box-shadow:
+    0 10px 30px rgba(2, 6, 23, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--rb-sep);
+  text-align: center;
+
+  h1 {
+    margin: 0 0 12px 0;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--rb-text);
+  }
+
+  p {
+    margin: 0 0 24px;
+    color: var(--rb-muted);
+    font-weight: 500;
+  }
+}
+
+/* ==========================================================
+   ===== Botones de acción
+   ========================================================== */
+ion-button {
+  width: 100%;
+  margin: 10px 0;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  border-radius: 14px;
+  --background: #ffffff;
+  --color: var(--rb-text);
+  border: 1px solid var(--rb-primary-10);
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.08);
+  transition: all 0.2s ease;
+
+  &:hover {
+    --background: var(--rb-primary);
+    --color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  ion-icon {
+    font-size: 1.2em;
+    margin-inline-end: 6px;
+  }
+}
+
+/* ==========================================================
+   ===== Botón de acción flotante (opcional)
+   ========================================================== */
+.fixed-action-button {
+  position: fixed;
+  bottom: 20px;
+  right: 18px;
+  z-index: 100;
+
+  --background: var(--rb-primary);
+  --color: white;
+  --border-radius: 12px;
+  --box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35);
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  height: 48px;
+  min-width: 140px;
+
+  transition: transform 0.2s ease;
+  &:active {
+    transform: scale(0.97);
+  }
+
+  ion-icon {
+    font-size: 1.3em;
+    margin-inline-start: 8px;
+  }
+}
+
+/* ==========================================================
+   ===== Estados de carga o vacío
+   ========================================================== */
+.loading, .empty {
+  text-align: center;
+  color: var(--rb-muted);
+  padding: 24px;
+  font-weight: 600;
+}
+
+/* ==========================================================
+   ===== Responsive
+   ========================================================== */
+@media (max-width: 520px) {
+  ion-content {
+    padding: 18px 14px;
+  }
+
+  .gestiones-container {
+    padding: 22px 16px;
+  }
+
+  ion-button {
+    font-size: 0.95rem;
+    margin: 8px 0;
+  }
+
+  .fixed-action-button {
+    bottom: 12px;
+    right: 12px;
+    min-width: 120px;
+    height: 44px;
+    font-size: 0.9em;
+  }
+}
+
+/* ==========================================================
+   ===== Corrección visual: quitar color activo persistente
+   ========================================================== */
+
+ion-button {
+  --background: #fff;
+  --color: var(--rb-text);
+  --background-hover: var(--rb-primary);
+  --color-hover: #fff;
+
+  /* 🔹 Elimina cualquier color aplicado por Ionic al “pressed/activated” */
+  --background-activated: #fff !important;
+  --background-activated-opacity: 0 !important;
+  --background-focused: #fff !important;
+  --color-activated: var(--rb-text) !important;
+  --color-focused: var(--rb-text) !important;
+
+  /* 🔹 Elimina ripple azul que Ionic dibuja dentro del shadow DOM */
+  --ripple-color: transparent !important;
+
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+ion-button::part(native):focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 🔹 Si algún botón queda marcado por aria-pressed, lo devolvemos al estado normal */
+ion-button[aria-pressed='true'] {
+  --background: #fff !important;
+  --color: var(--rb-text) !important;
+  --ion-color-base: #fff !important;
+  --ripple-color: transparent !important;
+}
+
+/* ==========================================================
+   ===== Eliminación total del color “pegado” en ion-button
+   ========================================================== */
+
+/* 1️⃣ Forzamos todos los estados a fondo blanco y texto original */
+ion-button::part(native),
+ion-button[aria-pressed="true"]::part(native),
+ion-button.ion-activated::part(native) {
+  background: #fff !important;
+  color: var(--rb-text) !important;
+  box-shadow: none !important;
+}
+
+/* 2️⃣ Anulamos colores internos de activación/foco */
+ion-button {
+  --background: #fff !important;
+  --color: var(--rb-text) !important;
+  --background-activated: #fff !important;
+  --color-activated: var(--rb-text) !important;
+  --background-focused: #fff !important;
+  --color-focused: var(--rb-text) !important;
+  --ripple-color: transparent !important;
+  --ion-color-primary: #fff !important;
+  --ion-color-base: #fff !important;
+}
+
+/* 3️⃣ Elimina el overlay del ripple azul (el responsable final) */
+ion-button::part(ripple),
+ion-button::part(container) {
+  background: transparent !important;
+}
+
+/* 4️⃣ Elimina cualquier focus residual */
+ion-button::part(native):focus {
+  outline: none !important;
+  box-shadow: none !important;
+}

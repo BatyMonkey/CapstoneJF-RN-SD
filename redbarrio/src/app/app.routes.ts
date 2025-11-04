@@ -9,5 +9,9 @@ export const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
+  },  {
+    path: 'gestiones',
+    loadComponent: () => import('./admin/gestiones/gestiones.page').then( m => m.GestionesPage)
   },
+
 ];
