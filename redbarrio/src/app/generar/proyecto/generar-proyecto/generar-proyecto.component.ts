@@ -101,11 +101,15 @@ export class GenerarProyectoComponent implements OnInit {
 
     const formValue = this.proyectoForm.value;
     const id_auth = this.perfil?.id_auth;
+    const rol = this.perfil?.rol; // ✅ aseguramos el rol desde el perfil
 
     if (!id_auth) {
       this.showAlert('Error', 'No se pudo obtener la sesión del usuario.');
       return;
     }
+
+    // ✅ Estado automático según el rol
+    const estado = rol === 'administrador' ? 'publicada' : 'pendiente';
 
     try {
       if (formValue.tipo === 'actividad') {
@@ -118,7 +122,7 @@ export class GenerarProyectoComponent implements OnInit {
             cupos_total: formValue.cupos_total ?? 0,
             fecha_inicio: formValue.fecha_inicio,
             fecha_fin: formValue.fecha_fin,
-            estado: 'publicada',
+            estado, // 🔹 Publicada o Pendiente según rol
             imagen_url: this.uploadedUrl,
             creado_en: new Date().toISOString(),
             actualizado_en: new Date().toISOString(),
@@ -135,7 +139,7 @@ export class GenerarProyectoComponent implements OnInit {
             id_auth,
             titulo: formValue.titulo,
             descripcion: formValue.descripcion,
-            estado: 'pendiente',
+            estado, // 🔹 Publicada o Pendiente según rol
             fecha_creacion: new Date().toISOString(),
             actualizado_en: new Date().toISOString(),
             imagen_url: this.uploadedUrl,

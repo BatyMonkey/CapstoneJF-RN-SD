@@ -71,11 +71,10 @@ const routes: Routes = [
   {
     path: 'generar/proyecto',
     canActivate: [AuthGuard],
-    data: { roles: ['administrador'] }, // solo permite a usuario de tipo "administrador"
+    data: { roles: ['administrador', 'vecino'] }, // ✅ ahora también permite a los vecinos
     loadComponent: () =>
-      import(
-        './generar/proyecto/generar-proyecto/generar-proyecto.component'
-      ).then((m) => m.GenerarProyectoComponent),
+      import('./generar/proyecto/generar-proyecto/generar-proyecto.component')
+        .then((m) => m.GenerarProyectoComponent),
   },
   {
   path: 'dashboard',

@@ -155,10 +155,10 @@ import {
   ɵɵtemplate,
   ɵɵviewQuery
 } from "./chunk-O3TFJGNF.js";
-import "./chunk-UQGLAMHP.js";
 import {
   fromEvent
 } from "./chunk-576P5TAG.js";
+import "./chunk-UQGLAMHP.js";
 import {
   BehaviorSubject,
   Subject,

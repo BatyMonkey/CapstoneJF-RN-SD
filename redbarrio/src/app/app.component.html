@@ -37,6 +37,15 @@
             <ion-label>Inscribirse a proyecto/Actividad</ion-label>
           </ion-item>
 
+          <ion-item
+            button
+            detail="false"
+            (click)="go('/generar/proyecto')"
+            *ngIf="!isActive('/generar/proyecto')">
+            <ion-icon slot="start" name="construct-outline"></ion-icon>
+            <ion-label>Sugerir proyecto/Actividad</ion-label>
+          </ion-item>
+
           <ion-item button detail="false" (click)="go('/solicitud')" *ngIf="!isActive('/solicitud')">
             <ion-icon slot="start" name="calendar-outline"></ion-icon>
             <ion-label>Arrendar espacio</ion-label>
