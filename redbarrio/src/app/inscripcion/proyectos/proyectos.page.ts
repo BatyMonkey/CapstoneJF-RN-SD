@@ -65,10 +65,16 @@ export class ProyectosPage implements OnInit {
     });
     await loading.present();
 
-    try {
+        try {
       const [proyectosRes, actividadesRes] = await Promise.all([
-        this.supabaseService.client.from('proyecto').select('*'),
-        this.supabaseService.client.from('actividad').select('*'),
+        this.supabaseService.client
+          .from('proyecto')
+          .select('*')
+          .eq('estado', 'publicada'), // ✅ solo publicados
+        this.supabaseService.client
+          .from('actividad')
+          .select('*')
+          .eq('estado', 'publicada'), // ✅ solo publicadas
       ]);
 
       if (proyectosRes.error) throw proyectosRes.error;
@@ -90,10 +96,8 @@ export class ProyectosPage implements OnInit {
         (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
       );
 
-      // Filtro inicial (todos)
       this.filtrarListado();
-
-      console.log('✅ Listado cargado:', this.elementos);
+      console.log('✅ Listado cargado (solo publicados):', this.elementos);
     } catch (err) {
       console.error('Error al cargar listado:', err);
       await this.mostrarAlerta('Error', 'No se pudo cargar el listado.');
@@ -101,6 +105,7 @@ export class ProyectosPage implements OnInit {
       this.isLoading = false;
       loading.dismiss();
     }
+
   }
 
   // ✅ Filtro visual entre proyectos y actividades

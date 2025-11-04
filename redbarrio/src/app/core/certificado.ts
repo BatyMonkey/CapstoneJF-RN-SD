@@ -10,7 +10,7 @@ const BUCKET_CERTS = 'certificados';
 
 /* ==================== AUTH ==================== */
 export async function getCurrentUserId(): Promise<string> {
-  const { data, error } = await supabaseService.auth().getSession();
+  const { data, error } = await supabaseService.auth.getSession();
   if (error) throw error;
   const uid = data.session?.user?.id;
   if (!uid) throw new Error('No hay sesión activa.');

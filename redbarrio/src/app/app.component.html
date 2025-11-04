@@ -34,7 +34,16 @@
 
           <ion-item button detail="false" (click)="go('/inscripcion/proyectos')" *ngIf="!isActive('/inscripcion/proyectos')">
             <ion-icon slot="start" name="people-outline"></ion-icon>
-            <ion-label>Inscribirse a Proyecto/Actividad</ion-label>
+            <ion-label>Inscribirse a proyecto/Actividad</ion-label>
+          </ion-item>
+
+          <ion-item
+            button
+            detail="false"
+            (click)="go('/generar/proyecto')"
+            *ngIf="!isActive('/generar/proyecto')">
+            <ion-icon slot="start" name="construct-outline"></ion-icon>
+            <ion-label>Sugerir proyecto/Actividad</ion-label>
           </ion-item>
 
           <ion-item button detail="false" (click)="go('/solicitud')" *ngIf="!isActive('/solicitud')">
@@ -45,6 +54,11 @@
           <ion-item button detail="false" (click)="go('/espacios')" *ngIf="!isActive('/espacios')">
             <ion-icon slot="start" name="business-outline"></ion-icon>
             <ion-label>Espacios Comunitarios</ion-label>
+          </ion-item>
+
+          <ion-item button detail="false" (click)="go('/dashboard')" *ngIf="!isActive('/dashboard')">
+            <ion-icon slot="start" name="business-outline"></ion-icon>
+            <ion-label>Transparencia y Metricas</ion-label>
           </ion-item>
 
           <!-- Admin -->
@@ -67,7 +81,6 @@
             <ion-icon slot="start" name="list-circle-outline"></ion-icon>
             <ion-label>Generar noticia</ion-label>
           </ion-item>
-
           <ion-item
             button
             detail="false"
@@ -75,7 +88,7 @@
             *ngIf="isAdmin && !isActive('/admin/solicitudes')"
           >
             <ion-icon slot="start" name="list-circle-outline"></ion-icon>
-            <ion-label>Administrar solicitudes</ion-label>
+            <ion-label>Registros de vecinos</ion-label>
           </ion-item>
         </ion-menu-toggle>
       </ion-list>

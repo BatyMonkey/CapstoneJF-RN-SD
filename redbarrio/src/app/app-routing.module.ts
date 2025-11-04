@@ -71,11 +71,14 @@ const routes: Routes = [
   {
     path: 'generar/proyecto',
     canActivate: [AuthGuard],
-    data: { roles: ['administrador'] }, // solo permite a usuario de tipo "administrador"
+    data: { roles: ['administrador', 'vecino'] }, // ✅ ahora también permite a los vecinos
     loadComponent: () =>
-      import(
-        './generar/proyecto/generar-proyecto/generar-proyecto.component'
-      ).then((m) => m.GenerarProyectoComponent),
+      import('./generar/proyecto/generar-proyecto/generar-proyecto.component')
+        .then((m) => m.GenerarProyectoComponent),
+  },
+  {
+  path: 'dashboard',
+  loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent)
   },
   {
     path: 'espacios',
@@ -114,15 +117,6 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'admin/solicitudes',
-    canActivate: [AuthGuard],
-    data: { roles: ['administrador'] },
-    loadComponent: () =>
-      import('./admin/solicitudes/solicitudes.page').then(
-        (m) => m.SolicitudesPage
-      ),
-  },
-  {
     path: 'inscripcion',
     children: [
       {
@@ -141,6 +135,17 @@ const routes: Routes = [
       },
     ],
   },
+
+  {
+    path: 'admin/solicitudes',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador'] },
+    loadComponent: () =>
+      import('./admin/solicitudes/solicitudes.page').then(
+        (m) => m.SolicitudesPage
+      ),
+  },
+
   {
     path: 'admin/gestiones',
     loadComponent: () =>

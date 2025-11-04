@@ -56,7 +56,7 @@ export class SolicitudesPage implements OnInit {
   async cargarSolicitudes() {
     this.cargando = true;
     try {
-      const session = await this.supabaseService.auth().getSession();
+      const session = await this.supabaseService.auth.getSession();
       console.log('🔑 UID autenticado:', session.data?.session?.user?.id);
       const perfil = await this.miPerfil();
 
