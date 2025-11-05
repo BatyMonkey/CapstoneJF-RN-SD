@@ -1,0 +1,54 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Actividades Pendientes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Refresher -->
+  <ion-refresher slot="fixed" (ionRefresh)="cargarPendientes()">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Lista de actividades -->
+  <ion-list *ngIf="!cargando && actividades.length > 0">
+    <ion-item *ngFor="let act of actividades">
+      <ion-label>
+        <h2>{{ act.nombre }}</h2>
+        <p>{{ act.descripcion }}</p>
+
+        <!-- Dirección o ubicación -->
+        <div class="direccion" *ngIf="act.ubicacion">
+          <ion-icon name="location-outline"></ion-icon>
+          <span>{{ act.ubicacion }}</span>
+        </div>
+
+        <!-- Chip de estado -->
+        <ion-chip color="warning" *ngIf="act.estado === 'pendiente'">
+          Pendiente
+        </ion-chip>
+      </ion-label>
+
+      <!-- Botones -->
+      <ion-buttons slot="end">
+        <ion-button color="success" (click)="cambiarEstado(act, 'aceptado')">
+          Aceptar
+        </ion-button>
+        <ion-button color="danger" (click)="cambiarEstado(act, 'rechazado')">
+          Rechazar
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-list>
+
+  <!-- Estado: cargando -->
+  <div *ngIf="cargando" class="ion-text-center texto-cargando">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando actividades...</p>
+  </div>
+
+  <!-- Estado: vacío -->
+  <div *ngIf="!cargando && actividades.length === 0" class="ion-text-center">
+    <p>No hay actividades pendientes.</p>
+  </div>
+</ion-content>

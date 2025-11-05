@@ -9,5 +9,9 @@ export const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
+  },  {
+    path: 'actividades',
+    loadComponent: () => import('./admin/actividades/actividades.page').then( m => m.ActividadesPage)
   },
+
 ];
