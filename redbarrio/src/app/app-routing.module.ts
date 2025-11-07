@@ -73,12 +73,16 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: { roles: ['administrador', 'vecino'] }, // ✅ ahora también permite a los vecinos
     loadComponent: () =>
-      import('./generar/proyecto/generar-proyecto/generar-proyecto.component')
-        .then((m) => m.GenerarProyectoComponent),
+      import(
+        './generar/proyecto/generar-proyecto/generar-proyecto.component'
+      ).then((m) => m.GenerarProyectoComponent),
   },
   {
-  path: 'dashboard',
-  loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent)
+    path: 'dashboard',
+    loadComponent: () =>
+      import('./dashboard/dashboard.component').then(
+        (m) => m.DashboardComponent
+      ),
   },
   {
     path: 'espacios',
@@ -145,7 +149,11 @@ const routes: Routes = [
         (m) => m.SolicitudesPage
       ),
   },
-
+  {
+  path: 'admin/actividades',
+  loadComponent: () =>
+    import('./admin/actividades/actividades.page').then(m => m.ActividadesPage)
+  },
   {
     path: 'admin/gestiones',
     loadComponent: () =>

@@ -20,7 +20,7 @@ export class SupabaseService {
     return this.supabase;
   }
 
-  /** ✅ Auth ahora es getter (no función) */
+  /** Wrapper de auth */
   get auth() {
     return this.supabase.auth;
   }
