@@ -5,11 +5,11 @@ import { FormsModule } from '@angular/forms';
 import { SupabaseService } from 'src/app/services/supabase.service';
 
 @Component({
-  standalone: true, // ✅ página sin módulo
+  standalone: true,
   selector: 'app-actividades',
   templateUrl: './actividades.page.html',
   styleUrls: ['./actividades.page.scss'],
-  imports: [IonicModule, CommonModule, FormsModule], // ✅ necesario para <ion-*> tags
+  imports: [IonicModule, CommonModule, FormsModule],
 })
 export class ActividadesPage implements OnInit {
   actividades: any[] = [];
@@ -21,12 +21,10 @@ export class ActividadesPage implements OnInit {
     private alertCtrl: AlertController
   ) {}
 
-  // 🟢 Cargar actividades al iniciar
   async ngOnInit() {
     await this.cargarPendientes();
   }
 
-  // 🟢 Obtener actividades pendientes desde Supabase
   async cargarPendientes() {
     this.cargando = true;
     try {
@@ -40,9 +38,17 @@ export class ActividadesPage implements OnInit {
     }
   }
 
-  // 🟢 Cambiar estado (aceptar / rechazar)
+  async onRefresh(event: any) {
+    try {
+      await this.cargarPendientes();
+    } finally {
+      // 🔹 Cierra el spinner del refresher
+      event.target.complete();
+    }
+  }
+
   async cambiarEstado(actividad: any, nuevoEstado: string) {
-    const verbo = nuevoEstado === 'aceptado' ? 'aceptar' : 'rechazar';
+    const verbo = nuevoEstado === 'publicada' ? 'publicar' : 'rechazar';
 
     const alerta = await this.alertCtrl.create({
       header: `${verbo.charAt(0).toUpperCase() + verbo.slice(1)} actividad`,
@@ -53,9 +59,11 @@ export class ActividadesPage implements OnInit {
           text: 'Confirmar',
           handler: async () => {
             try {
-              console.log('🟦 Cambiando estado de', actividad.id_actividad, 'a', nuevoEstado);
-              const result = await this.supabase.cambiarEstadoActividad(actividad.id_actividad, nuevoEstado);
-              console.log('✅ Resultado de Supabase:', result);
+              const result = await this.supabase.cambiarEstadoActividad(
+                actividad.id_actividad,
+                nuevoEstado
+              );
+              console.log('✅ Resultado Supabase:', result);
               this.mostrarToast(`Actividad ${nuevoEstado}`);
               await this.cargarPendientes();
             } catch (error) {
@@ -70,7 +78,6 @@ export class ActividadesPage implements OnInit {
     await alerta.present();
   }
 
-  // 🟢 Toast reutilizable
   async mostrarToast(mensaje: string) {
     const toast = await this.toastCtrl.create({
       message: mensaje,

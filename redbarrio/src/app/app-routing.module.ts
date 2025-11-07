@@ -169,6 +169,24 @@ const routes: Routes = [
         (m) => m.SolicitudesPage
       ),
   },
+  {
+    path: 'admin/actividades',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador'] },
+    loadComponent: () =>
+      import('./admin/actividades/actividades.page').then(
+        (m) => m.ActividadesPage
+      ),
+  },
+    {
+    path: 'admin/proyectos',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador'] },
+    loadComponent: () =>
+      import('./admin/proyectos/proyectos.page').then(
+        (m) => m.ProyectosPage
+      ),
+  },
 
   {
     path: 'home',

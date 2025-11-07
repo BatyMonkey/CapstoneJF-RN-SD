@@ -1,12 +1,53 @@
 import {
   menuController
-} from "./chunk-ADTWM3AV.js";
-import {
-  mdTransitionAnimation
-} from "./chunk-G74XXOHE.js";
+} from "./chunk-TOUZ5IF6.js";
 import {
   getTimeGivenProgression
 } from "./chunk-34QX6F67.js";
+import {
+  IonicSafeString,
+  setupConfig
+} from "./chunk-SIMPIJID.js";
+import {
+  actionSheetController,
+  alertController,
+  loadingController,
+  modalController,
+  pickerController,
+  popoverController,
+  toastController
+} from "./chunk-DBORD52S.js";
+import "./chunk-7WK6LNOU.js";
+import {
+  openURL
+} from "./chunk-ZWYZ2NSP.js";
+import {
+  getPlatforms,
+  initialize,
+  isPlatform
+} from "./chunk-AWRZZYUW.js";
+import {
+  createGesture
+} from "./chunk-Z3OEOVFM.js";
+import "./chunk-QA2SYHF5.js";
+import "./chunk-UJJ3HD6K.js";
+import {
+  iosTransitionAnimation
+} from "./chunk-W37PZ2ML.js";
+import {
+  mdTransitionAnimation
+} from "./chunk-3OVG3PQG.js";
+import {
+  getIonPageElement
+} from "./chunk-YMKXLMD3.js";
+import {
+  createAnimation as createAnimation2
+} from "./chunk-BGRTKWPL.js";
+import "./chunk-KQ7S7CHM.js";
+import "./chunk-LCMILTBF.js";
+import {
+  bootstrapLazy
+} from "./chunk-WJZQVC7X.js";
 import "./chunk-RA57Z6D3.js";
 import "./chunk-LTAFKWUM.js";
 import {
@@ -23,54 +64,6 @@ import {
   printIonWarning
 } from "./chunk-67MFLVOH.js";
 import {
-  IonicSafeString,
-  setupConfig
-} from "./chunk-KTIOI5BV.js";
-import {
-  actionSheetController,
-  alertController,
-  loadingController,
-  modalController,
-  pickerController,
-  popoverController,
-  toastController
-} from "./chunk-YV4ZXURU.js";
-import "./chunk-XOYRU2XS.js";
-import {
-  openURL
-} from "./chunk-ZWYZ2NSP.js";
-import {
-  getPlatforms,
-  initialize,
-  isPlatform
-} from "./chunk-GIBEAA6T.js";
-import {
-  createGesture
-} from "./chunk-Z3OEOVFM.js";
-import "./chunk-QA2SYHF5.js";
-import "./chunk-GOLGQDBA.js";
-import {
-  iosTransitionAnimation
-} from "./chunk-64QHRKK2.js";
-import {
-  getIonPageElement
-} from "./chunk-7UGMSFYF.js";
-import {
-  createAnimation as createAnimation2
-} from "./chunk-F2H6OGS6.js";
-import "./chunk-I7T5K4AI.js";
-import "./chunk-LCMILTBF.js";
-import {
-  bootstrapLazy
-} from "./chunk-FVYREO2U.js";
-import {
-  MaxValidator,
-  MinValidator,
-  NG_VALIDATORS,
-  NG_VALUE_ACCESSOR,
-  NgControl
-} from "./chunk-3ZQC5QQD.js";
-import {
   ActivatedRoute,
   ChildrenOutletContexts,
   NavigationStart,
@@ -78,26 +71,27 @@ import {
   Router,
   RouterLink,
   UrlSerializer
-<<<<<<< HEAD
+} from "./chunk-LJPS7NX5.js";
+import "./chunk-LYZ2RRMW.js";
+import "./chunk-KIMTXNSS.js";
+import {
+  MaxValidator,
+  MinValidator,
+  NG_VALIDATORS,
+  NG_VALUE_ACCESSOR,
+  NgControl
+} from "./chunk-N52XZBH5.js";
 } from "./chunk-Y6KMK7BQ.js";
 import "./chunk-YBXHZPW5.js";
-=======
-} from "./chunk-DUGSLUFO.js";
-import "./chunk-PKSYMLRJ.js";
->>>>>>> 5699daa8d4845ec29d946ce30953e5f41de8a020
 import {
   CommonModule,
   Location,
   LocationStrategy,
   NgIf,
   NgTemplateOutlet
-<<<<<<< HEAD
+} from "./chunk-ORVGVXJZ.js";
 } from "./chunk-ORVGVXJZ.js";
 import "./chunk-KIMTXNSS.js";
-=======
-} from "./chunk-XL4GFPXP.js";
-import "./chunk-WDR7LZW7.js";
->>>>>>> 5699daa8d4845ec29d946ce30953e5f41de8a020
 import "./chunk-4X6VR2I6.js";
 import {
   APP_INITIALIZER,
@@ -164,23 +158,21 @@ import {
   ɵɵrestoreView,
   ɵɵtemplate,
   ɵɵviewQuery
-} from "./chunk-S6RJXTDJ.js";
+} from "./chunk-O3TFJGNF.js";
 import {
   fromEvent
-} from "./chunk-ZPDA6Z6E.js";
-import "./chunk-6EY7IDZ7.js";
+} from "./chunk-576P5TAG.js";
+import "./chunk-UQGLAMHP.js";
 import {
   BehaviorSubject,
   Subject,
+  __decorate,
   combineLatest,
   distinctUntilChanged,
   filter,
   of,
   switchMap
-} from "./chunk-DMY7NSOM.js";
-import {
-  __decorate
-} from "./chunk-HSWANC32.js";
+} from "./chunk-2K3BB2X3.js";
 import {
   __async,
   __objRest,
