@@ -60,3 +60,4 @@ Thumbs.db
 # 🔒 Optional: ignore Capacitor config backup files
 # ==========================================
 capacitor.config.json.bak
+redbarrio/.angular/cache/
