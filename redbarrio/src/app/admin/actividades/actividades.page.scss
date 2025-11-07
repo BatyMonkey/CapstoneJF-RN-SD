@@ -1,0 +1,248 @@
+/* ==========================================================
+   ===== Paleta base (coherente con otras gestiones)
+   ========================================================== */
+:host {
+  --rb-primary: #2563eb;
+  --rb-primary-10: rgba(37, 99, 235, 0.10);
+  --rb-text: #0f172a;
+  --rb-muted: #64748b;
+  --rb-sep: rgba(2, 6, 23, 0.06);
+  --rb-bg: #f8fafc;
+
+  color-scheme: light;
+  --ion-background-color: var(--rb-bg);
+  --ion-text-color: var(--rb-text);
+}
+
+/* ==========================================================
+   ===== Header degradado
+   ========================================================== */
+.rb-header ion-toolbar {
+  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
+  --color: #fff;
+  --border-color: transparent;
+  --min-height: 56px;
+}
+
+/* ==========================================================
+   ===== Estructura principal del módulo
+   ========================================================== */
+ion-content {
+  --background: var(--rb-bg);
+  padding: 24px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Contenedor central tipo “tarjeta grande” */
+.actividades-container {
+  background: #fff;
+  border-radius: 18px;
+  padding: 24px 20px;
+  width: min(700px, 100%);
+  box-shadow:
+    0 10px 30px rgba(2, 6, 23, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--rb-sep);
+
+  h1 {
+    margin: 0 0 8px 0;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--rb-text);
+  }
+
+  p {
+    margin: 0 0 18px;
+    color: var(--rb-muted);
+    font-weight: 500;
+  }
+}
+
+/* ==========================================================
+   ===== Lista y tarjetas de actividades
+   ========================================================== */
+.actividades-container ion-list {
+  background: transparent;
+  margin: 0;
+  padding: 0;
+}
+
+/* CARD de cada actividad */
+.actividades-container ion-list > ion-item {
+  --background: #ffffff;
+  margin-bottom: 14px;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  --inner-border-width: 0;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  align-items: flex-start;
+}
+
+/* Texto dentro de la actividad */
+.actividades-container ion-list > ion-item ion-label {
+  color: var(--rb-text);
+}
+
+.actividades-container ion-list > ion-item ion-label h2 {
+  font-weight: 700;
+  font-size: 1.02rem;
+  margin-bottom: 4px;
+  color: var(--rb-text);
+}
+
+.actividades-container ion-list > ion-item ion-label p {
+  margin: 0 0 4px 0;
+  color: var(--rb-muted);
+  font-weight: 500;
+  word-break: break-word;
+}
+
+/* Dirección / ubicación */
+.direccion {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--rb-muted);
+  font-size: 0.88rem;
+  margin-top: 4px;
+}
+
+.direccion ion-icon {
+  color: var(--rb-primary);
+  font-size: 1rem;
+}
+
+/* Chip de estado */
+ion-chip[color='warning'] {
+  --background: #facc15;
+  --color: #1e293b;
+  border-radius: 8px;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+/* Botones de acción a la derecha */
+.actividades-container ion-list > ion-item ion-buttons[slot='end'] {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-left: 10px;
+}
+
+.actividades-container ion-list > ion-item ion-buttons ion-button {
+  font-weight: 600;
+  border-radius: 12px;
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.12);
+  height: 36px;
+  min-width: 110px;
+}
+
+.actividades-container ion-list > ion-item ion-buttons ion-button[color='success'] {
+  --background: #16a34a;
+  --background-activated: #15803d;
+  --color: #fff;
+}
+
+.actividades-container ion-list > ion-item ion-buttons ion-button[color='danger'] {
+  --background: #ef4444;
+  --background-activated: #b91c1c;
+  --color: #fff;
+}
+
+/* ==========================================================
+   ===== Estados de carga o vacío
+   ========================================================== */
+.loading,
+.empty {
+  text-align: center;
+  color: var(--rb-muted);
+  padding: 18px 0;
+  font-weight: 600;
+
+  ion-spinner {
+    margin-bottom: 8px;
+  }
+}
+
+/* ==========================================================
+   ===== Responsive
+   ========================================================== */
+@media (max-width: 520px) {
+  ion-content {
+    padding: 18px 12px;
+  }
+
+  .actividades-container {
+    padding: 20px 14px;
+  }
+
+  .actividades-container ion-list > ion-item {
+    align-items: stretch;
+  }
+
+  .actividades-container ion-list > ion-item ion-buttons[slot='end'] {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .actividades-container ion-list > ion-item ion-buttons ion-button {
+    min-width: 0;
+  }
+}
+:host {
+  --rb-primary: #2563eb;
+  --rb-primary-10: rgba(37, 99, 235, 0.10);
+  --rb-text: #0f172a;
+  --rb-muted: #64748b;
+  --rb-sep: rgba(2, 6, 23, 0.06);
+  --rb-bg: #f8fafc;
+
+  color-scheme: light;
+
+  /* 🔹 Fondo global uniforme */
+  --ion-background-color: var(--rb-bg);
+  --ion-text-color: var(--rb-text);
+  background: var(--rb-bg); /* <--- evita el “fondo negro” */
+}
+
+/* ==========================================================
+   ===== Fondo consistente (evita el flash oscuro al refrescar)
+   ========================================================== */
+ion-content {
+  --background: var(--rb-bg) !important;
+  background: var(--rb-bg) !important;
+  padding: 24px 18px;
+  display: block; /* ✅ volvemos al flujo normal */
+  min-height: 100%;
+}
+
+/* 🔹 Asegura que el contenedor quede centrado y no “pegado abajo” */
+.actividades-container {
+  background: #fff;
+  border-radius: 18px;
+  padding: 24px 20px;
+  width: min(700px, 100%);
+  margin: 0 auto 40px auto; /* margen inferior bonito */
+  box-shadow:
+    0 10px 30px rgba(2, 6, 23, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--rb-sep);
+}
+
+/* 🔹 También aplicamos color al refresher */
+ion-refresher,
+ion-refresher-content {
+  background: var(--rb-bg) !important;
+  --background: var(--rb-bg) !important;
+}
+
+/* resto de tu CSS debajo... */
+.rb-header ion-toolbar {
+  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
+  --color: #fff;
+  --border-color: transparent;
+  --min-height: 56px;
+}
