@@ -1,7 +1,38 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+// 🔧 Forzar toolchain global a Java 17 para todos los submódulos
+import org.gradle.api.JavaVersion
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+
+gradle.projectsLoaded {
+    gradle.rootProject.allprojects {
+        plugins.withId("com.android.library") {
+            project.extensions.configure(com.android.build.gradle.LibraryExtension) {
+                compileOptions {
+                    sourceCompatibility = JavaVersion.VERSION_17
+                    targetCompatibility = JavaVersion.VERSION_17
+                }
+            }
+        }
+        plugins.withId("com.android.application") {
+            project.extensions.configure(com.android.build.gradle.AppExtension) {
+                compileOptions {
+                    sourceCompatibility = JavaVersion.VERSION_17
+                    targetCompatibility = JavaVersion.VERSION_17
+                }
+            }
+        }
+
+        // Toolchain global
+        tasks.withType(JavaCompile).configureEach {
+            javaCompiler = javaToolchains.compilerFor {
+                languageVersion = JavaLanguageVersion.of(17)
+            }
+        }
+    }
+}
+
 
 buildscript {
-    
     repositories {
         google()
         mavenCentral()
@@ -9,9 +40,6 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:8.7.2'
         classpath 'com.google.gms:google-services:4.4.2'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
     }
 }
 
@@ -22,28 +50,38 @@ allprojects {
         google()
         mavenCentral()
     }
+
+    // 🔧 Forzar compilación con Java 17 para todos los subproyectos (incluye plugins como capacitor-filesystem)
+    plugins.withType(com.android.build.gradle.BasePlugin).configureEach {
+        project.android {
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_17
+                targetCompatibility = JavaVersion.VERSION_17
+            }
+            if (project.hasProperty("kotlinOptions")) {
+                kotlinOptions.jvmTarget = '17'
+            }
+        }
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        javaCompiler = javaToolchains.compilerFor {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+}
+
+subprojects {
+    afterEvaluate { proj ->
+        try {
+            if (proj.hasProperty('android')) {
+                proj.android.compileOptions.sourceCompatibility = JavaVersion.VERSION_17
+                proj.android.compileOptions.targetCompatibility = JavaVersion.VERSION_17
+            }
+        } catch (ignored) {}
+    }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
-}
-
-// Enforce Java 17 for all Android subprojects. This overrides generated module
-// settings that may target Java 21 and prevents javac errors when the dev
-// machine has JDK 17 installed. It's safe and non-destructive.
-subprojects {
-    afterEvaluate { proj ->
-        try {
-            if (proj.plugins.hasPlugin('com.android.library') || proj.plugins.hasPlugin('com.android.application')) {
-                proj.android.compileOptions.sourceCompatibility = JavaVersion.VERSION_17
-                proj.android.compileOptions.targetCompatibility = JavaVersion.VERSION_17
-            }
-        } catch (ignored) {
-            // some projects may not expose 'android' at this time - ignore safely
-        }
-
-        // Do NOT set task.options.release for Android projects (AGP manages
-        // toolchains/bootclasspath). Rely on sourceCompatibility/targetCompatibility
-        // and the JVM installed on the system.
-    }
 }
