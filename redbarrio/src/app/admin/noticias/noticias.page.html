@@ -1,0 +1,63 @@
+<ion-header class="rb-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Gestión de Noticias</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="news" [fullscreen]="true">
+  <!-- 🌀 Cargando -->
+  <div class="loading" *ngIf="estaCargando">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando noticias...</p>
+  </div>
+
+  <!-- 📰 Lista de noticias -->
+  <ion-grid *ngIf="!estaCargando && noticias?.length">
+    <ion-row>
+      <ion-col size="12" size-md="6" size-lg="4" *ngFor="let noticia of noticias">
+        <ion-card>
+          <!-- Imagen -->
+          <div class="card-image-container" *ngIf="noticia.url_foto?.length">
+            <img [src]="noticia.url_foto?.[0]" alt="Miniatura" class="card-image" />
+          </div>
+
+          <ion-card-header>
+            <ion-card-title class="card-title ion-text-wrap">
+              {{ noticia.titulo }}
+            </ion-card-title>
+            <ion-card-subtitle>
+              {{ noticia.nombre_autor || 'Anónimo' }}
+              <span *ngIf="noticia.fecha_creacion">
+                | {{ noticia.fecha_creacion | date:'dd/MM/yyyy HH:mm':'America/Santiago' }}
+              </span>
+            </ion-card-subtitle>
+          </ion-card-header>
+
+          <ion-card-content>
+            <p *ngIf="(noticia.parrafos?.[0]) as primerParrafo; else sinResumen" class="card-excerpt">
+              {{ primerParrafo | slice: 0: 100 }}…
+            </p>
+            <ng-template #sinResumen>
+              <p class="card-excerpt-placeholder">[Sin resumen]</p>
+            </ng-template>
+
+            <!-- Botón de eliminación -->
+            <ion-button color="danger" expand="block" class="delete-btn" (click)="confirmarEliminar(noticia)">
+              <ion-icon name="trash-outline" slot="start"></ion-icon>
+              Eliminar
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- 🚫 Sin noticias -->
+  <div class="empty" *ngIf="!estaCargando && (!noticias || !noticias.length)">
+    <h2>No hay noticias disponibles</h2>
+    <p>Sé el primero en crear una noticia usando el botón “Nueva Noticia”.</p>
+  </div>
+</ion-content>

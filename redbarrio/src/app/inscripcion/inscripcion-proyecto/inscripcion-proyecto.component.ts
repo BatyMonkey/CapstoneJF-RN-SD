@@ -2,8 +2,17 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { IonicModule, AlertController, LoadingController } from '@ionic/angular';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  IonicModule,
+  AlertController,
+  LoadingController,
+} from '@ionic/angular';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { SupabaseService } from 'src/app/services/supabase.service';
 import { AuthService, Perfil } from 'src/app/auth/auth.service';
 
@@ -58,7 +67,6 @@ export class InscripcionProyectoComponent implements OnInit {
     });
   }
 
-  
   async validarSesion() {
     try {
       const ses = await this.auth.waitForActiveSession();
@@ -80,7 +88,6 @@ export class InscripcionProyectoComponent implements OnInit {
       console.error('Error validando sesión:', error);
     }
   }
-
 
   async cargarDatos() {
     const loading = await this.loadingCtrl.create({
@@ -120,7 +127,6 @@ export class InscripcionProyectoComponent implements OnInit {
     }
   }
 
-
   async verificarEstadoActividad() {
     if (!this.idActividad || !this.perfil) return;
 
@@ -141,7 +147,6 @@ export class InscripcionProyectoComponent implements OnInit {
     this.sinCupos = this.cuposRestantes <= 0;
   }
 
- 
   async enviarPostulacion() {
     this.isSubmitting = true;
 
@@ -162,31 +167,62 @@ export class InscripcionProyectoComponent implements OnInit {
       const now = new Date().toISOString();
 
       if (this.isActividad && this.idActividad) {
-        const { error } = await this.supabaseService.client.from('actividad_inscripcion').insert([
+        const { error } = await this.supabaseService.client
+          .from('actividad_inscripcion')
+          .insert([
+            {
+              id_actividad: this.idActividad,
+              id_auth: userId,
+              estado: 'pendiente',
+              comentario: comentario ?? null,
+              fecha: now,
+            },
+          ]);
+        if (error) throw error;
+
+        // 🧾 Registrar auditoría para inscripción en actividad
+        await this.supabaseService.registrarAuditoria(
+          'enviar inscripción a actividad',
+          'actividad_inscripcion',
           {
             id_actividad: this.idActividad,
-            id_auth: userId, // 
+            comentario: comentario,
             estado: 'pendiente',
-            comentario: comentario ?? null,
             fecha: now,
-          },
-        ]);
-        if (error) throw error;
+          }
+        );
       } else if (this.idProyecto) {
-        const { error } = await this.supabaseService.client.from('proyecto_postulacion').insert([
+        const { error } = await this.supabaseService.client
+          .from('proyecto_postulacion')
+          .insert([
+            {
+              id_proyecto: this.idProyecto,
+              id_auth: userId,
+              descripcion: comentario ?? null,
+              estado: 'pendiente',
+              fecha: now,
+              actualizado_en: now,
+            },
+          ]);
+        if (error) throw error;
+
+        // 🧾 Registrar auditoría para postulación en proyecto
+        await this.supabaseService.registrarAuditoria(
+          'enviar postulación a proyecto',
+          'proyecto_postulacion',
           {
             id_proyecto: this.idProyecto,
-            id_auth: userId, // 
-            descripcion: comentario ?? null,
+            descripcion: comentario,
             estado: 'pendiente',
             fecha: now,
-            actualizado_en: now,
-          },
-        ]);
-        if (error) throw error;
+          }
+        );
       }
 
-      await this.mostrarAlerta('Éxito', 'Tu inscripción se ha enviado correctamente.');
+      await this.mostrarAlerta(
+        'Éxito',
+        'Tu inscripción se ha enviado correctamente.'
+      );
       this.router.navigate(['/inscripcion/proyectos']);
     } catch (err: any) {
       // 🔍 Console log detallado para ver el error real de Supabase
@@ -197,7 +233,10 @@ export class InscripcionProyectoComponent implements OnInit {
         err?.hint ||
         (typeof err === 'object' ? JSON.stringify(err) : String(err));
 
-      await this.mostrarAlerta('Error', `No se pudo enviar la inscripción.\n\n${detail}`);
+      await this.mostrarAlerta(
+        'Error',
+        `No se pudo enviar la inscripción.\n\n${detail}`
+      );
     } finally {
       this.isSubmitting = false;
       loading.dismiss();

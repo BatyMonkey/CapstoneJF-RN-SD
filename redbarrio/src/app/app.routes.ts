@@ -27,8 +27,13 @@ export const routes: Routes = [
     loadComponent: () => import('./admin/proyectos/proyectos.page').then( m => m.ProyectosPage)
   },
   {
+<<<<<<< Updated upstream
     path: 'auditoria',
     loadComponent: () => import('./admin/auditoria/auditoria.page').then( m => m.AuditoriaPage)
+=======
+    path: 'noticias',
+    loadComponent: () => import('./admin/noticias/noticias.page').then( m => m.NoticiasPage)
+>>>>>>> Stashed changes
   },
 
 ];

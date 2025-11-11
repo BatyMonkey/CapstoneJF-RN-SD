@@ -30,52 +30,76 @@ export class AuditoriaPage implements OnInit {
     await this.cargarAuditoria();
   }
 
+  /** 🔄 Cargar registros de auditoría */
   async cargarAuditoria(event?: any) {
     this.loading = true;
 
-    const loader = await this.loadingCtrl.create({
-      message: 'Cargando auditoría...',
-    });
-    await loader.present();
+    const { data, error } = await this.supabaseService
+      .from('auditoria')
+      .select('*')
+      .order('fecha', { ascending: false });
 
-    try {
-      const { data, error } = await this.supabaseService
-        .from('auditoria')
-        .select('id, fecha, accion, tabla, detalle, nombre')
-        .order('fecha', { ascending: false });
+    this.loading = false;
+    if (event) event.target.complete();
 
-      if (error) throw error;
-
-      this.registros = data || [];
-    } catch (err) {
-      console.error('❌ Error al cargar auditoría:', err);
-      const toast = await this.toastCtrl.create({
-        message: 'Error al cargar los registros de auditoría',
-        color: 'danger',
-        duration: 2500,
-      });
-      await toast.present();
-    } finally {
-      this.loading = false;
-      await loader.dismiss();
-      if (event) event.target.complete();
+    if (error) {
+      console.error('❌ Error cargando auditoría:', error);
+      this.registros = [];
+      return;
     }
+
+    // ✅ Parsear fechas y JSON del campo "detalle"
+    this.registros = data.map((r: any) => {
+      let detalle = r.detalle;
+
+      // Si el detalle viene como string JSON, lo parseamos
+      if (typeof detalle === 'string') {
+        try {
+          detalle = JSON.parse(detalle);
+        } catch (e) {
+          console.warn('⚠️ No se pudo parsear detalle:', e);
+        }
+      }
+
+      return {
+        ...r,
+        fecha: r.fecha ? new Date(r.fecha) : null,
+        detalle,
+      };
+    });
   }
 
+  /** 🧩 Detecta si el valor es un array */
+  isArray(value: any): boolean {
+    return Array.isArray(value);
+  }
+
+  /** 📅 Detecta si el valor es una fecha ISO válida */
+  isFecha(valor: any): boolean {
+    if (typeof valor !== 'string') return false;
+    return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(valor);
+  }
+
+  /** 📋 Ordena las claves del detalle en un orden lógico */
   orderedDetalleKeys(detalle: any): string[] {
-  if (!detalle) return [];
+    if (!detalle) return [];
 
-  const keys = Object.keys(detalle);
+    const keys = Object.keys(detalle);
 
-  // Orden deseado
-  const orden = ['titulo', 'estado_anterior', 'nuevo_estado', 'id_actividad'];
+    // Orden preferido
+    const orden = [
+      'titulo',
+      'estado_anterior',
+      'nuevo_estado',
+      'id_actividad',
+      'id_proyecto',
+      'id_usuario',
+      'opciones',
+    ];
 
-  // Primero los que están en "orden", en ese orden
-  const enOrden = orden.filter(k => keys.includes(k));
+    const enOrden = orden.filter((k) => keys.includes(k));
+    const resto = keys.filter((k) => !orden.includes(k));
 
-  // Luego, cualquier otra clave que pueda venir en el JSON
-  const resto = keys.filter(k => !orden.includes(k));
-
-  return [...enOrden, ...resto];
-}
+    return [...enOrden, ...resto];
+  }
 }

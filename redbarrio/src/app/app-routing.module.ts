@@ -196,6 +196,15 @@ const routes: Routes = [
         (m) => m.AuditoriaPage
       ),
   },
+  {
+    path: 'admin/noticias',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador'] },
+    loadComponent: () =>
+      import('./admin/noticias/noticias.page').then(
+        (m) => m.NoticiasPage
+      )
+  },
 
   {
     path: 'home',
