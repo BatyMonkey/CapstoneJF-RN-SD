@@ -1,14 +1,13 @@
 import {
   menuController
-} from "./chunk-5IAUOJTI.js";
+} from "./chunk-4WEMEU7P.js";
 import {
   getTimeGivenProgression
 } from "./chunk-34QX6F67.js";
-import "./chunk-LTAFKWUM.js";
 import {
   IonicSafeString,
   setupConfig
-} from "./chunk-LW6JY7C2.js";
+} from "./chunk-N24SJTXV.js";
 import {
   actionSheetController,
   alertController,
@@ -17,39 +16,25 @@ import {
   pickerController,
   popoverController,
   toastController
-} from "./chunk-DV2V7UNP.js";
-import "./chunk-FXXFJIIY.js";
+} from "./chunk-GLHFVQHJ.js";
+import "./chunk-CCSUFG5J.js";
 import {
   openURL
 } from "./chunk-ZWYZ2NSP.js";
 import {
-  getPlatforms,
-  initialize,
-  isPlatform
-} from "./chunk-EWWXQRJM.js";
-import {
-  createGesture
-} from "./chunk-Z3OEOVFM.js";
-import "./chunk-QA2SYHF5.js";
-import "./chunk-KO2SEC3D.js";
-import {
   iosTransitionAnimation
-} from "./chunk-SWRLSF2P.js";
+} from "./chunk-RIJ7ZOUN.js";
 import {
   mdTransitionAnimation
-} from "./chunk-CGIQHZKB.js";
+} from "./chunk-UTUNQVJQ.js";
 import {
   getIonPageElement
-} from "./chunk-2YP5NCSA.js";
+} from "./chunk-KGCUZFT7.js";
 import {
   createAnimation as createAnimation2
-} from "./chunk-5F5D2C7I.js";
-import "./chunk-I4XJ5IGH.js";
-import "./chunk-LCMILTBF.js";
-import {
-  bootstrapLazy
-} from "./chunk-4ZTYHVOG.js";
+} from "./chunk-NTNOC4F3.js";
 import "./chunk-RA57Z6D3.js";
+import "./chunk-LTAFKWUM.js";
 import {
   LIFECYCLE_DID_ENTER,
   LIFECYCLE_DID_LEAVE,
@@ -63,6 +48,21 @@ import {
   getMode,
   printIonWarning
 } from "./chunk-67MFLVOH.js";
+import {
+  getPlatforms,
+  initialize,
+  isPlatform
+} from "./chunk-DXIZOXSL.js";
+import "./chunk-2QSFQOVL.js";
+import {
+  createGesture
+} from "./chunk-Z3OEOVFM.js";
+import "./chunk-QA2SYHF5.js";
+import "./chunk-TCUDET6F.js";
+import "./chunk-LCMILTBF.js";
+import {
+  bootstrapLazy
+} from "./chunk-ALXP5TSD.js";
 import {
   MaxValidator,
   MinValidator,
@@ -78,8 +78,9 @@ import {
   Router,
   RouterLink,
   UrlSerializer
-} from "./chunk-Y6KMK7BQ.js";
-import "./chunk-YBXHZPW5.js";
+} from "./chunk-LJPS7NX5.js";
+import "./chunk-LYZ2RRMW.js";
+import "./chunk-KIMTXNSS.js";
 import {
   CommonModule,
   Location,
@@ -87,7 +88,6 @@ import {
   NgIf,
   NgTemplateOutlet
 } from "./chunk-ORVGVXJZ.js";
-import "./chunk-KIMTXNSS.js";
 import "./chunk-4X6VR2I6.js";
 import {
   APP_INITIALIZER,
