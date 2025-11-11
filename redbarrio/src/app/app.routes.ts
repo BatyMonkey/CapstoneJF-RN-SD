@@ -26,5 +26,9 @@ export const routes: Routes = [
     path: 'proyectos',
     loadComponent: () => import('./admin/proyectos/proyectos.page').then( m => m.ProyectosPage)
   },
+  {
+    path: 'auditoria',
+    loadComponent: () => import('./admin/auditoria/auditoria.page').then( m => m.AuditoriaPage)
+  },
 
 ];

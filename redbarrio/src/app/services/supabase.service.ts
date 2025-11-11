@@ -44,7 +44,7 @@ export class SupabaseService {
   async getActividadesPendientes() {
     const { data, error } = await this.from('actividad')
       .select('*')
-      .eq('estado', 'aceptado');
+      .eq('estado', 'pendiente');
 
     if (error) {
       console.error('❌ Error al obtener actividades:', error);
@@ -132,5 +132,41 @@ export class SupabaseService {
     }
 
     return data;
+  }
+
+  /** Registra una acción de auditoría */
+  async registrarAuditoria(accion: string, tabla: string, detalle: any) {
+    try {
+      const { data: userData, error: userError } =
+        await this.supabase.auth.getUser();
+      if (userError) throw userError;
+
+      const user = userData?.user;
+      if (!user) return;
+
+      // 🔎 Buscar nombre del usuario desde la tabla "usuario"
+      const { data: perfil, error: perfilError } = await this.supabase
+        .from('usuario')
+        .select('nombre')
+        .eq('id_auth', user.id)
+        .single();
+
+      const nombre_usuario = perfil?.nombre || '(sin nombre)';
+
+      // 🧾 Registrar auditoría
+      const { error } = await this.supabase.from('auditoria').insert({
+        id_auth: user.id,
+        nombre_usuario,
+        accion,
+        tabla,
+        detalle,
+      });
+
+      if (error) throw error;
+
+      console.log('📝 Auditoría registrada:', accion, tabla, detalle);
+    } catch (err) {
+      console.error('❌ Error al registrar auditoría:', err);
+    }
   }
 }
