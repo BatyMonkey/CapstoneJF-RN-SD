@@ -1,0 +1,38 @@
+<ion-header class="rb-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Gestión de Noticias</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="proyectos-container">
+    <ion-refresher slot="fixed" (ionRefresh)="cargarNoticias()">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+
+    <ng-container *ngIf="!loading; else loadingTpl">
+      <ion-list *ngIf="noticias.length > 0; else noDataTpl">
+        <ion-item *ngFor="let n of noticias">
+          <ion-label>
+            <h2>{{ n.titulo }}</h2>
+            <p>{{ n.fecha | date:'medium' }}</p>
+          </ion-label>
+          <ion-button fill="clear" color="danger" (click)="confirmarEliminar(n.id)">
+            <ion-icon name="trash"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </ion-list>
+    </ng-container>
+
+    <ng-template #loadingTpl>
+      <ion-spinner name="crescent"></ion-spinner>
+    </ng-template>
+
+    <ng-template #noDataTpl>
+      <p class="empty-text">No hay noticias registradas.</p>
+    </ng-template>
+  </div>
+</ion-content>

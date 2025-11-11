@@ -105,12 +105,29 @@ export class SolicitudesPage implements OnInit {
     solicitud.procesando = true;
 
     try {
+      console.log(
+        `🟦 Cambiando estado de usuario ${solicitud.id_usuario} → ${nuevoEstado}`
+      );
+
       const ok = await this.authService.cambiarEstadoUsuario(
         solicitud.id_usuario,
         nuevoEstado
       );
 
       if (ok) {
+        // 🧾 Registrar auditoría
+        await this.supabase.registrarAuditoria(
+          nuevoEstado === 'activo' ? 'aprobar solicitud' : 'rechazar solicitud',
+          'usuario',
+          {
+            nombre: solicitud.nombre || '(sin nombre)',
+            id_usuario: solicitud.id_usuario,
+            estado_anterior: solicitud.estado || 'pendiente',
+            nuevo_estado: nuevoEstado,
+          }
+        );
+
+        // 🧹 Actualizar lista en pantalla
         this.solicitudes = this.solicitudes.filter(
           (s) => s.id_usuario !== solicitud.id_usuario
         );
@@ -123,7 +140,7 @@ export class SolicitudesPage implements OnInit {
         );
       }
     } catch (err) {
-      console.error('Error al cambiar estado:', err);
+      console.error('❌ Error al cambiar estado:', err);
       await this.mostrarToast('Error al cambiar estado', 'danger');
     } finally {
       solicitud.procesando = false;
