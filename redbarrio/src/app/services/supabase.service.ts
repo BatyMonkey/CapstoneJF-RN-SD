@@ -151,12 +151,12 @@ export class SupabaseService {
         .eq('id_auth', user.id)
         .single();
 
-      const nombre_usuario = perfil?.nombre || '(sin nombre)';
+      const nombre = perfil?.nombre || '(sin nombre)';
 
       // 🧾 Registrar auditoría
       const { error } = await this.supabase.from('auditoria').insert({
         id_auth: user.id,
-        nombre_usuario,
+        nombre,
         accion,
         tabla,
         detalle,

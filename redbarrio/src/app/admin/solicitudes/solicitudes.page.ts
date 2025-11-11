@@ -116,7 +116,7 @@ export class SolicitudesPage implements OnInit {
 
       if (ok) {
         // 🧾 Registrar auditoría
-        await this.supabase.registrarAuditoria(
+        await this.supabaseService.registrarAuditoria(
           nuevoEstado === 'activo' ? 'aprobar solicitud' : 'rechazar solicitud',
           'usuario',
           {

@@ -365,7 +365,7 @@ export class CrearEspacioPage implements OnInit {
       await this.espaciosService.crearNuevoEspacio(nuevoEspacio);
 
       // 🧾 Registrar acción en auditoría
-      await this.supabase.registrarAuditoria('crear espacio', 'espacios', {
+      await this.supabaseService.registrarAuditoria('crear espacio', 'espacios', {
         nombre: nuevoEspacio.nombre,
         tipo: nuevoEspacio.tipo,
         capacidad: nuevoEspacio.capacidad,
