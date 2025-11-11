@@ -5,6 +5,10 @@ import { FormsModule } from '@angular/forms';
 import { MetricasService, Metrica } from './metricas.service';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartData, ChartType, Chart, registerables } from 'chart.js';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import { Capacitor } from '@capacitor/core';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 Chart.register(...registerables);
 
 @Component({
@@ -182,4 +186,63 @@ export class DashboardComponent implements OnInit {
 
     this.chart?.update();
   }
+
+    async descargarTransparencia() {
+      try {
+        if (!this.metricas || this.metricas.length === 0) {
+          const msg = 'No hay datos disponibles para exportar.';
+          Capacitor.isNativePlatform() ? alert(msg) : alert(msg);
+          return;
+        }
+
+        // 📅 Usamos la fecha tal como viene desde Supabase (YYYY-MM-DD HH:mm:ss)
+        const dataExcel = this.metricas.map(m => ({
+          Fecha: m.fecha.split(' ')[0].replace(/-/g, '/'), // deja formato 2025/01/05
+          'Tipo transacción': m.tipo_transaccion,
+          Monto: m.monto,
+          'Nombre item': m.nombre_item,
+          Descripción: m.descripcion || '',
+          Categoría: m.categoria,
+          'Tipo fondo': m.tipo_fondo,
+          'Fuente destino': m.fuente_destino || ''
+        }));
+
+        // 🧾 Crear hoja y libro Excel
+        const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataExcel);
+        const wb: XLSX.WorkBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Transparencia');
+
+        // 📦 Generar archivo binario Excel
+        const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([wbout], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+
+        const fileName = `detalle_transparencia_${new Date()
+          .toISOString()
+          .slice(0, 10)}.xlsx`;
+
+        if (Capacitor.isNativePlatform()) {
+          // 📱 Guardar en Android/iOS
+          const base64 = await blob.arrayBuffer().then(b =>
+            btoa(String.fromCharCode(...new Uint8Array(b)))
+          );
+
+          await Filesystem.writeFile({
+            path: fileName,
+            data: base64,
+            directory: Directory.Documents,
+          });
+
+          alert(`✅ Archivo guardado correctamente como ${fileName} en Documentos.`);
+        } else {
+          // 💻 Descargar en navegador
+          saveAs(blob, fileName);
+        }
+      } catch (error) {
+        console.error('Error al generar el archivo Excel:', error);
+        alert('Error al generar el archivo.');
+      }
+    }
+
 }
