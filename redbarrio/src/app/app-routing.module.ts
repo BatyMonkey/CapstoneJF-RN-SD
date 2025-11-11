@@ -178,13 +178,22 @@ const routes: Routes = [
         (m) => m.ActividadesPage
       ),
   },
-    {
+  {
     path: 'admin/proyectos',
     canActivate: [AuthGuard],
     data: { roles: ['administrador'] },
     loadComponent: () =>
       import('./admin/proyectos/proyectos.page').then(
         (m) => m.ProyectosPage
+      ),
+  },
+  {
+    path: 'admin/auditoria',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador'] },
+    loadComponent: () =>
+      import('./admin/auditoria/auditoria.page').then(
+        (m) => m.AuditoriaPage
       ),
   },
 

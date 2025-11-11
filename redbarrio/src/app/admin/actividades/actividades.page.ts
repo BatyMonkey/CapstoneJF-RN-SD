@@ -63,7 +63,21 @@ export class ActividadesPage implements OnInit {
                 actividad.id_actividad,
                 nuevoEstado
               );
+
               console.log('✅ Resultado Supabase:', result);
+
+              // 🧾 Registrar auditoría con el mismo servicio
+              await this.supabase.registrarAuditoria(
+                `${verbo} actividad`,
+                'actividad',
+                {
+                  id_actividad: actividad.id_actividad,
+                  titulo: actividad.titulo || '(sin título)',
+                  estado_anterior: actividad.estado,
+                  nuevo_estado: nuevoEstado,
+                }
+              );
+
               this.mostrarToast(`Actividad ${nuevoEstado}`);
               await this.cargarPendientes();
             } catch (error) {
