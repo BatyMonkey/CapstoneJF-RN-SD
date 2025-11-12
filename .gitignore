@@ -1,6 +1,5 @@
 # Ignorar directorios
 /.angular
-/android
 /node_modules
 /supabase
 /.vscode
