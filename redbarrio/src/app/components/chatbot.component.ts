@@ -50,9 +50,13 @@ interface Noticia {
 export class ChatbotComponent implements OnInit {
   // ====== FIX: estado de visibilidad requerido por tu HTML ======
   @Input() startOpen = false;
-  visible = false;                           // ← usado en *ngIf del HTML
-  openChat() { this.visible = true; }        // ← para el botón flotante
-  closeChat() { this.visible = false; }      // ← para el botón "Cerrar"
+  visible = false; // ← usado en *ngIf del HTML
+  openChat() {
+    this.visible = true;
+  } // ← para el botón flotante
+  closeChat() {
+    this.visible = false;
+  } // ← para el botón "Cerrar"
 
   messages: ChatMessage[] = [];
   inputText = '';
@@ -73,23 +77,39 @@ export class ChatbotComponent implements OnInit {
   // Proyectos / Actividades
   private lastProjectsOnlyCache: any[] = [];
   private lastActivitiesOnlyCache: any[] = [];
-  private lastScopeForPostulacion: 'proyectos' | 'actividades' | 'ambos' | null = null;
+  private lastScopeForPostulacion:
+    | 'proyectos'
+    | 'actividades'
+    | 'ambos'
+    | null = null;
 
   // Cortafuegos de heurísticas
-  private suppressHeuristicsOnce = false;      // resumen noticia
-  private suppressHeuristicsPostOnce = false;  // mensaje de postulación
-  private suppressHeuristicsListOnce = false;  // evita doble listado (noticias/proyectos/actividades)
+  private suppressHeuristicsOnce = false; // resumen noticia
+  private suppressHeuristicsPostOnce = false; // mensaje de postulación
+  private suppressHeuristicsListOnce = false; // evita doble listado (noticias/proyectos/actividades)
 
   private lastUserText = '';
   private certWebhookUrl = (environment as any).N8N_WEBHOOK_URL || '';
-  private openaiKeyForN8N: string = (environment as any).OPENAI_KEY_FOR_N8N || '';
+  private openaiKeyForN8N: string =
+    (environment as any).OPENAI_KEY_FOR_N8N || '';
 
-  constructor(
-    private chatbot: ChatbotService,
-    private auth: AuthService,
-  ) {}
+  constructor(private chatbot: ChatbotService, private auth: AuthService) {
+    console.log('🧩 ChatbotComponent constructor ejecutado');
+  }
 
   async ngOnInit() {
+    console.log('🚀 ChatbotComponent → ngOnInit ejecutado');
+    console.log('startOpen (recibido desde Home) =', this.startOpen);
+
+    if (this.startOpen) {
+      this.visible = true;
+      console.log('✅ visible = true (desde ngOnInit)');
+    } else {
+      console.log('❌ startOpen es FALSE, no se mostrará el chat');
+    }
+
+    await this.cargarPerfil();
+    console.log('🟢 Perfil cargado, visible =', this.visible);
     // ====== FIX: abrir si viene desde input ======
     if (this.startOpen) this.visible = true;
 
@@ -98,7 +118,9 @@ export class ChatbotComponent implements OnInit {
     this.messages = [
       {
         from: 'bot',
-        text: `Hola ${this.displayName || 'vecino/a'} 👋 soy el asistente de RedBarrio. ¿Qué necesitas?`,
+        text: `Hola ${
+          this.displayName || 'vecino/a'
+        } 👋 soy el asistente de RedBarrio. ¿Qué necesitas?`,
         at: new Date(),
       },
       {
@@ -116,7 +138,11 @@ export class ChatbotComponent implements OnInit {
         this.perfil = perfil;
         const pAny = perfil as any;
         this.userId = pAny.id_auth || pAny.user_id || pAny.id_usuario || 'anon';
-        this.displayName = pAny.nombre || pAny.primer_nombre || (pAny as any).full_name || 'vecino/a';
+        this.displayName =
+          pAny.nombre ||
+          pAny.primer_nombre ||
+          (pAny as any).full_name ||
+          'vecino/a';
         console.log('[Chatbot] perfil desde auth.miPerfil():', perfil);
         return;
       }
@@ -126,7 +152,11 @@ export class ChatbotComponent implements OnInit {
         this.perfil = perfilLocal as any;
         const pAny = perfilLocal as any;
         this.userId = pAny.id_auth || pAny.user_id || pAny.id_usuario || 'anon';
-        this.displayName = pAny.nombre || pAny.primer_nombre || (pAny as any).full_name || 'vecino/a';
+        this.displayName =
+          pAny.nombre ||
+          pAny.primer_nombre ||
+          (pAny as any).full_name ||
+          'vecino/a';
         console.log('[Chatbot] perfil desde getUsuarioForzado():', perfilLocal);
         return;
       }
@@ -146,7 +176,9 @@ export class ChatbotComponent implements OnInit {
   // ====== QUICK BUTTONS ======
   clickQuick(kind: 'faq' | 'cert' | 'votacion' | 'noticias') {
     if (kind === 'faq') {
-      this.pushBot('Puedes preguntarme por certificados, votaciones activas, noticias, proyectos, actividades, espacios y tus datos básicos 👌');
+      this.pushBot(
+        'Puedes preguntarme por certificados, votaciones activas, noticias, proyectos, actividades, espacios y tus datos básicos 👌'
+      );
       return;
     }
     if (kind === 'cert') {
@@ -175,10 +207,14 @@ export class ChatbotComponent implements OnInit {
 
     // pre-intents locales
     if (this.tryLocalOrdinalActions(text)) {
-      console.log('[Chatbot] (pre-intent) disparé acción local por ordinal (resumen noticia)');
+      console.log(
+        '[Chatbot] (pre-intent) disparé acción local por ordinal (resumen noticia)'
+      );
     }
     if (this.tryLocalPostulacionActions(text)) {
-      console.log('[Chatbot] (pre-intent) disparé acción local por ordinal (postulación)');
+      console.log(
+        '[Chatbot] (pre-intent) disparé acción local por ordinal (postulación)'
+      );
     }
 
     this.inputText = '';
@@ -186,13 +222,20 @@ export class ChatbotComponent implements OnInit {
   }
 
   private tryLocalOrdinalActions(text: string): boolean {
-    const t = text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+    const t = text
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
     let m = t.match(/\bresumen(?:\s+de\s+la|\s+de|\s+)\s*(\d+)\b/);
     if (!m) m = t.match(/\bdetalle(?:\s+de\s+la|\s+de|\s+)\s*(\d+)\b/);
     if (m && m[1]) {
       const ord = Number(m[1]);
       if (Number.isFinite(ord) && ord > 0) {
-        console.log('[Chatbot] tryLocalOrdinalActions → resumen/detalle ordinal =', ord);
+        console.log(
+          '[Chatbot] tryLocalOrdinalActions → resumen/detalle ordinal =',
+          ord
+        );
         this.resumirNoticiaPorOrdinal(ord);
         return true;
       }
@@ -201,14 +244,25 @@ export class ChatbotComponent implements OnInit {
   }
 
   private tryLocalPostulacionActions(text: string): boolean {
-    const t = text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
-    const m = t.match(/\b(mensaje|postulacion|postulación)\s*(?:de|para)?\s*(?:la\s*)?(\d+)\b/);
+    const t = text
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
+    const m = t.match(
+      /\b(mensaje|postulacion|postulación)\s*(?:de|para)?\s*(?:la\s*)?(\d+)\b/
+    );
     if (m && m[2]) {
       const ord = Number(m[2]);
       let hintScope: 'proyecto' | 'actividad' | undefined = undefined;
       if (t.includes('proyecto')) hintScope = 'proyecto';
       if (t.includes('actividad')) hintScope = 'actividad';
-      console.log('[Chatbot] tryLocalPostulacionActions → ord=', ord, 'hintScope=', hintScope);
+      console.log(
+        '[Chatbot] tryLocalPostulacionActions → ord=',
+        ord,
+        'hintScope=',
+        hintScope
+      );
       this.sugerirPostulacionPorOrdinal(ord, hintScope);
       return true;
     }
@@ -309,8 +363,16 @@ export class ChatbotComponent implements OnInit {
 
       case 'SUGERIR_POSTULACION_ORDINAL': {
         const ord = Number(res?.payload?.ord ?? 0);
-        const scope = res?.payload?.scope as ('proyecto' | 'actividad' | undefined);
-        console.log('[Chatbot] comando: postulación ordinal =', ord, ' scope=', scope);
+        const scope = res?.payload?.scope as
+          | 'proyecto'
+          | 'actividad'
+          | undefined;
+        console.log(
+          '[Chatbot] comando: postulación ordinal =',
+          ord,
+          ' scope=',
+          scope
+        );
         this.sugerirPostulacionPorOrdinal(ord, scope);
         return true;
       }
@@ -340,44 +402,68 @@ export class ChatbotComponent implements OnInit {
     if (
       low.includes('listo ✅') ||
       low.includes('listo ') ||
-      low.includes('te lo envío') || low.includes('te lo envie') ||
-      low.includes('ya te lo envié') || low.includes('ya te lo envie')
+      low.includes('te lo envío') ||
+      low.includes('te lo envie') ||
+      low.includes('ya te lo envié') ||
+      low.includes('ya te lo envie')
     ) {
       console.log('[Chatbot] texto sugiere emisión → ejecutar certificado');
       this.emitirCertificadoDesdeChat();
       return;
     }
 
-    if ((low.includes('estas son las últimas') && low.includes('noticias')) ||
-        low.includes('últimas noticias')) {
+    if (
+      (low.includes('estas son las últimas') && low.includes('noticias')) ||
+      low.includes('últimas noticias')
+    ) {
       console.log('[Chatbot][fallback] listarNoticiasDesdeChat() por reply');
       this.listarNoticiasDesdeChat();
       return;
     }
 
-    if ((low.includes('estos son los') && low.includes('proyectos')) ||
-         low.includes('proyectos más recientes') || low.includes('solo proyectos')) {
-      console.log('[Chatbot][fallback] listarProyectosOActividadesDesdeChat(proyectos) por reply');
+    if (
+      (low.includes('estos son los') && low.includes('proyectos')) ||
+      low.includes('proyectos más recientes') ||
+      low.includes('solo proyectos')
+    ) {
+      console.log(
+        '[Chatbot][fallback] listarProyectosOActividadesDesdeChat(proyectos) por reply'
+      );
       this.listarProyectosOActividadesDesdeChat('proyectos');
       return;
     }
-    if ((low.includes('estas son las') && low.includes('actividades')) ||
-         low.includes('actividades más recientes') || low.includes('solo actividades')) {
-      console.log('[Chatbot][fallback] listarProyectosOActividadesDesdeChat(actividades) por reply');
+    if (
+      (low.includes('estas son las') && low.includes('actividades')) ||
+      low.includes('actividades más recientes') ||
+      low.includes('solo actividades')
+    ) {
+      console.log(
+        '[Chatbot][fallback] listarProyectosOActividadesDesdeChat(actividades) por reply'
+      );
       this.listarProyectosOActividadesDesdeChat('actividades');
       return;
     }
-    if (low.includes('proyectos/actividades') || low.includes('proyectos y actividades')) {
-      console.log('[Chatbot][fallback] listarProyectosOActividadesDesdeChat(ambos) por reply');
+    if (
+      low.includes('proyectos/actividades') ||
+      low.includes('proyectos y actividades')
+    ) {
+      console.log(
+        '[Chatbot][fallback] listarProyectosOActividadesDesdeChat(ambos) por reply'
+      );
       this.listarProyectosOActividadesDesdeChat('ambos');
       return;
     }
 
     let m = low.match(/resumen.*?(?:#|n[°º]?\s*|de\s+la\s+|de\s+)?\s*(\d+)\b/);
-    if (!m) m = low.match(/preparando\s+resumen.*?(?:#|n[°º]?\s*|de\s+la\s+|de\s+)?\s*(\d+)\b/);
+    if (!m)
+      m = low.match(
+        /preparando\s+resumen.*?(?:#|n[°º]?\s*|de\s+la\s+|de\s+)?\s*(\d+)\b/
+      );
     if (!m && this.lastUserText) {
       const u = this.lastUserText.toLowerCase();
-      m = u.match(/\bresumen(?:\s+de\s+la|\s+de|\s+)\s*(\d+)\b/) || u.match(/\bdetalle(?:\s+de\s+la|\s+de|\s+)\s*(\d+)\b/);
+      m =
+        u.match(/\bresumen(?:\s+de\s+la|\s+de|\s+)\s*(\d+)\b/) ||
+        u.match(/\bdetalle(?:\s+de\s+la|\s+de|\s+)\s*(\d+)\b/);
     }
     if (m && m[1]) {
       const ord = Number(m[1]);
@@ -388,10 +474,14 @@ export class ChatbotComponent implements OnInit {
       }
     }
 
-    let pm = low.match(/\b(mensaje|postulacion|postulación).*(?:#|n[°º]?\s*|de\s+la\s+|de\s+|para\s+la\s+|para\s+)?\s*(\d+)\b/);
+    let pm = low.match(
+      /\b(mensaje|postulacion|postulación).*(?:#|n[°º]?\s*|de\s+la\s+|de\s+|para\s+la\s+|para\s+)?\s*(\d+)\b/
+    );
     if (!pm && this.lastUserText) {
       const u = this.lastUserText.toLowerCase();
-      pm = u.match(/\b(mensaje|postulacion|postulación).*(?:#|n[°º]?\s*|de\s+la\s+|de\s+|para\s+la\s+|para\s+)?\s*(\d+)\b/);
+      pm = u.match(
+        /\b(mensaje|postulacion|postulación).*(?:#|n[°º]?\s*|de\s+la\s+|de\s+|para\s+la\s+|para\s+)?\s*(\d+)\b/
+      );
     }
     if (pm && pm[2]) {
       const ord = Number(pm[2]);
@@ -409,7 +499,9 @@ export class ChatbotComponent implements OnInit {
 
     if (!this.certWebhookUrl) {
       console.warn('[Chatbot] environment.N8N_WEBHOOK_URL está vacío');
-      this.pushBot('No tengo configurado el webhook de certificados en la app 😅');
+      this.pushBot(
+        'No tengo configurado el webhook de certificados en la app 😅'
+      );
       return;
     }
 
@@ -417,8 +509,9 @@ export class ChatbotComponent implements OnInit {
       const who = await getMyUserData().catch(() => null as any);
       console.log('[Chatbot] getMyUserData() =', who);
 
-      const { data: { user } = { user: null } } =
-        await supabase.auth.getUser().catch(() => ({ data: { user: null } } as any));
+      const { data: { user } = { user: null } } = await supabase.auth
+        .getUser()
+        .catch(() => ({ data: { user: null } } as any));
       console.log('[Chatbot] supabase.auth.getUser() =', user);
 
       const correoDestino =
@@ -431,7 +524,9 @@ export class ChatbotComponent implements OnInit {
       console.log('[Chatbot] correoDestino detectado =', correoDestino);
 
       if (!correoDestino) {
-        this.pushBot('No encontré tu correo registrado 😅. Ve a “Mi perfil” y guárdalo primero.');
+        this.pushBot(
+          'No encontré tu correo registrado 😅. Ve a “Mi perfil” y guárdalo primero.'
+        );
         return;
       }
 
@@ -448,7 +543,10 @@ export class ChatbotComponent implements OnInit {
       console.log('[Chatbot] createCertRecord() -> id =', id);
 
       const baseBytes = await fetchBaseTemplateBytes();
-      console.log('[Chatbot] fetchBaseTemplateBytes() OK, bytes =', baseBytes?.byteLength ?? '??');
+      console.log(
+        '[Chatbot] fetchBaseTemplateBytes() OK, bytes =',
+        baseBytes?.byteLength ?? '??'
+      );
 
       const rawVars = this.buildVarsFromWho(who);
       (rawVars as any).folio = String(id);
@@ -462,12 +560,16 @@ export class ChatbotComponent implements OnInit {
       console.log('[Chatbot] uploadPdfForRecord() -> pdf_url =', pdf_url);
 
       const bodyToN8n = {
-        to: (correoDestino as string),
+        to: correoDestino as string,
         subject: 'Certificado emitido',
         pdf_url,
         filename: `certificado-${id}.pdf`,
       };
-      console.log('[Chatbot] POST -> n8n (certificado):', this.certWebhookUrl, bodyToN8n);
+      console.log(
+        '[Chatbot] POST -> n8n (certificado):',
+        this.certWebhookUrl,
+        bodyToN8n
+      );
 
       const res = await fetch(this.certWebhookUrl, {
         method: 'POST',
@@ -476,7 +578,11 @@ export class ChatbotComponent implements OnInit {
       });
 
       const text = await res.text();
-      console.log('[Chatbot] respuesta HTTP de n8n (certificado) =', res.status, text);
+      console.log(
+        '[Chatbot] respuesta HTTP de n8n (certificado) =',
+        res.status,
+        text
+      );
 
       if (!res.ok) {
         this.pushBot('No pude enviar el certificado 😅 (n8n respondió error).');
@@ -486,7 +592,9 @@ export class ChatbotComponent implements OnInit {
       this.pushBot('Listo ✅ ya te lo envié por correo.');
     } catch (err: any) {
       console.error('[Chatbot] error en emitirCertificadoDesdeChat():', err);
-      this.pushBot(err?.message || 'Hubo un error al generar el certificado 😅');
+      this.pushBot(
+        err?.message || 'Hubo un error al generar el certificado 😅'
+      );
     }
   }
 
@@ -513,7 +621,11 @@ export class ChatbotComponent implements OnInit {
         return `${i + 1}. <b>${v.titulo || 'Sin título'}</b> (hasta ${fin})`;
       });
 
-      this.pushBot(`👉<br>${lines.join('<br>')}<br><i>Di, por ejemplo: “abrir votación 1”.</i>`);
+      this.pushBot(
+        `👉<br>${lines.join(
+          '<br>'
+        )}<br><i>Di, por ejemplo: “abrir votación 1”.</i>`
+      );
     } catch (e: any) {
       console.error('[Chatbot] listarVotacionesDesdeChat() error:', e);
       this.pushBot('No pude listar las votaciones 😅');
@@ -544,7 +656,11 @@ export class ChatbotComponent implements OnInit {
         return `${i + 1}. <b>${e.nombre || 'Sin nombre'}</b>${cap}${dir}`;
       });
 
-      this.pushBot(`🏢<br>${lines.join('<br>')}<br><i>Para reservar, ve a “Arrendar espacio”.</i>`);
+      this.pushBot(
+        `🏢<br>${lines.join(
+          '<br>'
+        )}<br><i>Para reservar, ve a “Arrendar espacio”.</i>`
+      );
     } catch (e: any) {
       console.error('[Chatbot] listarEspaciosDesdeChat() error:', e);
       this.pushBot('No pude listar los espacios 😅');
@@ -552,7 +668,9 @@ export class ChatbotComponent implements OnInit {
   }
 
   // ====== LISTAR PROYECTOS / ACTIVIDADES ======
-  private async listarProyectosOActividadesDesdeChat(scope: 'proyectos' | 'actividades' | 'ambos') {
+  private async listarProyectosOActividadesDesdeChat(
+    scope: 'proyectos' | 'actividades' | 'ambos'
+  ) {
     try {
       this.lastScopeForPostulacion = scope;
 
@@ -571,11 +689,20 @@ export class ChatbotComponent implements OnInit {
           return;
         }
 
-        const lines = items.slice(0, 8).map((p: any, i: number) =>
-          `${i + 1}. <b>${p.titulo || p.nombre || 'Sin título'}</b> — proyecto`
-        );
+        const lines = items
+          .slice(0, 8)
+          .map(
+            (p: any, i: number) =>
+              `${i + 1}. <b>${
+                p.titulo || p.nombre || 'Sin título'
+              }</b> — proyecto`
+          );
 
-        this.pushBot(`📌 Proyectos:<br>${lines.join('<br>')}<br><i>Di “mensaje de la 1/2/3…” para sugerir tu postulación.</i>`);
+        this.pushBot(
+          `📌 Proyectos:<br>${lines.join(
+            '<br>'
+          )}<br><i>Di “mensaje de la 1/2/3…” para sugerir tu postulación.</i>`
+        );
         return;
       }
 
@@ -594,11 +721,20 @@ export class ChatbotComponent implements OnInit {
           return;
         }
 
-        const lines = items.slice(0, 8).map((a: any, i: number) =>
-          `${i + 1}. <b>${a.titulo || a.nombre || 'Sin título'}</b> — actividad`
-        );
+        const lines = items
+          .slice(0, 8)
+          .map(
+            (a: any, i: number) =>
+              `${i + 1}. <b>${
+                a.titulo || a.nombre || 'Sin título'
+              }</b> — actividad`
+          );
 
-        this.pushBot(`🗓️ Actividades:<br>${lines.join('<br>')}<br><i>Di “mensaje de la 1/2/3…” para sugerir tu postulación.</i>`);
+        this.pushBot(
+          `🗓️ Actividades:<br>${lines.join(
+            '<br>'
+          )}<br><i>Di “mensaje de la 1/2/3…” para sugerir tu postulación.</i>`
+        );
         return;
       }
 
@@ -617,7 +753,11 @@ export class ChatbotComponent implements OnInit {
       const actividades = (actRes.data || []).map((a: any) => ({
         ...a,
         tipo: 'actividad',
-        fecha: a.creado_en || a.fecha_inicio || a.actualizado_en || new Date().toISOString(),
+        fecha:
+          a.creado_en ||
+          a.fecha_inicio ||
+          a.actualizado_en ||
+          new Date().toISOString(),
       }));
 
       this.lastProjectsOnlyCache = proyectos;
@@ -632,13 +772,25 @@ export class ChatbotComponent implements OnInit {
         return;
       }
 
-      const lines = elementos.slice(0, 8).map((e: any, i: number) =>
-        `${i + 1}. <b>${e.titulo || e.nombre || 'Sin título'}</b> — ${e.tipo}`
-      );
+      const lines = elementos
+        .slice(0, 8)
+        .map(
+          (e: any, i: number) =>
+            `${i + 1}. <b>${e.titulo || e.nombre || 'Sin título'}</b> — ${
+              e.tipo
+            }`
+        );
 
-      this.pushBot(`📋 Proyectos y Actividades:<br>${lines.join('<br>')}<br><i>Di “mensaje de la 1/2/3…” para sugerir tu postulación.</i>`);
+      this.pushBot(
+        `📋 Proyectos y Actividades:<br>${lines.join(
+          '<br>'
+        )}<br><i>Di “mensaje de la 1/2/3…” para sugerir tu postulación.</i>`
+      );
     } catch (e: any) {
-      console.error('[Chatbot] listarProyectosOActividadesDesdeChat() error:', e);
+      console.error(
+        '[Chatbot] listarProyectosOActividadesDesdeChat() error:',
+        e
+      );
       this.pushBot('No pude listar los proyectos/actividades 😅');
     }
   }
@@ -662,11 +814,19 @@ export class ChatbotComponent implements OnInit {
       }
 
       const lines = list.slice(0, 5).map((n, i) => {
-        const fecha = n.fecha_creacion ? new Date(n.fecha_creacion).toLocaleDateString() : '';
-        return `${i + 1}. <b>${n.titulo || 'Sin título'}</b> ${fecha ? `(${fecha})` : ''}`;
+        const fecha = n.fecha_creacion
+          ? new Date(n.fecha_creacion).toLocaleDateString()
+          : '';
+        return `${i + 1}. <b>${n.titulo || 'Sin título'}</b> ${
+          fecha ? `(${fecha})` : ''
+        }`;
       });
 
-      this.pushBot(`📰 Últimas noticias:<br>${lines.join('<br>')}<br><i>Pide “resumen de la 1” o “detalle de la 2”.</i>`);
+      this.pushBot(
+        `📰 Últimas noticias:<br>${lines.join(
+          '<br>'
+        )}<br><i>Pide “resumen de la 1” o “detalle de la 2”.</i>`
+      );
     } catch (e: any) {
       console.error('[Chatbot] listarNoticiasDesdeChat() error:', e);
       this.pushBot('No pude listar las noticias 😅');
@@ -677,7 +837,9 @@ export class ChatbotComponent implements OnInit {
   private async resumirNoticiaPorOrdinal(ord: number) {
     const idx = ord - 1;
     if (idx < 0 || idx >= this.lastNewsCache.length) {
-      this.pushBot('No ubico esa posición en la lista. Pide “ver noticias” primero 😉');
+      this.pushBot(
+        'No ubico esa posición en la lista. Pide “ver noticias” primero 😉'
+      );
       return;
     }
     const n = this.lastNewsCache[idx];
@@ -710,7 +872,9 @@ export class ChatbotComponent implements OnInit {
       this.chatbot.sendMessage(payload).subscribe({
         next: (res: ChatbotResponse) => {
           const summary = (res.summary || res.reply || '').trim();
-          const html = summary ? summary.replace(/\n/g, '<br>') : 'No pude generar el resumen 😅';
+          const html = summary
+            ? summary.replace(/\n/g, '<br>')
+            : 'No pude generar el resumen 😅';
           this.pushBot(`<b>${titulo}</b><br>${html}`);
           this.suppressHeuristicsOnce = true;
         },
@@ -768,7 +932,9 @@ export class ChatbotComponent implements OnInit {
     }
 
     if (!item) {
-      this.pushBot('No ubico esa posición. Pide “ver proyectos” o “ver actividades” primero 😉');
+      this.pushBot(
+        'No ubico esa posición. Pide “ver proyectos” o “ver actividades” primero 😉'
+      );
       return;
     }
 
@@ -776,15 +942,26 @@ export class ChatbotComponent implements OnInit {
     this.sugerirPostulacionDesdeChat(tipo, String(id));
   }
 
-  private async sugerirPostulacionDesdeChat(tipo: 'proyecto' | 'actividad', id: string) {
+  private async sugerirPostulacionDesdeChat(
+    tipo: 'proyecto' | 'actividad',
+    id: string
+  ) {
     try {
       let registro: any = null;
 
       if (tipo === 'proyecto') {
-        const r1 = await supabase.from('proyecto').select('*').eq('id_proyecto', id).maybeSingle();
+        const r1 = await supabase
+          .from('proyecto')
+          .select('*')
+          .eq('id_proyecto', id)
+          .maybeSingle();
         if (r1.data) registro = r1.data;
       } else {
-        const r1 = await supabase.from('actividad').select('*').eq('id_actividad', id).maybeSingle();
+        const r1 = await supabase
+          .from('actividad')
+          .select('*')
+          .eq('id_actividad', id)
+          .maybeSingle();
         if (r1.data) registro = r1.data;
       }
 
@@ -793,12 +970,18 @@ export class ChatbotComponent implements OnInit {
         return;
       }
 
-      const titulo = registro.titulo || registro.nombre || (tipo === 'proyecto' ? 'Proyecto' : 'Actividad');
-      const organizador = registro.organizador || registro.creado_por || 'la organización';
+      const titulo =
+        registro.titulo ||
+        registro.nombre ||
+        (tipo === 'proyecto' ? 'Proyecto' : 'Actividad');
+      const organizador =
+        registro.organizador || registro.creado_por || 'la organización';
       const fecha =
-        (tipo === 'proyecto')
-          ? (registro.fecha_creacion || registro.actualizado_en)
-          : (registro.fecha_inicio || registro.creado_en || registro.actualizado_en);
+        tipo === 'proyecto'
+          ? registro.fecha_creacion || registro.actualizado_en
+          : registro.fecha_inicio ||
+            registro.creado_en ||
+            registro.actualizado_en;
 
       const sugerido =
         `Hola, me interesa postular a **${titulo}**. ` +
@@ -811,15 +994,17 @@ export class ChatbotComponent implements OnInit {
         organizador ? `• Organiza: ${organizador}` : null,
         registro.cupos_total ? `• Cupos: ${registro.cupos_total}` : null,
         registro.estado ? `• Estado: ${registro.estado}` : null,
-      ].filter(Boolean).join('<br>');
+      ]
+        .filter(Boolean)
+        .join('<br>');
 
       const header = tipo === 'proyecto' ? '🧩 Proyecto' : '🗓️ Actividad';
       const extraHtml = infoExtra ? `<br>${infoExtra}` : '';
 
       this.pushBot(
         `${header}: <b>${titulo}</b>${extraHtml}<br><br>` +
-        `<u>Mensaje sugerido de postulación</u>:<br>` +
-        `${sugerido}`
+          `<u>Mensaje sugerido de postulación</u>:<br>` +
+          `${sugerido}`
       );
 
       this.suppressHeuristicsPostOnce = true;
@@ -832,12 +1017,16 @@ export class ChatbotComponent implements OnInit {
   // ====== helpers ======
   private buildVarsFromWho(who: any) {
     const now = new Date();
-    const nombre = this.nombreCompleto(
-      who?.primer_nombre,
-      who?.segundo_nombre,
-      who?.primer_apellido,
-      who?.segundo_apellido,
-    ) || who?.full_name || who?.nombre || '';
+    const nombre =
+      this.nombreCompleto(
+        who?.primer_nombre,
+        who?.segundo_nombre,
+        who?.primer_apellido,
+        who?.segundo_apellido
+      ) ||
+      who?.full_name ||
+      who?.nombre ||
+      '';
 
     return {
       nombre_completo: nombre,
@@ -867,12 +1056,34 @@ export class ChatbotComponent implements OnInit {
     return out as T;
   }
 
-  private nombreCompleto(pn?: string | null, sn?: string | null, pa?: string | null, sa?: string | null) {
-    return [pn, sn, pa, sa].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
+  private nombreCompleto(
+    pn?: string | null,
+    sn?: string | null,
+    pa?: string | null,
+    sa?: string | null
+  ) {
+    return [pn, sn, pa, sa]
+      .filter(Boolean)
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 
   private monthNameEs(m: number) {
-    return ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][m];
+    return [
+      'enero',
+      'febrero',
+      'marzo',
+      'abril',
+      'mayo',
+      'junio',
+      'julio',
+      'agosto',
+      'septiembre',
+      'octubre',
+      'noviembre',
+      'diciembre',
+    ][m];
   }
 
   private normalizaRut(rut: string) {
@@ -881,10 +1092,15 @@ export class ChatbotComponent implements OnInit {
     if (clean.length < 2) return rut;
     const dv = clean.slice(-1);
     const num = clean.slice(0, -1);
-    let out = ''; let i = 0;
+    let out = '';
+    let i = 0;
     for (let j = num.length - 1; j >= 0; j--) {
-      out = num[j] + out; i++;
-      if (i === 3 && j > 0) { out = '.' + out; i = 0; }
+      out = num[j] + out;
+      i++;
+      if (i === 3 && j > 0) {
+        out = '.' + out;
+        i = 0;
+      }
     }
     return `${out}-${dv}`;
   }

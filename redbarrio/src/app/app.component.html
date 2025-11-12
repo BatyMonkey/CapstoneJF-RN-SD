@@ -1,138 +1,62 @@
 <ion-app>
-  <!-- Menú lateral global: NO se muestra en /auth/* -->
-  <ion-menu
-    *ngIf="!isAuth"
-    side="start"
-    menuId="mainMenu"
-    contentId="main-content"
-    type="reveal"
-  >
-    <ion-header class="menu-header">
-      <ion-toolbar>
+  <!-- Menú lateral global (opcional) -->
+  <ion-menu contentId="main-content" menuId="main-menu" side="start">
+    <ion-header>
+      <ion-toolbar color="light">
         <ion-title>Menú</ion-title>
       </ion-toolbar>
     </ion-header>
-
-    <ion-content class="menu-content">
-      <ion-list lines="none" class="menu-list">
-        <ion-menu-toggle auto-hide="true">
-          <!-- ===== Secciones generales ===== -->
-          <ion-item button detail="false" (click)="go('/home')" *ngIf="!isActive('/home')">
-            <ion-icon slot="start" name="home-outline"></ion-icon>
-            <ion-label>Inicio</ion-label>
-          </ion-item>
-
-          <ion-item button detail="false" (click)="go('/solicitar')" *ngIf="!isActive('/solicitar')">
-            <ion-icon slot="start" name="document-text-outline"></ion-icon>
-            <ion-label>Solicitar certificado</ion-label>
-          </ion-item>
-
-          <ion-item button detail="false" (click)="go('/votaciones')" *ngIf="!isActive('/votaciones')">
-            <ion-icon slot="start" name="people-outline"></ion-icon>
-            <ion-label>Votaciones</ion-label>
-          </ion-item>
-
-          <ion-item button detail="false" (click)="go('/inscripcion/proyectos')" *ngIf="!isActive('/inscripcion/proyectos')">
-            <ion-icon slot="start" name="people-outline"></ion-icon>
-            <ion-label>Inscribirse a proyecto/Actividad</ion-label>
-          </ion-item>
-
-          <!-- La misma ruta /generar/proyecto con etiquetas distintas.
-               - Usuarios NO admin: "Sugerir proyecto/Actividad"
-               - Admin: se muestra más abajo en la sección Administración como "Generar proyecto"
-          -->
-          <ion-item
-            button
-            detail="false"
-            (click)="go('/generar/proyecto')"
-            *ngIf="!isAdmin && !isActive('/generar/proyecto')"
-          >
-            <ion-icon slot="start" name="construct-outline"></ion-icon>
-            <ion-label>Sugerir proyecto/Actividad</ion-label>
-          </ion-item>
-
-          <ion-item button detail="false" (click)="go('/solicitud')" *ngIf="!isActive('/solicitud')">
-            <ion-icon slot="start" name="calendar-outline"></ion-icon>
-            <ion-label>Arrendar espacio</ion-label>
-          </ion-item>
-
-          <ion-item button detail="false" (click)="go('/espacios')" *ngIf="!isActive('/espacios')">
-            <ion-icon slot="start" name="business-outline"></ion-icon>
-            <ion-label>Espacios Comunitarios</ion-label>
-          </ion-item>
-
-          <ion-item button detail="false" (click)="go('/dashboard')" *ngIf="!isActive('/dashboard')">
-            <ion-icon slot="start" name="business-outline"></ion-icon>
-            <ion-label>Transparencia y Métricas</ion-label>
-          </ion-item>
-
-          <!-- ===== Administración ===== -->
-          <ion-list-header *ngIf="isAdmin">Administración</ion-list-header>
-
-          <ion-item
-            button
-            detail="false"
-            (click)="go('/admin/gestiones')"
-            *ngIf="isAdmin && !isActive('/admin/gestiones')"
-          >
-            <ion-icon slot="start" name="list-circle-outline"></ion-icon>
-            <ion-label>Gestiones</ion-label>
-          </ion-item>
-
-          <!-- Misma ruta que arriba, pero visible solo para admin y bajo "Administración" -->
-          <ion-item
-            button
-            detail="false"
-            (click)="go('/generar/proyecto')"
-            *ngIf="isAdmin && !isActive('/generar/proyecto')"
-          >
-            <ion-icon slot="start" name="construct-outline"></ion-icon>
-            <ion-label>Generar proyecto</ion-label>
-          </ion-item>
-
-          <ion-item
-            button
-            detail="false"
-            (click)="go('/generar/votacion')"
-            *ngIf="isAdmin && !isActive('/generar/votacion')"
-          >
-            <ion-icon slot="start" name="list-circle-outline"></ion-icon>
-            <ion-label>Generar votación</ion-label>
-          </ion-item>
-
-          <ion-item
-            button
-            detail="false"
-            (click)="go('/noticias/crear')"
-            *ngIf="isAdmin && !isActive('/noticias/crear')"
-          >
-            <ion-icon slot="start" name="list-circle-outline"></ion-icon>
-            <ion-label>Generar noticia</ion-label>
-          </ion-item>
-        </ion-menu-toggle>
+    <ion-content>
+      <ion-list>
+        <ion-item routerLink="/home" routerDirection="root">Inicio</ion-item>
+        <ion-item routerLink="/noticias" routerDirection="root">Noticias</ion-item>
+        <ion-item routerLink="/eventos" routerDirection="root">Eventos</ion-item>
+        <ion-item routerLink="/votaciones" routerDirection="root">Votar</ion-item>
+        <ion-item routerLink="/admin" routerDirection="root">Admin</ion-item>
+        <ion-item routerLink="/perfil" routerDirection="root">Perfil</ion-item>
       </ion-list>
-
-      <!-- Perfil -->
-      <div class="perfil-wrap">
-        <ion-item button detail="false" class="perfil" (click)="go('/perfil')" *ngIf="!isActive('/perfil')">
-          <ion-icon slot="start" name="person-circle-outline"></ion-icon>
-          <ion-label>Mi perfil</ion-label>
-        </ion-item>
-      </div>
-
-      <!-- Logout -->
-      <div class="logout-wrap">
-        <ion-item button detail="false" class="logout" (click)="salir()">
-          <ion-icon slot="start" name="log-out-outline"></ion-icon>
-          <ion-label>Cerrar sesión</ion-label>
-        </ion-item>
-      </div>
     </ion-content>
   </ion-menu>
 
-  <!-- Donde se renderizan tus páginas -->
-  <ion-router-outlet id="main-content"></ion-router-outlet>
+  <!-- Contenedor principal -->
+  <div class="app-container" id="main-content">
+    <ion-router-outlet></ion-router-outlet>
 
-  <!-- Chat flotante global (se oculta en /auth/*) -->
-  <app-chatbot *ngIf="!isAuth"></app-chatbot>
+    <!-- Barra inferior persistente -->
+    <ion-tabs>
+      <ion-tab-bar slot="bottom" class="rb-tabbar">
+        <ion-tab-button tab="home" routerLink="/home" routerDirection="root">
+          <ion-icon name="home-outline"></ion-icon>
+          <ion-label>Inicio</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button tab="noticias" routerLink="/noticias" routerDirection="root">
+          <ion-icon name="chatbubble-outline"></ion-icon>
+          <ion-label>Noticias</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button tab="eventos" routerLink="/eventos" routerDirection="root">
+          <ion-icon name="calendar-outline"></ion-icon>
+          <ion-label>Eventos</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button tab="votar" routerLink="/votaciones" routerDirection="root">
+          <ion-icon name="checkbox-outline"></ion-icon>
+          <ion-label>Votar</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button tab="admin" routerLink="/admin" routerDirection="root">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+          <ion-label>Admin</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button tab="perfil" routerLink="/perfil" routerDirection="root">
+          <ion-avatar class="tab-avatar">
+            <img src="assets/icon/user-default.jpg" alt="Perfil" />
+          </ion-avatar>
+          <ion-label>Perfil</ion-label>
+        </ion-tab-button>
+      </ion-tab-bar>
+    </ion-tabs>
+  </div>
 </ion-app>

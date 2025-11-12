@@ -48,6 +48,11 @@ const routes: Routes = [
     loadComponent: () =>
       import('./pago-retorno/pago-retorno.page').then((m) => m.PagoRetornoPage),
   },
+  {
+    path: 'noticias',
+    loadComponent: () =>
+      import('./noticias/noticias.page').then((m) => m.NoticiasPage),
+  },
 
   // ===== Noticias =====
   {
@@ -197,9 +202,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: { roles: ['administrador'] },
     loadComponent: () =>
-      import('./admin/proyectos/proyectos.page').then(
-        (m) => m.ProyectosPage
-      ),
+      import('./admin/proyectos/proyectos.page').then((m) => m.ProyectosPage),
   },
   {
     path: 'admin/gestiones',
@@ -211,9 +214,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: { roles: ['administrador'] },
     loadComponent: () =>
-      import('./admin/auditoria/auditoria.page').then(
-        (m) => m.AuditoriaPage
-      ),
+      import('./admin/auditoria/auditoria.page').then((m) => m.AuditoriaPage),
   },
 
   // ===== Home (protegido) =====
@@ -227,9 +228,11 @@ const routes: Routes = [
       ),
   },
   {
-  path: 'admin/actividades',
-  loadComponent: () =>
-    import('./admin/actividades/actividades.page').then(m => m.ActividadesPage)
+    path: 'admin/actividades',
+    loadComponent: () =>
+      import('./admin/actividades/actividades.page').then(
+        (m) => m.ActividadesPage
+      ),
   },
   {
     path: 'admin/gestiones',
@@ -260,27 +263,21 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: { roles: ['administrador'] },
     loadComponent: () =>
-      import('./admin/proyectos/proyectos.page').then(
-        (m) => m.ProyectosPage
-      ),
+      import('./admin/proyectos/proyectos.page').then((m) => m.ProyectosPage),
   },
   {
     path: 'admin/auditoria',
     canActivate: [AuthGuard],
     data: { roles: ['administrador'] },
     loadComponent: () =>
-      import('./admin/auditoria/auditoria.page').then(
-        (m) => m.AuditoriaPage
-      ),
+      import('./admin/auditoria/auditoria.page').then((m) => m.AuditoriaPage),
   },
   {
     path: 'admin/noticias',
     canActivate: [AuthGuard],
     data: { roles: ['administrador'] },
     loadComponent: () =>
-      import('./admin/noticias/noticias.page').then(
-        (m) => m.NoticiasPage
-      )
+      import('./admin/noticias/noticias.page').then((m) => m.NoticiasPage),
   },
 
   {

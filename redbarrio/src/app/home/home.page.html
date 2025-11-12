@@ -1,75 +1,110 @@
-<ion-header class="rb-header">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
-    </ion-buttons>
+<!-- HERO HEADER (fuera del ion-content) -->
+<ion-header class="rb-hero-header">
+  <div class="rb-hero-container">
+    <!-- Logo y texto -->
+    <div class="rb-hero-info">
+      <img src="assets/icon/redbarrio-logo.svg" alt="Logo RedBarrio" class="rb-hero-logo" />
+      <div class="rb-hero-text">
+        <h1>RedBarrio</h1>
+        <p>Tu comunidad conectada</p>
+      </div>
+    </div>
 
-    <ion-title>Inicio y Noticias</ion-title>
-    
-    </ion-toolbar>
+    <!-- Botón de chat -->
+    <div class="rb-hero-chat-wrapper">
+      <button class="rb-hero-chat" (click)="toggleChat()">
+        <ion-icon name="chatbubble-outline"></ion-icon>
+      </button>
+      <!-- Chatbot (opcional, se mostrará luego con lógica Angular) -->
+      <!-- <app-chatbot *ngIf="showChat" [startOpen]="true" class="rb-chatbot-inline"></app-chatbot> -->
+    </div>
+  </div>
 </ion-header>
 
-<ion-content class="ion-padding news">
+<!-- CONTENIDO PRINCIPAL -->
+<ion-content [fullscreen]="true" class="home-content">
 
-  <div class="hero">
-    <h1>¡Bienvenido/a!</h1>
-    <p>Usa el menú (arriba a la izquierda) para navegar por la app.</p>
+  <!-- TARJETA DE BIENVENIDA -->
+  <div class="welcome-wrapper">
+    <ion-card class="welcome-card">
+      <ion-card-header>
+        <ion-card-subtitle>Bienvenida</ion-card-subtitle>
+        <ion-card-title>¡Hola, María!</ion-card-title>
+      </ion-card-header>
+    </ion-card>
   </div>
 
-  <div>
-    <h2>Noticias</h2>
-    <p>Aquí puedes ver las noticias más recientes de tu comunidad.</p>
+  <!-- ACCESOS RÁPIDOS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">Accesos Rápidos</span>
+    </div>
+
+    <div class="quick-access">
+      <div class="quick-btn">
+        <ion-icon name="document-text-outline"></ion-icon>
+        <span>Certificados</span>
+      </div>
+
+      <div class="quick-btn">
+        <ion-icon name="call-outline"></ion-icon>
+        <span>Emergencias</span>
+      </div>
+
+      <div class="quick-btn">
+        <ion-icon name="checkmark-done-outline"></ion-icon>
+        <span>Votaciones</span>
+      </div>
+
+      <div class="quick-btn">
+        <ion-icon name="business-outline"></ion-icon>
+        <span>Espacios</span>
+      </div>
+
+      <div class="quick-btn">
+        <ion-icon name="bar-chart-outline"></ion-icon>
+        <span>Transparencia</span>
+      </div>
+
+      <div class="quick-btn">
+        <ion-icon name="bulb-outline"></ion-icon>
+        <span>Sugerir Proyecto</span>
+      </div>
+    </div>
   </div>
 
-  <div class="loading" *ngIf="estaCargando">
-    <ion-spinner name="crescent"></ion-spinner>
-    <p>Cargando noticias...</p>
+  <!-- NOTICIAS RECIENTES -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">Noticias Recientes</span>
+      <a class="link-more">Ver todos</a>
+    </div>
+
+    <ion-card class="news-card">
+      <div class="news-item">
+        <div class="icon yellow">
+          <ion-icon name="megaphone-outline"></ion-icon>
+        </div>
+        <div class="text">
+          <h4>Corte de Agua Programado</h4>
+          <p>Mañana habrá corte de agua de 9:00 a 14:00 hrs por mantención.</p>
+          <small>Hace 2 horas</small>
+        </div>
+      </div>
+    </ion-card>
+
+    <ion-card class="news-card">
+      <div class="news-item">
+        <div class="icon cyan">
+          <ion-icon name="megaphone-outline"></ion-icon>
+        </div>
+        <div class="text">
+          <h4>Reunión de Vecinos</h4>
+          <p>Este sábado a las 18:00 hrs en la sede vecinal.</p>
+          <small>Hace 1 día</small>
+        </div>
+      </div>
+    </ion-card>
   </div>
 
-  <ion-grid *ngIf="!estaCargando && noticias?.length">
-    <ion-row>
-      <ion-col size="12" size-md="6" size-lg="4" *ngFor="let noticia of noticias">
-        
-        <ion-card (click)="verDetalle(noticia.id)">
-            
-          <div
-            class="card-image-container"
-            *ngIf="noticia.url_foto?.length">
-            <img [src]="noticia.url_foto?.[0]" alt="Miniatura" class="card-image" />
-          </div>
-
-          <ion-card-header>
-            <ion-card-title class="card-title ion-text-wrap">
-              {{ noticia.titulo }}
-            </ion-card-title>
-            
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <ion-card-subtitle>
-                    {{ noticia.nombre_autor || 'Anónimo' }}
-                    <span *ngIf="noticia.fecha_creacion">
-                        | {{ noticia.fecha_creacion | date:'shortDate' }}
-                    </span>
-                </ion-card-subtitle>
-            </div>
-            
-          </ion-card-header>
-
-          <ion-card-content>
-            <p *ngIf="(noticia.parrafos?.[0]) as primerParrafo; else sinResumen"
-               class="card-excerpt">
-              {{ primerParrafo | slice:0:100 }}…
-            </p>
-            <ng-template #sinResumen>
-              <p class="card-excerpt-placeholder">[Sin resumen]</p>
-            </ng-template>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-
-  <div class="empty" *ngIf="!estaCargando && (!noticias || !noticias.length)">
-    <h2>No hay noticias disponibles</h2>
-    <p>Sé el primero en crear una noticia usando el botón flotante.</p>
-  </div>
 </ion-content>

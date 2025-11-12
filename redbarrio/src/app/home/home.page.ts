@@ -1,4 +1,3 @@
-// src/app/home/home.page.ts
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { IonicModule, MenuController, AlertController } from '@ionic/angular';
@@ -7,8 +6,20 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AuthService } from '../auth/auth.service';
-import { supabase as sb } from '../core/supabase.client';
-import { ChatbotComponent } from '../components/chatbot.component';
+import { SupabaseService } from 'src/app/services/supabase.service';
+import { ChatbotComponent } from 'src/app/components/chatbot.component';
+
+// ✅ Importa y registra solo los iconos usados aquí
+import { addIcons } from 'ionicons';
+import {
+  documentTextOutline,
+  callOutline,
+  checkmarkCircleOutline,
+  businessOutline,
+  barChartOutline,
+  bulbOutline,
+  megaphoneOutline,
+} from 'ionicons/icons';
 
 interface Noticia {
   id: number;
@@ -34,14 +45,13 @@ interface Noticia {
   ],
 })
 export class HomePage implements OnInit {
-  private supabase = sb;
-
   noticias: Noticia[] = [];
   estaCargando = false;
 
   esAdmin = false;
   usuarioActual: any = null;
   nombreAutorActual: string | null = null;
+  nombreUsuario: string | null = null;
 
   showChat = false;
   showChatHint = true;
@@ -51,27 +61,59 @@ export class HomePage implements OnInit {
     private menu: MenuController,
     private auth: AuthService,
     private alertController: AlertController,
-  ) {}
-
-  ngOnInit() {
-    this.cargarEstadoYNoticias();
+    private supabaseService: SupabaseService
+  ) {
+    // ✅ Registra los íconos solo de esta página
+    addIcons({
+      documentTextOutline,
+      callOutline,
+      checkmarkCircleOutline,
+      businessOutline,
+      barChartOutline,
+      bulbOutline,
+      megaphoneOutline,
+    });
   }
 
-  toggleChat() {
-    this.showChat = !this.showChat;
-    if (this.showChat) {
-      this.showChatHint = false;
-    }
+  // ==========================
+  // Ciclo de vida
+  // ==========================
+  async ngOnInit() {
+    console.log('🏁 HomePage → ngOnInit()');
+    await this.cargarEstadoYNoticias();
   }
 
+  async ionViewWillEnter() {
+    await this.cargarEstadoYNoticias();
+  }
+
+  // ==========================
+  // Navegación
+  // ==========================
   async go(path: string) {
     await this.router.navigate(['/', path]);
     await this.menu.close('main-menu');
   }
 
+  navigateTo(path: string) {
+    this.go(path);
+  }
+
   async goVotacion() {
     await this.router.navigate(['/votacion', 'VOTACION-DEMOSTRACION']);
     await this.menu.close('main-menu');
+  }
+
+  navigateToSpaces() {
+    this.router.navigate(['/espacios']);
+  }
+
+  navigateToMetrics() {
+    this.router.navigate(['/transparencia']);
+  }
+
+  navigateToSuggestProject() {
+    this.router.navigate(['/sugerir-proyecto']);
   }
 
   async salir() {
@@ -83,6 +125,17 @@ export class HomePage implements OnInit {
     }
   }
 
+  // ==========================
+  // Chatbot
+  // ==========================
+  toggleChat() {
+    this.showChat = !this.showChat;
+    console.log('💬 toggleChat() ejecutado → showChat =', this.showChat);
+    if (this.showChat) this.showChatHint = false;
+  }
+  // ==========================
+  // Estado de usuario y noticias
+  // ==========================
   async cargarEstadoYNoticias() {
     await this.cargarEstadoUsuario();
     await this.cargarNoticias();
@@ -90,35 +143,58 @@ export class HomePage implements OnInit {
 
   async cargarEstadoUsuario() {
     try {
-      const { data } = await this.supabase.auth.getUser();
+      const { data } = await this.supabaseService.client.auth.getUser();
       const user = data.user;
+
       this.usuarioActual = user;
       this.esAdmin = false;
       this.nombreAutorActual = null;
+      this.nombreUsuario = 'Vecino/a'; // valor por defecto
 
-      if (user) {
-        const { data: perfil, error } = await this.supabase
-          .from('usuario')
-          .select('rol, nombre')
-          .eq('user_id', user.id)
-          .single();
-
-        if (error && error.code !== 'PGRST116') throw error;
-
-        this.esAdmin = perfil?.rol === 'administrador';
-        this.nombreAutorActual = perfil?.nombre || 'Administrador/a';
+      if (!user) {
+        console.warn('⚠️ No hay usuario autenticado');
+        return;
       }
+
+      console.log('🧩 Usuario logueado (Auth ID):', user.id);
+
+      // Buscar por id_auth (correcto según tu BD)
+      const { data: perfil, error } = await this.supabaseService.client
+        .from('usuario')
+        .select('rol, nombre')
+        .eq('id_auth', user.id)
+        .single();
+
+      if (error) {
+        console.error('❌ Error al consultar perfil:', error);
+        return;
+      }
+
+      if (!perfil) {
+        console.warn(
+          '⚠️ No se encontró perfil para el usuario con id_auth =',
+          user.id
+        );
+        return;
+      }
+
+      console.log('✅ Perfil encontrado:', perfil);
+
+      this.esAdmin = perfil.rol === 'administrador';
+      this.nombreAutorActual = perfil.nombre || 'Administrador/a';
+      this.nombreUsuario = perfil.nombre || 'Vecino/a';
     } catch (err) {
       console.error('Error al cargar estado de usuario:', err);
       this.esAdmin = false;
       this.nombreAutorActual = null;
+      this.nombreUsuario = 'Vecino/a';
     }
   }
 
   async cargarNoticias() {
     this.estaCargando = true;
     try {
-      const { data, error } = await this.supabase
+      const { data, error } = await this.supabaseService.client
         .from('noticias')
         .select('id, titulo, url_foto, nombre_autor, fecha_creacion, parrafos')
         .order('fecha_creacion', { ascending: false });
@@ -132,43 +208,15 @@ export class HomePage implements OnInit {
     }
   }
 
-  async confirmarYEliminarNoticia(noticiaId: number) {
-    const alert = await this.alertController.create({
-      header: 'Confirmar Eliminación',
-      message: '¿Estás seguro de que quieres eliminar esta noticia?',
-      buttons: [
-        { text: 'Cancelar', role: 'cancel', cssClass: 'secondary' },
-        { text: 'Eliminar', handler: () => this.eliminarNoticia(noticiaId) },
-      ],
-    });
-    await alert.present();
-  }
-
-  async eliminarNoticia(noticiaId: number) {
-    this.estaCargando = true;
-    try {
-      const { error } = await this.supabase
-        .from('noticias')
-        .delete()
-        .eq('id', noticiaId);
-      if (error) throw error;
-      await this.cargarNoticias();
-    } catch (err) {
-      console.error('Error al eliminar noticia:', err);
-    } finally {
-      this.estaCargando = false;
-    }
-  }
-
+  // ==========================================================
+  // Funciones auxiliares para las noticias dinámicas
+  // ==========================================================
   verDetalle(noticiaId: number) {
     this.router.navigate(['/noticias', noticiaId]);
   }
 
-  navegarACrearNoticia() {
-    this.router.navigate(['noticias/crear']);
-  }
-
-  ionViewWillEnter() {
-    this.cargarEstadoYNoticias();
+  getIconColor(noticia: any) {
+    const index = this.noticias.indexOf(noticia);
+    return index % 2 === 0 ? 'yellow' : 'cyan';
   }
 }

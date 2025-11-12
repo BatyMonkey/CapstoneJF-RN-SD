@@ -12,10 +12,28 @@ import { Browser } from '@capacitor/browser';
 // 👇 IMPORTA EL CHATBOT (ruta relativa a src/app/app.component.ts)
 import { ChatbotComponent } from './components/chatbot.component';
 
+// ✅ IMPORTAR IONICONS GLOBALES
+import { addIcons } from 'ionicons';
+import {
+  homeOutline,
+  chatbubbleOutline,
+  calendarOutline,
+  checkboxOutline,
+  shieldCheckmarkOutline,
+  personCircleOutline,
+  documentTextOutline,
+  callOutline,
+  checkmarkCircleOutline,
+  businessOutline,
+  barChartOutline,
+  bulbOutline,
+  megaphoneOutline,
+} from 'ionicons/icons';
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, IonicModule, RouterOutlet, ChatbotComponent], // 👈 importante
+  imports: [CommonModule, IonicModule, RouterOutlet, ChatbotComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
@@ -32,6 +50,23 @@ export class AppComponent {
     private ngZone: NgZone,
     private supabaseService: SupabaseService
   ) {
+    // ✅ Registrar íconos globales (footer + secciones)
+    addIcons({
+      homeOutline,
+      chatbubbleOutline,
+      calendarOutline,
+      checkboxOutline,
+      shieldCheckmarkOutline,
+      personCircleOutline,
+      documentTextOutline,
+      callOutline,
+      checkmarkCircleOutline,
+      businessOutline,
+      barChartOutline,
+      bulbOutline,
+      megaphoneOutline,
+    });
+
     this.currentUrl = this.router.url || '';
     this.refrescarRol();
 
@@ -135,7 +170,9 @@ export class AppComponent {
         (u.protocol === 'capacitor:' && u.host === 'localhost' && u.pathname === '/pago-retorno')
       ) {
         const token = u.searchParams.get('token_ws') || '';
-        try { await Browser.close(); } catch {}
+        try {
+          await Browser.close();
+        } catch {}
         this.ngZone.run(() => {
           this.router.navigate(['/pago-retorno'], {
             queryParams: { token_ws: token },
