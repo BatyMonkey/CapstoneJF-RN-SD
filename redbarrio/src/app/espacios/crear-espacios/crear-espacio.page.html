@@ -1,0 +1,141 @@
+<ion-header [translucent]="true" class="rb-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/espacios"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Crear Nuevo Espacio</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  
+  <div class="page-wrap ion-padding">
+    
+    <form [formGroup]="espacioForm" (ngSubmit)="guardarEspacio()">
+      
+      <ion-card class="card">
+        <ion-card-header>
+          <ion-card-title>Detalles del Espacio</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          
+          <ion-item class="field" lines="none">
+            <ion-label position="stacked">Nombre (*)</ion-label>
+            <ion-input 
+              type="text" 
+              formControlName="nombre" 
+              placeholder="Ej: Salón Principal o Cancha #3"
+            ></ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="espacioForm.get('nombre')?.invalid && (espacioForm.get('nombre')?.dirty || espacioForm.get('nombre')?.touched)">
+            El nombre es obligatorio.
+          </ion-note>
+
+          <ion-item class="field" lines="none">
+            <ion-label position="stacked">Tipo de Espacio (*)</ion-label>
+            <ion-select formControlName="tipo" placeholder="Selecciona el tipo"> Tipo de Espacio
+              <ion-select-option *ngFor="let tipo of tiposEspacio" [value]="tipo.id">
+                {{ tipo.nombre }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-note color="danger" *ngIf="espacioForm.get('tipo')?.invalid && (espacioForm.get('tipo')?.dirty || espacioForm.get('tipo')?.touched)">
+            Debes seleccionar un tipo de espacio.
+          </ion-note>
+
+          <ion-item class="field" lines="none">
+            <ion-label position="stacked">Capacidad (Personas)</ion-label>
+            <ion-input 
+              type="number" 
+              formControlName="capacidad" 
+              placeholder="Ej: 50"
+            ></ion-input>
+          </ion-item>
+          
+          <ion-item class="field" lines="none">
+            <ion-label position="stacked">Descripción</ion-label>
+            <ion-textarea 
+              formControlName="descripcion" 
+              rows="4" 
+              placeholder="Descripción detallada del espacio y sus características."
+            ></ion-textarea>
+          </ion-item>
+
+        </ion-card-content>
+      </ion-card>
+      
+      <ion-card class="card">
+        <ion-card-header>
+          <ion-card-title>Imagen del Espacio</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item class="field" lines="none">
+            <ion-label position="stacked">Imagen</ion-label>
+            <input
+              type="file"
+              accept="image/*"
+              (change)="onFileSelected($event)"
+              class="ion-padding-top"
+            >
+          </ion-item>
+          
+          <div *ngIf="imageUrl" class="ion-padding-top">
+            <img [src]="imageUrl" alt="Preview" style="max-width: 100%; border-radius: 8px;">
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="card">
+        <ion-card-header>
+          <ion-card-title>Ubicación</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+
+          <ion-item class="field" lines="none">
+            <ion-label position="stacked">Dirección Completa (*)</ion-label>
+            <ion-input 
+              type="text" 
+              formControlName="direccion_completa" 
+              placeholder="Calle, número, comuna"
+            ></ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="espacioForm.get('direccion_completa')?.invalid && (espacioForm.get('direccion_completa')?.dirty || espacioForm.get('direccion_completa')?.touched)">
+            La dirección es obligatoria.
+          </ion-note>
+          
+          <div *ngIf="latitud.value || longitud.value" class="ion-padding-vertical ion-text-center">
+             <ion-note>
+                Latitud: {{ latitud.value || 'N/A' }}, Longitud: {{ longitud.value || 'N/A' }}
+             </ion-note>
+          </div>
+          
+          <ion-input type="hidden" formControlName="latitud"></ion-input>
+          <ion-input type="hidden" formControlName="longitud"></ion-input>
+
+        </ion-card-content>
+      </ion-card>
+
+
+      <div class="actions">
+        <ion-button 
+          type="submit" 
+          color="success" 
+          [disabled]="espacioForm.invalid || isSaving" 
+          size="large"
+        >
+          <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
+          {{ isSaving ? 'Guardando...' : 'Guardar Espacio' }}
+        </ion-button>
+      </div>
+
+      <div style="height: 50px;"></div>
+      
+    </form>
+
+    <ion-card *ngIf="error" color="danger">
+        <ion-card-content>Error al guardar: {{ error }}</ion-card-content>
+    </ion-card>
+
+  </div>
+  
+</ion-content>

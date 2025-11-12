@@ -6,27 +6,6 @@
 /www
 /platforms # (Asumido en proyectos Ionic/Angular)
 /hooks # (Asumido en proyectos Ionic/Angular)
-
-# Ignorar todos los archivos listados
-.browserslistrc
-.editorconfig
-.eslintrc.js
-.gitignore # Si quieres que tu .gitignore no sea trakeado
-angular.json
-capacitor.config.ts
-ionic.config.json
-karma.conf.js
-package.json
-package-lock.json
-requirements*.txt
-tsconfig.app.json
-tsconfig.config.json
-tsconfig.spec.json
-
-# Excepción: La carpeta 'src' y todo su contenido NO se ignora.
-# Por lo tanto, no se incluye ninguna línea para '/src'.
-tsconfig.json
-*.pdf
-*.pdf
-Fase 1/Evidencias grupales/1.4_APT122_FormativaFase1.docx.pdf
-.eslintrc.json
+node_modules/
+redbarrio/node_modules/
+.angular/cache
