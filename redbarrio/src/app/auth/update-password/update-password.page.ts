@@ -28,6 +28,7 @@ export class UpdatePasswordPage implements OnInit {
   ) {}
 
   async ngOnInit() {
+    // Validación temprana: si no hay sesión, el cambio fallará.
     const { data: s } = await this.supabaseService.client.auth.getSession();
     if (!s.session) {
       this.errorMsg = 'No se detectó sesión de recuperación. Abre nuevamente el enlace del correo desde este dispositivo.';
@@ -49,6 +50,7 @@ export class UpdatePasswordPage implements OnInit {
     this.loading = true;
 
     try {
+      // Garantiza sesión antes de actualizar
       const { data: s } = await this.supabaseService.client.auth.getSession();
       if (!s.session) {
         this.errorMsg = 'No se detectó sesión de recuperación. Abre nuevamente el enlace del correo desde este dispositivo.';

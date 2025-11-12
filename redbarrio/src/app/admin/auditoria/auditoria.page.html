@@ -1,5 +1,5 @@
-<ion-header>
-  <ion-toolbar color="light">
+<ion-header class="rb-header">
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
     </ion-buttons>
@@ -8,29 +8,67 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="auditoria-content">
-
+  <!-- 🔄 Refresher -->
   <ion-refresher slot="fixed" (ionRefresh)="cargarAuditoria($event)">
-    <ion-refresher-content pullingText="Desliza para actualizar" refreshingSpinner="crescent"
-      refreshingText="Actualizando...">
-    </ion-refresher-content>
+    <ion-refresher-content
+      pullingText="Desliza para actualizar"
+      refreshingSpinner="crescent"
+      refreshingText="Actualizando..."
+    ></ion-refresher-content>
   </ion-refresher>
 
+  <!-- ✅ Lista de registros -->
   <div class="list-container" *ngIf="!loading">
     <ion-card *ngFor="let item of registros" class="registro-card">
       <ion-card-header>
         <ion-card-title>{{ item.accion | titlecase }}</ion-card-title>
+
+        <!-- 📅 Fecha en hora local de Chile -->
         <ion-card-subtitle>
-          {{ item.fecha | date: 'dd/MM/yyyy HH:mm' }} — {{ item.tabla }}
+          {{ item.fecha | date:'dd/MM/yyyy HH:mm':'America/Santiago' }} — {{ item.tabla }}
         </ion-card-subtitle>
       </ion-card-header>
 
       <ion-card-content>
         <p><strong>Usuario:</strong> {{ item.nombre || 'Desconocido' }}</p>
+
+        <!-- 🔍 Detalle formateado -->
         <div class="detalle">
           <ng-container *ngFor="let key of orderedDetalleKeys(item.detalle)">
             <p [attr.key]="key">
               <strong>{{ (key + '') | titlecase }}:</strong>
-              {{ item.detalle[key] }}
+
+              <!-- 🧩 Si es un array -->
+              <ng-container *ngIf="isArray(item.detalle[key]); else notArray">
+                <ul>
+                  <li *ngFor="let op of item.detalle[key]">
+                    <ng-container *ngIf="op.titulo; else rawObj">
+                      {{ op.titulo }}
+                      <span *ngIf="op.descripcion"> – {{ op.descripcion }}</span>
+                      <span *ngIf="op.image_url"> 📷</span>
+                    </ng-container>
+                    <ng-template #rawObj>{{ op | json }}</ng-template>
+                  </li>
+                </ul>
+              </ng-container>
+
+              <!-- 🧩 Si NO es un array -->
+              <ng-template #notArray>
+                <!-- Si parece una fecha ISO -->
+                <ng-container *ngIf="isFecha(item.detalle[key]); else otherType">
+                  {{ item.detalle[key] | date:'dd/MM/yyyy HH:mm:ss':'America/Santiago' }}
+                </ng-container>
+                <ng-template #otherType>
+                  <!-- Si es un objeto -->
+                  <ng-container *ngIf="item.detalle[key] instanceof Object; else plain">
+                    <pre>{{ item.detalle[key] | json }}</pre>
+                  </ng-container>
+                  <!-- Si es texto o número -->
+                  <ng-template #plain>
+                    {{ item.detalle[key] }}
+                  </ng-template>
+                </ng-template>
+              </ng-template>
             </p>
           </ng-container>
         </div>
@@ -38,7 +76,15 @@
     </ion-card>
   </div>
 
+  <!-- 🌀 Cargando -->
   <div *ngIf="loading" class="loading">
     <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <!-- 🚫 Sin registros -->
+  <div class="empty" *ngIf="!loading && (!registros || !registros.length)">
+    <ion-icon name="document-outline" color="medium" size="large"></ion-icon>
+    <h2>No hay registros de auditoría</h2>
+    <p>Las acciones del sistema aparecerán aquí automáticamente.</p>
   </div>
 </ion-content>

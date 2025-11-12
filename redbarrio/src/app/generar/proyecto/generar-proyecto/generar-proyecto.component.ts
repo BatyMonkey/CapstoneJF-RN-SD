@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, AlertController } from '@ionic/angular';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { SupabaseService } from 'src/app/services/supabase.service';
 import { AuthService } from '../../../auth/auth.service';
 
@@ -80,7 +85,9 @@ export class GenerarProyectoComponent implements OnInit {
     reader.readAsDataURL(file);
 
     const fileName = `${Date.now()}_${file.name}`;
-    const { error: uploadError } = await this.supabaseService.client.storage.from('proyectos').upload(fileName, file);
+    const { error: uploadError } = await this.supabaseService.client.storage
+      .from('proyectos')
+      .upload(fileName, file);
 
     if (uploadError) {
       console.error('Error al subir imagen:', uploadError.message);
@@ -88,14 +95,19 @@ export class GenerarProyectoComponent implements OnInit {
       return;
     }
 
-    const { data: urlData } = this.supabaseService.client.storage.from('proyectos').getPublicUrl(fileName);
+    const { data: urlData } = this.supabaseService.client.storage
+      .from('proyectos')
+      .getPublicUrl(fileName);
     this.uploadedUrl = urlData.publicUrl;
   }
 
   /** Envía el formulario a la base de datos */
   async generarProyecto() {
     if (this.proyectoForm.invalid) {
-      this.showAlert('Error', 'Por favor completa todos los campos obligatorios.');
+      this.showAlert(
+        'Error',
+        'Por favor completa todos los campos obligatorios.'
+      );
       return;
     }
 
@@ -114,47 +126,81 @@ export class GenerarProyectoComponent implements OnInit {
     try {
       if (formValue.tipo === 'actividad') {
         // ===== INSERTAR ACTIVIDAD =====
-        const { error } = await this.supabaseService.client.from('actividad').insert([
+        const { error } = await this.supabaseService.client
+          .from('actividad')
+          .insert([
+            {
+              id_auth,
+              titulo: formValue.titulo,
+              descripcion: formValue.descripcion,
+              cupos_total: formValue.cupos_total ?? 0,
+              fecha_inicio: formValue.fecha_inicio,
+              fecha_fin: formValue.fecha_fin,
+              estado, // 🔹 Publicada o Pendiente según rol
+              imagen_url: this.uploadedUrl,
+              creado_en: new Date().toISOString(),
+              actualizado_en: new Date().toISOString(),
+            },
+          ]);
+
+        if (error) throw error;
+        await this.showAlert('Éxito', 'Actividad creada correctamente.');
+
+        // 🧾 Registrar acción en auditoría
+        await this.supabaseService.registrarAuditoria(
+          'crear actividad',
+          'actividad',
           {
-            id_auth,
             titulo: formValue.titulo,
             descripcion: formValue.descripcion,
             cupos_total: formValue.cupos_total ?? 0,
             fecha_inicio: formValue.fecha_inicio,
             fecha_fin: formValue.fecha_fin,
-            estado, // 🔹 Publicada o Pendiente según rol
+            estado,
             imagen_url: this.uploadedUrl,
-            creado_en: new Date().toISOString(),
-            actualizado_en: new Date().toISOString(),
-          },
-        ]);
-
-        if (error) throw error;
-        await this.showAlert('Éxito', 'Actividad creada correctamente.');
-
+            rol_creador: rol,
+          }
+        );
       } else {
         // ===== INSERTAR PROYECTO =====
-        const { error } = await this.supabaseService.client.from('proyecto').insert([
-          {
-            id_auth,
-            titulo: formValue.titulo,
-            descripcion: formValue.descripcion,
-            estado, // 🔹 Publicada o Pendiente según rol
-            fecha_creacion: new Date().toISOString(),
-            actualizado_en: new Date().toISOString(),
-            imagen_url: this.uploadedUrl,
-          },
-        ]);
+        const { error } = await this.supabaseService.client
+          .from('proyecto')
+          .insert([
+            {
+              id_auth,
+              titulo: formValue.titulo,
+              descripcion: formValue.descripcion,
+              estado, // 🔹 Publicada o Pendiente según rol
+              fecha_creacion: new Date().toISOString(),
+              actualizado_en: new Date().toISOString(),
+              imagen_url: this.uploadedUrl,
+            },
+          ]);
 
         if (error) throw error;
         await this.showAlert('Éxito', 'Proyecto creado correctamente.');
+
+        // 🧾 Registrar acción en auditoría
+        await this.supabaseService.registrarAuditoria(
+          'crear proyecto',
+          'proyecto',
+          {
+            titulo: formValue.titulo,
+            descripcion: formValue.descripcion,
+            estado,
+            imagen_url: this.uploadedUrl,
+            rol_creador: rol,
+          }
+        );
       }
 
       this.limpiarFormulario();
-
     } catch (err: any) {
       console.error('Error al crear:', err);
-      await this.showAlert('Error', err.message || 'No se pudo crear el registro.');
+      await this.showAlert(
+        'Error',
+        err.message || 'No se pudo crear el registro.'
+      );
     }
   }
 

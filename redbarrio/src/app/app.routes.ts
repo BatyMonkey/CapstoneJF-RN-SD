@@ -9,14 +9,10 @@ export const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
-  },  {
-<<<<<<< HEAD
+  },
+  {
     path: 'actividades',
     loadComponent: () => import('./admin/actividades/actividades.page').then( m => m.ActividadesPage)
-=======
-    path: 'gestiones',
-    loadComponent: () => import('./admin/gestiones/gestiones.page').then( m => m.GestionesPage)
->>>>>>> 5699daa8d4845ec29d946ce30953e5f41de8a020
   },
   {
     path: 'actividades',
@@ -27,6 +23,8 @@ export const routes: Routes = [
     loadComponent: () => import('./admin/proyectos/proyectos.page').then( m => m.ProyectosPage)
   },
   {
+    path: 'auditoria',
+    loadComponent: () => import('./admin/auditoria/auditoria.page').then( m => m.AuditoriaPage)
     path: 'auditoria',
     loadComponent: () => import('./admin/auditoria/auditoria.page').then( m => m.AuditoriaPage)
   },

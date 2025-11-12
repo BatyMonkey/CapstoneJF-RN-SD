@@ -50,8 +50,12 @@ export class GenerarVotacionPage implements OnInit, ViewWillEnter {
 
   ionViewWillEnter() {}
 
-  addOpcion() { this.opciones.push({ titulo: '' }); }
-  removeOpcion(i: number) { if (this.opciones.length > 2) this.opciones.splice(i, 1); }
+  addOpcion() {
+    this.opciones.push({ titulo: '' });
+  }
+  removeOpcion(i: number) {
+    if (this.opciones.length > 2) this.opciones.splice(i, 1);
+  }
 
   async pickImage(i: number) {
     try {
@@ -74,12 +78,24 @@ export class GenerarVotacionPage implements OnInit, ViewWillEnter {
 
   get puedeGuardar(): boolean {
     const t = (this.titulo ?? '').trim();
-    const limpias = this.opciones.map(o => (o.titulo ?? '').trim()).filter(s => s.length > 0);
+    const limpias = this.opciones
+      .map((o) => (o.titulo ?? '').trim())
+      .filter((s) => s.length > 0);
     const unicas = new Set(limpias);
     const ini = new Date(this.fechaInicio).getTime();
     const fin = new Date(this.fechaFin).getTime();
-    const fechasOk = !!this.fechaInicio && !!this.fechaFin && Number.isFinite(ini) && Number.isFinite(fin) && ini < fin;
-    return t.length > 0 && fechasOk && limpias.length >= 2 && limpias.length === unicas.size;
+    const fechasOk =
+      !!this.fechaInicio &&
+      !!this.fechaFin &&
+      Number.isFinite(ini) &&
+      Number.isFinite(fin) &&
+      ini < fin;
+    return (
+      t.length > 0 &&
+      fechasOk &&
+      limpias.length >= 2 &&
+      limpias.length === unicas.size
+    );
   }
 
   async guardar() {
@@ -95,7 +111,11 @@ export class GenerarVotacionPage implements OnInit, ViewWillEnter {
       // Subir imágenes pendientes y fijar URLs
       for (const op of this.opciones) {
         if (op._blob && op._ext) {
-          op.image_url = await this.votosSvc.uploadOptionImage(op._blob, op._ext, userId);
+          op.image_url = await this.votosSvc.uploadOptionImage(
+            op._blob,
+            op._ext,
+            userId
+          );
           op._blob = undefined;
           op._ext = undefined;
         }
@@ -108,13 +128,32 @@ export class GenerarVotacionPage implements OnInit, ViewWillEnter {
         fecha_inicio: this.fechaInicio,
         fecha_fin: this.fechaFin,
         opciones: this.opciones
-          .map(o => ({
+          .map((o) => ({
             titulo: (o.titulo ?? '').trim(),
             descripcion: (o.descripcion ?? null) as string | null,
-            image_url: o.image_url ?? null
+            image_url: o.image_url ?? null,
           }))
-          .filter(o => o.titulo.length > 0),
+          .filter((o) => o.titulo.length > 0),
       });
+
+      // 🧾 Registrar acción en auditoría
+      await this.supabaseService.registrarAuditoria(
+        'crear votación',
+        'votaciones',
+        {
+          titulo: this.titulo.trim(),
+          descripcion: this.descripcion?.trim() || '',
+          fecha_inicio: this.fechaInicio,
+          fecha_fin: this.fechaFin,
+          cantidad_opciones: this.opciones.filter((o) => o.titulo.length > 0)
+            .length,
+          opciones: this.opciones.map((o) => ({
+            titulo: o.titulo,
+            descripcion: o.descripcion,
+            image_url: o.image_url,
+          })),
+        }
+      );
 
       await this.presentToast('Votación creada correctamente ✅', 'success');
       await this.router.navigateByUrl(`/votaciones`, { replaceUrl: true });
@@ -127,7 +166,12 @@ export class GenerarVotacionPage implements OnInit, ViewWillEnter {
   }
 
   private async presentToast(message: string, color: 'success' | 'danger') {
-    const t = await this.toast.create({ message, duration: 2500, position: 'top', color });
+    const t = await this.toast.create({
+      message,
+      duration: 2500,
+      position: 'top',
+      color,
+    });
     await t.present();
   }
 }

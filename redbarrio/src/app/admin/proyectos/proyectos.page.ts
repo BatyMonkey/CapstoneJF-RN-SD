@@ -69,12 +69,29 @@ export class ProyectosPage implements OnInit {
           text: 'Confirmar',
           handler: async () => {
             try {
-              console.log(`🟦 Cambiando estado de ${proyecto.id_proyecto} → ${nuevoEstado}`);
+              console.log(
+                `🟦 Cambiando estado de ${proyecto.id_proyecto} → ${nuevoEstado}`
+              );
+
               const result = await this.supabase.cambiarEstadoProyecto(
                 proyecto.id_proyecto,
                 nuevoEstado
               );
+
               console.log('✅ Resultado de Supabase:', result);
+
+              // 🧾 Registrar acción en auditoría
+              await this.supabase.registrarAuditoria(
+                `${verbo} proyecto`,
+                'proyecto',
+                {
+                  titulo: proyecto.titulo || '(sin título)',
+                  id_proyecto: proyecto.id_proyecto,
+                  estado_anterior: proyecto.estado,
+                  nuevo_estado: nuevoEstado,
+                }
+              );
+
               await this.mostrarToast(`Proyecto ${nuevoEstado}`);
               await this.cargarPendientes();
             } catch (error) {
