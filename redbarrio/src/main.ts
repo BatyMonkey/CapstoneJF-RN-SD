@@ -2,43 +2,48 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { importProvidersFrom } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { AppRoutingModule } from './app/app-routing.module';
 import { AppComponent } from './app/app.component';
-import {
-  HttpClientModule,
-  provideHttpClient,
-  withInterceptorsFromDi,
-} from '@angular/common/http';
+import { HttpClientModule, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
-// 👇👇 AÑADIR ESTO
+import { RouteReuseStrategy } from '@angular/router'; // ⬅️ importa esto
+
 import { addIcons } from 'ionicons';
 import {
-  chatbubblesOutline,
-  close,
-  paperPlaneOutline,
-  sparklesOutline,
-  documentTextOutline,
-  helpCircleOutline,
+  homeOutline,
+  chatbubbleOutline,
+  personCircleOutline,
   checkboxOutline,
-  newspaperOutline,
+  documentTextOutline,
+  callOutline,
+  checkmarkDoneOutline,
+  businessOutline,
+  barChartOutline,
+  bulbOutline,
+  megaphoneOutline,
 } from 'ionicons/icons';
 
-// registramos los íconos que usamos en el chat
+// registra iconos que usas en footer + home
 addIcons({
-  'chatbubbles-outline': chatbubblesOutline,
-  'close': close,
-  'paper-plane-outline': paperPlaneOutline,
-  'sparkles-outline': sparklesOutline,
-  'document-text-outline': documentTextOutline,
-  'help-circle-outline': helpCircleOutline,
+  'home-outline': homeOutline,
+  'chatbubble-outline': chatbubbleOutline,
+  'person-circle-outline': personCircleOutline,
   'checkbox-outline': checkboxOutline,
-  'newspaper-outline': newspaperOutline,
+  'document-text-outline': documentTextOutline,
+  'call-outline': callOutline,
+  'checkmark-done-outline': checkmarkDoneOutline,
+  'business-outline': businessOutline,
+  'bar-chart-outline': barChartOutline,
+  'bulb-outline': bulbOutline,
+  'megaphone-outline': megaphoneOutline,
 });
-// 👆👆 con esto ya no te salen 404
 
 bootstrapApplication(AppComponent, {
   providers: [
+    // ⬇️ MUY IMPORTANTE en standalone:
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+
     importProvidersFrom(
       BrowserModule,
       IonicModule.forRoot(),

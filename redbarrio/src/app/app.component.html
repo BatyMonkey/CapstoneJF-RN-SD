@@ -1,6 +1,6 @@
 <ion-app>
-  <!-- Menú lateral global (opcional) -->
-  <ion-menu contentId="main-content" menuId="main-menu" side="start">
+  <!-- Menú lateral -->
+  <ion-menu contentId="main" menuId="main-menu" side="start">
     <ion-header>
       <ion-toolbar color="light">
         <ion-title>Menú</ion-title>
@@ -10,53 +10,62 @@
       <ion-list>
         <ion-item routerLink="/home" routerDirection="root">Inicio</ion-item>
         <ion-item routerLink="/noticias" routerDirection="root">Noticias</ion-item>
-        <ion-item routerLink="/eventos" routerDirection="root">Eventos</ion-item>
         <ion-item routerLink="/votaciones" routerDirection="root">Votar</ion-item>
-        <ion-item routerLink="/admin" routerDirection="root">Admin</ion-item>
         <ion-item routerLink="/perfil" routerDirection="root">Perfil</ion-item>
       </ion-list>
     </ion-content>
   </ion-menu>
 
   <!-- Contenedor principal -->
-  <div class="app-container" id="main-content">
-    <ion-router-outlet></ion-router-outlet>
+  <ion-router-outlet id="main"></ion-router-outlet>
 
-    <!-- Barra inferior persistente -->
-    <ion-tabs>
-      <ion-tab-bar slot="bottom" class="rb-tabbar">
-        <ion-tab-button tab="home" routerLink="/home" routerDirection="root">
-          <ion-icon name="home-outline"></ion-icon>
+  <!-- Barra inferior fija -->
+  <ion-footer class="rb-footer-fixed">
+    <ion-toolbar class="rb-tabbar">
+      <div class="rb-tabbar__row">
+        <ion-button
+          fill="clear"
+          routerLink="/home"
+          routerDirection="root"
+          routerLinkActive="rb-active"
+          routerLinkActiveOptions="{ exact: true }"
+        >
+          <span class="rb-icon"><ion-icon name="home-outline"></ion-icon></span>
           <ion-label>Inicio</ion-label>
-        </ion-tab-button>
+        </ion-button>
 
-        <ion-tab-button tab="noticias" routerLink="/noticias" routerDirection="root">
-          <ion-icon name="chatbubble-outline"></ion-icon>
+        <ion-button
+          fill="clear"
+          routerLink="/noticias"
+          routerDirection="root"
+          routerLinkActive="rb-active"
+        >
+          <span class="rb-icon"><ion-icon name="chatbubble-outline"></ion-icon></span>
           <ion-label>Noticias</ion-label>
-        </ion-tab-button>
+        </ion-button>
 
-        <ion-tab-button tab="eventos" routerLink="/eventos" routerDirection="root">
-          <ion-icon name="calendar-outline"></ion-icon>
-          <ion-label>Eventos</ion-label>
-        </ion-tab-button>
-
-        <ion-tab-button tab="votar" routerLink="/votaciones" routerDirection="root">
-          <ion-icon name="checkbox-outline"></ion-icon>
+        <ion-button
+          fill="clear"
+          routerLink="/votaciones"
+          routerDirection="root"
+          routerLinkActive="rb-active"
+        >
+          <span class="rb-icon"><ion-icon name="checkbox-outline"></ion-icon></span>
           <ion-label>Votar</ion-label>
-        </ion-tab-button>
+        </ion-button>
 
-        <ion-tab-button tab="admin" routerLink="/admin" routerDirection="root">
-          <ion-icon name="shield-checkmark-outline"></ion-icon>
-          <ion-label>Admin</ion-label>
-        </ion-tab-button>
-
-        <ion-tab-button tab="perfil" routerLink="/perfil" routerDirection="root">
-          <ion-avatar class="tab-avatar">
-            <img src="assets/icon/user-default.jpg" alt="Perfil" />
-          </ion-avatar>
+        <ion-button
+          fill="clear"
+          routerLink="/perfil"
+          routerDirection="root"
+          routerLinkActive="rb-active"
+        >
+          <span class="rb-icon"><ion-icon name="person-circle-outline"></ion-icon></span>
           <ion-label>Perfil</ion-label>
-        </ion-tab-button>
-      </ion-tab-bar>
-    </ion-tabs>
-  </div>
+        </ion-button>
+      </div>
+    </ion-toolbar>
+  </ion-footer>
+  <app-chatbot></app-chatbot>
 </ion-app>
+

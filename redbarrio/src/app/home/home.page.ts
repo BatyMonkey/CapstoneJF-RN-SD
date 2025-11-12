@@ -9,12 +9,13 @@ import { AuthService } from '../auth/auth.service';
 import { SupabaseService } from 'src/app/services/supabase.service';
 import { ChatbotComponent } from 'src/app/components/chatbot.component';
 
-// ✅ Importa y registra solo los iconos usados aquí
+// ✅ Registra SOLO los iconos que usa este componente
 import { addIcons } from 'ionicons';
 import {
   documentTextOutline,
   callOutline,
-  checkmarkCircleOutline,
+  // ⬇️ este es el que corresponde a tu HTML: "checkmark-done-outline"
+  checkmarkDoneOutline,
   businessOutline,
   barChartOutline,
   bulbOutline,
@@ -63,15 +64,16 @@ export class HomePage implements OnInit {
     private alertController: AlertController,
     private supabaseService: SupabaseService
   ) {
-    // ✅ Registra los íconos solo de esta página
+    // ✅ Registra los íconos usados en esta página
     addIcons({
-      documentTextOutline,
-      callOutline,
-      checkmarkCircleOutline,
-      businessOutline,
-      barChartOutline,
-      bulbOutline,
-      megaphoneOutline,
+      'document-text-outline': documentTextOutline,
+      'call-outline': callOutline,
+      // importante: coincide con el HTML
+      'checkmark-done-outline': checkmarkDoneOutline,
+      'business-outline': businessOutline,
+      'bar-chart-outline': barChartOutline,
+      'bulb-outline': bulbOutline,
+      'megaphone-outline': megaphoneOutline,
     });
   }
 
@@ -91,29 +93,31 @@ export class HomePage implements OnInit {
   // Navegación
   // ==========================
   async go(path: string) {
-    await this.router.navigate(['/', path]);
     await this.menu.close('main-menu');
+    await this.router.navigateByUrl('/' + path); // este te funcionaba
   }
+
 
   navigateTo(path: string) {
     this.go(path);
   }
 
   async goVotacion() {
-    await this.router.navigate(['/votacion', 'VOTACION-DEMOSTRACION']);
     await this.menu.close('main-menu');
+    await this.router.navigate(['/votacion', 'VOTACION-DEMOSTRACION']);
   }
 
   navigateToSpaces() {
     this.router.navigate(['/espacios']);
   }
 
+  // Si tu routing no tiene /transparencia, cambia a /dashboard
   navigateToMetrics() {
-    this.router.navigate(['/transparencia']);
+    this.router.navigate(['/dashboard']);
   }
 
   navigateToSuggestProject() {
-    this.router.navigate(['/sugerir-proyecto']);
+    this.router.navigate(['/generar/proyecto']);
   }
 
   async salir() {
@@ -133,6 +137,7 @@ export class HomePage implements OnInit {
     console.log('💬 toggleChat() ejecutado → showChat =', this.showChat);
     if (this.showChat) this.showChatHint = false;
   }
+
   // ==========================
   // Estado de usuario y noticias
   // ==========================
@@ -171,10 +176,7 @@ export class HomePage implements OnInit {
       }
 
       if (!perfil) {
-        console.warn(
-          '⚠️ No se encontró perfil para el usuario con id_auth =',
-          user.id
-        );
+        console.warn('⚠️ No se encontró perfil para el usuario con id_auth =', user.id);
         return;
       }
 

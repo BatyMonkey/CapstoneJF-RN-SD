@@ -15,7 +15,6 @@
       <button class="rb-hero-chat" (click)="toggleChat()">
         <ion-icon name="chatbubble-outline"></ion-icon>
       </button>
-      <!-- Chatbot (opcional, se mostrará luego con lógica Angular) -->
       <!-- <app-chatbot *ngIf="showChat" [startOpen]="true" class="rb-chatbot-inline"></app-chatbot> -->
     </div>
   </div>
@@ -28,8 +27,8 @@
   <div class="welcome-wrapper">
     <ion-card class="welcome-card">
       <ion-card-header>
-        <ion-card-subtitle>Bienvenida</ion-card-subtitle>
-        <ion-card-title>¡Hola, María!</ion-card-title>
+        <ion-card-subtitle>Bienvenido/a</ion-card-subtitle>
+        <ion-card-title>¡Hola, {{ nombreUsuario || 'Vecino/a' }}!</ion-card-title>
       </ion-card-header>
     </ion-card>
   </div>
@@ -41,32 +40,38 @@
     </div>
 
     <div class="quick-access">
-      <div class="quick-btn">
+      <!-- Certificados -> /solicitar -->
+      <div class="quick-btn" role="button" tabindex="0" (click)="go('solicitar')">
         <ion-icon name="document-text-outline"></ion-icon>
         <span>Certificados</span>
       </div>
 
-      <div class="quick-btn">
+      <!-- Proyectos (antes “Emergencias”) -> /inscripcion/proyectos -->
+      <div class="quick-btn" role="button" tabindex="0" (click)="go('inscripcion/proyectos')">
         <ion-icon name="call-outline"></ion-icon>
-        <span>Emergencias</span>
+        <span>Proyectos</span>
       </div>
 
-      <div class="quick-btn">
+      <!-- Votaciones -> /votaciones -->
+      <div class="quick-btn" role="button" tabindex="0" (click)="go('votaciones')">
         <ion-icon name="checkmark-done-outline"></ion-icon>
         <span>Votaciones</span>
       </div>
 
-      <div class="quick-btn">
+      <!-- Espacios -> /espacios -->
+      <div class="quick-btn" role="button" tabindex="0" (click)="go('espacios')">
         <ion-icon name="business-outline"></ion-icon>
         <span>Espacios</span>
       </div>
 
-      <div class="quick-btn">
+      <!-- Transparencia -> /dashboard -->
+      <div class="quick-btn" role="button" tabindex="0" (click)="go('dashboard')">
         <ion-icon name="bar-chart-outline"></ion-icon>
         <span>Transparencia</span>
       </div>
 
-      <div class="quick-btn">
+      <!-- Sugerir Proyecto -> /generar/proyecto -->
+      <div class="quick-btn" role="button" tabindex="0" (click)="go('generar/proyecto')">
         <ion-icon name="bulb-outline"></ion-icon>
         <span>Sugerir Proyecto</span>
       </div>
@@ -77,10 +82,10 @@
   <div class="section">
     <div class="section-header">
       <span class="section-title">Noticias Recientes</span>
-      <a class="link-more">Ver todos</a>
+      <a class="link-more" role="button" tabindex="0" (click)="go('noticias')">Ver todos</a>
     </div>
 
-    <ion-card class="news-card">
+    <ion-card class="news-card" (click)="go('noticias')">
       <div class="news-item">
         <div class="icon yellow">
           <ion-icon name="megaphone-outline"></ion-icon>
@@ -93,7 +98,7 @@
       </div>
     </ion-card>
 
-    <ion-card class="news-card">
+    <ion-card class="news-card" (click)="go('noticias')">
       <div class="news-item">
         <div class="icon cyan">
           <ion-icon name="megaphone-outline"></ion-icon>

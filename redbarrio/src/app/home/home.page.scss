@@ -10,8 +10,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  z-index: 10;
   padding: 0;
 }
 
@@ -83,13 +81,8 @@ ion-header::after {
     font-size: 1.35rem;
   }
 
-  &:hover {
-    background: rgba(255, 255, 255, 0.25);
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
+  &:hover { background: rgba(255, 255, 255, 0.25); }
+  &:active { transform: scale(0.95); }
 }
 
 /* ==========================================================
@@ -99,9 +92,7 @@ ion-header::after {
   --background: #f8fafc;
   color: #1e293b;
   padding: 0 1rem 2rem 1rem;
-  margin-top: -30px; /* para solapar la tarjeta amarilla ligeramente */
-  position: relative;
-  z-index: 1;
+  margin-top: -30px; /* solapar ligeramente la tarjeta */
 }
 
 /* ===============================
@@ -119,9 +110,7 @@ ion-header::after {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   text-align: left;
 
-  ion-card-header {
-    padding: 1.2rem 1.5rem;
-  }
+  ion-card-header { padding: 1.2rem 1.5rem; }
 
   ion-card-subtitle {
     color: rgba(255, 255, 255, 0.9);
@@ -140,12 +129,9 @@ ion-header::after {
 }
 
 /* ===============================
-   Secciones (Accesos rápidos / Noticias)
+   Secciones
    =============================== */
-.section {
-  margin-top: 1.75rem;
-  padding: 0 0.25rem;
-}
+.section { margin-top: 1.75rem; padding: 0 0.25rem; }
 
 .section-header {
   display: flex;
@@ -155,11 +141,7 @@ ion-header::after {
   padding: 0 0.25rem;
 }
 
-.section-title {
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: #334155;
-}
+.section-title { font-size: 1.05rem; font-weight: 600; color: #334155; }
 
 .link-more {
   --color: #06b6d4;
@@ -199,30 +181,16 @@ ion-header::after {
     padding: 0.65rem;
   }
 
-  /* Íconos alternan color */
-  &:nth-child(odd) ion-icon {
-    background: #e0f2fe;
-    color: #0284c7;
-  }
+  &:nth-child(odd) ion-icon { background: #e0f2fe; color: #0284c7; }
+  &:nth-child(even) ion-icon { background: #fef9c3; color: #ca8a04; }
 
-  &:nth-child(even) ion-icon {
-    background: #fef9c3;
-    color: #ca8a04;
-  }
-
-  span {
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
+  span { font-size: 0.9rem; font-weight: 500; }
 
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   }
-
-  &:active {
-    transform: scale(0.97);
-  }
+  &:active { transform: scale(0.97); }
 }
 
 /* ===============================
@@ -242,49 +210,19 @@ ion-header::after {
     padding: 1rem;
 
     .icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-shrink: 0;
+      width: 42px; height: 42px; border-radius: 50%;
+      display: flex; justify-content: center; align-items: center; flex-shrink: 0;
 
-      &.yellow {
-        background: #fef9c3;
-        ion-icon {
-          color: #ca8a04;
-        }
-      }
-
-      &.cyan {
-        background: #e0f2fe;
-        ion-icon {
-          color: #0284c7;
-        }
-      }
+      &.yellow { background: #fef9c3; ion-icon { color: #ca8a04; } }
+      &.cyan   { background: #e0f2fe; ion-icon { color: #0284c7; } }
     }
 
     .text {
       flex: 1;
 
-      h4 {
-        color: #0f172a;
-        font-size: 1rem;
-        font-weight: 600;
-        margin: 0 0 0.25rem 0;
-      }
-
-      p {
-        color: #475569;
-        font-size: 0.9rem;
-        margin: 0 0 0.3rem 0;
-      }
-
-      small {
-        color: #94a3b8;
-        font-size: 0.75rem;
-      }
+      h4 { color: #0f172a; font-size: 1rem; font-weight: 600; margin: 0 0 0.25rem 0; }
+      p  { color: #475569; font-size: 0.9rem; margin: 0 0 0.3rem 0; }
+      small { color: #94a3b8; font-size: 0.75rem; }
     }
   }
 }
@@ -292,18 +230,9 @@ ion-header::after {
 /* ===============================
    Spinner y mensaje vacío
    =============================== */
-.loading-spinner {
-  display: block;
-  margin: 1rem auto;
-  --color: #06b6d4;
-}
+.loading-spinner { display: block; margin: 1rem auto; --color: #06b6d4; }
 
-.no-news {
-  text-align: center;
-  color: #64748b;
-  font-size: 0.9rem;
-  margin-top: 1rem;
-}
+.no-news { text-align: center; color: #64748b; font-size: 0.9rem; margin-top: 1rem; }
 
 /* ===============================
    Chatbot dentro del header (visible)
@@ -324,12 +253,12 @@ ion-header::after {
   background: #fff;
   border-radius: 1rem;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-  z-index: 9999;
+  z-index: 5; /* bajo controles del sistema */
   overflow: hidden;
   animation: fadeIn 0.25s ease;
 }
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 }

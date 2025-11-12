@@ -1,11 +1,15 @@
 <!-- src/app/components/chatbot.component.html -->
 
 <!-- LAUNCHER (aparece cuando el chat está cerrado) -->
-<ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="!visible">
-  <ion-fab-button (click)="visible = true" aria-label="Abrir chat">
-    <ion-icon name="chatbubbles-outline"></ion-icon>
-  </ion-fab-button>
-</ion-fab>
+<button
+  class="rb-chat-launcher"
+  *ngIf="!visible"
+  type="button"
+  aria-label="Abrir chat"
+  (click)="openChat()"
+>
+  <ion-icon name="chatbubbles-outline"></ion-icon>
+</button>
 
 <!-- CHAT (aparece cuando visible=true) -->
 <div class="rb-chat" *ngIf="visible">

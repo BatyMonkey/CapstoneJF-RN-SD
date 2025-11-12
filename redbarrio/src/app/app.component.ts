@@ -28,6 +28,11 @@ import {
   barChartOutline,
   bulbOutline,
   megaphoneOutline,
+  closeOutline,
+  paperPlaneOutline,
+  sparklesOutline,
+  helpCircleOutline,
+  newspaperOutline,
 } from 'ionicons/icons';
 
 @Component({
@@ -65,6 +70,11 @@ export class AppComponent {
       barChartOutline,
       bulbOutline,
       megaphoneOutline,
+      closeOutline,
+      paperPlaneOutline,
+      sparklesOutline,
+      helpCircleOutline,
+      newspaperOutline,
     });
 
     this.currentUrl = this.router.url || '';

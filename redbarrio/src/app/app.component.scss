@@ -1,42 +1,94 @@
-/* ===============================
-   Barra inferior tipo TabBar
-   =============================== */
-.rb-tabbar {
+/* ===== Footer fijo abajo + espacio para que no tape el contenido ===== */
+.rb-footer-fixed {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 70px;
-  background: #fff;
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
-  border-top-left-radius: 18px;
-  border-top-right-radius: 18px;
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  align-items: center;
-  justify-items: center;
-  z-index: 2000;
+  left: 0; right: 0; bottom: 0;
+  z-index: 1000;
+  /* Sombra suave y borde superior */
+  box-shadow: 0 -4px 16px rgba(0,0,0,.08);
+  border-top: 1px solid rgba(0,0,0,.06);
+}
+/* Da espacio inferior al contenido para no quedar bajo el footer */
+ion-router-outlet {
+  --rb-footer-h: 56px;
+  padding-bottom: var(--rb-footer-h);
 }
 
-.rb-tabbar button {
-  background: transparent;
-  border: none;
-  outline: none;
-  color: #64748b;
+/* ===== Barra inferior tipo tabs ===== */
+.rb-tabbar {
+  --background: #fff;
+  padding: 0;
+}
+
+.rb-tabbar__row {
   display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 100%;
+}
+
+/* Botones en columna, sin padding extra, color de texto negro suave */
+.rb-tabbar__row ion-button {
+  flex: 1 1 0;
+  margin: 0;
+  height: 56px;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  gap: 2px;
-  transition: color 0.2s ease;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 6px;
+  --padding-bottom: 6px;
+  min-width: 0;
+
+  /* Quitar azul/primario en estados, todo en negro/gris */
+  --color: #111;
+  --color-activated: #000;
+  --background-hover: transparent;
+  --background-activated: rgba(0,0,0,.06);
 }
 
-.rb-tabbar button.active {
-  color: #2563eb;
-  font-weight: 600;
+/* Icono dentro de puck con borde negro y fondo blanco */
+.rb-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1.6px solid #000;   /* borde negro */
+  border-radius: 9999px;
+  background: #fff;           /* fondo blanco */
+  margin-bottom: 3px;
 }
 
-ion-icon {
-  font-size: 22px;
+.rb-icon ion-icon {
+  font-size: 18px;            /* tamaño del pictograma */
+  line-height: 1;
+  color: #111;                /* icono negro */
 }
+
+/* Label compacto */
+.rb-tabbar__row ion-label {
+  font-size: 10px;
+  margin-top: 2px;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  color: #111;
+}
+
+/* Activo en negro (no azul) */
+.rb-tabbar__row ion-button.rb-active {
+  --color: #000;
+}
+
+/* Elimina anillos/contornos azules por accesibilidad visual predeterminada */
+.rb-tabbar__row ion-button:focus,
+.rb-tabbar__row ion-button:focus-visible {
+  outline: none !important;
+}
+
+/* Ripple oscuro (en vez de azul) */
+.rb-tabbar__row ion-button::part(native) {
+  --ripple-color: rgba(0,0,0,.12);
+}
+
+/* Páginas inactivas ocultas (no tocar más ion-router-outlet/.ion-page) */
+.ion-page.ion-page-hidden,
+.ion-page.ion-page-invisible { display: none !important; }
