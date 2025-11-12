@@ -1,138 +1,111 @@
+/* =====================================================
+   AUDITORÍA DEL SISTEMA (modo claro forzado)
+   ===================================================== */
+
 :host {
-  --rb-primary: #2563eb;
-  --rb-primary-10: rgba(37, 99, 235, 0.1);
+  color-scheme: light !important;
+  --rb-bg: #f8fafc;
+  --rb-card: #ffffff;
   --rb-text: #0f172a;
   --rb-muted: #64748b;
-  --rb-bg: #f8fafc;
-  --rb-sep: rgba(2, 6, 23, 0.06);
+  --rb-border: rgba(15, 23, 42, 0.08);
 
-  color-scheme: light;
   --ion-background-color: var(--rb-bg);
   --ion-text-color: var(--rb-text);
 }
 
-/* ==============================
-   Encabezado
-   ============================== */
-.rb-header ion-toolbar {
-  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
+/* 🚫 Evita que el modo oscuro de Ionic se aplique */
+:host-context(html[data-theme='dark']),
+:host-context(body.dark),
+:host-context(body[data-theme='dark']) {
+  color-scheme: light !important;
+  --ion-background-color: var(--rb-bg) !important;
+  --ion-text-color: var(--rb-text) !important;
+  background: var(--rb-bg) !important;
+}
+
+/* 🧭 Header degradado */
+ion-header ion-toolbar {
+  --background: linear-gradient(135deg, #2563eb, #60a5fa);
   --color: #fff;
   --border-color: transparent;
 }
 
-/* ==============================
-   Contenido general
-   ============================== */
-ion-content {
+/* 📄 Fondo principal */
+.auditoria-content {
   --background: var(--rb-bg);
-  display: block;
-  padding: 24px 18px;
+  padding: 16px;
 }
 
-.auditoria-container {
-  background: #fff;
+/* === TARJETAS === */
+ion-card.registro-card {
+  background: var(--rb-card) !important;
+  color: var(--rb-text) !important;
   border-radius: 18px;
-  padding: 28px 22px;
-  width: min(700px, 100%);
-  margin: 0 auto 40px auto;
-  box-shadow:
-    0 10px 30px rgba(2, 6, 23, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  border: 1px solid var(--rb-sep);
-  text-align: center;
-
-  h1 {
-    font-size: 22px;
-    font-weight: 800;
-    margin: 0 0 8px;
-    color: var(--rb-text);
-  }
-
-  p {
-    color: var(--rb-muted);
-    margin: 0 0 24px;
-  }
+  margin-bottom: 18px;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
+  border: 1px solid var(--rb-border);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-/* ==============================
-   Lista de registros
-   ============================== */
-ion-list {
-  background: transparent;
-  margin-top: 8px;
+ion-card.registro-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.1);
 }
 
-ion-item {
-  --background: #fff;
-  border-radius: 14px;
-  margin-bottom: 14px;
-  box-shadow: 0 6px 20px rgba(2, 6, 23, 0.05);
-  align-items: flex-start;
-}
-
-ion-label h2 {
-  font-weight: 700;
-  font-size: 1rem;
-  margin-bottom: 4px;
+ion-card-header,
+ion-card-content {
+  background: var(--rb-card);
   color: var(--rb-text);
 }
 
-ion-label p {
+ion-card-title {
+  font-weight: 700;
+  color: var(--rb-text);
+  font-size: 1.1rem;
+}
+
+ion-card-subtitle {
   color: var(--rb-muted);
-  font-weight: 500;
-}
-
-/* ==============================
-   Bloque detalle (JSON formateado)
-   ============================== */
-.detalle {
-  background: var(--rb-primary-10);
-  border-radius: 12px;
-  padding: 12px 14px;
-  margin-top: 8px;
-  text-align: left;
   font-size: 0.9rem;
-  font-weight: 500;
-
-  p {
-    margin: 4px 0;
-  }
-
-  strong {
-    color: var(--rb-primary);
-  }
-
-  /* Colores especiales por tipo de campo */
-  p[key='estado_anterior'] strong {
-    color: #dc2626; /* rojo */
-  }
-
-  p[key='nuevo_estado'] strong {
-    color: #16a34a; /* verde */
-  }
-
-  p[key='titulo'] strong {
-    color: #1e40af; /* azul fuerte */
-  }
-
-  p[key='id_actividad'] strong {
-    color: #334155; /* gris oscuro */
-  }
+  margin-bottom: 4px;
 }
 
-/* ==============================
-   Estado vacío / carga
-   ============================== */
-.loading,
+/* 🧩 Detalles */
+.detalle p {
+  margin: 3px 0;
+  color: var(--rb-text);
+  font-size: 0.92rem;
+}
+
+.detalle strong {
+  color: var(--rb-muted);
+}
+
+/* 🔄 Loading */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 0;
+}
+
+/* 🚫 Vacío */
 .empty {
   text-align: center;
   color: var(--rb-muted);
-  font-weight: 600;
-  padding: 24px;
+  margin-top: 40px;
 }
 
-@media (max-width: 520px) {
-  ion-buttons[slot='end'] {
-    flex-direction: row;
-  }
+/* ✨ Borde lateral según acción (opcional visual) */
+ion-card.registro-card::before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 5px;
+  border-radius: 18px 0 0 18px;
+  background: linear-gradient(180deg, #2563eb, #60a5fa);
 }

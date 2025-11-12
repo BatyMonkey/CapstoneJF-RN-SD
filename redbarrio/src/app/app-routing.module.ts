@@ -218,6 +218,72 @@ const routes: Routes = [
 
   // ===== Home (protegido) =====
   {
+    path: 'admin/solicitudes',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador'] },
+    loadComponent: () =>
+      import('./admin/solicitudes/solicitudes.page').then(
+        (m) => m.SolicitudesPage
+      ),
+  },
+  {
+  path: 'admin/actividades',
+  loadComponent: () =>
+    import('./admin/actividades/actividades.page').then(m => m.ActividadesPage)
+  },
+  {
+    path: 'admin/gestiones',
+    loadComponent: () =>
+      import('./admin/gestiones/gestiones.page').then((m) => m.GestionesPage),
+  },
+
+  {
+    path: 'admin/solicitudes',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador'] },
+    loadComponent: () =>
+      import('./admin/solicitudes/solicitudes.page').then(
+        (m) => m.SolicitudesPage
+      ),
+  },
+  {
+    path: 'admin/actividades',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador'] },
+    loadComponent: () =>
+      import('./admin/actividades/actividades.page').then(
+        (m) => m.ActividadesPage
+      ),
+  },
+  {
+    path: 'admin/proyectos',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador'] },
+    loadComponent: () =>
+      import('./admin/proyectos/proyectos.page').then(
+        (m) => m.ProyectosPage
+      ),
+  },
+  {
+    path: 'admin/auditoria',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador'] },
+    loadComponent: () =>
+      import('./admin/auditoria/auditoria.page').then(
+        (m) => m.AuditoriaPage
+      ),
+  },
+  {
+    path: 'admin/noticias',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador'] },
+    loadComponent: () =>
+      import('./admin/noticias/noticias.page').then(
+        (m) => m.NoticiasPage
+      )
+  },
+
+  {
     path: 'home',
     canActivate: [AuthGuard],
     loadComponent: () => import('./home/home.page').then((m) => m.HomePage),

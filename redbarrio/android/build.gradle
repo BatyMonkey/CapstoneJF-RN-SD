@@ -1,4 +1,36 @@
-// android/build.gradle (root)
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+// 🔧 Forzar toolchain global a Java 17 para todos los submódulos
+import org.gradle.api.JavaVersion
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+
+gradle.projectsLoaded {
+    gradle.rootProject.allprojects {
+        plugins.withId("com.android.library") {
+            project.extensions.configure(com.android.build.gradle.LibraryExtension) {
+                compileOptions {
+                    sourceCompatibility = JavaVersion.VERSION_17
+                    targetCompatibility = JavaVersion.VERSION_17
+                }
+            }
+        }
+        plugins.withId("com.android.application") {
+            project.extensions.configure(com.android.build.gradle.AppExtension) {
+                compileOptions {
+                    sourceCompatibility = JavaVersion.VERSION_17
+                    targetCompatibility = JavaVersion.VERSION_17
+                }
+            }
+        }
+
+        // Toolchain global
+        tasks.withType(JavaCompile).configureEach {
+            javaCompiler = javaToolchains.compilerFor {
+                languageVersion = JavaLanguageVersion.of(17)
+            }
+        }
+    }
+}
+
 
 buildscript {
     repositories {
@@ -38,6 +70,36 @@ allprojects {
             // Legacy cordova libs (si las usas)
             dirs 'capacitor-cordova-android-plugins/src/main/libs', 'app/libs'
         }
+    }
+
+    // 🔧 Forzar compilación con Java 17 para todos los subproyectos (incluye plugins como capacitor-filesystem)
+    plugins.withType(com.android.build.gradle.BasePlugin).configureEach {
+        project.android {
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_17
+                targetCompatibility = JavaVersion.VERSION_17
+            }
+            if (project.hasProperty("kotlinOptions")) {
+                kotlinOptions.jvmTarget = '17'
+            }
+        }
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        javaCompiler = javaToolchains.compilerFor {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+}
+
+subprojects {
+    afterEvaluate { proj ->
+        try {
+            if (proj.hasProperty('android')) {
+                proj.android.compileOptions.sourceCompatibility = JavaVersion.VERSION_17
+                proj.android.compileOptions.targetCompatibility = JavaVersion.VERSION_17
+            }
+        } catch (ignored) {}
     }
 }
 

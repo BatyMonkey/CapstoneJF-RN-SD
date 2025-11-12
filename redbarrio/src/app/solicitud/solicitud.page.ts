@@ -1,7 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonicModule, AlertController, ToastController, LoadingController } from '@ionic/angular';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import {
+  IonicModule,
+  AlertController,
+  ToastController,
+  LoadingController,
+} from '@ionic/angular';
 import { EspaciosService } from '../services/espacios.service';
 import { AuthService } from '../auth/auth.service';
 import { Router } from '@angular/router';
@@ -14,11 +24,7 @@ import { SupabaseService } from 'src/app/services/supabase.service';
   templateUrl: './solicitud.page.html',
   styleUrls: ['./solicitud.page.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    IonicModule,
-    ReactiveFormsModule
-  ]
+  imports: [CommonModule, IonicModule, ReactiveFormsModule],
 })
 export class SolicitudPage implements OnInit {
   solicitudForm: FormGroup;
@@ -40,7 +46,7 @@ export class SolicitudPage implements OnInit {
       evento_titulo: ['', Validators.required],
       evento_descripcion: ['', Validators.required],
       evento_inicio: ['', Validators.required],
-      evento_fin: ['', Validators.required]
+      evento_fin: ['', Validators.required],
     });
   }
 
@@ -74,57 +80,91 @@ export class SolicitudPage implements OnInit {
 
     const loading = await this.loadingCtrl.create({
       message: 'Procesando solicitud...',
-      spinner: 'crescent'
+      spinner: 'crescent',
     });
     await loading.present();
 
     try {
       // 1️⃣ Crear evento
-      const { data: eventoData, error: eventoError } = await this.supabaseService.client
-        .from('evento')
-        .insert([{
-          titulo: formData.evento_titulo,
-          descripcion: formData.evento_descripcion,
-          fecha_inicio: formData.evento_inicio,
-          fecha_fin: formData.evento_fin
-        }])
-        .select()
-        .single();
+      const { data: eventoData, error: eventoError } =
+        await this.supabaseService.client
+          .from('evento')
+          .insert([
+            {
+              titulo: formData.evento_titulo,
+              descripcion: formData.evento_descripcion,
+              fecha_inicio: formData.evento_inicio,
+              fecha_fin: formData.evento_fin,
+            },
+          ])
+          .select()
+          .single();
 
       if (eventoError) throw eventoError;
 
       // 2️⃣ Crear reserva
       const espacioId = Number(formData.id_espacio);
-      const { data: reservaData, error: reservaError } = await this.supabaseService.client
-        .from('reserva')
-        .insert([{
-          id_espacio: espacioId,
-          id_evento: eventoData.id_evento,
-          id_auth: idUsuario,
-          fecha: new Date().toISOString(),
-          creado_en: new Date().toISOString()
-        }])
-        .select()
-        .single();
+      const { data: reservaData, error: reservaError } =
+        await this.supabaseService.client
+          .from('reserva')
+          .insert([
+            {
+              id_espacio: espacioId,
+              id_evento: eventoData.id_evento,
+              id_auth: idUsuario,
+              fecha: new Date().toISOString(),
+              creado_en: new Date().toISOString(),
+            },
+          ])
+          .select()
+          .single();
 
       if (reservaError) throw reservaError;
 
       // 3️⃣ Generar orden de pago local
-      const { data: ordenData, error: ordenError } = await this.supabaseService.client
-        .from('orden_pago')
-        .insert([{
-          id_auth: idUsuario,
-          id_evento: eventoData.id_evento,
-          id_espacio: espacioId,
-          monto: 1500,
-          estado: 'pendiente',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }])
-        .select()
-        .single();
+      const { data: ordenData, error: ordenError } =
+        await this.supabaseService.client
+          .from('orden_pago')
+          .insert([
+            {
+              id_auth: idUsuario,
+              id_evento: eventoData.id_evento,
+              id_espacio: espacioId,
+              monto: 1500,
+              estado: 'pendiente',
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            },
+          ])
+          .select()
+          .single();
 
       if (ordenError) throw ordenError;
+
+      // 🧾 Registrar acción en auditoría
+      await this.supabaseService.registrarAuditoria(
+        'enviar solicitud de reserva',
+        'reserva',
+        {
+          evento: {
+            id_evento: eventoData.id_evento,
+            titulo: eventoData.titulo,
+            fecha_inicio: eventoData.fecha_inicio,
+            fecha_fin: eventoData.fecha_fin,
+          },
+          reserva: {
+            id_reserva: reservaData.id_reserva,
+            id_espacio: espacioId,
+            fecha: reservaData.fecha,
+          },
+          orden_pago: {
+            id_orden: ordenData.id_orden,
+            monto: ordenData.monto,
+            estado: ordenData.estado,
+          },
+          fecha_solicitud: new Date().toISOString(),
+        }
+      );
 
       // 4️⃣ Simular pago Transbank
       const response = await fetch(
@@ -135,8 +175,8 @@ export class SolicitudPage implements OnInit {
           body: JSON.stringify({
             id_reserva: reservaData.id_reserva,
             monto: 1500,
-            descripcion: `Pago arriendo espacio #${espacioId}`
-          })
+            descripcion: `Pago arriendo espacio #${espacioId}`,
+          }),
         }
       );
 
@@ -148,7 +188,7 @@ export class SolicitudPage implements OnInit {
         // ✅ Abrir simulador de pago en el navegador interno
         await Browser.open({
           url: `${simData.url}?token_ws=${simData.token}`,
-          presentationStyle: 'fullscreen'
+          presentationStyle: 'fullscreen',
         });
       } else {
         throw new Error('No se recibió token o URL de Transbank.');
@@ -158,7 +198,10 @@ export class SolicitudPage implements OnInit {
     } catch (error) {
       console.error('Error al enviar solicitud:', error);
       await loading.dismiss();
-      this.mostrarAlerta('Error', 'No se pudo completar la reserva ni el pago.');
+      this.mostrarAlerta(
+        'Error',
+        'No se pudo completar la reserva ni el pago.'
+      );
     }
   }
 
@@ -166,7 +209,7 @@ export class SolicitudPage implements OnInit {
     const alert = await this.alertCtrl.create({
       header,
       message,
-      buttons: ['OK']
+      buttons: ['OK'],
     });
     await alert.present();
   }
@@ -175,7 +218,7 @@ export class SolicitudPage implements OnInit {
     const toast = await this.toastCtrl.create({
       message,
       duration: 2500,
-      color: 'success'
+      color: 'success',
     });
     toast.present();
   }

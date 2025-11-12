@@ -2,19 +2,26 @@
 
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms'; 
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+  FormArray,
+  FormControl,
+} from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { NoticiasService } from '../services/noticias';
 
 // Vuelve la inicialización directa del cliente
-import { createClient, SupabaseClient, User } from '@supabase/supabase-js'; 
+import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
 import { environment } from 'src/environments/environment';
 import { SupabaseService } from 'src/app/services/supabase.service';
 
 import { IonicModule } from '@ionic/angular';
 
 // Constantes de límites
-const IMAGES_BUCKET = 'noticias-bucket'; 
+const IMAGES_BUCKET = 'noticias-bucket';
 const MAX_PARRAFOS = 6;
 const MAX_IMAGENES = 5;
 
@@ -41,9 +48,14 @@ export class CrearNoticiaPage implements OnInit {
   MAX_PARRAFOS = MAX_PARRAFOS;
   MAX_IMAGENES = MAX_IMAGENES;
 
-  constructor(private fb: FormBuilder, private router: Router, private noticiasService: NoticiasService, private supabaseService: SupabaseService) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private noticiasService: NoticiasService,
+    private supabaseService: SupabaseService
+  ) {
     // Inicialización directa del cliente (versión funcional)
-   this.supabase = this.supabaseService.client;
+    this.supabase = this.supabaseService.client;
   }
 
   // --- GETTERS TIPADOS PARA EL HTML ---
@@ -117,7 +129,9 @@ export class CrearNoticiaPage implements OnInit {
         const perfilLocal = this.noticiasService.getUsuarioForzado?.() ?? null;
         if (perfilLocal) {
           // Construimos un objeto minimal de User con el id esperado por el resto del código
-          this.usuarioAutenticado = { id: (perfilLocal.id_auth || perfilLocal.user_id) } as any;
+          this.usuarioAutenticado = {
+            id: perfilLocal.id_auth || perfilLocal.user_id,
+          } as any;
           this.nombreAutor = perfilLocal.nombre || 'Autor Desconocido';
           return;
         }
@@ -176,14 +190,21 @@ export class CrearNoticiaPage implements OnInit {
 
     if (!session) {
       // Si no hay sesión, indicamos claramente que las subidas requieren inicio de sesión real.
-      console.warn('Intento de subir imágenes sin sesión Supabase activa. Perfil forzado presente:', this.noticiasService?.getUsuarioForzado?.());
-      alert('No hay una sesión activa en Supabase. Para subir imágenes debes iniciar sesión. Si estás en modo desarrollo y usas un perfil forzado, inicia sesión real para habilitar Storage.');
+      console.warn(
+        'Intento de subir imágenes sin sesión Supabase activa. Perfil forzado presente:',
+        this.noticiasService?.getUsuarioForzado?.()
+      );
+      alert(
+        'No hay una sesión activa en Supabase. Para subir imágenes debes iniciar sesión. Si estás en modo desarrollo y usas un perfil forzado, inicia sesión real para habilitar Storage.'
+      );
       return null;
     }
 
     if (!user) {
       console.warn('Usuario nulo en subirImagenes despite active session');
-      alert('No se pudo determinar el usuario para la subida de imágenes. Inicia sesión y vuelve a intentarlo.');
+      alert(
+        'No se pudo determinar el usuario para la subida de imágenes. Inicia sesión y vuelve a intentarlo.'
+      );
       return null;
     }
 
@@ -208,22 +229,45 @@ export class CrearNoticiaPage implements OnInit {
           }/noticias/${Date.now()}_${i}_${file.name.replace(/ /g, '_')}`;
 
           // Usamos el cliente global (que comparte sesión) para tener la misma auth
-          const uploadResp = await this.supabaseService.client.storage.from(IMAGES_BUCKET).upload(filePath, file);
-          console.debug('[crear-noticia] upload response for', filePath, uploadResp);
+          const uploadResp = await this.supabaseService.client.storage
+            .from(IMAGES_BUCKET)
+            .upload(filePath, file);
+          console.debug(
+            '[crear-noticia] upload response for',
+            filePath,
+            uploadResp
+          );
 
           if (uploadResp.error) {
-            console.error('Supabase upload error for', filePath, uploadResp.error);
-            alert('Error subiendo imágenes: ' + (uploadResp.error.message || JSON.stringify(uploadResp.error)));
+            console.error(
+              'Supabase upload error for',
+              filePath,
+              uploadResp.error
+            );
+            alert(
+              'Error subiendo imágenes: ' +
+                (uploadResp.error.message || JSON.stringify(uploadResp.error))
+            );
             this.estaSubiendoImagen = false;
             return null;
           }
 
-          const publicUrlResp = await this.supabaseService.client.storage.from(IMAGES_BUCKET).getPublicUrl(filePath);
-          console.debug('[crear-noticia] getPublicUrl response for', filePath, publicUrlResp);
+          const publicUrlResp = await this.supabaseService.client.storage
+            .from(IMAGES_BUCKET)
+            .getPublicUrl(filePath);
+          console.debug(
+            '[crear-noticia] getPublicUrl response for',
+            filePath,
+            publicUrlResp
+          );
 
           const publicUrl = publicUrlResp?.data?.publicUrl;
           if (!publicUrl) {
-            console.error('No public URL returned for', filePath, publicUrlResp);
+            console.error(
+              'No public URL returned for',
+              filePath,
+              publicUrlResp
+            );
             alert('No se pudo obtener la URL pública de la imagen.');
             this.estaSubiendoImagen = false;
             return null;
@@ -289,14 +333,27 @@ export class CrearNoticiaPage implements OnInit {
 
     // 4. Insertar en la base de datos
     try {
-      // Necesitas castear a 'any' o definir una interfaz DB para evitar errores de tipo si usas typescript estricto con Supabase
       // Use the shared globalSupabase client so the persisted session (if any) is used
-      const { error } = await this.supabaseService.client.from('noticias').insert(nuevaNoticia as any);
+      const { error } = await this.supabaseService.client
+        .from('noticias')
+        .insert(nuevaNoticia as any);
 
       if (error) {
         console.error('Error al guardar noticia en Supabase:', error);
         alert('Hubo un error al crear la noticia. Detalle: ' + error.message);
       } else {
+        // 🧾 Registrar acción en auditoría
+        await this.supabaseService.registrarAuditoria(
+          'crear noticia',
+          'noticias',
+          {
+            titulo: nuevaNoticia.titulo,
+            user_id: nuevaNoticia.user_id,
+            nombre_autor: nuevaNoticia.nombre_autor,
+            url_foto: nuevaNoticia.url_foto,
+          }
+        );
+
         alert('Noticia creada con éxito!');
 
         this.noticiaForm.reset();
