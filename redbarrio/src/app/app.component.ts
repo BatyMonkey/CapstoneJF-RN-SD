@@ -9,10 +9,13 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 import { App } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
 
+// 👇 IMPORTA EL CHATBOT (ruta relativa a src/app/app.component.ts)
+import { ChatbotComponent } from './components/chatbot.component';
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, IonicModule, RouterOutlet],
+  imports: [CommonModule, IonicModule, RouterOutlet, ChatbotComponent], // 👈 importante
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
@@ -61,7 +64,7 @@ export class AppComponent {
     try {
       if (await this.menu.isOpen('mainMenu')) {
         await this.menu.close('mainMenu');
-        await new Promise(res => setTimeout(res, 75));
+        await new Promise((res) => setTimeout(res, 75));
       }
     } catch {}
     await this.router.navigateByUrl(url, { replaceUrl: false });
@@ -113,19 +116,11 @@ export class AppComponent {
     } catch {}
   }
 
-  /**
-   * Deep links soportados:
-   *  - redbarrio://app/pago-retorno?token_ws=...
-   *  - capacitor://localhost/pago-retorno?token_ws=...  (fallback/legacy)
-   *  - myapp://auth/reset?type=recovery&code=... (Supabase)
-   */
   private setupDeepLinks() {
-    // App abierta desde cero
     App.getLaunchUrl().then((launch) => {
       if (launch?.url) this.handleUrl(launch.url);
     });
 
-    // App ya abierta
     App.addListener('appUrlOpen', (data) => {
       if (data?.url) this.handleUrl(data.url);
     });
@@ -135,7 +130,6 @@ export class AppComponent {
     try {
       const u = new URL(rawUrl);
 
-      // === PAGO (nuevo/legacy)
       if (
         (u.protocol === 'redbarrio:' && u.host === 'app' && u.pathname.startsWith('/pago-retorno')) ||
         (u.protocol === 'capacitor:' && u.host === 'localhost' && u.pathname === '/pago-retorno')
@@ -151,7 +145,6 @@ export class AppComponent {
         return;
       }
 
-      // === AUTH SUPABASE: myapp://auth/reset?type=recovery&code=...
       if (u.protocol === 'myapp:' && u.host === 'auth') {
         const q = u.searchParams;
         const hashParams = new URLSearchParams(u.hash?.startsWith('#') ? u.hash.slice(1) : u.hash);
@@ -162,10 +155,8 @@ export class AppComponent {
         const code = getParam('code');
 
         if (type === 'recovery' && access_token && refresh_token) {
-          // flujo tokens (algunas plantillas antiguas)
           await this.supabaseService.client.auth.setSession({ access_token, refresh_token });
         } else if (code) {
-          // ✅ FIX: usar la URL COMPLETA
           await this.supabaseService.client.auth.exchangeCodeForSession(rawUrl);
         } else {
           console.warn('Deep link sin tokens ni code. No se pudo establecer sesión.');
@@ -176,8 +167,6 @@ export class AppComponent {
         });
         return;
       }
-
-      // Otros esquemas/URLs ignorados
     } catch (e) {
       console.error('Deep link parse error', e);
     }

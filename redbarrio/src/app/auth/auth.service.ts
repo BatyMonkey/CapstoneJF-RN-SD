@@ -4,10 +4,11 @@ import { Capacitor } from '@capacitor/core';
 import { SupabaseService } from '../services/supabase.service';
 import { ToastController } from '@ionic/angular';
 
-
 // ==========================================================
 // 🧩 Interfaces y tipos
 // ==========================================================
+
+export type Rol = 'vecino' | 'directorio' | 'administrador';
 
 export interface Perfil {
   id_usuario: string;
@@ -15,8 +16,8 @@ export interface Perfil {
   user_id: string;
   nombre: string;
   correo: string;
-  rol?: string;
-  rol_usuario: 'vecino' | 'directorio' | 'administrador';
+  rol?: Rol;                 // ← opcional para compatibilidad
+  rol_usuario?: Rol;         // ← compat con esquemas antiguos
   direccion?: string | null;
   rut?: string | null;
   telefono?: string | null;
@@ -30,10 +31,8 @@ export interface Perfil {
   fecha_nacimiento?: string | null;
   sexo?: 'M' | 'F' | null;
   url_foto_perfil?: string | null;
-  url_boleta_servicio?: string | null; // << opcional si quieres leerlo
+  url_boleta_servicio?: string | null;
 }
-
-type Rol = 'vecino' | 'directorio' | 'administrador';
 
 export type RegisterExtras = Partial<{
   primer_nombre: string | null;
@@ -48,7 +47,7 @@ export type RegisterExtras = Partial<{
   fecha_nacimiento: string | null;
   sexo: 'M' | 'F' | null;
   url_foto_perfil: string | null;
-  url_boleta_servicio: string | null; // << NUEVO
+  url_boleta_servicio: string | null;
 }>;
 
 export type RegisterPayload = {
@@ -64,7 +63,7 @@ export type RegisterPayload = {
   telefono?: string | null;
   fecha_nacimiento?: string | null;
   sexo?: 'M' | 'F' | null;
-  url_boleta_servicio?: string | null; // << NUEVO
+  url_boleta_servicio?: string | null;
 };
 
 const PENDING_KEY = 'rb_pending_full';
@@ -79,7 +78,11 @@ export class AuthService {
   private currentSession: Session | null = null;
   private perfilCache: Perfil | null = null;
 
-  constructor(private supabaseService: SupabaseService, private toastController: ToastController) {
+  constructor(
+    private supabaseService: SupabaseService,
+    private toastController: ToastController
+  ) {
+    // Mantener UID cacheado para rehidratar perfil si la sesión no está aún
     this.supabaseService.client.auth.onAuthStateChange((_event, session) => {
       this.currentSession = session;
       if (session?.user?.id) {
@@ -105,6 +108,7 @@ export class AuthService {
       ses = (await this.supabaseService.client.auth.getSession()).data.session;
     }
 
+    // Fallback: si no hay sesión pero sí UID cacheado, rehidratar perfil para modo degradado
     if (!ses && localStorage.getItem(UID_KEY)) {
       const uid = localStorage.getItem(UID_KEY);
       if (uid) {
@@ -129,7 +133,7 @@ export class AuthService {
   }
 
   // ==========================================================
-  // 🧩 Métodos auxiliares
+  // 🧩 Métodos auxiliares de nombre
   // ==========================================================
 
   private construirNombreCompleto(perfil: Perfil, extras: Partial<RegisterExtras>): string {
@@ -166,7 +170,7 @@ export class AuthService {
     const { data: sessionData } = await this.supabaseService.client.auth.getSession();
     const uid = sessionData.session?.user.id ?? data.user?.id ?? null;
 
-    // Si requiere verificación de email
+    // Requiere verificación de correo
     if (!sessionData.session) {
       localStorage.setItem(PENDING_KEY, JSON.stringify({ nombre: nombreCompleto, extras }));
       return { needsEmailConfirm: true };
@@ -187,7 +191,9 @@ export class AuthService {
       ...extras,
     };
 
-    const { error: upsertError } = await this.supabaseService.client.from('usuario').upsert(row, { onConflict: 'id_auth' });
+    const { error: upsertError } = await this.supabaseService.client
+      .from('usuario')
+      .upsert(row, { onConflict: 'id_auth' });
     if (upsertError) throw upsertError;
 
     return { needsEmailConfirm: false };
@@ -199,7 +205,7 @@ export class AuthService {
 
     if (data.user?.id) localStorage.setItem(UID_KEY, data.user.id);
 
-    // Si había registro pendiente, se completa
+    // Completar registro pendiente si lo hubiera
     const pendingRaw = localStorage.getItem(PENDING_KEY);
     if (pendingRaw) {
       try {
@@ -250,7 +256,12 @@ export class AuthService {
     const uid = ses?.user?.id ?? localStorage.getItem(UID_KEY);
     if (!uid) return null;
 
-    const { data, error } = await this.supabaseService.client.from('usuario').select('*').eq('id_auth', uid).maybeSingle();
+    const { data, error } = await this.supabaseService.client
+      .from('usuario')
+      .select('*')
+      .eq('id_auth', uid)
+      .maybeSingle();
+
     if (error) {
       console.warn('Error al obtener perfil:', error.message);
       return null;
@@ -279,7 +290,9 @@ export class AuthService {
     if (nombre?.trim()) row['nombre'] = nombre.trim();
     if (email) row['correo'] = email.toLowerCase().trim();
 
-    const { error } = await this.supabaseService.client.from('usuario').upsert(row, { onConflict: 'id_auth' });
+    const { error } = await this.supabaseService.client
+      .from('usuario')
+      .upsert(row, { onConflict: 'id_auth' });
     if (error) console.warn('ensureUsuarioRow warning:', error.message);
   }
 
@@ -294,7 +307,10 @@ export class AuthService {
     const nuevoNombre = this.construirNombreCompleto(perfil, extras);
     const payload = { ...extras, nombre: nuevoNombre, actualizado_en: new Date().toISOString() };
 
-    const { error } = await this.supabaseService.client.from('usuario').update(payload).eq('id_auth', uid);
+    const { error } = await this.supabaseService.client
+      .from('usuario')
+      .update(payload)
+      .eq('id_auth', uid);
     if (error) throw error;
 
     this.perfilCache = { ...perfil, ...payload };
@@ -303,7 +319,9 @@ export class AuthService {
   async checkIfAdmin(): Promise<boolean> {
     try {
       const perfil = await this.miPerfil();
-      return perfil?.rol === 'administrador' || perfil?.rol === 'directorio';
+      // Acepta 'administrador' o 'directorio' como admin
+      const rol = perfil?.rol ?? perfil?.rol_usuario;
+      return rol === 'administrador' || rol === 'directorio';
     } catch {
       return false;
     }
@@ -314,42 +332,38 @@ export class AuthService {
   // ==========================================================
 
   async sendPasswordResetLink(email: string): Promise<void> {
-  // Detecta dónde está el usuario cuando solicita el reset
-  const isNative = Capacitor.isNativePlatform();
+    // Detecta plataforma para armar redirect
+    const isNative = Capacitor.isNativePlatform();
 
-  // ⚠️ PRODUCCIÓN: reemplaza por tu dominio real
-  const webBase = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8100';
-  const webCallback = `${webBase}/auth/callback`;
+    // PRODUCCIÓN: cambia webBase al dominio real si quieres forzarlo
+    const webBase = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8100';
+    const webCallback = `${webBase}/auth/callback`;
 
-  const redirectUrl = isNative
-    ? 'myapp://auth/reset'          // app nativa (Android/iOS)
-    : webCallback;                   // navegador (PC / web)
+    const redirectUrl = isNative ? 'myapp://auth/reset' : webCallback;
 
-  const { error } = await this.supabaseService.client.auth
-    .resetPasswordForEmail(email, { redirectTo: redirectUrl });
+    const { error } = await this.supabaseService.client.auth
+      .resetPasswordForEmail(email, { redirectTo: redirectUrl });
 
-  if (error) {
-    if (error.message?.includes('not found')) {
-      throw new Error('No se encontró una cuenta con ese correo.');
+    if (error) {
+      if (error.message?.includes('not found')) {
+        throw new Error('No se encontró una cuenta con ese correo.');
+      }
+      throw error;
     }
-    throw error;
   }
-}
 
-  // Actualizar contraseña (luego del exchange en AppComponent)
   async updateUser(attributes: { password?: string; data?: object }): Promise<void> {
     const { error } = await this.supabaseService.client.auth.updateUser(attributes);
     if (error) throw new Error(error.message);
   }
 
   // ==========================================================
-  // 🧰 Modo desarrollo
+  // 🧰 Modo desarrollo / utilidades
   // ==========================================================
 
   getUsuarioForzado(): Perfil | null {
     try {
-      const perfilCache = this.perfilCache;
-      if (perfilCache) return perfilCache;
+      if (this.perfilCache) return this.perfilCache;
 
       const perfilLocal = localStorage.getItem('rb_usuario_activo');
       if (perfilLocal) return JSON.parse(perfilLocal) as Perfil;
@@ -366,41 +380,41 @@ export class AuthService {
   }
 
   // ==========================================================
-// 🔹 Método auxiliar para solicitudes.page.ts
-// ==========================================================
-async obtenerPerfilActual() {
-  return await this.miPerfil();
-}
-
-// ==========================================================
-// 🔹 Cambiar estado de usuario (Aprobar / Rechazar)
-// ==========================================================
-async cambiarEstadoUsuario(id_usuario: string, nuevoEstado: string) {
-  const { error } = await this.supabaseService
-    .from('usuario')
-    .update({ status: nuevoEstado })
-    .eq('id_usuario', id_usuario);
-
-  if (error) {
-    const toast = await this.toastController.create({
-      message: 'Error al cambiar estado del usuario.',
-      duration: 2000,
-      color: 'danger',
-    });
-    await toast.present();
-    return false;
+  // 🔹 Método auxiliar para solicitudes.page.ts
+  // ==========================================================
+  async obtenerPerfilActual() {
+    return await this.miPerfil();
   }
 
-  const toast = await this.toastController.create({
-    message:
-      nuevoEstado === 'activo'
-        ? 'Usuario aprobado correctamente.'
-        : 'Usuario rechazado correctamente.',
-    duration: 2000,
-    color: nuevoEstado === 'activo' ? 'success' : 'warning',
-  });
-  await toast.present();
+  // ==========================================================
+  // 🔹 Cambiar estado de usuario (Aprobar / Rechazar)
+  // ==========================================================
+  async cambiarEstadoUsuario(id_usuario: string, nuevoEstado: string) {
+    const { error } = await this.supabaseService.client
+      .from('usuario')
+      .update({ status: nuevoEstado })
+      .eq('id_usuario', id_usuario);
 
-  return true;
+    if (error) {
+      const toast = await this.toastController.create({
+        message: 'Error al cambiar estado del usuario.',
+        duration: 2000,
+        color: 'danger',
+      });
+      await toast.present();
+      return false;
+    }
+
+    const toast = await this.toastController.create({
+      message:
+        nuevoEstado === 'activo'
+          ? 'Usuario aprobado correctamente.'
+          : 'Usuario rechazado correctamente.',
+      duration: 2000,
+      color: nuevoEstado === 'activo' ? 'success' : 'warning',
+    });
+    await toast.present();
+
+    return true;
   }
 }

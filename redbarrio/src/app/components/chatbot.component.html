@@ -1,0 +1,90 @@
+<!-- src/app/components/chatbot.component.html -->
+
+<!-- LAUNCHER (aparece cuando el chat está cerrado) -->
+<ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="!visible">
+  <ion-fab-button (click)="visible = true" aria-label="Abrir chat">
+    <ion-icon name="chatbubbles-outline"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+
+<!-- CHAT (aparece cuando visible=true) -->
+<div class="rb-chat" *ngIf="visible">
+  <!-- HEADER -->
+  <div class="rb-chat__header">
+    <div class="rb-chat__avatar">
+      <ion-icon name="sparkles-outline"></ion-icon>
+      <span class="rb-chat__avatar-fallback">🤖</span>
+    </div>
+    <div class="rb-chat__title">
+      <h2>Asistente RedBarrio</h2>
+      <p>Hola {{ displayName || 'vecino/a' }} 👋</p>
+    </div>
+
+    <!-- BOTÓN CERRAR -->
+    <button
+      type="button"
+      class="rb-chat__close"
+      aria-label="Cerrar chat"
+      (click)="closeChat()"
+    >
+      <ion-icon name="close-outline"></ion-icon>
+      <span class="rb-chat__close-fallback">×</span>
+    </button>
+  </div>
+
+  <!-- QUICK ACTIONS -->
+  <div class="rb-chat__quick">
+    <button (click)="clickQuick('faq')">
+      <ion-icon name="help-circle-outline"></ion-icon>
+      FAQ
+    </button>
+    <button (click)="clickQuick('cert')">
+      <ion-icon name="document-text-outline"></ion-icon>
+      Certificados
+    </button>
+    <button (click)="clickQuick('votacion')">
+      <ion-icon name="checkbox-outline"></ion-icon>
+      Votaciones
+    </button>
+    <button (click)="clickQuick('noticias')">
+      <ion-icon name="newspaper-outline"></ion-icon>
+      Noticias
+    </button>
+  </div>
+
+  <!-- MENSAJES -->
+  <div class="rb-chat__messages">
+    <div
+      *ngFor="let m of messages"
+      [ngClass]="{
+        'msg': true,
+        'msg--bot': m.from === 'bot',
+        'msg--user': m.from === 'user'
+      }"
+    >
+      <div class="msg__bubble" [innerHTML]="m.text"></div>
+      <div class="msg__time">{{ m.at | date:'shortTime' }}</div>
+    </div>
+
+    <div class="rb-chat__loading" *ngIf="loading">
+      <ion-spinner name="dots"></ion-spinner>
+      <span>Escribiendo…</span>
+    </div>
+  </div>
+
+  <!-- INPUT -->
+  <form class="rb-chat__input" (ngSubmit)="send()">
+    <input
+      type="text"
+      [(ngModel)]="inputText"
+      name="chatInput"
+      placeholder="Escribe un mensaje..."
+      [disabled]="loading"
+      autocomplete="off"
+    />
+    <button type="submit" [disabled]="loading || !inputText.trim()">
+      <ion-icon name="paper-plane-outline"></ion-icon>
+      <span class="rb-chat__send-fallback">➤</span>
+    </button>
+  </form>
+</div>
