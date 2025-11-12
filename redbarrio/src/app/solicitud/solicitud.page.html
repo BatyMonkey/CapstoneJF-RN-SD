@@ -1,14 +1,24 @@
 <ion-header class="rb-header">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <!-- Debe coincidir con menuId="mainMenu" del app.component.html -->
       <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
     </ion-buttons>
     <ion-title>Reserva de Espacio/Terreno</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding solicitud" [fullscreen]="true">
+<ion-content class="ion-padding reserva" [fullscreen]="true">
+  <!-- Pull to refresh sin agregar métodos al TS -->
+  <ion-refresher
+    slot="fixed"
+    (ionRefresh)="cargarEspaciosDisponibles(); $any($event.target).complete()">
+    <ion-refresher-content
+      pullingText="Desliza para refrescar"
+      refreshingSpinner="crescent"
+      refreshingText="Actualizando...">
+    </ion-refresher-content>
+  </ion-refresher>
+
   <ion-card class="card">
     <ion-card-header>
       <ion-card-title>Formulario de Reserva</ion-card-title>
@@ -25,13 +35,15 @@
             formControlName="id_espacio"
             interface="popover"
             placeholder="Elige un espacio disponible">
-            <ion-select-option *ngFor="let espacio of espaciosDisponibles" [value]="espacio.id_espacio">
-              {{ espacio.nombre }} - {{ espacio.tipo }}
+            <ion-select-option
+              *ngFor="let espacio of espaciosDisponibles"
+              [value]="espacio.id_espacio">
+              {{ espacio.nombre }} — {{ espacio.tipo || 'General' }}
             </ion-select-option>
           </ion-select>
         </ion-item>
 
-        <ion-note color="medium" *ngIf="espaciosDisponibles.length === 0">
+        <ion-note color="medium" *ngIf="espaciosDisponibles?.length === 0">
           No hay espacios disponibles por ahora.
         </ion-note>
 
@@ -40,14 +52,17 @@
           <ion-label position="stacked">Descripción / Comentario</ion-label>
           <ion-textarea
             formControlName="descripcion"
-            placeholder="Agrega una nota o detalle sobre la reserva (opcional)">
+            placeholder="Agrega una nota o detalle (opcional)">
           </ion-textarea>
         </ion-item>
 
         <!-- Datos del Evento -->
         <ion-item class="field">
           <ion-label position="stacked">Título del Evento</ion-label>
-          <ion-input formControlName="evento_titulo" placeholder="Ej: Campeonato de fútbol"></ion-input>
+          <ion-input
+            formControlName="evento_titulo"
+            placeholder="Ej: Campeonato de fútbol">
+          </ion-input>
         </ion-item>
 
         <ion-item class="field">
@@ -58,31 +73,34 @@
           </ion-textarea>
         </ion-item>
 
-        <ion-item class="field">
-          <ion-label>Fecha de Inicio</ion-label>
-          <ion-datetime
-            formControlName="evento_inicio"
-            presentation="date-time"
-            minute-values="0,15,30,45">
-          </ion-datetime>
-        </ion-item>
+        <!-- Fechas -->
+        <div class="grid-2">
+          <ion-item class="field">
+            <ion-label position="stacked">Fecha de Inicio</ion-label>
+            <ion-datetime
+              formControlName="evento_inicio"
+              presentation="date-time"
+              minute-values="0,15,30,45">
+            </ion-datetime>
+          </ion-item>
 
-        <ion-item class="field">
-          <ion-label>Fecha de Término</ion-label>
-          <ion-datetime
-            formControlName="evento_fin"
-            presentation="date-time"
-            minute-values="0,15,30,45">
-          </ion-datetime>
-        </ion-item>
+          <ion-item class="field">
+            <ion-label position="stacked">Fecha de Término</ion-label>
+            <ion-datetime
+              formControlName="evento_fin"
+              presentation="date-time"
+              minute-values="0,15,30,45">
+            </ion-datetime>
+          </ion-item>
+        </div>
 
-        <!-- Botón principal -->
+        <!-- Acción -->
         <div class="actions">
           <ion-button
             expand="block"
             type="submit"
-            [disabled]="solicitudForm.invalid"
-            color="success">
+            color="success"
+            [disabled]="solicitudForm.invalid">
             💳 Reservar Espacio
           </ion-button>
         </div>

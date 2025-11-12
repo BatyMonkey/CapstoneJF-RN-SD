@@ -1,0 +1,62 @@
+<ion-header class="rb-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Gestión de Actividades</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- 🔄 Refresher -->
+  <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
+    <ion-refresher-content pullingIcon="arrow-down-outline" refreshingSpinner="crescent"
+      pullingText="Desliza para actualizar" refreshingText="Actualizando...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <!-- 📦 Contenedor principal -->
+  <div class="actividades-container">
+    <h1>Actividades Pendientes</h1>
+    <p>Revisa, publica o rechaza las actividades propuestas por los vecinos.</p>
+
+    <!-- ✅ Lista -->
+    <ion-list *ngIf="!cargando && actividades.length > 0">
+      <ion-item *ngFor="let act of actividades">
+        <ion-label>
+          <h2>{{ act.titulo || 'Actividad sin título' }}</h2>
+          <p>{{ act.descripcion || 'Sin descripción' }}</p>
+
+          <div class="direccion" *ngIf="act.ubicacion">
+            <ion-icon name="location-outline"></ion-icon>
+            <span>{{ act.ubicacion }}</span>
+          </div>
+
+          <ion-chip color="warning">
+            <ion-label>{{ act.estado }}</ion-label>
+          </ion-chip>
+        </ion-label>
+
+        <ion-buttons slot="end">
+          <ion-button color="success" (click)="cambiarEstado(act, 'publicada')">
+            Publicar
+          </ion-button>
+          <ion-button color="danger" (click)="cambiarEstado(act, 'rechazada')">
+            Rechazar
+          </ion-button>
+        </ion-buttons>
+      </ion-item>
+    </ion-list>
+
+    <!-- 🌀 Loading -->
+    <div *ngIf="cargando" class="loading">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando actividades...</p>
+    </div>
+
+    <!-- ⚠️ Empty -->
+    <div *ngIf="!cargando && actividades.length === 0" class="empty">
+      No hay actividades pendientes.
+    </div>
+  </div>
+</ion-content>

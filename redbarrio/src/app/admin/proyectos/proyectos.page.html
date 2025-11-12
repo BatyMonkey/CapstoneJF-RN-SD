@@ -1,0 +1,46 @@
+<ion-header class="rb-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Gestión de Proyectos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="refrescar($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="proyectos-container">
+    <h1>Proyectos pendientes</h1>
+    <p>Aprueba o rechaza los proyectos en espera.</p>
+
+    <ion-list *ngIf="!cargando && proyectos.length > 0">
+      <ion-item *ngFor="let proyecto of proyectos">
+        <ion-label>
+          <h2>{{ proyecto.titulo || 'Proyecto sin título' }}</h2>
+          <p>{{ proyecto.descripcion || 'Sin descripción disponible.' }}</p>
+        </ion-label>
+
+        <ion-buttons slot="end">
+          <ion-button color="success" (click)="cambiarEstado(proyecto, 'publicada')">
+            Publicar
+          </ion-button>
+          <ion-button color="danger" (click)="cambiarEstado(proyecto, 'rechazada')">
+            Rechazar
+          </ion-button>
+        </ion-buttons>
+      </ion-item>
+    </ion-list>
+
+    <div *ngIf="cargando" class="loading">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando proyectos...</p>
+    </div>
+
+    <div *ngIf="!cargando && proyectos.length === 0" class="empty">
+      <p>No hay proyectos pendientes por revisar.</p>
+    </div>
+  </div>
+</ion-content>

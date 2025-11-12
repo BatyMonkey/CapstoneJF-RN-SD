@@ -1,0 +1,138 @@
+/* ===== Paleta base ===== */
+:host {
+  --rb-primary: #2563eb;
+  --rb-primary-soft: rgba(37, 99, 235, 0.1);
+
+  --rb-bg: #f8fafc;
+  --rb-text: #0f172a;
+  --rb-muted: #64748b;
+
+  --ion-background-color: var(--rb-bg);
+  --ion-text-color: var(--rb-text);
+}
+
+/* Fondo del page */
+ion-content {
+  --background: var(--rb-bg);
+  padding: 16px;
+}
+
+/* Header degradado (si lo usas) */
+ion-header ion-toolbar {
+  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
+  --color: #fff;
+  --border-color: transparent;
+}
+
+/* La lista no debe tener fondo */
+ion-list {
+  background: transparent;
+}
+
+/* === CARD de cada solicitud === */
+ion-list > ion-item {
+  --background: #ffffff;
+  margin-bottom: 14px;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  /* esto hace que el borde redondo se vea */
+  --inner-border-width: 0;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  align-items: flex-start;
+}
+
+/* Texto dentro de la solicitud */
+ion-list > ion-item ion-label {
+  color: var(--rb-text);
+}
+
+ion-list > ion-item ion-label h2 {
+  font-weight: 700;
+  font-size: 1.02rem;
+  margin-bottom: 4px;
+  color: var(--rb-text);
+}
+
+ion-list > ion-item ion-label p {
+  margin: 0 0 4px 0;
+  color: var(--rb-muted);
+  font-weight: 500;
+  word-break: break-word;
+}
+
+/* Dirección con icono de casa 🏠 */
+.direccion {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--rb-muted);
+  font-size: 0.88rem;
+  margin-top: 4px;
+}
+
+.direccion ion-icon {
+  color: var(--rb-primary);
+  font-size: 1rem;
+}
+
+/* Chip de estado */
+ion-chip[color='warning'] {
+  --background: #facc15;
+  --color: #1e293b;
+  border-radius: 8px;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+/* Botones a la derecha */
+ion-list > ion-item ion-buttons[slot='end'] {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-left: 10px;
+}
+
+ion-list > ion-item ion-buttons ion-button {
+  font-weight: 600;
+  border-radius: 12px;
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.12);
+  height: 36px;
+  min-width: 110px;
+}
+
+ion-list > ion-item ion-buttons ion-button[color='success'] {
+  --background: #16a34a;
+  --background-activated: #15803d;
+  --color: #fff;
+}
+
+ion-list > ion-item ion-buttons ion-button[color='danger'] {
+  --background: #ef4444;
+  --background-activated: #b91c1c;
+  --color: #fff;
+}
+
+/* Texto “sin solicitudes” y “cargando” */
+.texto-cargando,
+ion-content > div.ion-text-center {
+  color: var(--rb-muted);
+  font-weight: 600;
+}
+
+/* === Responsive === */
+@media (max-width: 520px) {
+  ion-list > ion-item {
+    /* el item se hace más vertical */
+    align-items: stretch;
+  }
+
+  ion-list > ion-item ion-buttons[slot='end'] {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  ion-list > ion-item ion-buttons ion-button {
+    min-width: 0;
+  }
+}

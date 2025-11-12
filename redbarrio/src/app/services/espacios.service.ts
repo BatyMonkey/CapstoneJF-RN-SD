@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { supabase } from '../core/supabase.client'; 
+import { SupabaseService } from './supabase.service';
 
 // 🚨 CORRECCIÓN 1: Cambiar 'ubicacion' por 'direccion_con' en la interfaz
 export interface Espacio {
@@ -23,15 +23,16 @@ export interface Espacio {
 @Injectable({
   providedIn: 'root'
 })
+
 export class EspaciosService {
 
-  constructor() { }
+  constructor(private supabaseService: SupabaseService) { }
 
   /**
    * Obtiene la lista completa de espacios desde la tabla 'espacio'.
    */
   async obtenerEspacios(): Promise<Espacio[]> {
-    const { data, error } = await supabase
+    const { data, error } = await this.supabaseService.client
       .from('espacio')
       .select('*') // Obtiene todos los campos
       .order('nombre', { ascending: true });
@@ -51,7 +52,7 @@ export class EspaciosService {
     console.log('Datos a insertar:', espacioData);
     
     // 🚨 ATENCIÓN: Se usa el ID numérico del 'tipo'
-    const { data, error } = await supabase
+    const { data, error } = await this.supabaseService.client
       .from('espacio')
       .insert([
         {
@@ -76,7 +77,7 @@ export class EspaciosService {
   }
 
   async obtenerEspacioPorId(id: number): Promise<Espacio | null> {
-    const { data, error } = await supabase
+    const { data, error } = await this.supabaseService.client
       .from('espacio')
       .select('*')
       .eq('id_espacio', id)

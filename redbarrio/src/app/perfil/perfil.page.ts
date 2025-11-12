@@ -7,7 +7,7 @@ import { IonicModule, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 
 // 🚨 Importaciones de Supabase
-import { supabase } from '../core/supabase.client'; 
+import { SupabaseService } from 'src/app/services/supabase.service';
 import { User } from '@supabase/supabase-js'; 
 
 import { AuthService, Perfil } from '../auth/auth.service'; 
@@ -51,7 +51,8 @@ export class PerfilPage implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService, 
     private toastController: ToastController,
-    private router: Router
+    private router: Router,
+    private supabaseService: SupabaseService
   ) {
     this.perfilForm = this.fb.group({
       // CAMPOS BLOQUEADOS (se llenan pero no se pueden editar)
@@ -79,7 +80,7 @@ export class PerfilPage implements OnInit {
     this.perfilActual = null;
     
     try {
-      const userResult = await supabase.auth.getUser();
+      const userResult = await this.supabaseService.client.auth.getUser();
       this.usuarioActual = userResult.data.user; // Obtener el objeto User de Supabase
       
       const perfil = await this.authService.miPerfil(); 
@@ -120,7 +121,7 @@ export class PerfilPage implements OnInit {
     const filePath = parts[1]; // Esto es 'users/uid/avatar.jpg'
     
     // 2. Llama al método remove de Supabase Storage
-    const { error } = await supabase.storage
+    const { error } = await this.supabaseService.client.storage
       .from(PROFILE_BUCKET)
       .remove([filePath]);
       
@@ -143,7 +144,7 @@ export class PerfilPage implements OnInit {
         const filePath = `users/${user.id}/profile_avatar_${Date.now()}.${fileExt}`;
         
         // 2. Subir el nuevo archivo
-        const { error: uploadError } = await supabase.storage
+        const { error: uploadError } = await this.supabaseService.client.storage
             .from(PROFILE_BUCKET)
             .upload(filePath, this.fotoFile, {
                 cacheControl: '3600',
@@ -153,7 +154,7 @@ export class PerfilPage implements OnInit {
         if (uploadError) throw uploadError;
         
         // 3. Obtener la URL pública del nuevo archivo
-        const { data: publicUrlData } = supabase.storage
+        const { data: publicUrlData } = this.supabaseService.client.storage
             .from(PROFILE_BUCKET)
             .getPublicUrl(filePath);
             

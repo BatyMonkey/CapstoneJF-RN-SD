@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, AlertController } from '@ionic/angular';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { supabase } from '../../../core/supabase.client';
+import { SupabaseService } from 'src/app/services/supabase.service';
 import { AuthService } from '../../../auth/auth.service';
 
 @Component({
@@ -24,7 +24,8 @@ export class GenerarProyectoComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private alertCtrl: AlertController,
-    private auth: AuthService
+    private auth: AuthService,
+    private supabaseService: SupabaseService
   ) {}
 
   /** Inicializa el formulario y obtiene el perfil del usuario */
@@ -79,7 +80,7 @@ export class GenerarProyectoComponent implements OnInit {
     reader.readAsDataURL(file);
 
     const fileName = `${Date.now()}_${file.name}`;
-    const { error: uploadError } = await supabase.storage.from('proyectos').upload(fileName, file);
+    const { error: uploadError } = await this.supabaseService.client.storage.from('proyectos').upload(fileName, file);
 
     if (uploadError) {
       console.error('Error al subir imagen:', uploadError.message);
@@ -87,7 +88,7 @@ export class GenerarProyectoComponent implements OnInit {
       return;
     }
 
-    const { data: urlData } = supabase.storage.from('proyectos').getPublicUrl(fileName);
+    const { data: urlData } = this.supabaseService.client.storage.from('proyectos').getPublicUrl(fileName);
     this.uploadedUrl = urlData.publicUrl;
   }
 
@@ -100,16 +101,20 @@ export class GenerarProyectoComponent implements OnInit {
 
     const formValue = this.proyectoForm.value;
     const id_auth = this.perfil?.id_auth;
+    const rol = this.perfil?.rol; // ✅ aseguramos el rol desde el perfil
 
     if (!id_auth) {
       this.showAlert('Error', 'No se pudo obtener la sesión del usuario.');
       return;
     }
 
+    // ✅ Estado automático según el rol
+    const estado = rol === 'administrador' ? 'publicada' : 'pendiente';
+
     try {
       if (formValue.tipo === 'actividad') {
         // ===== INSERTAR ACTIVIDAD =====
-        const { error } = await supabase.from('actividad').insert([
+        const { error } = await this.supabaseService.client.from('actividad').insert([
           {
             id_auth,
             titulo: formValue.titulo,
@@ -117,7 +122,7 @@ export class GenerarProyectoComponent implements OnInit {
             cupos_total: formValue.cupos_total ?? 0,
             fecha_inicio: formValue.fecha_inicio,
             fecha_fin: formValue.fecha_fin,
-            estado: 'publicada',
+            estado, // 🔹 Publicada o Pendiente según rol
             imagen_url: this.uploadedUrl,
             creado_en: new Date().toISOString(),
             actualizado_en: new Date().toISOString(),
@@ -129,12 +134,12 @@ export class GenerarProyectoComponent implements OnInit {
 
       } else {
         // ===== INSERTAR PROYECTO =====
-        const { error } = await supabase.from('proyecto').insert([
+        const { error } = await this.supabaseService.client.from('proyecto').insert([
           {
             id_auth,
             titulo: formValue.titulo,
             descripcion: formValue.descripcion,
-            estado: 'pendiente',
+            estado, // 🔹 Publicada o Pendiente según rol
             fecha_creacion: new Date().toISOString(),
             actualizado_en: new Date().toISOString(),
             imagen_url: this.uploadedUrl,
