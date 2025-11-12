@@ -332,18 +332,8 @@ export class AuthService {
   // ==========================================================
 
   async sendPasswordResetLink(email: string): Promise<void> {
-<<<<<<< HEAD
     // Detecta plataforma para armar redirect
     const isNative = Capacitor.isNativePlatform();
-=======
-    const redirectUrl = 'myapp://auth/reset';
-    const { error } = await this.supabaseService.client.auth.resetPasswordForEmail(email, { redirectTo: redirectUrl });
-    if (error) {
-      if (error.message?.includes('not found')) throw new Error('No se encontró una cuenta con ese correo.');
-      throw error;
-    }
-  }
->>>>>>> 2c576a97cc6a7d98b2743bbf10a67c915da689e7
 
     // PRODUCCIÓN: cambia webBase al dominio real si quieres forzarlo
     const webBase = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8100';
