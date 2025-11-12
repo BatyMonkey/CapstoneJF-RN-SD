@@ -34,7 +34,16 @@
 
           <ion-item button detail="false" (click)="go('/inscripcion/proyectos')" *ngIf="!isActive('/inscripcion/proyectos')">
             <ion-icon slot="start" name="people-outline"></ion-icon>
-            <ion-label>Inscribirse a proyecto</ion-label>
+            <ion-label>Inscribirse a proyecto/Actividad</ion-label>
+          </ion-item>
+
+          <ion-item
+            button
+            detail="false"
+            (click)="go('/generar/proyecto')"
+            *ngIf="!isActive('/generar/proyecto')">
+            <ion-icon slot="start" name="construct-outline"></ion-icon>
+            <ion-label>Sugerir proyecto/Actividad</ion-label>
           </ion-item>
 
           <ion-item button detail="false" (click)="go('/solicitud')" *ngIf="!isActive('/solicitud')">
@@ -47,36 +56,21 @@
             <ion-label>Espacios Comunitarios</ion-label>
           </ion-item>
 
+          <ion-item button detail="false" (click)="go('/dashboard')" *ngIf="!isActive('/dashboard')">
+            <ion-icon slot="start" name="business-outline"></ion-icon>
+            <ion-label>Transparencia y Metricas</ion-label>
+          </ion-item>
+
           <!-- Admin -->
           <ion-list-header *ngIf="isAdmin">Administración</ion-list-header>
-
           <ion-item
             button
             detail="false"
-            (click)="go('/generar/proyecto')"
-            *ngIf="isAdmin && !isActive('/generar/proyecto')"
-          >
-            <ion-icon slot="start" name="construct-outline"></ion-icon>
-            <ion-label>Generar proyecto</ion-label>
-          </ion-item>
-
-          <ion-item
-            button
-            detail="false"
-            (click)="go('/generar/votacion')"
-            *ngIf="isAdmin && !isActive('/generar/votacion')"
+            (click)="go('/admin/gestiones')"
+            *ngIf="isAdmin && !isActive('/admin/gestiones')"
           >
             <ion-icon slot="start" name="list-circle-outline"></ion-icon>
-            <ion-label>Generar votación</ion-label>
-          </ion-item>
-          <ion-item
-            button
-            detail="false"
-            (click)="go('/noticias/crear')"
-            *ngIf="isAdmin && !isActive('/noticias/crear')"
-          >
-            <ion-icon slot="start" name="list-circle-outline"></ion-icon>
-            <ion-label>Generar noticia</ion-label>
+            <ion-label>Gestiones</ion-label>
           </ion-item>
         </ion-menu-toggle>
       </ion-list>

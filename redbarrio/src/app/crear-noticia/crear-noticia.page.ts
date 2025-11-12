@@ -9,7 +9,7 @@ import { NoticiasService } from '../services/noticias';
 // Vuelve la inicialización directa del cliente
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js'; 
 import { environment } from 'src/environments/environment';
-import { supabase as globalSupabase } from '../core/supabase.client';
+import { SupabaseService } from 'src/app/services/supabase.service';
 
 import { IonicModule } from '@ionic/angular';
 
@@ -41,12 +41,9 @@ export class CrearNoticiaPage implements OnInit {
   MAX_PARRAFOS = MAX_PARRAFOS;
   MAX_IMAGENES = MAX_IMAGENES;
 
-  constructor(private fb: FormBuilder, private router: Router, private noticiasService: NoticiasService) {
+  constructor(private fb: FormBuilder, private router: Router, private noticiasService: NoticiasService, private supabaseService: SupabaseService) {
     // Inicialización directa del cliente (versión funcional)
-    this.supabase = createClient(
-      environment.supabaseUrl,
-      environment.supabaseAnonKey
-    );
+   this.supabase = this.supabaseService.client;
   }
 
   // --- GETTERS TIPADOS PARA EL HTML ---
@@ -163,7 +160,7 @@ export class CrearNoticiaPage implements OnInit {
 
   async subirImagenes(): Promise<string[] | null> {
     // Verificamos que haya un usuario autenticado real en Supabase.
-    const fullSession = await globalSupabase.auth.getSession();
+    const fullSession = await this.supabaseService.auth.getSession();
     const session = fullSession.data.session;
     const user = this.usuarioAutenticado;
 
@@ -211,7 +208,7 @@ export class CrearNoticiaPage implements OnInit {
           }/noticias/${Date.now()}_${i}_${file.name.replace(/ /g, '_')}`;
 
           // Usamos el cliente global (que comparte sesión) para tener la misma auth
-          const uploadResp = await globalSupabase.storage.from(IMAGES_BUCKET).upload(filePath, file);
+          const uploadResp = await this.supabaseService.client.storage.from(IMAGES_BUCKET).upload(filePath, file);
           console.debug('[crear-noticia] upload response for', filePath, uploadResp);
 
           if (uploadResp.error) {
@@ -221,7 +218,7 @@ export class CrearNoticiaPage implements OnInit {
             return null;
           }
 
-          const publicUrlResp = await globalSupabase.storage.from(IMAGES_BUCKET).getPublicUrl(filePath);
+          const publicUrlResp = await this.supabaseService.client.storage.from(IMAGES_BUCKET).getPublicUrl(filePath);
           console.debug('[crear-noticia] getPublicUrl response for', filePath, publicUrlResp);
 
           const publicUrl = publicUrlResp?.data?.publicUrl;
@@ -294,7 +291,7 @@ export class CrearNoticiaPage implements OnInit {
     try {
       // Necesitas castear a 'any' o definir una interfaz DB para evitar errores de tipo si usas typescript estricto con Supabase
       // Use the shared globalSupabase client so the persisted session (if any) is used
-      const { error } = await globalSupabase.from('noticias').insert(nuevaNoticia as any);
+      const { error } = await this.supabaseService.client.from('noticias').insert(nuevaNoticia as any);
 
       if (error) {
         console.error('Error al guardar noticia en Supabase:', error);

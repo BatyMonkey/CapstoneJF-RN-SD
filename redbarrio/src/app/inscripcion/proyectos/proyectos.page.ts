@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { IonicModule, LoadingController, AlertController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
-import { supabase } from 'src/app/core/supabase.client';
+import { SupabaseService } from 'src/app/services/supabase.service';
 import { AuthService, Perfil } from 'src/app/auth/auth.service';
 
 @Component({
@@ -24,7 +24,8 @@ export class ProyectosPage implements OnInit {
     private auth: AuthService,
     private router: Router,
     private loadingCtrl: LoadingController,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private supabaseService: SupabaseService
   ) {}
 
   async ngOnInit() {
@@ -64,10 +65,16 @@ export class ProyectosPage implements OnInit {
     });
     await loading.present();
 
-    try {
+        try {
       const [proyectosRes, actividadesRes] = await Promise.all([
-        supabase.from('proyecto').select('*'),
-        supabase.from('actividad').select('*'),
+        this.supabaseService.client
+          .from('proyecto')
+          .select('*')
+          .eq('estado', 'publicada'), // ✅ solo publicados
+        this.supabaseService.client
+          .from('actividad')
+          .select('*')
+          .eq('estado', 'publicada'), // ✅ solo publicadas
       ]);
 
       if (proyectosRes.error) throw proyectosRes.error;
@@ -89,10 +96,8 @@ export class ProyectosPage implements OnInit {
         (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
       );
 
-      // Filtro inicial (todos)
       this.filtrarListado();
-
-      console.log('✅ Listado cargado:', this.elementos);
+      console.log('✅ Listado cargado (solo publicados):', this.elementos);
     } catch (err) {
       console.error('Error al cargar listado:', err);
       await this.mostrarAlerta('Error', 'No se pudo cargar el listado.');
@@ -100,6 +105,7 @@ export class ProyectosPage implements OnInit {
       this.isLoading = false;
       loading.dismiss();
     }
+
   }
 
   // ✅ Filtro visual entre proyectos y actividades

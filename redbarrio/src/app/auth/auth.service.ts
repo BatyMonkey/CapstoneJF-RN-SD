@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { supabase } from '../core/supabase.client';
 import { Session } from '@supabase/supabase-js';
 import { Capacitor } from '@capacitor/core';
+import { SupabaseService } from '../services/supabase.service';
+import { ToastController } from '@ionic/angular';
+
 
 // ==========================================================
 // 🧩 Interfaces y tipos
@@ -13,7 +15,8 @@ export interface Perfil {
   user_id: string;
   nombre: string;
   correo: string;
-  rol: 'vecino' | 'directorio' | 'administrador';
+  rol?: string;
+  rol_usuario: 'vecino' | 'directorio' | 'administrador';
   direccion?: string | null;
   rut?: string | null;
   telefono?: string | null;
@@ -76,8 +79,8 @@ export class AuthService {
   private currentSession: Session | null = null;
   private perfilCache: Perfil | null = null;
 
-  constructor() {
-    supabase.auth.onAuthStateChange((_event, session) => {
+  constructor(private supabaseService: SupabaseService, private toastController: ToastController) {
+    this.supabaseService.client.auth.onAuthStateChange((_event, session) => {
       this.currentSession = session;
       if (session?.user?.id) {
         localStorage.setItem(UID_KEY, session.user.id);
@@ -94,18 +97,18 @@ export class AuthService {
   async waitForActiveSession(maxWaitMs = 2500): Promise<Session | null> {
     let waited = 0;
     const step = 250;
-    let ses = (await supabase.auth.getSession()).data.session;
+    let ses = (await this.supabaseService.client.auth.getSession()).data.session;
 
     while (!ses && waited < maxWaitMs) {
       await new Promise((res) => setTimeout(res, step));
       waited += step;
-      ses = (await supabase.auth.getSession()).data.session;
+      ses = (await this.supabaseService.client.auth.getSession()).data.session;
     }
 
     if (!ses && localStorage.getItem(UID_KEY)) {
       const uid = localStorage.getItem(UID_KEY);
       if (uid) {
-        const { data } = await supabase
+        const { data } = await this.supabaseService.client
           .from('usuario')
           .select('*')
           .eq('id_auth', uid)
@@ -153,14 +156,14 @@ export class AuthService {
     const { email, password, ...extras } = payload;
     const nombreCompleto = payload.nombre?.trim() || this.construirNombreRegistro(payload);
 
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await this.supabaseService.client.auth.signUp({
       email,
       password,
       options: { data: { full_name: nombreCompleto } },
     });
     if (error) throw error;
 
-    const { data: sessionData } = await supabase.auth.getSession();
+    const { data: sessionData } = await this.supabaseService.client.auth.getSession();
     const uid = sessionData.session?.user.id ?? data.user?.id ?? null;
 
     // Si requiere verificación de email
@@ -184,14 +187,14 @@ export class AuthService {
       ...extras,
     };
 
-    const { error: upsertError } = await supabase.from('usuario').upsert(row, { onConflict: 'id_auth' });
+    const { error: upsertError } = await this.supabaseService.client.from('usuario').upsert(row, { onConflict: 'id_auth' });
     if (upsertError) throw upsertError;
 
     return { needsEmailConfirm: false };
   }
 
   async signIn(email: string, password: string) {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await this.supabaseService.client.auth.signInWithPassword({ email, password });
     if (error) throw error;
 
     if (data.user?.id) localStorage.setItem(UID_KEY, data.user.id);
@@ -219,7 +222,7 @@ export class AuthService {
   }
 
   async signOut() {
-    await supabase.auth.signOut();
+    await this.supabaseService.client.auth.signOut();
     this.currentSession = null;
     this.perfilCache = null;
     localStorage.removeItem(UID_KEY);
@@ -231,7 +234,7 @@ export class AuthService {
   // ==========================================================
 
   async session(): Promise<Session | null> {
-    const { data } = await supabase.auth.getSession();
+    const { data } = await this.supabaseService.client.auth.getSession();
     return data.session ?? null;
   }
 
@@ -247,7 +250,7 @@ export class AuthService {
     const uid = ses?.user?.id ?? localStorage.getItem(UID_KEY);
     if (!uid) return null;
 
-    const { data, error } = await supabase.from('usuario').select('*').eq('id_auth', uid).maybeSingle();
+    const { data, error } = await this.supabaseService.client.from('usuario').select('*').eq('id_auth', uid).maybeSingle();
     if (error) {
       console.warn('Error al obtener perfil:', error.message);
       return null;
@@ -276,7 +279,7 @@ export class AuthService {
     if (nombre?.trim()) row['nombre'] = nombre.trim();
     if (email) row['correo'] = email.toLowerCase().trim();
 
-    const { error } = await supabase.from('usuario').upsert(row, { onConflict: 'id_auth' });
+    const { error } = await this.supabaseService.client.from('usuario').upsert(row, { onConflict: 'id_auth' });
     if (error) console.warn('ensureUsuarioRow warning:', error.message);
   }
 
@@ -291,7 +294,7 @@ export class AuthService {
     const nuevoNombre = this.construirNombreCompleto(perfil, extras);
     const payload = { ...extras, nombre: nuevoNombre, actualizado_en: new Date().toISOString() };
 
-    const { error } = await supabase.from('usuario').update(payload).eq('id_auth', uid);
+    const { error } = await this.supabaseService.client.from('usuario').update(payload).eq('id_auth', uid);
     if (error) throw error;
 
     this.perfilCache = { ...perfil, ...payload };
@@ -311,16 +314,31 @@ export class AuthService {
   // ==========================================================
 
   async sendPasswordResetLink(email: string): Promise<void> {
-    const redirectUrl = 'myapp://auth/reset';
-    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: redirectUrl });
-    if (error) {
-      if (error.message?.includes('not found')) throw new Error('No se encontró una cuenta con ese correo.');
-      throw error;
-    }
-  }
+  // Detecta dónde está el usuario cuando solicita el reset
+  const isNative = Capacitor.isNativePlatform();
 
+  // ⚠️ PRODUCCIÓN: reemplaza por tu dominio real
+  const webBase = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8100';
+  const webCallback = `${webBase}/auth/callback`;
+
+  const redirectUrl = isNative
+    ? 'myapp://auth/reset'          // app nativa (Android/iOS)
+    : webCallback;                   // navegador (PC / web)
+
+  const { error } = await this.supabaseService.client.auth
+    .resetPasswordForEmail(email, { redirectTo: redirectUrl });
+
+  if (error) {
+    if (error.message?.includes('not found')) {
+      throw new Error('No se encontró una cuenta con ese correo.');
+    }
+    throw error;
+  }
+}
+
+  // Actualizar contraseña (luego del exchange en AppComponent)
   async updateUser(attributes: { password?: string; data?: object }): Promise<void> {
-    const { error } = await supabase.auth.updateUser(attributes);
+    const { error } = await this.supabaseService.client.auth.updateUser(attributes);
     if (error) throw new Error(error.message);
   }
 
@@ -345,5 +363,44 @@ export class AuthService {
   setUsuarioForzado(perfil: Perfil) {
     this.perfilCache = perfil;
     localStorage.setItem('rb_usuario_activo', JSON.stringify(perfil));
+  }
+
+  // ==========================================================
+// 🔹 Método auxiliar para solicitudes.page.ts
+// ==========================================================
+async obtenerPerfilActual() {
+  return await this.miPerfil();
+}
+
+// ==========================================================
+// 🔹 Cambiar estado de usuario (Aprobar / Rechazar)
+// ==========================================================
+async cambiarEstadoUsuario(id_usuario: string, nuevoEstado: string) {
+  const { error } = await this.supabaseService
+    .from('usuario')
+    .update({ status: nuevoEstado })
+    .eq('id_usuario', id_usuario);
+
+  if (error) {
+    const toast = await this.toastController.create({
+      message: 'Error al cambiar estado del usuario.',
+      duration: 2000,
+      color: 'danger',
+    });
+    await toast.present();
+    return false;
+  }
+
+  const toast = await this.toastController.create({
+    message:
+      nuevoEstado === 'activo'
+        ? 'Usuario aprobado correctamente.'
+        : 'Usuario rechazado correctamente.',
+    duration: 2000,
+    color: nuevoEstado === 'activo' ? 'success' : 'warning',
+  });
+  await toast.present();
+
+  return true;
   }
 }

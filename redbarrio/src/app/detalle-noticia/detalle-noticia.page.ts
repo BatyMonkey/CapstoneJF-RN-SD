@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from 'src/environments/environment';
+import { SupabaseService } from 'src/app/services/supabase.service';
 
 // Definición de la interfaz para la noticia (ajustada a la nueva estructura)
 interface DetalleNoticia {
@@ -40,11 +41,8 @@ export class DetalleNoticiaPage implements OnInit {
   // Array para almacenar párrafos y URLs mezclados
   contenidoMixto: ContenidoMixtoItem[] = [];
 
-  constructor(private route: ActivatedRoute) {
-    this.supabase = createClient(
-      environment.supabaseUrl,
-      environment.supabaseAnonKey
-    );
+  constructor(private route: ActivatedRoute, private supabaseService: SupabaseService) {
+    this.supabase = this.supabaseService.client;
   }
 
   ngOnInit() {

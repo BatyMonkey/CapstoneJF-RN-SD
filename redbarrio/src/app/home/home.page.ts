@@ -10,6 +10,7 @@ import { AuthService } from '../auth/auth.service';
 // --- INICIO DE CÓDIGO DE noticias.page.ts ---
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js'; 
 import { environment } from 'src/environments/environment'; 
+import { SupabaseService } from '../services/supabase.service';
 
 // Definición de la interfaz para la noticia
 interface Noticia {
@@ -47,13 +48,11 @@ export class HomePage implements OnInit {
     private router: Router,
     private menu: MenuController,
     private auth: AuthService,
-    private alertController: AlertController 
+    private alertController: AlertController,
+    private supabaseService: SupabaseService
   ) {
     // Inicialización de Supabase
-    this.supabase = createClient(
-      environment.supabaseUrl,
-      environment.supabaseAnonKey
-    );
+    this.supabase = this.supabaseService.client;
   }
 
   ngOnInit() {

@@ -5,7 +5,7 @@ import { ViewWillEnter, IonicModule, ToastController } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 
 import { VotacionesService } from '../services/votaciones.service';
-import { supabase } from '../core/supabase.client';
+import { SupabaseService } from 'src/app/services/supabase.service';
 
 interface OpcionVM {
   titulo: string;
@@ -37,7 +37,8 @@ export class GenerarVotacionPage implements OnInit, ViewWillEnter {
   constructor(
     private votosSvc: VotacionesService,
     private toast: ToastController,
-    private router: Router
+    private router: Router,
+    private supabaseService: SupabaseService
   ) {}
 
   ngOnInit(): void {
@@ -87,7 +88,7 @@ export class GenerarVotacionPage implements OnInit, ViewWillEnter {
     this.errorMsg = '';
 
     try {
-      const { data: auth } = await supabase.auth.getUser();
+      const { data: auth } = await this.supabaseService.client.auth.getUser();
       const userId = auth?.user?.id || null;
       if (!userId) throw new Error('Debes iniciar sesión');
 

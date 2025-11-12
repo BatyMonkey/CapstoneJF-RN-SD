@@ -1,13 +1,13 @@
 import {
   menuController
-} from "./chunk-YJYYGSEK.js";
+} from "./chunk-4WEMEU7P.js";
 import {
   getTimeGivenProgression
 } from "./chunk-34QX6F67.js";
 import {
   IonicSafeString,
   setupConfig
-} from "./chunk-OWOOU7VT.js";
+} from "./chunk-N24SJTXV.js";
 import {
   actionSheetController,
   alertController,
@@ -16,29 +16,23 @@ import {
   pickerController,
   popoverController,
   toastController
-} from "./chunk-B3OFUUJV.js";
-import "./chunk-KUZZZZQT.js";
+} from "./chunk-GLHFVQHJ.js";
+import "./chunk-CCSUFG5J.js";
 import {
   openURL
 } from "./chunk-ZWYZ2NSP.js";
 import {
-  createGesture
-} from "./chunk-Z3OEOVFM.js";
-import "./chunk-QA2SYHF5.js";
-import "./chunk-FXJHFXDF.js";
-import {
   iosTransitionAnimation
-} from "./chunk-6UQU3GWC.js";
+} from "./chunk-RIJ7ZOUN.js";
 import {
   mdTransitionAnimation
-} from "./chunk-J7ZKOBYP.js";
+} from "./chunk-UTUNQVJQ.js";
 import {
   getIonPageElement
-} from "./chunk-Y6FJFSJ2.js";
+} from "./chunk-KGCUZFT7.js";
 import {
   createAnimation as createAnimation2
-} from "./chunk-S4Q23B2F.js";
-import "./chunk-LCMILTBF.js";
+} from "./chunk-NTNOC4F3.js";
 import "./chunk-RA57Z6D3.js";
 import "./chunk-LTAFKWUM.js";
 import {
@@ -58,11 +52,17 @@ import {
   getPlatforms,
   initialize,
   isPlatform
-} from "./chunk-J42IWAJW.js";
-import "./chunk-GGRQ5HQ3.js";
+} from "./chunk-DXIZOXSL.js";
+import "./chunk-2QSFQOVL.js";
+import {
+  createGesture
+} from "./chunk-Z3OEOVFM.js";
+import "./chunk-QA2SYHF5.js";
+import "./chunk-TCUDET6F.js";
+import "./chunk-LCMILTBF.js";
 import {
   bootstrapLazy
-} from "./chunk-THQAVDZS.js";
+} from "./chunk-ALXP5TSD.js";
 import {
   MaxValidator,
   MinValidator,
@@ -78,8 +78,9 @@ import {
   Router,
   RouterLink,
   UrlSerializer
-} from "./chunk-Y6KMK7BQ.js";
-import "./chunk-YBXHZPW5.js";
+} from "./chunk-LJPS7NX5.js";
+import "./chunk-LYZ2RRMW.js";
+import "./chunk-KIMTXNSS.js";
 import {
   CommonModule,
   Location,
@@ -87,7 +88,6 @@ import {
   NgIf,
   NgTemplateOutlet
 } from "./chunk-ORVGVXJZ.js";
-import "./chunk-KIMTXNSS.js";
 import "./chunk-4X6VR2I6.js";
 import {
   APP_INITIALIZER,

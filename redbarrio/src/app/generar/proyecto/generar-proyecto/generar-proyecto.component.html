@@ -11,6 +11,7 @@
 <ion-content fullscreen>
   <div class="page-wrap ion-padding">
 
+    <!-- 🔹 Tarjeta principal -->
     <ion-card class="card hero">
       <ion-card-header>
         <ion-card-title>Nuevo {{ isActividad ? 'Actividad' : 'Proyecto' }}</ion-card-title>
@@ -18,8 +19,22 @@
           Completa la información básica de la {{ isActividad ? 'actividad' : 'proyecto' }}.
         </ion-card-subtitle>
       </ion-card-header>
+
+      <!-- 🔹 Mensaje dinámico según rol -->
+      <ion-card-content *ngIf="perfil?.rol">
+        <ion-note color="medium" *ngIf="perfil?.rol === 'administrador'">
+          Estás creando una {{ isActividad ? 'actividad' : 'proyecto' }} como <strong>administrador</strong>.
+          El estado quedará automáticamente como <strong>publicada</strong>.
+        </ion-note>
+
+        <ion-note color="warning" *ngIf="perfil?.rol === 'vecino'">
+          Estás creando una {{ isActividad ? 'actividad' : 'proyecto' }} como <strong>vecino</strong>.
+          Tu publicación quedará con estado <strong>pendiente</strong> hasta ser aprobada por un administrador.
+        </ion-note>
+      </ion-card-content>
     </ion-card>
 
+    <!-- 🔹 Formulario -->
     <form [formGroup]="proyectoForm" (ngSubmit)="generarProyecto()">
       <!-- Tipo de publicación -->
       <ion-item class="tipo-publicacion" lines="none">

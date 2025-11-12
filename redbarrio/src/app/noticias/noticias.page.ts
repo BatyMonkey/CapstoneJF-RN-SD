@@ -9,6 +9,7 @@ import { Router, RouterModule } from '@angular/router';
 // Vuelve la importación de createClient y User para la autenticación
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js'; 
 import { environment } from 'src/environments/environment';
+import { SupabaseService } from 'src/app/services/supabase.service';
 
 // Definición de la interfaz para la noticia
 interface Noticia {
@@ -38,13 +39,11 @@ export class NoticiasPage implements OnInit {
   usuarioActual: User | null = null; // Para guardar el usuario
 
   constructor(
-    private router: Router
+    private router: Router, 
+    private supabaseService: SupabaseService
   ) {
     // Inicialización directa del cliente (versión funcional)
-    this.supabase = createClient(
-      environment.supabaseUrl,
-      environment.supabaseAnonKey
-    );
+    this.supabase = this.supabaseService.client;
   }
 
   ngOnInit() {

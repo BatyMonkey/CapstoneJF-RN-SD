@@ -6,6 +6,7 @@ import { AuthGuard } from './core/auth-guard';
 const routes: Routes = [
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
 
+  // ===== Auth =====
   {
     path: 'auth/login',
     loadComponent: () =>
@@ -14,21 +15,41 @@ const routes: Routes = [
   {
     path: 'auth/register',
     loadComponent: () =>
-      import('./auth/register/register.page').then((c) => c.RegisterPage), // 👈 Debe existir EXACTAMENTE este export
+      import('./auth/register/register.page').then((c) => c.RegisterPage),
   },
+
+  // 🔁 Callback para Supabase (web/dev). Debe existir el componente.
   {
-    path: 'solicitar',
-    canActivate: [AuthGuard],
+    path: 'auth/callback',
     loadComponent: () =>
-      import('./certificados/solicitar/solicitar.page').then(
-        (c) => c.SolicitarCertificadoPage
+      import('./auth/auth-callback/auth-callback.page').then(
+        (m) => m.AuthCallbackPage
       ),
   },
+
+  // ✅ Ruta ASCII para el form de nueva contraseña
+  {
+    path: 'auth/recuperar-contrasena',
+    loadComponent: () =>
+      import('./auth/update-password/update-password.page').then(
+        (m) => m.UpdatePasswordPage
+      ),
+  },
+  // 🔀 Redirect si quedó algún link con "ñ"
+  {
+    path: 'auth/recuperar-contraseña',
+    redirectTo: 'auth/recuperar-contrasena',
+    pathMatch: 'full',
+  },
+
+  // ===== Pagos / Retorno Webpay =====
   {
     path: 'pago-retorno',
     loadComponent: () =>
       import('./pago-retorno/pago-retorno.page').then((m) => m.PagoRetornoPage),
   },
+
+  // ===== Noticias =====
   {
     path: 'noticias/crear',
     loadComponent: () =>
@@ -43,6 +64,8 @@ const routes: Routes = [
         (m) => m.DetalleNoticiaPage
       ),
   },
+
+  // ===== Votaciones =====
   {
     path: 'votacion/:id',
     canActivate: [AuthGuard],
@@ -56,26 +79,57 @@ const routes: Routes = [
         (m) => m.VotacionesListPage
       ),
   },
+
+  // ===== Certificados / Solicitudes =====
+  {
+    path: 'solicitar',
+    canActivate: [AuthGuard],
+    loadComponent: () =>
+      import('./certificados/solicitar/solicitar.page').then(
+        (c) => c.SolicitarCertificadoPage
+      ),
+  },
   {
     path: 'solicitud',
     loadComponent: () =>
       import('./solicitud/solicitud.page').then((m) => m.SolicitudPage),
   },
+
+  // ===== Perfil =====
   {
-    path: 'perfil', // o /cuenta
-    // Agrega el AuthGuard para proteger el perfil
+    path: 'perfil',
     canActivate: [AuthGuard],
     loadComponent: () =>
       import('./perfil/perfil.page').then((m) => m.PerfilPage),
   },
+
+  // ===== Generar (admin/vecino donde aplique) =====
   {
     path: 'generar/proyecto',
     canActivate: [AuthGuard],
-    data: { roles: ['administrador'] }, // solo permite a usuario de tipo "administrador"
+    data: { roles: ['administrador', 'vecino'] },
     loadComponent: () =>
       import(
         './generar/proyecto/generar-proyecto/generar-proyecto.component'
       ).then((m) => m.GenerarProyectoComponent),
+  },
+  {
+    path: 'generar/votacion',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador'] },
+    loadComponent: () =>
+      import('./generar-votacion/generar-votacion.page').then(
+        (m) => m.GenerarVotacionPage
+      ),
+  },
+
+  // ===== Dashboard / Espacios =====
+  {
+    path: 'dashboard',
+    loadComponent: () =>
+      import('./dashboard/dashboard.component').then(
+        (m) => m.DashboardComponent
+      ),
   },
   {
     path: 'espacios',
@@ -97,22 +151,8 @@ const routes: Routes = [
         (m) => m.DetalleEspacioPage
       ),
   },
-  {
-    path: 'generar/votacion',
-    canActivate: [AuthGuard],
-    data: { roles: ['administrador'] },
-    loadComponent: () =>
-      import('./generar-votacion/generar-votacion.page').then(
-        (m) => m.GenerarVotacionPage
-      ),
-  },
-  {
-    path: 'auth/recuperar-contrasena',
-    loadComponent: () =>
-      import('./auth/update-password/update-password.page').then(
-        (m) => m.UpdatePasswordPage
-      ),
-  },
+
+  // ===== Inscripción =====
   {
     path: 'inscripcion',
     children: [
@@ -133,12 +173,57 @@ const routes: Routes = [
     ],
   },
 
+  // ===== Admin =====
+  {
+    path: 'admin/solicitudes',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador'] },
+    loadComponent: () =>
+      import('./admin/solicitudes/solicitudes.page').then(
+        (m) => m.SolicitudesPage
+      ),
+  },
+  {
+    path: 'admin/actividades',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador'] },
+    loadComponent: () =>
+      import('./admin/actividades/actividades.page').then(
+        (m) => m.ActividadesPage
+      ),
+  },
+  {
+    path: 'admin/proyectos',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador'] },
+    loadComponent: () =>
+      import('./admin/proyectos/proyectos.page').then(
+        (m) => m.ProyectosPage
+      ),
+  },
+  {
+    path: 'admin/gestiones',
+    loadComponent: () =>
+      import('./admin/gestiones/gestiones.page').then((m) => m.GestionesPage),
+  },
+  {
+    path: 'admin/auditoria',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador'] },
+    loadComponent: () =>
+      import('./admin/auditoria/auditoria.page').then(
+        (m) => m.AuditoriaPage
+      ),
+  },
+
+  // ===== Home (protegido) =====
   {
     path: 'home',
     canActivate: [AuthGuard],
     loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
   },
 
+  // ===== Fallback =====
   { path: '**', redirectTo: 'auth/login' },
 ];
 

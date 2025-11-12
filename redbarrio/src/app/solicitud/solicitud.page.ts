@@ -4,10 +4,10 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { IonicModule, AlertController, ToastController, LoadingController } from '@ionic/angular';
 import { EspaciosService } from '../services/espacios.service';
 import { AuthService } from '../auth/auth.service';
-import { supabase } from '../core/supabase.client';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { Browser } from '@capacitor/browser';
+import { SupabaseService } from 'src/app/services/supabase.service';
 
 @Component({
   selector: 'app-solicitud',
@@ -31,7 +31,8 @@ export class SolicitudPage implements OnInit {
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
     private loadingCtrl: LoadingController,
-    private router: Router
+    private router: Router,
+    private supabaseService: SupabaseService
   ) {
     this.solicitudForm = this.fb.group({
       id_espacio: ['', Validators.required],
@@ -79,7 +80,7 @@ export class SolicitudPage implements OnInit {
 
     try {
       // 1️⃣ Crear evento
-      const { data: eventoData, error: eventoError } = await supabase
+      const { data: eventoData, error: eventoError } = await this.supabaseService.client
         .from('evento')
         .insert([{
           titulo: formData.evento_titulo,
@@ -94,7 +95,7 @@ export class SolicitudPage implements OnInit {
 
       // 2️⃣ Crear reserva
       const espacioId = Number(formData.id_espacio);
-      const { data: reservaData, error: reservaError } = await supabase
+      const { data: reservaData, error: reservaError } = await this.supabaseService.client
         .from('reserva')
         .insert([{
           id_espacio: espacioId,
@@ -109,7 +110,7 @@ export class SolicitudPage implements OnInit {
       if (reservaError) throw reservaError;
 
       // 3️⃣ Generar orden de pago local
-      const { data: ordenData, error: ordenError } = await supabase
+      const { data: ordenData, error: ordenError } = await this.supabaseService.client
         .from('orden_pago')
         .insert([{
           id_auth: idUsuario,

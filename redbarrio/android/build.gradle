@@ -1,29 +1,53 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+// android/build.gradle (root)
 
 buildscript {
-    
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.7.2'
+        // ✅ AGP que soporta compileSdk 35
+        classpath 'com.android.tools.build:gradle:8.6.1'
+        // Kotlin compatible con AGP 8.6.x
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24'
+        // (opcional) Google services si tienes google-services.json
         classpath 'com.google.gms:google-services:4.4.2'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
     }
 }
 
-apply from: "variables.gradle"
+// ===== Versiones y SDK compartidos por todos los módulos =====
+ext {
+    compileSdkVersion = 35
+    targetSdkVersion  = 35
+    minSdkVersion     = 24
+
+    // Dependencias usadas en :app
+    androidxAppCompatVersion         = '1.7.0'
+    androidxCoordinatorLayoutVersion = '1.2.0'
+    coreSplashScreenVersion          = '1.0.1'
+    junitVersion                     = '4.13.2'
+    androidxJunitVersion             = '1.1.5'
+    androidxEspressoCoreVersion      = '3.5.1'
+}
 
 allprojects {
     repositories {
         google()
         mavenCentral()
+        flatDir {
+            // Legacy cordova libs (si las usas)
+            dirs 'capacitor-cordova-android-plugins/src/main/libs', 'app/libs'
+        }
     }
 }
 
-task clean(type: Delete) {
+// Unificar SOLO Kotlin jvmTarget a 21
+subprojects { sub ->
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+        kotlinOptions { jvmTarget = "21" }
+    }
+}
+
+tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }

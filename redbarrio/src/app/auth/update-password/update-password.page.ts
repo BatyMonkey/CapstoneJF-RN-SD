@@ -4,19 +4,18 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { AuthService } from '../auth.service';
-import { supabase } from '../../core/supabase.client';
+import { SupabaseService } from 'src/app/services/supabase.service';
 
 @Component({
   standalone: true,
   selector: 'app-update-password',
   templateUrl: './update-password.page.html',
-  styleUrls: ['../login/login.page.scss'], // reutilizas estilo de login
+  styleUrls: ['../login/login.page.scss'],
   imports: [IonicModule, CommonModule, FormsModule],
 })
 export class UpdatePasswordPage implements OnInit {
   newPassword = '';
   confirmPassword = '';
-
   loading = false;
   errorMsg = '';
   successMsg = '';
@@ -24,12 +23,12 @@ export class UpdatePasswordPage implements OnInit {
   constructor(
     private auth: AuthService,
     private router: Router,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private supabaseService: SupabaseService
   ) {}
 
   async ngOnInit() {
-    // Validación temprana: si no hay sesión, el cambio fallará.
-    const { data: s } = await supabase.auth.getSession();
+    const { data: s } = await this.supabaseService.client.auth.getSession();
     if (!s.session) {
       this.errorMsg = 'No se detectó sesión de recuperación. Abre nuevamente el enlace del correo desde este dispositivo.';
     }
@@ -39,20 +38,18 @@ export class UpdatePasswordPage implements OnInit {
     this.errorMsg = '';
     this.successMsg = '';
 
-    if (form.invalid || this.newPassword !== this.confirmPassword) {
-      if (this.newPassword !== this.confirmPassword) {
-        this.errorMsg = 'Las contraseñas no coinciden.';
-      } else {
-        this.errorMsg = 'Por favor, completa la contraseña (mínimo 6 caracteres).';
-      }
+    if (form.invalid || this.newPassword !== this.confirmPassword || this.newPassword.length < 8) {
+      if (this.newPassword !== this.confirmPassword) this.errorMsg = 'Las contraseñas no coinciden.';
+      else if (this.newPassword.length < 8) this.errorMsg = 'La contraseña debe tener al menos 8 caracteres.';
+      else this.errorMsg = 'Por favor, completa la contraseña.';
+      await this.mostrarToast(this.errorMsg, 'danger');
       return;
     }
 
     this.loading = true;
 
     try {
-      // Garantiza sesión antes de actualizar
-      const { data: s } = await supabase.auth.getSession();
+      const { data: s } = await this.supabaseService.client.auth.getSession();
       if (!s.session) {
         this.errorMsg = 'No se detectó sesión de recuperación. Abre nuevamente el enlace del correo desde este dispositivo.';
         await this.mostrarToast(this.errorMsg, 'danger');
@@ -79,7 +76,7 @@ export class UpdatePasswordPage implements OnInit {
       message,
       duration: 3000,
       position: 'top',
-      color: color,
+      color,
     });
     await toast.present();
   }
