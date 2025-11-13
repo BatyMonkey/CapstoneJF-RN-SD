@@ -53,20 +53,43 @@ export class GenerarVotacionPage implements OnInit, ViewWillEnter {
   addOpcion() {
     this.opciones.push({ titulo: '' });
   }
+
   removeOpcion(i: number) {
     if (this.opciones.length > 2) this.opciones.splice(i, 1);
   }
 
-  async pickImage(i: number) {
+  /**
+   * Selección de imagen desde input file (PC y móvil).
+   * Guarda blob/ext/preview en la opción correspondiente.
+   */
+  async onFileSelected(i: number, event: Event) {
     try {
-      const { blob, ext, previewDataUrl } = await this.votosSvc.pickPhoto();
-      this.opciones[i]._blob = blob;
+      const input = event.target as HTMLInputElement;
+      const file = input.files && input.files[0];
+      if (!file) return;
+
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+
+      this.opciones[i]._blob = file;
       this.opciones[i]._ext = ext;
-      this.opciones[i].previewDataUrl = previewDataUrl;
+      this.opciones[i].previewDataUrl = await this.readFileAsDataUrl(file);
+
+      // para poder volver a elegir la misma imagen si quiere
+      input.value = '';
     } catch (e: any) {
       this.errorMsg = e?.message || 'No se pudo obtener la imagen';
       await this.presentToast(this.errorMsg, 'danger');
     }
+  }
+
+  private readFileAsDataUrl(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () =>
+        reject(new Error('No se pudo leer el archivo de imagen'));
+      reader.readAsDataURL(file);
+    });
   }
 
   removeImage(i: number) {

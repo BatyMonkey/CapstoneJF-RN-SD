@@ -23,18 +23,48 @@
 
         <ion-item class="field">
           <ion-label position="stacked">Descripción (opcional)</ion-label>
-          <ion-textarea autoGrow="true" rows="3" [(ngModel)]="descripcion"
-            placeholder="Describe brevemente el propósito de esta votación"></ion-textarea>
+          <ion-textarea
+            autoGrow="true"
+            rows="3"
+            [(ngModel)]="descripcion"
+            placeholder="Describe brevemente el propósito de esta votación">
+          </ion-textarea>
         </ion-item>
 
+        <!-- 🔹 Fecha de inicio -->
         <ion-item class="field">
           <ion-label position="stacked">Fecha de inicio</ion-label>
-          <ion-datetime [(ngModel)]="fechaInicio" presentation="date-time" minute-values="0,15,30,45"></ion-datetime>
+
+          <ion-datetime-button datetime="dt-voto-inicio"></ion-datetime-button>
+
+          <ion-modal [keepContentsMounted]="true">
+            <ng-template>
+              <ion-datetime
+                id="dt-voto-inicio"
+                [(ngModel)]="fechaInicio"
+                presentation="date-time"
+                minute-values="0,15,30,45">
+              </ion-datetime>
+            </ng-template>
+          </ion-modal>
         </ion-item>
 
+        <!-- 🔹 Fecha de término -->
         <ion-item class="field">
           <ion-label position="stacked">Fecha de término</ion-label>
-          <ion-datetime [(ngModel)]="fechaFin" presentation="date-time" minute-values="0,15,30,45"></ion-datetime>
+
+          <ion-datetime-button datetime="dt-voto-fin"></ion-datetime-button>
+
+          <ion-modal [keepContentsMounted]="true">
+            <ng-template>
+              <ion-datetime
+                id="dt-voto-fin"
+                [(ngModel)]="fechaFin"
+                presentation="date-time"
+                minute-values="0,15,30,45">
+              </ion-datetime>
+            </ng-template>
+          </ion-modal>
         </ion-item>
 
         <div class="options-header">
@@ -51,28 +81,53 @@
             <ion-input [(ngModel)]="o.titulo" placeholder="Ej: Iluminación de calles"></ion-input>
 
             <ion-label position="stacked" class="ion-margin-top">Descripción</ion-label>
-            <ion-textarea [(ngModel)]="o.descripcion" autoGrow="true" rows="2"
-              placeholder="Detalle breve de la opción"></ion-textarea>
+            <ion-textarea
+              [(ngModel)]="o.descripcion"
+              autoGrow="true"
+              rows="2"
+              placeholder="Detalle breve de la opción">
+            </ion-textarea>
 
             <div class="ion-margin-top img-row">
-              <ion-button size="small" (click)="pickImage(i)" [disabled]="loading">
+              <!-- input de archivo oculto por opción -->
+              <input
+                type="file"
+                accept="image/*"
+                (change)="onFileSelected(i, $event)"
+                #fileInput
+                hidden
+              />
+
+              <ion-button size="small" (click)="fileInput.click()" [disabled]="loading">
                 <ion-icon slot="start" name="image-outline"></ion-icon>
                 Agregar / cambiar foto
               </ion-button>
-              <ion-button size="small" color="medium" fill="outline"
-                (click)="removeImage(i)" *ngIf="o.previewDataUrl || o.image_url" [disabled]="loading">
+
+              <ion-button
+                size="small"
+                color="medium"
+                fill="outline"
+                (click)="removeImage(i)"
+                *ngIf="o.previewDataUrl || o.image_url"
+                [disabled]="loading">
                 Quitar foto
               </ion-button>
             </div>
 
             <!-- Contenedor de imagen de alto fijo para uniformidad -->
             <div class="img-box" *ngIf="o.previewDataUrl || o.image_url">
-              <img [src]="o.previewDataUrl || o.image_url"
-                   style="width:100%;height:100%;object-fit:cover;border-radius:8px;" />
+              <img
+                [src]="o.previewDataUrl || o.image_url"
+                style="width:100%;height:100%;object-fit:cover;border-radius:8px;" />
             </div>
 
-            <ion-button slot="end" fill="clear" color="danger"
-              (click)="removeOpcion(i)" [disabled]="opciones.length <= 2 || loading" aria-label="Eliminar opción">
+            <ion-button
+              slot="end"
+              fill="clear"
+              color="danger"
+              (click)="removeOpcion(i)"
+              [disabled]="opciones.length <= 2 || loading"
+              aria-label="Eliminar opción">
               <ion-icon name="trash-outline"></ion-icon>
             </ion-button>
           </ion-item>

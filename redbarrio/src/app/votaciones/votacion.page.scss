@@ -1,8 +1,8 @@
 :host {
   color-scheme: light;
   --rb-primary: #2563eb;
-  --rb-primary-10: rgba(37, 99, 235, 0.10);
-  --rb-primary-20: rgba(37, 99, 235, 0.20);
+  --rb-primary-10: rgba(37, 99, 235, 0.1);
+  --rb-primary-20: rgba(37, 99, 235, 0.2);
   --rb-bg: #f8fafc;
   --rb-text: #0f172a;
 
@@ -10,15 +10,49 @@
   --ion-text-color: var(--rb-text);
 }
 
-/* Header gradient consistente con el resto */
+/* Header gradient */
 .rb-header ion-toolbar {
   --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
   --color: #fff;
   --border-color: transparent;
 }
 
+/* Sub-header “Detalle de votación” + chip estado */
+.detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;  // antes estaba space-between
+  gap: 0.5rem;                  // separación pequeña entre texto y pill
+  margin: 8px 0 12px;
+  padding: 0 25px;
+}
+
+.detail-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.detail-status {
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #e5f9eb;
+  color: #15803d;
+
+  &.state-pending {
+    background: #eff6ff;
+    color: #1d4ed8;
+  }
+  &.state-closed {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+}
+
 /* Tarjeta principal */
-ion-card {
+.card {
   background: #fff;
   border-radius: 18px;
   border: 1px solid rgba(2, 6, 23, 0.06);
@@ -28,100 +62,369 @@ ion-card {
   ion-card-header {
     background: #fff;
     border-bottom: 1px solid rgba(2, 6, 23, 0.06);
+  }
+}
 
-    ion-card-title {
-      font-weight: 800;
-      color: var(--rb-text);
-    }
+.card-header-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
 
-    ion-card-subtitle {
-      color: #64748b;
-      font-weight: 500;
+.card-header-text {
+  flex: 1;
+}
+
+ion-card-title {
+  font-weight: 800;
+  color: var(--rb-text);
+  font-size: 1.1rem;
+}
+
+ion-card-subtitle {
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Pill “Votación” misma línea que título, color listado */
+.type-badge {
+  align-self: flex-start;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* Resumen participación / tiempo */
+.summary-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 12px;
+  margin-bottom: 16px;
+}
+
+.summary-card {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.summary-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  ion-icon {
+    font-size: 1.2rem;
+  }
+
+  &.participation {
+    background: #eff6ff;
+    ion-icon {
+      color: #2563eb;
     }
   }
 
-  ion-card-content {
-    padding-top: 12px;
-
-    ion-chip {
-      margin-bottom: 8px;
-      --color: var(--rb-text);
-      --background: var(--rb-primary-10);
-      --border-color: var(--rb-primary-20);
+  &.time {
+    background: #fef9c3;
+    ion-icon {
+      color: #ca8a04;
     }
   }
 }
 
-/* Lista de opciones con barra de progreso */
-ion-list {
+.summary-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-label {
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.summary-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Título opciones */
+.options-title {
+  margin: 8px 2px 4px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Lista de opciones */
+.opciones {
   background: transparent;
-
-  ion-item {
-    position: relative;
-    overflow: hidden;
-    margin: 10px 6px;
-    border-radius: 14px;
-    background: #fff;
-    --background: #fff;
-    border: 1px solid rgba(2, 6, 23, 0.06);
-    box-shadow: 0 6px 14px rgba(2, 6, 23, 0.06);
-
-    /* Barra de progreso (usa la var --pct: "66%") */
-    &::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      width: var(--pct, 0%);      /* ← set por HTML */
-      background: var(--bar-color, rgba(37,99,235,0.14));
-      transition: width .35s ease;
-      z-index: 0;
-    }
-
-    ion-label,
-    ion-button {
-      position: relative;
-      z-index: 1;
-    }
-
-    ion-label {
-      h2 {
-        margin: 2px 0 4px 0;
-        font-weight: 800;
-        color: var(--rb-text);
-      }
-      p {
-        margin: 0;
-        color: #64748b;
-        font-weight: 600;
-      }
-    }
-
-    ion-button {
-      border-radius: 12px;
-      box-shadow: 0 10px 18px var(--rb-primary-10);
-      --padding-start: 14px;
-      --padding-end: 14px;
-    }
-  }
-
-  /* Paleta por fila (colores cálidos/diferenciados) */
-  ion-item:nth-child(6n + 1) { --bar-color: rgba(37, 99, 235, .18); }  /* azul */
-  ion-item:nth-child(6n + 2) { --bar-color: rgba(34, 197, 94, .18); }  /* verde */
-  ion-item:nth-child(6n + 3) { --bar-color: rgba(234, 179, 8, .20); }  /* ámbar */
-  ion-item:nth-child(6n + 4) { --bar-color: rgba(168, 85, 247, .18); } /* púrpura */
-  ion-item:nth-child(6n + 5) { --bar-color: rgba(20, 184, 166, .18); } /* teal */
-  ion-item:nth-child(6n + 6) { --bar-color: rgba(244, 63, 94, .18); }  /* rosado */
 }
 
-/* Mensaje de voto registrado */
+.option-card {
+  position: relative;
+  overflow: hidden;
+  margin: 10px 4px;
+  border-radius: 18px;
+  background: #ffffff;
+  --background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+
+  /* barra de porcentaje de fondo */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: var(--pct, 0%);
+    background: rgba(37, 99, 235, 0.08);
+    transition: width 0.35s ease;
+    z-index: 0;
+  }
+
+  ion-label,
+  .radio-wrap,
+  .pct-badge {
+    position: relative;
+    z-index: 1;
+  }
+
+  &.is-selected {
+    border-color: #22d3ee;
+    box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.8);
+    background: #ecfeff;
+  }
+}
+
+/* radio circle estilo prototipo */
+.radio-wrap {
+  margin-right: 8px;
+}
+
+.radio-outer {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  border: 2px solid #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+}
+
+.option-card.is-selected .radio-outer {
+  border-color: #2563eb;
+}
+
+.radio-inner {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #2563eb;
+}
+
+.option-label {
+  width: 100%;
+}
+
+.option-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.option-title {
+  margin: 2px 0 4px 0;
+  font-weight: 700;
+  color: var(--rb-text);
+  font-size: 0.95rem;
+}
+
+.option-desc {
+  margin: 0 0 8px 0;
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.pct-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #0f172a;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #e5f2ff;
+}
+
+/* Imagen 16:9 */
+.img-box {
+  margin-top: 0.5rem;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 0;
+  border: none;
+  background: #f3f4f6;
+}
+
+.img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.option-meta {
+  margin: 6px 0 0;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* Nota */
 ion-note {
   display: inline-block;
   margin-top: 8px;
   font-weight: 700;
 }
 
+/* Footer botón Confirmar voto */
+.confirm-footer {
+  margin-top: 16px;
+}
+
+.confirm-btn {
+  --background: linear-gradient(90deg, #facc15, #fbbf24);
+  --background-activated: linear-gradient(90deg, #eab308, #f59e0b);
+  --background-hover: linear-gradient(90deg, #fde047, #facc15);
+  --color: #ffffff;
+  --border-radius: 999px;
+  --box-shadow: 0 10px 24px rgba(251, 191, 36, 0.55);
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0.2px;
+}
+
+.confirm-btn[disabled] {
+  --background: #e5e7eb;
+  --color: #9ca3af;
+  --box-shadow: none;
+}
+
+/* Modal detalle (se mantiene muy parecido a tu versión) */
+
+.bar {
+  margin: 8px 0 6px 0;
+  height: 8px;
+  border-radius: 6px;
+  background: #e5e7eb;
+  overflow: hidden;
+
+  .fill {
+    height: 100%;
+    background: var(--ion-color-primary);
+    width: var(--pct);
+    transition: width 0.25s ease;
+  }
+
+  &.big {
+    height: 12px;
+    border-radius: 10px;
+  }
+}
+
+.detail-stats {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.op-dialog {
+  --backdrop-opacity: 0;
+  --background: transparent;
+  --box-shadow: none;
+  --ion-background-color: transparent;
+}
+
+ion-modal.op-dialog::part(backdrop) {
+  background: transparent !important;
+  pointer-events: auto !important;
+}
+
+.op-dialog .modal-shadow {
+  display: none !important;
+}
+
+.op-dialog .modal-wrapper {
+  position: fixed !important;
+  inset: 0 !important;
+  background: transparent !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 16px !important;
+  box-shadow: none !important;
+}
+
+.op-dialog .modal-wrapper .ion-page {
+  background: transparent !important;
+  color-scheme: light;
+}
+
+.op-dialog ion-content {
+  --background: transparent !important;
+  overscroll-behavior: contain;
+}
+
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  z-index: 1;
+}
+
+.dialog-card {
+  width: min(560px, 92vw);
+  max-height: 85vh;
+  border-radius: 16px;
+  overflow: hidden auto;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  pointer-events: auto;
+}
+
+.detail-img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #000;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
 /* iOS tweaks */
-.ios ion-item {
-  --padding-start: 12px;
-  --inner-padding-end: 12px;
+.ios .option-card {
+  --padding-start: 10px;
+  --inner-padding-end: 10px;
 }

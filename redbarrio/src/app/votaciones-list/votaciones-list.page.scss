@@ -1,10 +1,9 @@
 :host {
   color-scheme: light;
 
-  /* Mantén la misma paleta que en el detalle */
-  --rb-primary: #2563eb;
-  --rb-primary-10: rgba(37, 99, 235, 0.10);
-  --rb-primary-20: rgba(37, 99, 235, 0.20);
+  --rb-primary: #06b6d4;
+  --rb-primary-soft: #e0f2fe;
+  --rb-primary-strong: #0284c7;
   --rb-bg: #f8fafc;
   --rb-text: #0f172a;
 
@@ -12,125 +11,290 @@
   --ion-text-color: var(--rb-text);
 }
 
-/* Header gradient consistente */
+/* Header con gradiente similar al home */
 .rb-header ion-toolbar {
-  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
+  --background: linear-gradient(90deg, #06b6d4 0%, #22d3ee 100%);
   --color: #fff;
   --border-color: transparent;
 }
 
-/* Separación entre cajas */
-.section {
-  margin-bottom: 18px;
+/* Quita línea inferior por defecto */
+ion-header::after {
+  background: none !important;
+  display: none !important;
 }
 
-/* Header de cada acordeón (claro, no oscuro) */
-.section-header {
-  --background: #ffffff;
-  --color: var(--rb-text);
-  --padding-start: 14px;
-  --padding-end: 12px;
-  --min-height: 56px;
-  border: 1px solid rgba(2, 6, 23, 0.06);
-  border-radius: 14px;
-  box-shadow: 0 10px 22px rgba(2, 6, 23, 0.06);
+/* ===============================
+   Layout general
+   =============================== */
+.vot-content {
+  --background: var(--rb-bg);
+}
 
-  ion-icon[slot="start"] {
-    font-size: 20px;
-    margin-right: 8px;
-    opacity: .9;
-  }
+.vot-wrapper {
+  padding: 1rem 1.25rem 2.5rem 1.25rem;
+}
 
-  ion-label {
+.vot-header {
+  margin-bottom: 0.85rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
     font-weight: 700;
-    letter-spacing: .2px;
+    color: #1e293b;
+  }
+}
+
+/* ===============================
+   Tabs Activas / Finalizadas
+   =============================== */
+.vot-tabs {
+  display: flex;
+  background: #ffffff;
+  border-radius: 999px;
+  padding: 4px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+  margin-bottom: 1.2rem;
+}
+
+.vot-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  border-radius: 999px;
+  padding: 0.45rem 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  .badge {
+    min-width: 1.6rem;
+    height: 1.15rem;
+    border-radius: 999px;
+    padding: 0 0.4rem;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e2e8f0;
+    color: #0f172a;
+    font-weight: 600;
   }
 
-  .count {
-    --background: rgba(2, 6, 23, 0.10);
-    --color: #111827;
-    height: 24px;
-    border-radius: 999px;
-    padding: 0 10px;
-    font-size: 12px;
+  &.active {
+    background: var(--rb-primary);
+    color: #ffffff;
+    font-weight: 600;
 
-    &.primary {
-      --background: var(--rb-primary-10);
-      --color: var(--rb-text);
-      font-weight: 700;
+    .badge {
+      background: rgba(255, 255, 255, 0.25);
+      color: #ffffff;
     }
   }
 }
 
-/* Contenido desplegado: fondo igual al resto de la app */
-.section-content {
-  padding: 10px 2px 2px;
-  background: transparent;
+/* ===============================
+   Listas y estados
+   =============================== */
+.vot-list {
+  margin-top: 0.4rem;
 }
 
-/* Estado de carga */
 .loading {
   display: grid;
   place-items: center;
-  padding: 18px 0;
+  padding: 1rem 0;
 }
 
-/* Tarjetas igual que en la vista de detalle */
-.card {
-  background: #fff;
-  border-radius: 18px;
-  border: 1px solid rgba(2, 6, 23, 0.06);
-  box-shadow: 0 10px 26px rgba(2, 6, 23, 0.08);
-  overflow: hidden;
-  margin: 12px 4px;
-
-  ion-card-header {
-    background: #fff;
-    border-bottom: 1px solid rgba(2, 6, 23, 0.06);
-
-    .card-title {
-      font-weight: 800;
-      color: var(--rb-text);
-    }
-
-    .card-subtitle {
-      color: #64748b;
-      font-weight: 500;
-    }
-  }
-
-  ion-card-content {
-    padding-top: 12px;
-
-    .meta {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: #f3f4f6;
-      color: #475569;
-      font-weight: 600;
-
-      ion-icon { font-size: 18px; opacity: .9; }
-
-      &.primary {
-        background: var(--rb-primary-10);
-        color: var(--rb-text);
-        border: 1px solid var(--rb-primary-20);
-      }
-    }
-  }
+.error-text {
+  margin: 0.35rem 0 0.15rem;
+  font-size: 0.85rem;
 }
 
 .empty {
   text-align: center;
-  margin: 18px 0 6px;
+  margin: 1.2rem 0 0.5rem;
+  font-size: 0.9rem;
 }
 
-/* iOS pequeños ajustes */
-.ios .section-header {
-  --min-height: 52px;
-  --padding-start: 12px;
-  --padding-end: 10px;
+/* ===============================
+   Tarjetas base
+   =============================== */
+.vot-card {
+  border-radius: 1.1rem;
+  margin: 0.65rem 0;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.15);
+  border: none;
+  overflow: hidden;
+  cursor: pointer;
+
+  ion-icon {
+    pointer-events: none;
+  }
+}
+
+.vot-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem 0.75rem;
+
+  .titles {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .title {
+    margin: 0 0 0.25rem 0;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .subtitle {
+    margin: 0;
+    font-size: 0.87rem;
+    line-height: 1.35;
+  }
+
+  ion-icon {
+    font-size: 1.2rem;
+    margin-top: 2px;
+  }
+}
+
+.vot-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem 0.9rem;
+
+  .left {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+
+    ion-icon {
+      font-size: 1.05rem;
+    }
+  }
+
+  .pills {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .pill {
+    padding: 0.28rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+}
+
+/* ===============================
+   Tarjetas ACTIVAS (mock azul)
+   =============================== */
+.vot-card--active {
+  background: linear-gradient(135deg, #06b6d4, #22d3ee);
+  color: #ffffff;
+
+  .vot-card-header {
+    .title {
+      color: #ffffff;
+    }
+
+    .subtitle {
+      color: rgba(255, 255, 255, 0.88);
+      font-weight: 500;
+    }
+
+    ion-icon {
+      color: #ffffff;
+    }
+  }
+
+  .vot-card-footer--active {
+    .left {
+      color: rgba(255, 255, 255, 0.9);
+
+      ion-icon {
+        color: #ffffff;
+      }
+    }
+
+    .pill {
+      background: rgba(15, 23, 42, 0.14);
+      color: #ffffff;
+    }
+  }
+}
+
+/* ===============================
+   Tarjetas FINALIZADAS (gris + pill amarillo)
+   =============================== */
+.vot-card--finished {
+  /* gris/plateado tipo mock */
+  background: #4b5563; /* slate-600 aprox */
+  color: #e5e7eb;
+
+  .vot-card-header {
+    .title {
+      color: #f9fafb;
+    }
+
+    .subtitle {
+      color: #d1d5db;
+    }
+
+    ion-icon {
+      color: #e5e7eb;
+    }
+  }
+
+  .vot-card-footer--finished {
+    justify-content: flex-start;
+
+    .left {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    ion-icon {
+      color: #facc15;
+      font-size: 1.1rem;
+    }
+
+    /* pill amarillo tipo botón */
+    .pill-finished {
+      background: #facc15;
+      color: #111827;
+      border-radius: 999px;
+      padding: 0.3rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(180, 83, 9, 0.45);
+      white-space: nowrap;
+    }
+  }
+}
+
+/* Ajustes pequeños para iOS */
+.ios .vot-wrapper {
+  padding-top: 1rem;
 }

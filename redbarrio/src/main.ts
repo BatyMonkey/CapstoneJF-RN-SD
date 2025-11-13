@@ -22,6 +22,9 @@ import {
   barChartOutline,
   bulbOutline,
   megaphoneOutline,
+  peopleOutline,
+  timeOutline,
+  checkmarkCircleOutline,
 } from 'ionicons/icons';
 
 // registra iconos que usas en footer + home
@@ -37,6 +40,9 @@ addIcons({
   'bar-chart-outline': barChartOutline,
   'bulb-outline': bulbOutline,
   'megaphone-outline': megaphoneOutline,
+  'people-outline': peopleOutline,
+  'time-outline': timeOutline,
+  'checkmark-circle-outline': checkmarkCircleOutline,
 });
 
 bootstrapApplication(AppComponent, {

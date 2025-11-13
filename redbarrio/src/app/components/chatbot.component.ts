@@ -1,3 +1,4 @@
+// src/app/components/chatbot.component.ts
 import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -15,29 +16,14 @@ import {
 } from '../core/certificado';
 import { environment } from 'src/environments/environment';
 
-interface ChatMessage {
-  from: 'user' | 'bot';
-  text: string;
-  at: Date;
-}
-
+interface ChatMessage { from: 'user' | 'bot'; text: string; at: Date; }
 interface ChatbotResponse {
-  reply: string;
-  command?: string;
-  payload?: any;
-  ask_again?: boolean;
-  next_action?: string;
-  intent?: string;
-  summary?: string;
+  reply: string; command?: string; payload?: any; ask_again?: boolean;
+  next_action?: string; intent?: string; summary?: string;
 }
-
 interface Noticia {
-  id: number;
-  titulo: string;
-  url_foto: string[] | null;
-  nombre_autor: string | null;
-  fecha_creacion: string;
-  parrafos: string[] | null;
+  id: number; titulo: string; url_foto: string[] | null;
+  nombre_autor: string | null; fecha_creacion: string; parrafos: string[] | null;
 }
 
 @Component({
@@ -48,15 +34,10 @@ interface Noticia {
   styleUrls: ['./chatbot.component.scss'],
 })
 export class ChatbotComponent implements OnInit {
-  // ====== FIX: estado de visibilidad requerido por tu HTML ======
   @Input() startOpen = false;
-  visible = false; // ← usado en *ngIf del HTML
-  openChat() {
-    this.visible = true;
-  } // ← para el botón flotante
-  closeChat() {
-    this.visible = false;
-  } // ← para el botón "Cerrar"
+  visible = false;
+  openChat() { this.visible = true; }
+  closeChat() { this.visible = false; }
 
   messages: ChatMessage[] = [];
   inputText = '';
@@ -70,172 +51,187 @@ export class ChatbotComponent implements OnInit {
 
   private lastVotesCache: any[] = [];
   private lastSpacesCache: any[] = [];
-
-  // Noticias
   private lastNewsCache: Noticia[] = [];
-
-  // Proyectos / Actividades
   private lastProjectsOnlyCache: any[] = [];
   private lastActivitiesOnlyCache: any[] = [];
-  private lastScopeForPostulacion:
-    | 'proyectos'
-    | 'actividades'
-    | 'ambos'
-    | null = null;
+  private lastScopeForPostulacion: 'proyectos' | 'actividades' | 'ambos' | null = null;
 
-  // Cortafuegos de heurísticas
-  private suppressHeuristicsOnce = false; // resumen noticia
-  private suppressHeuristicsPostOnce = false; // mensaje de postulación
-  private suppressHeuristicsListOnce = false; // evita doble listado (noticias/proyectos/actividades)
+  private suppressHeuristicsOnce = false;
+  private suppressHeuristicsPostOnce = false;
+  private suppressHeuristicsListOnce = false;
 
   private lastUserText = '';
   private certWebhookUrl = (environment as any).N8N_WEBHOOK_URL || '';
-  private openaiKeyForN8N: string =
-    (environment as any).OPENAI_KEY_FOR_N8N || '';
+  private openaiKeyForN8N: string = (environment as any).OPENAI_KEY_FOR_N8N || '';
 
-  constructor(private chatbot: ChatbotService, private auth: AuthService) {
-    console.log('🧩 ChatbotComponent constructor ejecutado');
+  // ====== logger ======
+  private dbg(...args: any[]) { console.log('[Chatbot]', ...args); }
+  private printSample(tag: string, rows: any[]) {
+    if (!rows?.length) { this.dbg(tag, '0 rows'); return; }
+    const first = rows[0];
+    const preview: any = {};
+    Object.keys(first).slice(0, 12).forEach(k => preview[k] = first[k]);
+    this.dbg(`${tag} sample[0]:`, preview);
   }
 
+  constructor(private chatbot: ChatbotService, private auth: AuthService) {}
+
   async ngOnInit() {
-    console.log('🚀 ChatbotComponent → ngOnInit ejecutado');
-    console.log('startOpen (recibido desde Home) =', this.startOpen);
-
-    if (this.startOpen) {
-      this.visible = true;
-      console.log('✅ visible = true (desde ngOnInit)');
-    } else {
-      console.log('❌ startOpen es FALSE, no se mostrará el chat');
-    }
-
-    await this.cargarPerfil();
-    console.log('🟢 Perfil cargado, visible =', this.visible);
-    // ====== FIX: abrir si viene desde input ======
     if (this.startOpen) this.visible = true;
-
     await this.cargarPerfil();
 
     this.messages = [
-      {
-        from: 'bot',
-        text: `Hola ${
-          this.displayName || 'vecino/a'
-        } 👋 soy el asistente de RedBarrio. ¿Qué necesitas?`,
-        at: new Date(),
-      },
-      {
-        from: 'bot',
-        text: `Puedo ayudarte solo con cosas de <b>RedBarrio</b> (certificados, votaciones, noticias, <b>proyectos</b>, <b>actividades</b>, espacios y datos de tu cuenta).`,
-        at: new Date(),
-      },
+      { from: 'bot', text: `Hola ${this.displayName || 'vecino/a'} 👋 soy el asistente de RedBarrio. ¿Qué necesitas?`, at: new Date() },
+      { from: 'bot', text: `Puedo ayudarte con <b>certificados</b>, <b>votaciones</b>, <b>noticias</b>, <b>proyectos</b>, <b>actividades</b>, <b>espacios</b> y tus datos.`, at: new Date() },
     ];
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      this.dbg('auth.getUser():', user?.id ? { id: user.id, email: (user as any)?.email } : 'ANON');
+    } catch (e) {
+      this.dbg('auth.getUser() error:', e);
+    }
   }
 
   private async cargarPerfil() {
     try {
-      const perfil = await this.auth.miPerfil();
-      if (perfil) {
-        this.perfil = perfil;
-        const pAny = perfil as any;
-        this.userId = pAny.id_auth || pAny.user_id || pAny.id_usuario || 'anon';
-        this.displayName =
-          pAny.nombre ||
-          pAny.primer_nombre ||
-          (pAny as any).full_name ||
-          'vecino/a';
-        console.log('[Chatbot] perfil desde auth.miPerfil():', perfil);
+      const p = (await this.auth.miPerfil()) as any;
+      if (p) {
+        this.perfil = p;
+        this.userId = p.id_auth || p.user_id || p.id_usuario || 'anon';
+        this.displayName = p.nombre || p.primer_nombre || p.full_name || 'vecino/a';
+        this.dbg('perfil miPerfil():', { userId: this.userId, displayName: this.displayName });
         return;
       }
-
-      const perfilLocal = this.auth.getUsuarioForzado?.();
-      if (perfilLocal) {
-        this.perfil = perfilLocal as any;
-        const pAny = perfilLocal as any;
-        this.userId = pAny.id_auth || pAny.user_id || pAny.id_usuario || 'anon';
-        this.displayName =
-          pAny.nombre ||
-          pAny.primer_nombre ||
-          (pAny as any).full_name ||
-          'vecino/a';
-        console.log('[Chatbot] perfil desde getUsuarioForzado():', perfilLocal);
+      const q = this.auth.getUsuarioForzado?.() as any;
+      if (q) {
+        this.perfil = q;
+        this.userId = q.id_auth || q.user_id || q.id_usuario || 'anon';
+        this.displayName = q.nombre || q.primer_nombre || q.full_name || 'vecino/a';
+        this.dbg('perfil getUsuarioForzado():', { userId: this.userId, displayName: this.displayName });
         return;
       }
-
-      this.perfil = null;
-      this.userId = 'anon';
-      this.displayName = 'vecino/a';
-      console.log('[Chatbot] sin perfil (anon)');
+      this.perfil = null; this.userId = 'anon'; this.displayName = 'vecino/a';
+      this.dbg('sin perfil (anon)');
     } catch (e) {
-      console.warn('[Chatbot] no pude cargar perfil:', e);
-      this.perfil = null;
-      this.userId = 'anon';
-      this.displayName = 'vecino/a';
+      this.perfil = null; this.userId = 'anon'; this.displayName = 'vecino/a';
+      this.dbg('cargarPerfil() error:', e);
     }
   }
 
-  // ====== QUICK BUTTONS ======
+  // ===== Quick buttons =====
   clickQuick(kind: 'faq' | 'cert' | 'votacion' | 'noticias') {
     if (kind === 'faq') {
-      this.pushBot(
-        'Puedes preguntarme por certificados, votaciones activas, noticias, proyectos, actividades, espacios y tus datos básicos 👌'
-      );
+      this.pushBot('Puedes pedirme: ver noticias, ver proyectos, ver actividades, ver votaciones, ver espacios, o sacar certificado 👌');
       return;
     }
     if (kind === 'cert') {
-      this.pushUser('Quiero un certificado de residencia');
-      this.sendTextToBot('Quiero un certificado de residencia');
+      const text = 'Quiero un certificado de residencia';
+      this.pushUser(text);
+      this.sendTextToBot(text);
       return;
     }
     if (kind === 'votacion') {
-      this.pushUser('¿Qué votaciones hay activas?');
-      this.sendTextToBot('¿Qué votaciones hay activas?');
+      const text = '¿Qué votaciones hay activas?';
+      this.pushUser(text);
+      this.sendTextToBot(text);
       return;
     }
     if (kind === 'noticias') {
-      this.pushUser('ver noticias');
-      this.sendTextToBot('ver noticias');
+      const text = 'ver noticias';
+      this.pushUser(text);
+      this.sendTextToBot(text);
       return;
     }
   }
 
-  // ====== INPUT ======
+  // ===== Input =====
+    // ===== Input =====
   send() {
     const text = this.inputText.trim();
     if (!text) return;
+
     this.lastUserText = text;
     this.pushUser(text);
 
-    // pre-intents locales
-    if (this.tryLocalOrdinalActions(text)) {
-      console.log(
-        '[Chatbot] (pre-intent) disparé acción local por ordinal (resumen noticia)'
-      );
-    }
-    if (this.tryLocalPostulacionActions(text)) {
-      console.log(
-        '[Chatbot] (pre-intent) disparé acción local por ordinal (postulación)'
-      );
-    }
-
-    this.inputText = '';
-    this.sendTextToBot(text);
-  }
-
-  private tryLocalOrdinalActions(text: string): boolean {
-    const t = text
+    const low = text
       .toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .trim();
+
+    // ===== atajos directos (listados desde la app, sin pasar por n8n) =====
+
+    // Noticias
+    if (
+      low.includes('ver noticias') ||
+      low === 'noticias' ||
+      low.includes('ultimas noticias') ||
+      low.includes('últimas noticias')
+    ) {
+      this.inputText = '';
+      this.listarNoticiasDesdeChat();
+      return;
+    }
+
+    // Espacios
+    if (
+      low.includes('ver espacios') ||
+      low.includes('espacios disponibles') ||
+      low.includes('espacios comunitarios')
+    ) {
+      this.inputText = '';
+      this.listarEspaciosDesdeChat();
+      return;
+    }
+
+    // Actividades
+    if (
+      (low.includes('ver actividades') && !low.includes('proyectos')) ||
+      low === 'actividades'
+    ) {
+      this.inputText = '';
+      this.listarProyectosOActividadesDesdeChat('actividades');
+      return;
+    }
+
+    // Votaciones activas
+    const askActiveVotes =
+      low.includes('votaciones activas') ||
+      low.includes('ver votaciones') ||
+      low.includes('hay votaciones') ||
+      low.includes('votaciones disponibles') ||
+      (low.includes('votar') && low.includes('activa'));
+
+    if (askActiveVotes) {
+      this.inputText = '';
+      // texto similar al de n8n
+      this.pushBot('Estas son las votaciones activas (te muestro un resumen):');
+      this.listarVotacionesDesdeChat();
+      return;
+    }
+
+    // ===== manejos locales por ordinal (resumen y mensaje) =====
+    const handledResumen = this.tryLocalOrdinalActions(text);
+    const handledPost   = this.tryLocalPostulacionActions(text);
+
+    this.inputText = '';
+
+    // Si no era resumen/mensaje por número, lo mandamos a n8n (certificados, FAQ, etc.)
+    if (!handledResumen && !handledPost) {
+      this.sendTextToBot(text);
+    }
+  }
+
+
+  private tryLocalOrdinalActions(text: string): boolean {
+    const t = text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
     let m = t.match(/\bresumen(?:\s+de\s+la|\s+de|\s+)\s*(\d+)\b/);
     if (!m) m = t.match(/\bdetalle(?:\s+de\s+la|\s+de|\s+)\s*(\d+)\b/);
-    if (m && m[1]) {
+    if (m?.[1]) {
       const ord = Number(m[1]);
       if (Number.isFinite(ord) && ord > 0) {
-        console.log(
-          '[Chatbot] tryLocalOrdinalActions → resumen/detalle ordinal =',
-          ord
-        );
+        this.dbg('resumen/detalle ordinal (local):', ord);
         this.resumirNoticiaPorOrdinal(ord);
         return true;
       }
@@ -244,34 +240,23 @@ export class ChatbotComponent implements OnInit {
   }
 
   private tryLocalPostulacionActions(text: string): boolean {
-    const t = text
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .trim();
-    const m = t.match(
-      /\b(mensaje|postulacion|postulación)\s*(?:de|para)?\s*(?:la\s*)?(\d+)\b/
-    );
-    if (m && m[2]) {
+    const t = text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+    const m = t.match(/\b(mensaje|postulacion|postulación)\s*(?:de|para)?\s*(?:la\s*)?(\d+)\b/);
+    if (m?.[2]) {
       const ord = Number(m[2]);
       let hintScope: 'proyecto' | 'actividad' | undefined = undefined;
       if (t.includes('proyecto')) hintScope = 'proyecto';
       if (t.includes('actividad')) hintScope = 'actividad';
-      console.log(
-        '[Chatbot] tryLocalPostulacionActions → ord=',
-        ord,
-        'hintScope=',
-        hintScope
-      );
+      this.dbg('postulación ordinal (local):', { ord, hintScope });
       this.sugerirPostulacionPorOrdinal(ord, hintScope);
       return true;
     }
     return false;
   }
 
+  // ===== IA =====
   private sendTextToBot(text: string) {
     this.loading = true;
-
     const body = {
       user_id: this.userId,
       community_id: this.communityId,
@@ -281,30 +266,27 @@ export class ChatbotComponent implements OnInit {
       pending_action: this.pendingAction,
     };
 
-    console.log('[Chatbot] -> envío al webhook de IA:', body);
+    this.dbg('-> sendMessage body:', body);
 
     this.chatbot.sendMessage(body).subscribe({
       next: (res: ChatbotResponse) => {
         this.loading = false;
-        console.log('[Chatbot] <- respuesta de IA (n8n):', res);
+        this.dbg('<- IA response:', res);
 
         const replyText = res.reply || 'No pude responder 😅';
         this.pushBot(replyText);
 
-        if (res.next_action) {
-          console.log('[Chatbot] pending_action =', res.next_action);
-          this.pendingAction = res.next_action;
-        } else {
-          this.pendingAction = null;
-        }
+        // guardar próxima acción (para certificados, etc.)
+        this.pendingAction = res.next_action ?? null;
 
-        const handled = this.handleByCommand(res);
-        if (handled) return;
+        // comandos especiales (listar, resumen ordinal, postulación ordinal, certificado…)
+        if (this.handleByCommand(res)) return;
 
+        // heurísticas solo si no hubo comando
         this.handleByReplyHeuristics(replyText);
       },
-      error: (err) => {
-        console.error('[Chatbot] Error llamando al webhook de IA:', err);
+      error: (e) => {
+        this.dbg('sendMessage error:', e);
         this.pushBot('Ocurrió un error hablando con el asistente.');
         this.loading = false;
       },
@@ -314,450 +296,241 @@ export class ChatbotComponent implements OnInit {
   private handleByCommand(res: ChatbotResponse): boolean {
     switch (res.command) {
       case 'GENERAR_CERTIFICADO_RESIDENCIA':
-        console.log('[Chatbot] comando: emitir certificado');
-        this.emitirCertificadoDesdeChat();
-        return true;
-
+        this.dbg('cmd: GENERAR_CERTIFICADO_RESIDENCIA');
+        this.suppressHeuristicsOnce = true;
+        this.emitirCertificadoDesdeChat(); return true;
       case 'LISTAR_VOTACIONES_ACTIVAS':
-        console.log('[Chatbot] comando: listar votaciones');
-        this.suppressHeuristicsListOnce = true;
-        this.listarVotacionesDesdeChat();
-        return true;
-
+        this.dbg('cmd: LISTAR_VOTACIONES_ACTIVAS');
+        this.suppressHeuristicsListOnce = true; this.listarVotacionesDesdeChat(); return true;
       case 'LISTAR_ESPACIOS':
-        console.log('[Chatbot] comando: listar espacios');
-        this.suppressHeuristicsListOnce = true;
-        this.listarEspaciosDesdeChat();
-        return true;
-
+        this.dbg('cmd: LISTAR_ESPACIOS');
+        this.suppressHeuristicsListOnce = true; this.listarEspaciosDesdeChat(); return true;
       case 'LISTAR_NOTICIAS':
-        console.log('[Chatbot] comando: listar noticias');
-        this.suppressHeuristicsListOnce = true;
-        this.listarNoticiasDesdeChat();
-        return true;
-
+        this.dbg('cmd: LISTAR_NOTICIAS');
+        this.suppressHeuristicsListOnce = true; this.listarNoticiasDesdeChat(); return true;
       case 'LISTAR_PROYECTOS':
-        console.log('[Chatbot] comando: listar proyectos (solo)');
-        this.suppressHeuristicsListOnce = true;
-        this.listarProyectosOActividadesDesdeChat('proyectos');
-        return true;
-
+        this.dbg('cmd: LISTAR_PROYECTOS');
+        this.suppressHeuristicsListOnce = true; this.lastScopeForPostulacion = 'proyectos';
+        this.listarProyectosOActividadesDesdeChat('proyectos'); return true;
       case 'LISTAR_ACTIVIDADES':
-        console.log('[Chatbot] comando: listar actividades (solo)');
-        this.suppressHeuristicsListOnce = true;
-        this.listarProyectosOActividadesDesdeChat('actividades');
-        return true;
-
+        this.dbg('cmd: LISTAR_ACTIVIDADES');
+        this.suppressHeuristicsListOnce = true; this.lastScopeForPostulacion = 'actividades';
+        this.listarProyectosOActividadesDesdeChat('actividades'); return true;
       case 'LISTAR_PROYECTOS_Y_ACTIVIDADES':
-        console.log('[Chatbot] comando: listar proyectos + actividades');
-        this.suppressHeuristicsListOnce = true;
-        this.listarProyectosOActividadesDesdeChat('ambos');
-        return true;
-
+        this.dbg('cmd: LISTAR_PROYECTOS_Y_ACTIVIDADES');
+        this.suppressHeuristicsListOnce = true; this.lastScopeForPostulacion = 'ambos';
+        this.listarProyectosOActividadesDesdeChat('ambos'); return true;
       case 'RESUMIR_NOTICIA_ORDINAL': {
         const ord = Number(res?.payload?.ord ?? 0);
-        console.log('[Chatbot] comando: resumir noticia ordinal =', ord);
-        this.resumirNoticiaPorOrdinal(ord);
-        return true;
+        this.dbg('cmd: RESUMIR_NOTICIA_ORDINAL', ord);
+        this.suppressHeuristicsOnce = true; this.resumirNoticiaPorOrdinal(ord); return true;
       }
-
       case 'SUGERIR_POSTULACION_ORDINAL': {
         const ord = Number(res?.payload?.ord ?? 0);
-        const scope = res?.payload?.scope as
-          | 'proyecto'
-          | 'actividad'
-          | undefined;
-        console.log(
-          '[Chatbot] comando: postulación ordinal =',
-          ord,
-          ' scope=',
-          scope
-        );
-        this.sugerirPostulacionPorOrdinal(ord, scope);
-        return true;
+        const scope = res?.payload?.scope as ('proyecto' | 'actividad' | undefined);
+        this.dbg('cmd: SUGERIR_POSTULACION_ORDINAL', { ord, scope });
+        this.suppressHeuristicsPostOnce = true; this.sugerirPostulacionPorOrdinal(ord, scope); return true;
       }
     }
     return false;
   }
 
   private handleByReplyHeuristics(replyText: string) {
-    if (this.suppressHeuristicsListOnce) {
-      console.log('[Chatbot] heurística suprimida una vez (listado)');
-      this.suppressHeuristicsListOnce = false;
-      return;
-    }
-    if (this.suppressHeuristicsOnce) {
-      console.log('[Chatbot] heurística suprimida una vez (resumen noticia)');
-      this.suppressHeuristicsOnce = false;
-      return;
-    }
-    if (this.suppressHeuristicsPostOnce) {
-      console.log('[Chatbot] heurística suprimida una vez (postulación)');
-      this.suppressHeuristicsPostOnce = false;
-      return;
-    }
+    if (this.suppressHeuristicsListOnce) { this.dbg('heurística list suprimida'); this.suppressHeuristicsListOnce = false; return; }
+    if (this.suppressHeuristicsOnce) { this.dbg('heurística resumen suprimida'); this.suppressHeuristicsOnce = false; return; }
+    if (this.suppressHeuristicsPostOnce) { this.dbg('heurística postulación suprimida'); this.suppressHeuristicsPostOnce = false; return; }
 
     const low = replyText.toLowerCase();
 
     if (
-      low.includes('listo ✅') ||
-      low.includes('listo ') ||
-      low.includes('te lo envío') ||
-      low.includes('te lo envie') ||
-      low.includes('ya te lo envié') ||
-      low.includes('ya te lo envie')
-    ) {
-      console.log('[Chatbot] texto sugiere emisión → ejecutar certificado');
-      this.emitirCertificadoDesdeChat();
-      return;
-    }
+      low.includes('te lo envío') || low.includes('te lo envio') ||
+      low.includes('ya te lo envié') || low.includes('ya te lo envie') ||
+      low.includes('enviar certificado') || low.includes('envío del certificado') ||
+      (low.includes('listo') && (low.includes('envi') || low.includes('certificado')))
+    ) { this.dbg('heurística → emitir certificado'); this.suppressHeuristicsOnce = true; this.emitirCertificadoDesdeChat(); return; }
 
-    if (
-      (low.includes('estas son las últimas') && low.includes('noticias')) ||
-      low.includes('últimas noticias')
-    ) {
-      console.log('[Chatbot][fallback] listarNoticiasDesdeChat() por reply');
-      this.listarNoticiasDesdeChat();
-      return;
-    }
+    if (low.includes('últimas noticias') || (low.includes('estas son') && low.includes('noticias'))) { this.dbg('heurística → noticias'); this.suppressHeuristicsListOnce = true; this.listarNoticiasDesdeChat(); return; }
+    if (low.includes('proyectos más recientes') || (low.includes('estos son') && low.includes('proyectos')) || low.includes('solo proyectos')) { this.dbg('heurística → proyectos'); this.suppressHeuristicsListOnce = true; this.listarProyectosOActividadesDesdeChat('proyectos'); return; }
+    if (low.includes('actividades más recientes') || (low.includes('estas son') && low.includes('actividades')) || low.includes('solo actividades')) { this.dbg('heurística → actividades'); this.suppressHeuristicsListOnce = true; this.listarProyectosOActividadesDesdeChat('actividades'); return; }
+    if (low.includes('proyectos y actividades') || low.includes('proyectos/actividades')) { this.dbg('heurística → ambos'); this.suppressHeuristicsListOnce = true; this.listarProyectosOActividadesDesdeChat('ambos'); return; }
+    if (low.includes('votaciones activas') || (low.includes('estas son') && low.includes('votaciones'))) { this.dbg('heurística → votaciones'); this.suppressHeuristicsListOnce = true; this.listarVotacionesDesdeChat(); return; }
+    if (low.includes('espacios disponibles') || (low.includes('estos son') && low.includes('espacios'))) { this.dbg('heurística → espacios'); this.suppressHeuristicsListOnce = true; this.listarEspaciosDesdeChat(); return; }
 
-    if (
-      (low.includes('estos son los') && low.includes('proyectos')) ||
-      low.includes('proyectos más recientes') ||
-      low.includes('solo proyectos')
-    ) {
-      console.log(
-        '[Chatbot][fallback] listarProyectosOActividadesDesdeChat(proyectos) por reply'
-      );
-      this.listarProyectosOActividadesDesdeChat('proyectos');
-      return;
-    }
-    if (
-      (low.includes('estas son las') && low.includes('actividades')) ||
-      low.includes('actividades más recientes') ||
-      low.includes('solo actividades')
-    ) {
-      console.log(
-        '[Chatbot][fallback] listarProyectosOActividadesDesdeChat(actividades) por reply'
-      );
-      this.listarProyectosOActividadesDesdeChat('actividades');
-      return;
-    }
-    if (
-      low.includes('proyectos/actividades') ||
-      low.includes('proyectos y actividades')
-    ) {
-      console.log(
-        '[Chatbot][fallback] listarProyectosOActividadesDesdeChat(ambos) por reply'
-      );
-      this.listarProyectosOActividadesDesdeChat('ambos');
-      return;
-    }
-
-    let m = low.match(/resumen.*?(?:#|n[°º]?\s*|de\s+la\s+|de\s+)?\s*(\d+)\b/);
-    if (!m)
-      m = low.match(
-        /preparando\s+resumen.*?(?:#|n[°º]?\s*|de\s+la\s+|de\s+)?\s*(\d+)\b/
-      );
+    let m = low.match(/\bresumen(?:\s+de\s+la|\s+de|\s+)\s*(\d+)\b/) || low.match(/\bdetalle(?:\s+de\s+la|\s+de|\s+)\s*(\d+)\b/);
     if (!m && this.lastUserText) {
       const u = this.lastUserText.toLowerCase();
-      m =
-        u.match(/\bresumen(?:\s+de\s+la|\s+de|\s+)\s*(\d+)\b/) ||
-        u.match(/\bdetalle(?:\s+de\s+la|\s+de|\s+)\s*(\d+)\b/);
+      m = u.match(/\bresumen(?:\s+de\s+la|\s+de|\s+)\s*(\d+)\b/) || u.match(/\bdetalle(?:\s+de\s+la|\s+de|\s+)\s*(\d+)\b/);
     }
-    if (m && m[1]) {
-      const ord = Number(m[1]);
-      if (Number.isFinite(ord) && ord > 0) {
-        console.log('[Chatbot][fallback] resumen ordinal detectado =', ord);
-        this.resumirNoticiaPorOrdinal(ord);
-        return;
-      }
-    }
+    if (m?.[1]) { const ord = Number(m[1]); if (Number.isFinite(ord) && ord > 0) { this.dbg('heurística → resumen ordinal', ord); this.suppressHeuristicsOnce = true; this.resumirNoticiaPorOrdinal(ord); return; } }
 
-    let pm = low.match(
-      /\b(mensaje|postulacion|postulación).*(?:#|n[°º]?\s*|de\s+la\s+|de\s+|para\s+la\s+|para\s+)?\s*(\d+)\b/
-    );
+    let pm = low.match(/\b(mensaje|postulacion|postulación).*(?:#|n[°º]?\s*|de\s+la\s+|de\s+|para\s+la\s+|para\s+)?\s*(\d+)\b/);
     if (!pm && this.lastUserText) {
       const u = this.lastUserText.toLowerCase();
-      pm = u.match(
-        /\b(mensaje|postulacion|postulación).*(?:#|n[°º]?\s*|de\s+la\s+|de\s+|para\s+la\s+|para\s+)?\s*(\d+)\b/
-      );
+      pm = u.match(/\b(mensaje|postulacion|postulación).*(?:#|n[°º]?\s*|de\s+la\s+|de\s+|para\s+la\s+|para\s+)?\s*(\d+)\b/);
     }
-    if (pm && pm[2]) {
-      const ord = Number(pm[2]);
-      if (Number.isFinite(ord) && ord > 0) {
-        console.log('[Chatbot][fallback] postulación ordinal detectada =', ord);
-        this.sugerirPostulacionPorOrdinal(ord, undefined);
-        return;
-      }
-    }
+    if (pm?.[2]) { const ord = Number(pm[2]); if (Number.isFinite(ord) && ord > 0) { this.dbg('heurística → postulación ordinal', ord); this.suppressHeuristicsPostOnce = true; this.sugerirPostulacionPorOrdinal(ord, undefined); return; } }
   }
 
-  // ====== CERTIFICADO ======
-  private async emitirCertificadoDesdeChat() {
-    console.log('[Chatbot] iniciar emisión de certificado desde el chat…');
-
-    if (!this.certWebhookUrl) {
-      console.warn('[Chatbot] environment.N8N_WEBHOOK_URL está vacío');
-      this.pushBot(
-        'No tengo configurado el webhook de certificados en la app 😅'
-      );
-      return;
+  // ===== Helpers SELECT y orden =====
+  private async trySelect(tableNames: string[], select = '*') {
+    for (const name of tableNames) {
+      this.dbg('trySelect →', name, 'select:', select);
+      const { data, error } = await supabase.from(name).select(select);
+      if (error) {
+        this.dbg('trySelect error', { table: name, error });
+      } else {
+        this.dbg('trySelect ok', { table: name, count: data?.length ?? 0 });
+        if (data && data.length) return data;
+      }
     }
+    return [];
+  }
+  private sortByKnownDates(rows: any[], keys: string[]) {
+    return [...rows].sort((a, b) => {
+      const fa = keys.map(k => a?.[k]).find(Boolean);
+      const fb = keys.map(k => b?.[k]).find(Boolean);
+      const da = fa ? new Date(fa).getTime() : 0;
+      const db = fb ? new Date(fb).getTime() : 0;
+      return db - da;
+    });
+  }
 
+  // ===== Certificado =====
+  private async emitirCertificadoDesdeChat() {
+    if (!this.certWebhookUrl) { this.pushBot('No tengo configurado el webhook de certificados en la app 😅'); return; }
     try {
       const who = await getMyUserData().catch(() => null as any);
-      console.log('[Chatbot] getMyUserData() =', who);
-
-      const { data: { user } = { user: null } } = await supabase.auth
-        .getUser()
-        .catch(() => ({ data: { user: null } } as any));
-      console.log('[Chatbot] supabase.auth.getUser() =', user);
+      const { data: { user } = { user: null } } = await supabase.auth.getUser().catch(() => ({ data: { user: null } } as any));
 
       const correoDestino =
         (who && (who.correo || who.email)) ||
         (this.perfil && (this.perfil as any).correo) ||
         (this.perfil && (this.perfil as any).email) ||
-        (user && user.email) ||
-        '';
+        (user && user.email) || '';
 
-      console.log('[Chatbot] correoDestino detectado =', correoDestino);
-
-      if (!correoDestino) {
-        this.pushBot(
-          'No encontré tu correo registrado 😅. Ve a “Mi perfil” y guárdalo primero.'
-        );
-        return;
-      }
+      if (!correoDestino) { this.pushBot('No encontré tu correo registrado 😅. Ve a “Mi perfil” y guárdalo primero.'); return; }
 
       this.pushBot('Ok, lo estoy generando… ⏳');
 
-      const baseMeta = {
-        ...(who || {}),
-        destino_presentacion: '',
-        fecha_emision: new Date().toISOString(),
-        render: 'pdf-lib',
-      };
-      console.log('[Chatbot] createCertRecord() con meta =', baseMeta);
+      const baseMeta = { ...(who || {}), destino_presentacion: '', fecha_emision: new Date().toISOString(), render: 'pdf-lib' };
       const { id } = await createCertRecord(baseMeta);
-      console.log('[Chatbot] createCertRecord() -> id =', id);
 
       const baseBytes = await fetchBaseTemplateBytes();
-      console.log(
-        '[Chatbot] fetchBaseTemplateBytes() OK, bytes =',
-        baseBytes?.byteLength ?? '??'
-      );
-
-      const rawVars = this.buildVarsFromWho(who);
-      (rawVars as any).folio = String(id);
+      const rawVars = this.buildVarsFromWho(who); (rawVars as any).folio = String(id);
       const vars = this.sanitizeVars(rawVars);
-      console.log('[Chatbot] vars para fillCertificate (sanitizadas) =', vars);
-
       const blob = await fillCertificate(baseBytes, vars);
-      console.log('[Chatbot] fillCertificate() OK, blob =', blob);
-
       const { pdf_url } = await uploadPdfForRecord(id, blob);
-      console.log('[Chatbot] uploadPdfForRecord() -> pdf_url =', pdf_url);
-
-      const bodyToN8n = {
-        to: correoDestino as string,
-        subject: 'Certificado emitido',
-        pdf_url,
-        filename: `certificado-${id}.pdf`,
-      };
-      console.log(
-        '[Chatbot] POST -> n8n (certificado):',
-        this.certWebhookUrl,
-        bodyToN8n
-      );
 
       const res = await fetch(this.certWebhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bodyToN8n),
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to: correoDestino, subject: 'Certificado emitido', pdf_url, filename: `certificado-${id}.pdf` }),
       });
 
-      const text = await res.text();
-      console.log(
-        '[Chatbot] respuesta HTTP de n8n (certificado) =',
-        res.status,
-        text
-      );
-
-      if (!res.ok) {
-        this.pushBot('No pude enviar el certificado 😅 (n8n respondió error).');
-        return;
-      }
-
+      if (!res.ok) { this.pushBot('No pude enviar el certificado 😅 (n8n respondió error).'); return; }
       this.pushBot('Listo ✅ ya te lo envié por correo.');
     } catch (err: any) {
-      console.error('[Chatbot] error en emitirCertificadoDesdeChat():', err);
-      this.pushBot(
-        err?.message || 'Hubo un error al generar el certificado 😅'
-      );
+      this.pushBot(err?.message || 'Hubo un error al generar el certificado 😅');
     }
   }
 
-  // ====== LISTAR VOTACIONES ======
+  // ===== Votaciones =====
   private async listarVotacionesDesdeChat() {
     try {
-      const { data, error } = await supabase
-        .from('votaciones')
-        .select('*')
-        .eq('estado', 'activa')
-        .order('fecha_fin', { ascending: true });
-
-      if (error) throw error;
-      const items = data || [];
+      let items = await this.trySelect(['votaciones', 'votacion'], '*');
+      this.dbg('votaciones len:', items?.length ?? 0);
+      this.printSample('votaciones', items);
+      items = (items || []).filter((v: any) => (v.estado || '').toLowerCase() === 'activa');
+      items = this.sortByKnownDates(items, ['fecha_fin', 'actualizado_en', 'creado_en']);
       this.lastVotesCache = items;
 
-      if (!items.length) {
-        this.pushBot('No hay votaciones activas en este momento.');
-        return;
-      }
+      if (!items.length) { this.pushBot('No hay votaciones activas en este momento.'); return; }
 
       const lines = items.slice(0, 5).map((v: any, i: number) => {
         const fin = v.fecha_fin ? new Date(v.fecha_fin).toLocaleString() : '—';
         return `${i + 1}. <b>${v.titulo || 'Sin título'}</b> (hasta ${fin})`;
       });
-
-      this.pushBot(
-        `👉<br>${lines.join(
-          '<br>'
-        )}<br><i>Di, por ejemplo: “abrir votación 1”.</i>`
-      );
-    } catch (e: any) {
-      console.error('[Chatbot] listarVotacionesDesdeChat() error:', e);
-      this.pushBot('No pude listar las votaciones 😅');
-    }
+      this.pushBot(`👉<br>${lines.join('<br>')}<br><i>Di, por ejemplo: “abrir votación 1”.</i>`);
+    } catch (e) { this.dbg('listarVotacionesDesdeChat error:', e); this.pushBot('No pude listar las votaciones 😅'); }
   }
 
-  // ====== LISTAR ESPACIOS ======
+  // ===== Espacios =====
   private async listarEspaciosDesdeChat() {
     try {
-      const { data, error } = await supabase
-        .from('espacio')
-        .select('*')
-        .order('nombre', { ascending: true });
+      this.dbg('listarEspaciosDesdeChat → inicio');
+      let items = await this.trySelect(['espacio', 'espacios'], '*');
+      this.dbg('espacios len (antes de ordenar):', items?.length ?? 0);
+      this.printSample('espacios', items);
 
-      if (error) throw error;
-
-      const items = data || [];
+      items = this.sortByKnownDates(items, ['actualizado_en', 'creado_en']);
       this.lastSpacesCache = items;
 
-      if (!items.length) {
-        this.pushBot('No hay espacios registrados aún.');
-        return;
-      }
+      if (!items.length) { this.pushBot('No hay espacios registrados aún.'); return; }
 
       const lines = items.slice(0, 6).map((e: any, i: number) => {
         const cap = e.capacidad ? ` • Capacidad: ${e.capacidad}` : '';
-        const dir = e.direccion ? ` • ${e.direccion}` : '';
+        const dir = e.direccion_completa ? ` • ${e.direccion_completa}` : '';
         return `${i + 1}. <b>${e.nombre || 'Sin nombre'}</b>${cap}${dir}`;
       });
-
-      this.pushBot(
-        `🏢<br>${lines.join(
-          '<br>'
-        )}<br><i>Para reservar, ve a “Arrendar espacio”.</i>`
-      );
-    } catch (e: any) {
-      console.error('[Chatbot] listarEspaciosDesdeChat() error:', e);
-      this.pushBot('No pude listar los espacios 😅');
-    }
+      this.pushBot(`🏢<br>${lines.join('<br>')}<br><i>Para reservar, ve a “Arrendar espacio”.</i>`);
+    } catch (e) { this.dbg('listarEspaciosDesdeChat error:', e); this.pushBot('No pude listar los espacios 😅'); }
   }
 
-  // ====== LISTAR PROYECTOS / ACTIVIDADES ======
-  private async listarProyectosOActividadesDesdeChat(
-    scope: 'proyectos' | 'actividades' | 'ambos'
-  ) {
+  // ===== Proyectos / Actividades =====
+  private async listarProyectosOActividadesDesdeChat(scope: 'proyectos' | 'actividades' | 'ambos') {
     try {
+      this.dbg('listarProyectosOActividadesDesdeChat → scope:', scope);
       this.lastScopeForPostulacion = scope;
 
       if (scope === 'proyectos') {
-        const { data, error } = await supabase
-          .from('proyecto')
-          .select('*')
-          .order('fecha_creacion', { ascending: false });
+        let items = await this.trySelect(['proyecto', 'proyectos'], '*');
+        this.dbg('proyectos len:', items?.length ?? 0);
+        this.printSample('proyectos', items);
 
-        if (error) throw error;
-        const items = data || [];
+        items = this.sortByKnownDates(items, ['fecha_creacion', 'actualizado_en']);
         this.lastProjectsOnlyCache = items;
 
-        if (!items.length) {
-          this.pushBot('No hay proyectos publicados todavía.');
-          return;
-        }
+        if (!items.length) { this.pushBot('No hay proyectos publicados todavía.'); return; }
 
-        const lines = items
-          .slice(0, 8)
-          .map(
-            (p: any, i: number) =>
-              `${i + 1}. <b>${
-                p.titulo || p.nombre || 'Sin título'
-              }</b> — proyecto`
-          );
-
-        this.pushBot(
-          `📌 Proyectos:<br>${lines.join(
-            '<br>'
-          )}<br><i>Di “mensaje de la 1/2/3…” para sugerir tu postulación.</i>`
+        const lines = items.slice(0, 8).map((p: any, i: number) =>
+          `${i + 1}. <b>${p.titulo || p.nombre || 'Sin título'}</b> — proyecto`
         );
+        this.pushBot(`📌 Proyectos:<br>${lines.join('<br>')}<br><i>Di “mensaje de la 1/2/3…” para que la IA redacte tu postulación.</i>`);
         return;
       }
 
       if (scope === 'actividades') {
-        const { data, error } = await supabase
-          .from('actividad')
-          .select('*')
-          .order('creado_en', { ascending: false });
+        let items = await this.trySelect(['actividad', 'actividades'], '*');
+        this.dbg('actividades len:', items?.length ?? 0);
+        this.printSample('actividades', items);
 
-        if (error) throw error;
-        const items = data || [];
+        items = this.sortByKnownDates(items, ['creado_en', 'fecha_inicio', 'actualizado_en']);
         this.lastActivitiesOnlyCache = items;
 
-        if (!items.length) {
-          this.pushBot('No hay actividades publicadas todavía.');
-          return;
-        }
+        if (!items.length) { this.pushBot('No hay actividades publicadas todavía.'); return; }
 
-        const lines = items
-          .slice(0, 8)
-          .map(
-            (a: any, i: number) =>
-              `${i + 1}. <b>${
-                a.titulo || a.nombre || 'Sin título'
-              }</b> — actividad`
-          );
-
-        this.pushBot(
-          `🗓️ Actividades:<br>${lines.join(
-            '<br>'
-          )}<br><i>Di “mensaje de la 1/2/3…” para sugerir tu postulación.</i>`
+        const lines = items.slice(0, 8).map((a: any, i: number) =>
+          `${i + 1}. <b>${a.titulo || a.nombre || 'Sin título'}</b> — actividad`
         );
+        this.pushBot(`🗓️ Actividades:<br>${lines.join('<br>')}<br><i>Di “mensaje de la 1/2/3…” para que la IA redacte tu postulación.</i>`);
         return;
       }
 
-      const [proyRes, actRes] = await Promise.all([
-        supabase.from('proyecto').select('*'),
-        supabase.from('actividad').select('*'),
-      ]);
-      if (proyRes.error) throw proyRes.error;
-      if (actRes.error) throw actRes.error;
+      // ambos
+      const proy = await this.trySelect(['proyecto', 'proyectos'], '*');
+      const act  = await this.trySelect(['actividad', 'actividades'], '*');
+      this.dbg('ambos → proy len:', proy?.length ?? 0, 'act len:', act?.length ?? 0);
+      this.printSample('ambos-proyectos', proy || []);
+      this.printSample('ambos-actividades', act || []);
 
-      const proyectos = (proyRes.data || []).map((p: any) => ({
+      const proyectos = (proy || []).map((p: any) => ({
         ...p,
         tipo: 'proyecto',
         fecha: p.fecha_creacion || p.actualizado_en || new Date().toISOString(),
       }));
-      const actividades = (actRes.data || []).map((a: any) => ({
+      const actividades = (act || []).map((a: any) => ({
         ...a,
         tipo: 'actividad',
-        fecha:
-          a.creado_en ||
-          a.fecha_inicio ||
-          a.actualizado_en ||
-          new Date().toISOString(),
+        fecha: a.creado_en || a.fecha_inicio || a.actualizado_en || new Date().toISOString(),
       }));
 
       this.lastProjectsOnlyCache = proyectos;
@@ -767,133 +540,85 @@ export class ChatbotComponent implements OnInit {
         (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
       );
 
-      if (!elementos.length) {
-        this.pushBot('No hay proyectos ni actividades publicados todavía.');
-        return;
-      }
+      if (!elementos.length) { this.pushBot('No hay proyectos ni actividades publicados todavía.'); return; }
 
-      const lines = elementos
-        .slice(0, 8)
-        .map(
-          (e: any, i: number) =>
-            `${i + 1}. <b>${e.titulo || e.nombre || 'Sin título'}</b> — ${
-              e.tipo
-            }`
-        );
-
-      this.pushBot(
-        `📋 Proyectos y Actividades:<br>${lines.join(
-          '<br>'
-        )}<br><i>Di “mensaje de la 1/2/3…” para sugerir tu postulación.</i>`
+      const lines = elementos.slice(0, 8).map((e: any, i: number) =>
+        `${i + 1}. <b>${e.titulo || e.nombre || 'Sin título'}</b> — ${e.tipo}`
       );
-    } catch (e: any) {
-      console.error(
-        '[Chatbot] listarProyectosOActividadesDesdeChat() error:',
-        e
-      );
-      this.pushBot('No pude listar los proyectos/actividades 😅');
-    }
+      this.pushBot(`📋 Proyectos y Actividades:<br>${lines.join('<br>')}<br><i>Di “mensaje de la 1/2/3…” para que la IA redacte tu postulación.</i>`);
+    } catch (e) { this.dbg('listarProyectosOActividadesDesdeChat error:', e); this.pushBot('No pude listar los proyectos/actividades 😅'); }
   }
 
-  // ====== LISTAR NOTICIAS ======
+  // ===== Noticias (IA resumida, usando menú y cache) =====
   private async listarNoticiasDesdeChat() {
     try {
       const { data, error } = await supabase
         .from('noticias')
-        .select('id, titulo, url_foto, nombre_autor, fecha_creacion, parrafos')
-        .order('fecha_creacion', { ascending: false });
+        .select('id, titulo, url_foto, nombre_autor, fecha_creacion, parrafos');
 
-      if (error) throw error;
+      if (error) this.dbg('noticias error:', error);
+      this.dbg('noticias len:', data?.length ?? 0);
+      this.printSample('noticias', data || []);
 
       const list = (data ?? []) as Noticia[];
       this.lastNewsCache = list;
 
-      if (!list.length) {
-        this.pushBot('No hay noticias publicadas por ahora.');
-        return;
-      }
+      if (!list.length) { this.pushBot('No hay noticias publicadas por ahora.'); return; }
 
       const lines = list.slice(0, 5).map((n, i) => {
-        const fecha = n.fecha_creacion
-          ? new Date(n.fecha_creacion).toLocaleDateString()
-          : '';
-        return `${i + 1}. <b>${n.titulo || 'Sin título'}</b> ${
-          fecha ? `(${fecha})` : ''
-        }`;
+        const fecha = n.fecha_creacion ? new Date(n.fecha_creacion).toLocaleDateString() : '';
+        return `${i + 1}. <b>${n.titulo || 'Sin título'}</b> ${fecha ? `(${fecha})` : ''}`;
       });
-
-      this.pushBot(
-        `📰 Últimas noticias:<br>${lines.join(
-          '<br>'
-        )}<br><i>Pide “resumen de la 1” o “detalle de la 2”.</i>`
-      );
-    } catch (e: any) {
-      console.error('[Chatbot] listarNoticiasDesdeChat() error:', e);
-      this.pushBot('No pude listar las noticias 😅');
-    }
+      this.pushBot(`📰 Últimas noticias:<br>${lines.join('<br>')}<br><i>Pide “resumen de la 1” o “detalle de la 2”.</i>`);
+    } catch (e) { this.dbg('listarNoticiasDesdeChat error:', e); this.pushBot('No pude listar las noticias 😅'); }
   }
 
-  // ====== RESUMIR NOTICIA ======
   private async resumirNoticiaPorOrdinal(ord: number) {
     const idx = ord - 1;
     if (idx < 0 || idx >= this.lastNewsCache.length) {
-      this.pushBot(
-        'No ubico esa posición en la lista. Pide “ver noticias” primero 😉'
-      );
+      this.pushBot('No ubico esa posición en la lista. Pide “ver noticias” primero 😉');
       return;
     }
+
     const n = this.lastNewsCache[idx];
-    await this.resumirNoticiaDesdeChat(n.id);
-  }
+    const titulo = n.titulo || 'Sin título';
+    const texto = (n.parrafos || []).join('\n\n').trim();
 
-  private async resumirNoticiaDesdeChat(id: number) {
-    try {
-      const { data, error } = await supabase
-        .from('noticias')
-        .select('id, titulo, parrafos, fecha_creacion, nombre_autor')
-        .eq('id', id)
-        .single();
-
-      if (error) throw error;
-
-      const titulo = data?.titulo || 'Sin título';
-      const texto = (data?.parrafos || []).join('\n\n');
-
-      const payload = {
-        user_id: this.userId,
-        community_id: this.communityId,
-        thread_id: `chat-${this.communityId}-${this.userId}`,
-        message: '[RESUMIR_NOTICIA]',
-        perfil: this.perfil,
-        news_doc: { id, titulo, texto },
-        openai_key: this.openaiKeyForN8N || '',
-      };
-
-      this.chatbot.sendMessage(payload).subscribe({
-        next: (res: ChatbotResponse) => {
-          const summary = (res.summary || res.reply || '').trim();
-          const html = summary
-            ? summary.replace(/\n/g, '<br>')
-            : 'No pude generar el resumen 😅';
-          this.pushBot(`<b>${titulo}</b><br>${html}`);
-          this.suppressHeuristicsOnce = true;
-        },
-        error: (err) => {
-          console.error('[Chatbot] error al pedir resumen a n8n:', err);
-          this.pushBot('No pude generar el resumen 😅');
-        },
-      });
-    } catch (e: any) {
-      console.error('[Chatbot] resumirNoticiaDesdeChat error:', e);
-      this.pushBot('No pude leer esa noticia 😅');
+    if (!texto) {
+      this.pushBot('No tengo el contenido completo de esa noticia 😅. Vuelve a intentar más tarde.');
+      return;
     }
+
+    this.pushBot(`📰 Preparando resumen de <b>${titulo}</b>…`);
+
+    const payload = {
+      user_id: this.userId,
+      community_id: this.communityId,
+      thread_id: `chat-${this.communityId}-${this.userId}`,
+      message: '[RESUMIR_NOTICIA]',
+      perfil: this.perfil,
+      news_doc: { id: n.id, titulo, texto },
+      openai_key: this.openaiKeyForN8N || '',
+    };
+
+    this.chatbot.sendMessage(payload).subscribe({
+      next: (res: ChatbotResponse) => {
+        this.dbg('resumen noticia IA response:', res);
+        const full = (res.summary || res.reply || '').trim();
+        const html = full ? full.replace(/\n/g, '<br>') : 'No pude generar el resumen 😅';
+
+        this.pushBot(`<b>${titulo}</b><br>${html}`);
+        this.suppressHeuristicsOnce = true;
+      },
+      error: (err) => {
+        this.dbg('resumen IA error:', err);
+        this.pushBot('No pude generar el resumen 😅');
+      },
+    });
   }
 
-  // ====== SUGERIR POSTULACIÓN ======
-  private sugerirPostulacionPorOrdinal(
-    ord: number,
-    hintScope?: 'proyecto' | 'actividad'
-  ) {
+  // ===== Postulación (IA usando ítem del menú) =====
+  private sugerirPostulacionPorOrdinal(ord: number, hintScope?: 'proyecto' | 'actividad') {
     const scope = this.lastScopeForPostulacion || 'ambos';
     const idx = ord - 1;
     let item: any | null = null;
@@ -910,124 +635,84 @@ export class ChatbotComponent implements OnInit {
         tipo = 'actividad';
       }
     } else {
-      if (scope === 'proyectos') {
-        if (idx >= 0 && idx < this.lastProjectsOnlyCache.length) {
-          item = this.lastProjectsOnlyCache[idx];
-          tipo = 'proyecto';
-        }
-      } else if (scope === 'actividades') {
-        if (idx >= 0 && idx < this.lastActivitiesOnlyCache.length) {
-          item = this.lastActivitiesOnlyCache[idx];
-          tipo = 'actividad';
-        }
-      } else {
-        if (idx >= 0 && idx < this.lastProjectsOnlyCache.length) {
-          item = this.lastProjectsOnlyCache[idx];
-          tipo = 'proyecto';
-        } else if (idx >= 0 && idx < this.lastActivitiesOnlyCache.length) {
-          item = this.lastActivitiesOnlyCache[idx];
-          tipo = 'actividad';
-        }
+      if (scope === 'proyectos' && idx < this.lastProjectsOnlyCache.length) {
+        item = this.lastProjectsOnlyCache[idx];
+        tipo = 'proyecto';
+      } else if (scope === 'actividades' && idx < this.lastActivitiesOnlyCache.length) {
+        item = this.lastActivitiesOnlyCache[idx];
+        tipo = 'actividad';
+      } else if (idx < this.lastProjectsOnlyCache.length) {
+        item = this.lastProjectsOnlyCache[idx];
+        tipo = 'proyecto';
+      } else if (idx < this.lastActivitiesOnlyCache.length) {
+        item = this.lastActivitiesOnlyCache[idx];
+        tipo = 'actividad';
       }
     }
 
     if (!item) {
-      this.pushBot(
-        'No ubico esa posición. Pide “ver proyectos” o “ver actividades” primero 😉'
-      );
+      this.pushBot('No ubico esa posición. Pide “ver proyectos” o “ver actividades” primero 😉');
       return;
     }
 
-    const id = item.id_proyecto || item.id_actividad;
-    this.sugerirPostulacionDesdeChat(tipo, String(id));
+    const post_doc = {
+      tipo,
+      titulo: item.titulo || item.nombre || (tipo === 'proyecto' ? 'Proyecto' : 'Actividad'),
+      descripcion: item.descripcion || item.detalle || '',
+      requisitos: item.requisitos || item.req || '',
+      fecha:
+        (tipo === 'proyecto'
+          ? (item.fecha_creacion || item.actualizado_en)
+          : (item.fecha_inicio || item.creado_en || item.actualizado_en)
+        ) || '',
+      organizador: item.organizador || item.creado_por || 'la organización',
+      cupos_total: item.cupos_total || item.cupos || null,
+      estado: item.estado || null,
+      id: item.id_proyecto || item.id_actividad || item.id,
+    };
+
+    this.dbg('sugerirPostulacionPorOrdinal post_doc:', post_doc);
+
+    const placeholder = `Preparando mensaje de postulación para el ítem #${ord}…`;
+    this.pushBot(placeholder);
+
+    const payload = {
+      user_id: this.userId,
+      community_id: this.communityId,
+      thread_id: `chat-${this.communityId}-${this.userId}`,
+      message: '[POSTULACION_IA]',
+      perfil: this.perfil,
+      post_doc,
+      openai_key: this.openaiKeyForN8N || '',
+    };
+
+    this.chatbot.sendMessage(payload).subscribe({
+      next: (res: ChatbotResponse) => {
+        this.dbg('postulación IA response:', res);
+
+        const full = (res.summary || res.reply || '').trim();
+        if (full) {
+          const html = full.replace(/\n/g, '<br>');
+          this.pushBot(html);
+        } else {
+          this.pushBot('No pude generar el mensaje de postulación 😅');
+        }
+
+        this.suppressHeuristicsPostOnce = true;
+      },
+      error: (err) => {
+        this.dbg('postulación IA error:', err);
+        this.pushBot('No pude generar el mensaje de postulación 😅');
+      },
+    });
   }
 
-  private async sugerirPostulacionDesdeChat(
-    tipo: 'proyecto' | 'actividad',
-    id: string
-  ) {
-    try {
-      let registro: any = null;
-
-      if (tipo === 'proyecto') {
-        const r1 = await supabase
-          .from('proyecto')
-          .select('*')
-          .eq('id_proyecto', id)
-          .maybeSingle();
-        if (r1.data) registro = r1.data;
-      } else {
-        const r1 = await supabase
-          .from('actividad')
-          .select('*')
-          .eq('id_actividad', id)
-          .maybeSingle();
-        if (r1.data) registro = r1.data;
-      }
-
-      if (!registro) {
-        this.pushBot('No pude leer ese elemento 😅. Revisa que exista el ID.');
-        return;
-      }
-
-      const titulo =
-        registro.titulo ||
-        registro.nombre ||
-        (tipo === 'proyecto' ? 'Proyecto' : 'Actividad');
-      const organizador =
-        registro.organizador || registro.creado_por || 'la organización';
-      const fecha =
-        tipo === 'proyecto'
-          ? registro.fecha_creacion || registro.actualizado_en
-          : registro.fecha_inicio ||
-            registro.creado_en ||
-            registro.actualizado_en;
-
-      const sugerido =
-        `Hola, me interesa postular a **${titulo}**. ` +
-        `Cuento con disponibilidad y motivación para aportar al equipo. ` +
-        `¿Me indican por favor los próximos pasos y requisitos? ` +
-        `Quedo atento/a. ¡Gracias!`;
-
-      const infoExtra = [
-        fecha ? `• Fecha: ${new Date(fecha).toLocaleDateString()}` : null,
-        organizador ? `• Organiza: ${organizador}` : null,
-        registro.cupos_total ? `• Cupos: ${registro.cupos_total}` : null,
-        registro.estado ? `• Estado: ${registro.estado}` : null,
-      ]
-        .filter(Boolean)
-        .join('<br>');
-
-      const header = tipo === 'proyecto' ? '🧩 Proyecto' : '🗓️ Actividad';
-      const extraHtml = infoExtra ? `<br>${infoExtra}` : '';
-
-      this.pushBot(
-        `${header}: <b>${titulo}</b>${extraHtml}<br><br>` +
-          `<u>Mensaje sugerido de postulación</u>:<br>` +
-          `${sugerido}`
-      );
-
-      this.suppressHeuristicsPostOnce = true;
-    } catch (err) {
-      console.error('[Chatbot] sugerirPostulacionDesdeChat error:', err);
-      this.pushBot('No pude preparar el mensaje de postulación 😅');
-    }
-  }
-
-  // ====== helpers ======
+  // ===== helpers varios =====
   private buildVarsFromWho(who: any) {
     const now = new Date();
     const nombre =
-      this.nombreCompleto(
-        who?.primer_nombre,
-        who?.segundo_nombre,
-        who?.primer_apellido,
-        who?.segundo_apellido
-      ) ||
-      who?.full_name ||
-      who?.nombre ||
-      '';
-
+      this.nombreCompleto(who?.primer_nombre, who?.segundo_nombre, who?.primer_apellido, who?.segundo_apellido) ||
+      who?.full_name || who?.nombre || '';
     return {
       nombre_completo: nombre,
       rut: this.normalizaRut(who?.rut || who?.run || ''),
@@ -1038,78 +723,23 @@ export class ChatbotComponent implements OnInit {
       anio_emision: now.getFullYear(),
     };
   }
-
   private sanitizeStr(s: any): string {
     const v = s == null ? '' : String(s);
-    let out = v.normalize('NFC');
-    out = out.replace(/\p{M}/gu, '');
-    out = out.replace(/[\u200B-\u200D\uFEFF]/g, '');
-    return out;
+    let out = v.normalize('NFC'); out = out.replace(/\p{M}/gu, ''); out = out.replace(/[\u200B-\u200D\uFEFF]/g, ''); return out;
   }
-
   private sanitizeVars<T extends Record<string, any>>(o: T): T {
-    const out: any = {};
-    for (const k of Object.keys(o)) {
-      const val = o[k];
-      out[k] = typeof val === 'string' ? this.sanitizeStr(val) : val;
-    }
-    return out as T;
+    const out: any = {}; for (const k of Object.keys(o)) out[k] = typeof o[k] === 'string' ? this.sanitizeStr(o[k]) : o[k]; return out as T;
   }
-
-  private nombreCompleto(
-    pn?: string | null,
-    sn?: string | null,
-    pa?: string | null,
-    sa?: string | null
-  ) {
-    return [pn, sn, pa, sa]
-      .filter(Boolean)
-      .join(' ')
-      .replace(/\s+/g, ' ')
-      .trim();
+  private nombreCompleto(pn?: string|null, sn?: string|null, pa?: string|null, sa?: string|null) {
+    return [pn, sn, pa, sa].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
   }
-
-  private monthNameEs(m: number) {
-    return [
-      'enero',
-      'febrero',
-      'marzo',
-      'abril',
-      'mayo',
-      'junio',
-      'julio',
-      'agosto',
-      'septiembre',
-      'octubre',
-      'noviembre',
-      'diciembre',
-    ][m];
-  }
-
+  private monthNameEs(m: number) { return ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][m]; }
   private normalizaRut(rut: string) {
-    if (!rut) return rut;
-    const clean = rut.replace(/[^0-9kK]/g, '').toUpperCase();
-    if (clean.length < 2) return rut;
-    const dv = clean.slice(-1);
-    const num = clean.slice(0, -1);
-    let out = '';
-    let i = 0;
-    for (let j = num.length - 1; j >= 0; j--) {
-      out = num[j] + out;
-      i++;
-      if (i === 3 && j > 0) {
-        out = '.' + out;
-        i = 0;
-      }
-    }
+    if (!rut) return rut; const clean = rut.replace(/[^0-9kK]/g, '').toUpperCase(); if (clean.length < 2) return rut;
+    const dv = clean.slice(-1); const num = clean.slice(0, -1); let out = ''; let i = 0;
+    for (let j = num.length - 1; j >= 0; j--) { out = num[j] + out; i++; if (i === 3 && j > 0) { out = '.' + out; i = 0; } }
     return `${out}-${dv}`;
   }
-
-  private pushBot(text: string) {
-    this.messages.push({ from: 'bot', text, at: new Date() });
-  }
-
-  private pushUser(text: string) {
-    this.messages.push({ from: 'user', text, at: new Date() });
-  }
+  private pushBot(text: string) { this.messages.push({ from: 'bot', text, at: new Date() }); }
+  private pushUser(text: string) { this.messages.push({ from: 'user', text, at: new Date() }); }
 }

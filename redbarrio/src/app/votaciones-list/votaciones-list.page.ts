@@ -20,8 +20,8 @@ export class VotacionesListPage implements OnInit, OnDestroy, ViewWillEnter, Vie
   activas: Votacion[] = [];
   finalizadas: Votacion[] = [];
 
-  /** Controla qué acordeón está abierto. undefined = todos cerrados */
-  accordionValue: string | undefined = undefined;
+  // pestaña seleccionada en el UI
+  activeTab: 'activas' | 'finalizadas' = 'activas';
 
   now = Date.now();
   private timer?: any;
@@ -34,11 +34,12 @@ export class VotacionesListPage implements OnInit, OnDestroy, ViewWillEnter, Vie
   }
 
   ionViewWillEnter() {
-    this.accordionValue = undefined;
+    // siempre entrar mostrando las activas
+    this.activeTab = 'activas';
   }
 
   ionViewWillLeave() {
-    this.accordionValue = undefined;
+    // nada especial por ahora
   }
 
   ngOnDestroy(): void {

@@ -23,73 +23,117 @@
   </div>
 
   <ng-container *ngIf="!cargando && votacion">
+    <!-- Sub-header: Detalle de votación + estado -->
+    <div class="detail-header">
+      <span class="detail-title">Detalle de Votación</span>
+      <span class="detail-status" [ngClass]="estadoChipClass()">
+        {{ estadoChipLabel() }}
+      </span>
+    </div>
+
+    <!-- Tarjeta principal -->
     <ion-card class="card">
       <ion-card-header>
-        <ion-card-title>{{ votacion.titulo }}</ion-card-title>
-        <ion-card-subtitle *ngIf="votacion.descripcion">
-          {{ votacion.descripcion }}
-        </ion-card-subtitle>
+        <div class="card-header-top">
+          <div class="card-header-text">
+            <ion-card-title>{{ votacion.titulo }}</ion-card-title>
+            <ion-card-subtitle *ngIf="votacion.descripcion">
+              {{ votacion.descripcion }}
+            </ion-card-subtitle>
+          </div>
+
+          <!-- Pill “Votación” como en el listado -->
+          <span class="type-badge">Votación</span>
+        </div>
       </ion-card-header>
 
       <ion-card-content>
-        <div class="status">
-          <ion-chip [color]="bloqueada ? 'medium' : 'primary'" [outline]="true">
-            <ion-icon name="time-outline"></ion-icon>
-            <ion-label>{{ etiquetaTiempo() }}</ion-label>
-          </ion-chip>
+        <!-- Resumen participación / tiempo -->
+        <div class="summary-row">
+          <div class="summary-card">
+            <div class="summary-icon participation">
+              <ion-icon name="people-outline"></ion-icon>
+            </div>
+            <div class="summary-text">
+              <span class="summary-label">Participación</span>
+              <span class="summary-value">{{ totalVotos }} votos</span>
+            </div>
+          </div>
 
-          <ion-badge color="tertiary" class="total" *ngIf="totalVotos">
-            Total: {{ totalVotos }}
-          </ion-badge>
+          <div class="summary-card">
+            <div class="summary-icon time">
+              <ion-icon name="time-outline"></ion-icon>
+            </div>
+            <div class="summary-text">
+              <span class="summary-label">Tiempo restante</span>
+              <span class="summary-value">{{ tiempoResumen() }}</span>
+            </div>
+          </div>
         </div>
 
+        <h3 class="options-title">Opciones</h3>
+
+        <!-- Lista de opciones -->
         <ion-list class="opciones" lines="none">
           <ion-item
-            class="opcion"
+            class="option-card"
             *ngFor="let op of opciones; trackBy: trackByOp"
-            [class.seleccionada]="miOpcionId === op.id"
+            (click)="seleccionarOpcion(op)"
+            [class.is-selected]="isOpcionSeleccionada(op)"
             [style.--pct]="pct(op)"
           >
-            <ion-label class="label">
-              <div class="top">
-                <h2 class="titulo">{{ op.titulo }}</h2>
+            <!-- radio circle -->
+            <div class="radio-wrap" slot="start">
+              <span class="radio-outer">
+                <span class="radio-inner" *ngIf="isOpcionSeleccionada(op)"></span>
+              </span>
+            </div>
+
+            <ion-label class="option-label">
+              <div class="option-top">
+                <h2 class="option-title">{{ op.titulo }}</h2>
                 <span class="pct-badge">{{ percent(op) }}%</span>
               </div>
 
-              <p class="desc" *ngIf="op.descripcion" style="margin:4px 0 8px 0;">
+              <p class="option-desc" *ngIf="op.descripcion">
                 {{ op.descripcion }}
               </p>
 
-              <div class="bar"><div class="fill"></div></div>
-
+              <!-- Imagen 16:9, se puede tap para ver detalle -->
               <button
                 class="img-box"
                 *ngIf="op.image_url"
                 type="button"
-                (click)="openDetail(op)"
+                (click)="openDetail(op); $event.stopPropagation()"
                 aria-label="Ver detalle de la opción"
               >
                 <img [src]="op.image_url" alt="Imagen opción" />
               </button>
 
-              <p class="meta">Votos: {{ op.total_votos }}</p>
+              <p class="option-meta">Votos: {{ op.total_votos || 0 }}</p>
             </ion-label>
-
-            <ion-button
-              slot="end"
-              [disabled]="!!miOpcionId || bloqueada"
-              (click)="votar(op)"
-            >
-              {{ miOpcionId ? (miOpcionId === op.id ? 'Votado' : 'Votar') : 'Votar' }}
-            </ion-button>
           </ion-item>
         </ion-list>
 
         <ion-note color="success" *ngIf="miOpcionId">¡Voto registrado!</ion-note>
       </ion-card-content>
     </ion-card>
+
+    <!-- Botón Confirmar voto -->
+    <div class="confirm-footer">
+      <ion-button
+        expand="block"
+        class="confirm-btn"
+        [disabled]="!puedeConfirmar"
+        (click)="confirmarVoto()"
+      >
+        <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
+        Confirmar voto
+      </ion-button>
+    </div>
   </ng-container>
 
+  <!-- Modal detalle de imagen/opción (se mantiene) -->
   <ion-modal
     [isOpen]="detailOpen"
     (didDismiss)="closeDetail()"
@@ -135,105 +179,4 @@
       </ng-container>
     </ng-template>
   </ion-modal>
-
-  <style>
-    .img-box{
-      margin-top:.5rem;
-      width:100%;
-      aspect-ratio:16/9;
-      border-radius:8px;
-      overflow:hidden;
-      padding:0;
-      border:none;
-      background:#f3f4f6;
-    }
-    .img-box img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-    }
-
-    .bar{ margin:8px 0 6px 0; height:8px; border-radius:6px; background:#e5e7eb; overflow:hidden; }
-    .bar .fill{ height:100%; background: var(--ion-color-primary); width: var(--pct); transition: width .25s ease; }
-    .bar.big{ height:12px; border-radius:10px; }
-    .detail-stats{ display:flex; gap:.5rem; align-items:center; margin-bottom:.5rem; }
-
-    .op-dialog{
-      --backdrop-opacity: 0;
-      --background: transparent;
-      --box-shadow: none;
-      --ion-background-color: transparent;
-    }
-
-    ion-modal.op-dialog::part(backdrop){
-      background: transparent !important;
-      pointer-events: auto !important;
-    }
-
-    .op-dialog .modal-shadow{ display:none !important; }
-    .op-dialog .ion-overlay-wrapper{ background:transparent !important; }
-
-    .op-dialog .modal-wrapper{
-      position: fixed !important;
-      inset: 0 !important;
-      background: transparent !important;
-      display: grid !important;
-      place-items: center !important;
-      padding: 16px !important;
-      box-shadow: none !important;
-    }
-
-    .op-dialog .modal-wrapper .ion-page{
-      background: transparent !important;
-      color-scheme: light;
-    }
-    .op-dialog ion-content{ --background: transparent !important; }
-
-    .dialog-overlay{
-      position: fixed;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      background: transparent;
-      z-index: 1;
-    }
-
-    .dialog-card{
-      width: min(560px, 92vw);
-      max-height: 85vh;
-      border-radius: 16px;
-      overflow: hidden auto;
-      background: var(--ion-background-color, #fff);
-      box-shadow: 0 10px 30px rgba(0,0,0,.12);
-      pointer-events: auto;
-    }
-
-    .dialog-card ion-card-header,
-    .dialog-card ion-card-content{
-      background: #fff !important;
-    }
-
-    .detail-img{ width:100%; aspect-ratio:16/9; overflow:hidden; background:#000; }
-    .detail-img img{ width:100%; height:100%; object-fit:cover; display:block; }
-
-    ion-modal.op-dialog::part(content),
-    .op-dialog .ion-overlay-wrapper,
-    .op-dialog .modal-wrapper,
-    .op-dialog .modal-wrapper > .ion-page,
-    .op-dialog ion-content {
-      border-radius: 16px !important;
-      overflow: hidden !important;
-      background: transparent !important;
-    }
-
-    .dialog-card,
-    ion-modal.op-dialog::part(content){
-      -webkit-mask-image: -webkit-radial-gradient(white, black);
-    }
-
-    .op-dialog ion-content{
-      overscroll-behavior: contain;
-    }
-  </style>
 </ion-content>
