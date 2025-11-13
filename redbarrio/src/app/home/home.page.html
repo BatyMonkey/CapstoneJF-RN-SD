@@ -3,19 +3,19 @@
   <div class="rb-hero-container">
     <!-- Logo y texto -->
     <div class="rb-hero-info">
-      <img src="assets/icon/redbarrio-logo.svg" alt="Logo RedBarrio" class="rb-hero-logo" />
+      <div class="rb-hero-logo">
+        <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
+      </div>
       <div class="rb-hero-text">
         <h1>RedBarrio</h1>
         <p>Tu comunidad conectada</p>
       </div>
     </div>
 
-    <!-- Botón de chat -->
+
+    <!-- 🔹 Ocultamos el botón de chat del header (ya tienes el FAB abajo) -->
     <div class="rb-hero-chat-wrapper">
-      <button class="rb-hero-chat" (click)="toggleChat()">
-        <ion-icon name="chatbubble-outline"></ion-icon>
-      </button>
-      <!-- <app-chatbot *ngIf="showChat" [startOpen]="true" class="rb-chatbot-inline"></app-chatbot> -->
+      <!-- vacío / oculto por CSS -->
     </div>
   </div>
 </ion-header>
@@ -46,7 +46,7 @@
         <span>Certificados</span>
       </div>
 
-      <!-- Proyectos (antes “Emergencias”) -> /inscripcion/proyectos -->
+      <!-- Proyectos -> /inscripcion/proyectos -->
       <div class="quick-btn" role="button" tabindex="0" (click)="go('inscripcion/proyectos')">
         <ion-icon name="call-outline"></ion-icon>
         <span>Proyectos</span>
@@ -85,31 +85,48 @@
       <a class="link-more" role="button" tabindex="0" (click)="go('noticias')">Ver todos</a>
     </div>
 
-    <ion-card class="news-card" (click)="go('noticias')">
-      <div class="news-item">
-        <div class="icon yellow">
-          <ion-icon name="megaphone-outline"></ion-icon>
-        </div>
-        <div class="text">
-          <h4>Corte de Agua Programado</h4>
-          <p>Mañana habrá corte de agua de 9:00 a 14:00 hrs por mantención.</p>
-          <small>Hace 2 horas</small>
-        </div>
-      </div>
-    </ion-card>
+    <!-- 🔄 Cargando -->
+    <ion-spinner
+      *ngIf="estaCargando"
+      class="loading-spinner"
+      name="dots">
+    </ion-spinner>
 
-    <ion-card class="news-card" (click)="go('noticias')">
-      <div class="news-item">
-        <div class="icon cyan">
-          <ion-icon name="megaphone-outline"></ion-icon>
+    <!-- 🚫 Sin noticias -->
+    <div *ngIf="!estaCargando && noticias.length === 0" class="no-news">
+      No hay noticias disponibles.
+    </div>
+
+    <!-- ✅ Noticias dinámicas (mismo estilo que las de prueba + foto a la izquierda) -->
+    <ng-container *ngIf="!estaCargando && noticias.length > 0">
+      <ion-card
+        class="news-card"
+        *ngFor="let n of noticias | slice:0:3"
+        (click)="verDetalle(n.id)"
+      >
+        <div class="news-item">
+          <div class="icon" [ngClass]="getIconColor(n)">
+            <!-- FOTO si hay url_foto -->
+            <img
+              *ngIf="n.url_foto && n.url_foto.length > 0"
+              [src]="n.url_foto[0]"
+              alt="Noticia"
+            />
+            <!-- Icono megáfono si no hay foto -->
+            <ion-icon
+              *ngIf="!n.url_foto || n.url_foto.length === 0"
+              name="megaphone-outline">
+            </ion-icon>
+          </div>
+
+          <div class="text">
+            <h4>{{ n.titulo }}</h4>
+            <p>{{ n.parrafos?.[0] || 'Ver más detalles de la noticia.' }}</p>
+            <small>{{ n.fecha_creacion | date:'short' }}</small>
+          </div>
         </div>
-        <div class="text">
-          <h4>Reunión de Vecinos</h4>
-          <p>Este sábado a las 18:00 hrs en la sede vecinal.</p>
-          <small>Hace 1 día</small>
-        </div>
-      </div>
-    </ion-card>
+      </ion-card>
+    </ng-container>
   </div>
 
 </ion-content>

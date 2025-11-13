@@ -257,3 +257,16 @@ ion-footer {
   text-transform: uppercase; letter-spacing: .02em;
 }
 .rb-tabbar__row ion-button.rb-active { --color: var(--ion-color-primary, #3880ff); }
+
+/* Que el contenido no quede bajo la barra inferior */
+ion-content {
+  --padding-bottom: calc(150px + env(safe-area-inset-bottom));
+}
+
+html,
+body,
+ion-app,
+.ion-page,
+ion-router-outlet {
+  background-color: #f4f7f6 !important; /* o #f8fafc, el que uses como fondo */
+}

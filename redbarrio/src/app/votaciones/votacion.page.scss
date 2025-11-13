@@ -1,8 +1,8 @@
 :host {
   color-scheme: light;
-  --rb-primary: #2563eb;
-  --rb-primary-10: rgba(37, 99, 235, 0.1);
-  --rb-primary-20: rgba(37, 99, 235, 0.2);
+  --rb-primary: #06b6d4;
+  --rb-primary-10: rgba(6, 182, 212, 0.1);
+  --rb-primary-20: rgba(6, 182, 212, 0.2);
   --rb-bg: #f8fafc;
   --rb-text: #0f172a;
 
@@ -10,54 +10,179 @@
   --ion-text-color: var(--rb-text);
 }
 
-/* Header gradient */
-.rb-header ion-toolbar {
-  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
-  --color: #fff;
-  --border-color: transparent;
-}
-
-/* Sub-header “Detalle de votación” + chip estado */
-.detail-header {
+/* ============== HERO HEADER (como en otras páginas) ============== */
+.rb-hero-header {
+  background: linear-gradient(90deg, #06b6d4, #22d3ee);
+  border-bottom-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  height: 130px;
   display: flex;
   align-items: center;
-  justify-content: flex-start;  // antes estaba space-between
-  gap: 0.5rem;                  // separación pequeña entre texto y pill
-  margin: 8px 0 12px;
-  padding: 0 25px;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
 }
 
-.detail-title {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #0f172a;
+ion-header::after {
+  background: none !important;
+  display: none !important;
 }
 
-.detail-status {
-  padding: 2px 10px;
+.rb-hero-container {
+  width: 100%;
+  padding: 0 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rb-hero-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rb-hero-logo {
+  /* SIN fondo blanco */
+  width: 80px;
+  height: 80px;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rb-hero-logo img {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+  border-radius: 0;
+}
+
+.rb-hero-text h1 {
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.rb-hero-text p {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 2px 0 0;
+  font-size: 0.9rem;
+}
+
+.rb-hero-chat {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  ion-icon {
+    color: #fff;
+    font-size: 1.3rem;
+  }
+}
+
+/* ============== CONTENIDO ============== */
+
+.votacion-page {
+  --background: #f5f7fb;
+  margin-top: 140px; /* espacio bajo el header */
+}
+
+.page-wrapper {
+  max-width: 430px;
+  margin: 0 auto 24px;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+/* --- tarjeta azul principal, tamaño más pequeño --- */
+.main-vot-card {
+  background: linear-gradient(135deg, #00c6ff, #009fe3);
+  border-radius: 20px;
+  padding: 14px 16px;
+  margin: 14px 0 10px;
+  display: flex;
+  gap: 12px;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.icon-circle {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  ion-icon {
+    font-size: 1.6rem;
+  }
+}
+
+.main-vot-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.main-vot-text h2 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.main-vot-text p {
+  margin: 0;
+  font-size: 0.86rem;
+}
+
+/* pill pequeño “En curso / Finalizada”, solo ancho del texto */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 12px;
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 600;
-  background: #e5f9eb;
-  color: #15803d;
+  background: #e0fdf4;
+  color: #166534;
+  margin-top: 8px;
 
   &.state-pending {
     background: #eff6ff;
     color: #1d4ed8;
   }
+
   &.state-closed {
     background: #fee2e2;
     color: #b91c1c;
   }
 }
 
-/* Tarjeta principal */
+/* ================= Detalle tarjeta blanca ================= */
+
 .card {
   background: #fff;
   border-radius: 18px;
   border: 1px solid rgba(2, 6, 23, 0.06);
   box-shadow: 0 10px 26px rgba(2, 6, 23, 0.08);
   overflow: hidden;
+  margin-top: 14px;
 
   ion-card-header {
     background: #fff;
@@ -78,15 +203,9 @@
 ion-card-title {
   font-weight: 800;
   color: var(--rb-text);
-  font-size: 1.1rem;
+  font-size: 1.05rem;
 }
 
-ion-card-subtitle {
-  color: #64748b;
-  font-weight: 500;
-}
-
-/* Pill “Votación” misma línea que título, color listado */
 .type-badge {
   align-self: flex-start;
   padding: 4px 10px;
@@ -97,7 +216,8 @@ ion-card-subtitle {
   color: #0f172a;
 }
 
-/* Resumen participación / tiempo */
+/* === resumen participación / tiempo (sin cambios grandes) === */
+
 .summary-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -161,7 +281,8 @@ ion-card-subtitle {
   color: #0f172a;
 }
 
-/* Título opciones */
+/* === lista de opciones (igual que antes) === */
+
 .options-title {
   margin: 8px 2px 4px;
   font-size: 0.95rem;
@@ -169,7 +290,6 @@ ion-card-subtitle {
   color: #0f172a;
 }
 
-/* Lista de opciones */
 .opciones {
   background: transparent;
 }
@@ -185,7 +305,6 @@ ion-card-subtitle {
   box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 
-  /* barra de porcentaje de fondo */
   &::before {
     content: "";
     position: absolute;
@@ -210,7 +329,7 @@ ion-card-subtitle {
   }
 }
 
-/* radio circle estilo prototipo */
+/* radio circle */
 .radio-wrap {
   margin-right: 8px;
 }
@@ -302,18 +421,18 @@ ion-note {
   font-weight: 700;
 }
 
-/* Footer botón Confirmar voto */
+/* Botón confirmar voto (igual al de “Solicitar Arriendo”) */
 .confirm-footer {
   margin-top: 16px;
 }
 
 .confirm-btn {
-  --background: linear-gradient(90deg, #facc15, #fbbf24);
-  --background-activated: linear-gradient(90deg, #eab308, #f59e0b);
-  --background-hover: linear-gradient(90deg, #fde047, #facc15);
+  --background: linear-gradient(90deg, #06b6d4, #fbbf24);
+  --background-activated: linear-gradient(90deg, #0ea5e9, #f59e0b);
+  --background-hover: linear-gradient(90deg, #22d3ee, #facc15);
   --color: #ffffff;
-  --border-radius: 999px;
-  --box-shadow: 0 10px 24px rgba(251, 191, 36, 0.55);
+  --border-radius: 12px;
+  --box-shadow: 0 10px 24px rgba(15, 23, 42, 0.3);
   font-weight: 700;
   text-transform: none;
   letter-spacing: 0.2px;
@@ -325,7 +444,7 @@ ion-note {
   --box-shadow: none;
 }
 
-/* Modal detalle (se mantiene muy parecido a tu versión) */
+/* ====== estilos del modal (igual que antes, los dejo tal cual) ====== */
 
 .bar {
   margin: 8px 0 6px 0;

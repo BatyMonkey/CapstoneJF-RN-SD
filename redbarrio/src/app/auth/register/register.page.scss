@@ -1,98 +1,187 @@
-/* ===== Mismo look & feel del Login (blanco + azules) ===== */
+/* ===============================
+   FONDO + HEADER
+   =============================== */
 
 :host {
-  --bg1: #f7fbff;
-  --bg2: #e8f0ff;
+  color-scheme: light; /* 👈 fuerza modo claro */
+  --rb-header-from: #06b6d4;
+  --rb-header-to: #22d3ee;
+  --rb-bg: #f5f7fb;
   --card-bg: #ffffff;
 }
 
-ion-content {
-  --background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
+.rb-reg-header {
+  ion-toolbar {
+    --background: linear-gradient(90deg, var(--rb-header-from), var(--rb-header-to));
+    --color: #ffffff;
+    --border-color: transparent;
+    padding-inline-start: 8px;
+    padding-inline-end: 12px;
+    min-height: 62px;
+  }
+
+  ion-header::after {
+    background: none !important;
+    display: none !important;
+  }
 }
 
-ion-toolbar {
+.back-btn {
   --background: transparent;
-  --color: var(--ion-text-color);
-  --border-color: transparent;
+  --box-shadow: none;
+  --padding-start: 4px;
+  --padding-end: 4px;
+  border-radius: 999px;
+
+  ion-icon {
+    font-size: 1.4rem;
+  }
 }
 
-.wrap {
-  max-width: 420px;
-  margin: 8vh auto 0;
+.rb-reg-toolbar-text {
+  display: flex;
+  flex-direction: column;
+  margin-left: 4px;
+
+  h1 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  p {
+    margin: 2px 0 0;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.9);
+  }
 }
 
-ion-card {
-  border-radius: 16px;
+.reg-content {
+  --background: var(--rb-bg);
+}
+
+/* ===============================
+   CARD PRINCIPAL
+   =============================== */
+
+.reg-wrapper {
+  max-width: 430px;
+  margin: 0 auto;
+  padding: 16px 16px 24px;
+}
+
+.reg-card {
   background: var(--card-bg);
-  box-shadow: 0 10px 30px rgba(43, 88, 118, 0.12);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+  padding: 18px 16px 22px;
 }
 
-ion-card-title {
-  font-weight: 700;
+/* ===============================
+   TOP ACTIONS (Escanear / Boleta)
+   =============================== */
+
+.reg-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-ion-card-subtitle {
-  margin-top: 4px;
-  opacity: 0.7;
+.reg-action-btn {
+  --border-radius: 14px;
+  --border-color: rgba(6, 182, 212, 0.8);
+  --color: #06b6d4;
+  --background: #ffffff; /* 👈 botón claro */
+  --box-shadow: 0 4px 12px rgba(6, 182, 212, 0.18);
+  font-weight: 600;
+  text-transform: none;
+
+  ion-icon {
+    font-size: 1.2rem;
+  }
 }
 
-ion-item {
-  --background: transparent;
+.reg-file-name {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.8rem;
+}
+
+.reg-note-center {
+  display: block;
+  text-align: center;
+  margin: 4px 0 4px;
+  font-size: 0.8rem;
+}
+
+.reg-note-small {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.78rem;
+}
+
+/* ===============================
+   INPUTS
+   =============================== */
+
+.reg-input {
+  --background: #f9fafb;
   --padding-start: 12px;
   --inner-padding-end: 12px;
-  --min-height: 54px;
+  --min-height: 52px;
 
-  border: 1px solid rgba(25, 71, 170, 0.15);
-  border-radius: 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
   margin-top: 12px;
 
-  transition: border-color 160ms ease, box-shadow 160ms ease;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
 }
 
-ion-item.item-has-focus {
-  border-color: var(--ion-color-primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+.reg-input.item-has-focus {
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.25);
 }
 
-ion-icon[slot="start"] {
+.reg-input ion-icon[slot='start'] {
   margin-right: 6px;
-  opacity: 0.9;
+  opacity: 0.95;
 }
 
-ion-input {
-  font-size: 16px;
+.reg-input ion-input,
+.reg-input ion-select {
+  font-size: 0.95rem;
 }
 
-ion-button.cta {
-  --border-radius: 12px;
-  --box-shadow: 0 6px 18px rgba(59, 130, 246, 0.35);
-  margin-top: 16px;
-}
-
-.error {
+/* Mensajes de error */
+.reg-error {
   display: block;
-  font-size: 0.9rem;
-  margin-top: 12px;
+  font-size: 0.85rem;
+  margin-top: 4px;
 }
 
-/* ===== Modo oscuro ===== */
-@media (prefers-color-scheme: dark) {
-  :host {
-    --bg1: #0b1220;
-    --bg2: #0f1630;
-    --card-bg: #141a2a;
-  }
+/* ===============================
+   BOTÓN REGISTRAR
+   =============================== */
 
-  ion-card {
-    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
-  }
+.btn-register {
+  margin-top: 18px;
+  --border-radius: 999px;
+  --background: linear-gradient(90deg, #facc15, #fbbf24);
+  --background-hover: linear-gradient(90deg, #fde047, #facc15);
+  --background-activated: linear-gradient(90deg, #eab308, #f59e0b);
+  --box-shadow: 0 10px 24px rgba(251, 191, 36, 0.6);
+  --color: #ffffff;
+  font-weight: 700;
+  text-transform: none;
+}
 
-  ion-item {
-    border-color: rgba(255, 255, 255, 0.08);
-  }
-  /* === Alert centrado con estilo moderno === */
+/* ===============================
+   ALERT CUSTOM (si lo usas en esta página)
+   =============================== */
+
 ::ng-deep .custom-success-alert .alert-wrapper {
-  background: #1e1e2a; /* gris oscuro elegante */
+  background: #1e1e2a;
   border-radius: 22px;
   padding: 25px;
   text-align: center;
@@ -100,7 +189,6 @@ ion-button.cta {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
 }
 
-/* Header (título principal) */
 ::ng-deep .custom-success-alert .alert-title {
   color: #2dd36f;
   font-weight: 800;
@@ -109,7 +197,6 @@ ion-button.cta {
   letter-spacing: 0.3px;
 }
 
-/* Subheader (línea intermedia) */
 ::ng-deep .custom-success-alert .alert-sub-title {
   color: #e0e0e0;
   font-weight: 500;
@@ -118,7 +205,6 @@ ion-button.cta {
   opacity: 0.9;
 }
 
-/* Mensaje inferior */
 ::ng-deep .custom-success-alert .alert-message {
   color: #ccc;
   font-size: 0.95rem;
@@ -126,7 +212,6 @@ ion-button.cta {
   margin-top: 5px;
 }
 
-/* Botón OK */
 ::ng-deep .custom-success-alert .ok-button {
   color: #2d8cf0 !important;
   font-weight: 700;
@@ -135,38 +220,21 @@ ion-button.cta {
   letter-spacing: 0.4px;
 }
 
-/* ===== Uploader: mismo look que el botón de escanear ===== */
-.boleta-uploader {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+/* ===============================
+   DARK MODE (mantiene fondo CLARO)
+   =============================== */
 
-.boleta-uploader .file-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
+@media (prefers-color-scheme: dark) {
+  :host {
+    --rb-bg: #f5f7fb;   /* 👈 igual que en modo claro */
+    --card-bg: #ffffff; /* 👈 tarjeta blanca */
+  }
 
-.boleta-uploader .mini {
-  --border-radius: 12px;
-  height: 36px;
-  --padding-start: 12px;
-  --padding-end: 12px;
-}
+  .reg-card {
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.3);
+  }
 
-.boleta-uploader .ok-chip {
-  align-self: flex-start;
-  margin-top: 2px;
-}
-
-/* Asegura mismo estilo a ambos botones “principales” */
-ion-button.cta {
-  --border-radius: 12px;
-  --box-shadow: 0 6px 18px rgba(59, 130, 246, 0.35);
-}
-
-
-  
+  .reg-input {
+    border-color: rgba(148, 163, 184, 0.55);
+  }
 }

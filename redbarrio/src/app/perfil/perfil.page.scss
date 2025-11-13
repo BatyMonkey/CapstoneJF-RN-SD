@@ -1,195 +1,416 @@
-/* ===== Perfil de Usuario (Diseño Unificado) ===== */
+/* ======= PALETA Y FONDO GENERAL ======= */
 :host {
-  /* Paleta */
-  --rb-primary: #2563eb;
-  --rb-primary-10: rgba(37, 99, 235, 0.10);
-  --rb-primary-20: rgba(37, 99, 235, 0.20);
+  color-scheme: light;
 
-  --rb-bg: #ffffff; /* FONDO BLANCO */
+  --rb-primary: #06b6d4;
+  --rb-primary-10: rgba(6, 182, 212, 0.1);
+  --rb-bg: #f5f7fb;
   --rb-text: #0f172a;
   --rb-muted: #64748b;
 
-  /* Fuerza esquema claro y fondo blanco */
-  color-scheme: light;
   --ion-background-color: var(--rb-bg);
   --ion-text-color: var(--rb-text);
-  --ion-item-background: #ffffff;
-  --ion-card-background: #ffffff;
 }
 
-/* Header con gradiente consistente */
-.rb-header ion-toolbar {
-  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
-  --color: #fff;
-  --border-color: transparent;
-  --min-height: 56px;
+/* Quita la línea fea bajo el header de Ionic */
+ion-header::after {
+  background: none !important;
+  display: none !important;
 }
 
-/* Contenido de la Página */
+/* ============== HERO HEADER (COPIADO DEL EJEMPLO) ============== */
+.rb-hero-header {
+  background: linear-gradient(90deg, #06b6d4, #22d3ee);
+  border-bottom-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.rb-hero-container {
+  width: 100%;
+  padding: 0 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rb-hero-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rb-hero-logo {
+  width: 80px;
+  height: 80px;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rb-hero-logo img {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+  border-radius: 0;
+}
+
+.rb-hero-text h1 {
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.rb-hero-text p {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 2px 0 0;
+  font-size: 0.9rem;
+}
+
+.rb-hero-chat {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  ion-icon {
+    color: #fff;
+    font-size: 1.3rem;
+  }
+}
+
+/* ============== CONTENIDO PERFIL ============== */
+
 .perfil-page {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 16px;
-  --background: var(--rb-bg); /* Fondo de la página */
+  --background: #f5f7fb;
+  margin-top: 140px; /* espacio bajo el header curvo */
+}
 
-  .card {
-    background: #fff;
-    border: 1px solid rgba(2, 6, 23, 0.06);
-    border-radius: 18px;
-    box-shadow: 0 10px 26px rgba(2, 6, 23, 0.08);
-    overflow: hidden;
-    margin-bottom: 24px;
+.perfil-wrapper {
+  max-width: 430px;
+  margin: 0 auto 24px;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
 
-    ion-card-header {
-      background: #fff;
-      border-bottom: 1px solid rgba(2, 6, 23, 0.06);
-      padding-bottom: 12px;
-    }
+/* ---- TARJETA HERO PERFIL ---- */
+.perfil-hero-card {
+  background: linear-gradient(135deg, #00c6ff, #009fe3);
+  border-radius: 24px;
+  padding: 22px 16px 18px;
+  margin-top: 16px; /* margen claro bajo el header */
+  color: #ffffff;
+  text-align: center;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.18);
+  position: relative;
+}
 
-    ion-card-title {
-      font-weight: 800;
-      color: var(--rb-text);
-    }
-    ion-card-subtitle {
-      color: var(--rb-muted);
-      font-weight: 500;
-      margin-top: 6px;
-      display: block;
-    }
-    
-    ion-card-content {
-        padding-bottom: 24px;
-    }
+.avatar-wrap {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 10px;
+}
 
-    /* ===== Campos Editables (.field) - Estilo Base Blanco ===== */
-    .field {
-      /* Caja blanca con relieve */
-      --background: #fff;
-      background: #fff;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 14px;
-      box-shadow: 0 8px 18px rgba(2, 6, 23, 0.06);
+.avatar-ring {
+  width: 96px;
+  height: 96px;
+  border-radius: 999px;
+  border: 4px solid #ffffff;
+  overflow: hidden;
+  background: #e2e8f0;
+}
 
-      /* Espaciado */
-      --padding-start: 12px;
-      --inner-padding-end: 12px;
-      --inner-padding-top: 12px;
-      --inner-padding-bottom: 12px;
-      --min-height: auto;
+.avatar-ring img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-      margin: 14px 0;
-      transition: border-color 160ms ease, box-shadow 160ms ease;
-      
-      ion-label {
-        margin: 2px 4px 6px 2px;
-        line-height: 1.2;
-        color: #334155;
-        font-weight: 700;
-      }
-      
-      /* Texto del control (input) */
-      ion-input::part(native),
-      ion-textarea::part(native) {
-        color: var(--rb-text);
-        background: #fff; /* Fondo blanco para editables */
-        line-height: 1.25;
-        font-weight: 600;
-        padding: 8px 10px 10px;
-        caret-color: var(--rb-primary);
-      }
+.avatar-edit-btn {
+  position: absolute;
+  bottom: 4px;
+  right: calc(50% - 40px);
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: none;
+  background: #facc15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+  padding: 0;
+  cursor: pointer;
 
-      /* Placeholders */
-      ion-input::part(native)::placeholder,
-      ion-textarea::part(native)::placeholder {
-        color: #6b7280;
-        opacity: 1;
-      }
-
-      /* Foco accesible */
-      &.item-has-focus,
-      &:focus-within {
-        border-color: var(--rb-primary);
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14), 0 8px 18px rgba(2, 6, 23, 0.06);
-      }
-    }
-
-    /* ===== Campos NO EDITABLES/ESTÁTICOS (Gris) ===== */
-    .field[disabled],
-    .field.is-static {
-        /* 1. Forzar Fondo gris claro en el ion-item */
-        --background: #f1f5f9 !important; 
-        background: #f1f5f9 !important;
-        
-        opacity: 0.95;
-        box-shadow: none;
-        border-color: #e2e8f0;
-        
-        ion-label {
-            color: var(--rb-muted) !important;
-            font-weight: 600;
-        }
-
-        /* 2. Forzar que el INPUT interno NO tenga fondo blanco */
-        ion-input::part(native),
-        ion-textarea::part(native) {
-            color: #334155 !important; 
-            font-weight: 500;
-            background: transparent !important; 
-        }
-    }
-
-
-    /* Mensajes de error */
-    ion-text[color="danger"] {
-      display: block;
-      margin: 4px 6px 0;
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    /* Acciones */
-    .actions {
-      margin-top: 24px;
-      padding: 0 0 16px;
-
-      ion-button {
-        --border-radius: 14px;
-        --box-shadow: 0 10px 18px var(--rb-primary-10);
-        font-weight: 700;
-
-        &:active {
-          transform: translateY(1px);
-        }
-      }
-    }
+  ion-icon {
+    font-size: 1.2rem;
+    color: #1f2937;
   }
 
-  /* Nota/Texto de estado de verificación */
-  .verification-status {
-      margin: 10px 0 20px;
-      padding: 10px 16px;
-      border-radius: 12px;
-      font-weight: 600;
-      
-      &.is-verified {
-          background: #dcfce7;
-          color: #16a34a; 
-          border: 1px solid #bbf7d0;
-      }
-      &.is-pending {
-          background: #fef9c3;
-          color: #eab308;
-          border: 1px solid #fde68a;
-      }
+  &:disabled {
+    opacity: 0.7;
+    cursor: default;
   }
 }
 
-/* Responsive: sombra más ligera en móviles */
-@media (max-width: 480px) {
-  .perfil-page .card .field {
-    box-shadow: 0 6px 12px rgba(2, 6, 23, 0.05);
+.perfil-name {
+  margin: 6px 0 2px;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.perfil-role {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.95;
+}
+
+.perfil-status-badge {
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  font-size: 0.8rem;
+  font-weight: 600;
+
+  ion-icon {
+    font-size: 1rem;
   }
-  .perfil-page {
-      padding: 8px;
+}
+
+/* ---- TARJETAS BLANCAS GENERALES ---- */
+.perfil-card {
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+  padding: 12px 16px 4px;
+  margin-top: 16px;
+}
+
+/* ---- FILAS DE INFORMACIÓN ---- */
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.info-row + .info-row {
+  border-top: 1px solid #e5e7eb;
+}
+
+.info-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  ion-icon {
+    font-size: 1.3rem;
+  }
+
+  &.mail {
+    background: #e0f2fe;
+    ion-icon {
+      color: #0284c7;
+    }
+  }
+
+  &.phone {
+    background: #fef3c7;
+    ion-icon {
+      color: #d97706;
+    }
+  }
+
+  &.address {
+    background: #fef9c3;
+    ion-icon {
+      color: #ca8a04;
+    }
+  }
+
+  &.member {
+    background: #ede9fe;
+    ion-icon {
+      color: #6d28d9;
+    }
+  }
+}
+
+.info-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.info-value {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* ---- TARJETA CONFIGURACIÓN ---- */
+.config-card {
+  padding-bottom: 8px;
+}
+
+.config-title {
+  margin: 4px 0 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.config-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+
+  & + .config-row {
+    border-top: 1px solid #e5e7eb;
+  }
+
+  ion-toggle {
+    --handle-background: #ffffff;
+    --background: #e5e7eb;
+    --background-checked: #0ea5e9;
+  }
+}
+
+.config-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.config-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon {
+    font-size: 1.1rem;
+  }
+
+  &.notif {
+    background: #eff6ff;
+    ion-icon {
+      color: #2563eb;
+    }
+  }
+
+  &.privacy {
+    background: #ecfdf3;
+    ion-icon {
+      color: #16a34a;
+    }
+  }
+
+  &.edit {
+    background: #f5f3ff;
+    ion-icon {
+      color: #7c3aed;
+    }
+  }
+}
+
+.config-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.config-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.config-arrow {
+  font-size: 1.1rem;
+  color: #94a3b8;
+}
+
+/* ---- TARJETA CERRAR SESIÓN ---- */
+.perfil-logout-card {
+  margin-top: 18px;
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid rgba(248, 113, 113, 0.45);
+  box-shadow: 0 10px 26px rgba(248, 113, 113, 0.22);
+}
+
+.logout-btn {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ef4444;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+
+  ion-icon {
+    font-size: 1.2rem;
+  }
+}
+
+/* ---- Indicador de guardado ---- */
+.saving-indicator {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: var(--rb-muted);
+}
+
+/* Responsive pequeño ajuste en móviles */
+@media (max-width: 480px) {
+  .perfil-wrapper {
+    padding: 0 12px;
+  }
+
+  /* mantenemos el mismo margen bajo el header también en móvil */
+  .perfil-hero-card {
+    margin-top: 16px;
   }
 }

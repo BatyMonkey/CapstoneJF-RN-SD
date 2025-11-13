@@ -1,78 +1,94 @@
-<ion-content class="ion-padding" fullscreen>
-  <div style="max-width:420px; margin: 8vh auto 0;">
-    <ion-card style="border-radius:16px;">
-      <ion-card-header>
-        <ion-card-title color="primary">Iniciar sesión</ion-card-title>
-        <ion-card-subtitle>Bienvenido/a 👋</ion-card-subtitle>
-      </ion-card-header>
+<ion-content class="login-page" [fullscreen]="true">
+  <div class="login-shell">
+    <!-- Logo -->
+    <div class="logo-wrapper">
+      <img src="assets/icon/redbarrio.png" alt="RedBarrio" />
+    </div>
 
-      <ion-card-content>
-        <ion-item lines="none">
-          <ion-icon name="mail-outline" slot="start" color="primary"></ion-icon>
+    <!-- Títulos -->
+    <h1 class="app-name">RedBarrio</h1>
+    <p class="app-tagline">Tu comunidad conectada</p>
+
+    <!-- FORM -->
+    <form (ngSubmit)="login()" novalidate class="form-wrapper">
+      <!-- Correo -->
+      <div class="field-group">
+        <label class="field-label">Correo Electrónico</label>
+        <ion-item lines="none" class="rb-input">
+          <ion-icon name="mail-outline" slot="start"></ion-icon>
           <ion-input
             type="email"
             autocomplete="email"
-            placeholder="Correo"
+            placeholder="tucorreo@ejemplo.com"
             [(ngModel)]="email"
+            name="email"
             (keyup.enter)="login()">
           </ion-input>
         </ion-item>
+      </div>
 
-        <ion-item lines="none" style="margin-top:10px;">
-          <ion-icon name="lock-closed-outline" slot="start" color="primary"></ion-icon>
+      <!-- Contraseña -->
+      <div class="field-group">
+        <label class="field-label">Contraseña</label>
+        <ion-item lines="none" class="rb-input">
+          <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
           <ion-input
             type="password"
             autocomplete="current-password"
-            placeholder="Contraseña"
+            placeholder="••••••••"
             [(ngModel)]="password"
+            name="password"
             (keyup.enter)="login()">
           </ion-input>
         </ion-item>
+      </div>
 
-        <ion-text color="danger" *ngIf="errorMsg" style="display:block; margin-top:12px;">
-          {{ errorMsg }}
-        </ion-text>
+      <!-- Recordarme / ¿Olvidaste tu contraseña? -->
+      <div class="row-inline helpers-row">
+        <label class="remember-me">
+          <ion-checkbox mode="md"></ion-checkbox>
+          <span>Recordarme</span>
+        </label>
 
-        <ion-button
-          expand="block"
-          size="large"
-          color="primary"
-          (click)="login()"
-          [disabled]="loading"
-          style="margin-top:16px; border-radius:12px;">
-          <ion-spinner slot="start" *ngIf="loading"></ion-spinner>
-          {{ loading ? 'Ingresando…' : 'Ingresar' }}
-        </ion-button>
+        <button
+          type="button"
+          class="link-button"
+          (click)="requestPasswordRecovery()"
+          [disabled]="loading || loadingRecovery">
+          ¿Olvidaste tu contraseña?
+        </button>
+      </div>
 
-        <!-- Línea divisoria suave -->
-        <div style="display:flex; align-items:center; gap:8px; margin:14px 0 6px;">
-          <div style="flex:1; height:1px; background:rgba(0,0,0,.08)"></div>
-          <small style="opacity:.6;">o</small>
-          <div style="flex:1; height:1px; background:rgba(0,0,0,.08)"></div>
-        </div>
+      <!-- Error -->
+      <ion-text color="danger" *ngIf="errorMsg" class="error-msg">
+        {{ errorMsg }}
+      </ion-text>
 
-        <!-- Botón para ir al registro -->
-        <ion-button
-          expand="block"
-          fill="clear"
-          [routerLink]="['/auth/register']"
-          [disabled]="loading"
-          style="border-radius:12px;">
-          Crear cuenta
-        </ion-button>
-        
-        <div style="text-align: center; margin-top: 10px;">
-            <ion-button 
-                fill="clear" 
-                size="small" 
-                color="medium"
-                class="recovery-button"
-                (click)="requestPasswordRecovery()"
-                [disabled]="loading || loadingRecovery">
-                Recuperar Contraseña
-            </ion-button>
-        </div>
-      </ion-card-content>
-    </ion-card>
+      <!-- Botón principal -->
+      <ion-button
+        expand="block"
+        size="large"
+        class="primary-btn"
+        (click)="login()"
+        [disabled]="loading">
+        <ion-spinner slot="start" *ngIf="loading"></ion-spinner>
+        {{ loading ? 'Ingresando…' : 'Iniciar Sesión' }}
+      </ion-button>
+    </form>
+
+    <!-- Registro -->
+    <div class="register-row">
+      <span>¿No tienes cuenta?</span>
+      <button
+        type="button"
+        class="link-button strong"
+        [routerLink]="['/auth/register']"
+        [disabled]="loading">
+        Regístrate aquí
+      </button>
+    </div>
+
+    <!-- Slogan -->
+    <p class="slogan">Conectando vecinos, fortaleciendo comunidades</p>
   </div>
 </ion-content>

@@ -11,17 +11,72 @@
   --ion-text-color: var(--rb-text);
 }
 
-/* Header con gradiente similar al home */
-.rb-header ion-toolbar {
-  --background: linear-gradient(90deg, #06b6d4 0%, #22d3ee 100%);
-  --color: #fff;
-  --border-color: transparent;
+/* ================================================
+   HERO HEADER (mismo estilo que Certificados)
+   ================================================ */
+.rb-hero-header {
+  background: linear-gradient(90deg, #06b6d4 0%, #22d3ee 100%);
+  border-bottom-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  z-index: 10;
 }
 
-/* Quita línea inferior por defecto */
 ion-header::after {
   background: none !important;
   display: none !important;
+}
+
+.rb-hero-container {
+  width: 100%;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rb-hero-info {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.rb-hero-logo {
+  width: 80px;
+  height: 80px;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rb-hero-logo img {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+  border-radius: 0;
+}
+
+.rb-hero-text h1 {
+  color: #ffffff;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.rb-hero-text p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  margin: 2px 0 0 0;
 }
 
 /* ===============================
@@ -29,18 +84,64 @@ ion-header::after {
    =============================== */
 .vot-content {
   --background: var(--rb-bg);
+  margin-top: 140px; /* deja espacio para el hero header */
 }
 
 .vot-wrapper {
   padding: 1rem 1.25rem 2.5rem 1.25rem;
 }
 
+/* ===============================
+   Tarjeta principal del módulo
+   (clon de la de Certificados)
+   =============================== */
+.vot-main-card {
+  background: linear-gradient(135deg, #00c6ff, #009fe3);
+  border-radius: 20px;
+  padding: 20px 18px;
+  margin-top: 4px;
+  margin-bottom: 14px;
+  display: flex;
+  gap: 14px;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.icon-circle {
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon-circle ion-icon {
+  font-size: 1.8rem;
+}
+
+.vot-main-text h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.vot-main-text p {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  opacity: 0.95;
+}
+
+/* ===============================
+   Título interno
+   =============================== */
 .vot-header {
   margin-bottom: 0.85rem;
 
   h2 {
     margin: 0;
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: #1e293b;
   }
@@ -245,11 +346,10 @@ ion-header::after {
 }
 
 /* ===============================
-   Tarjetas FINALIZADAS (gris + pill amarillo)
+   Tarjetas FINALIZADAS
    =============================== */
 .vot-card--finished {
-  /* gris/plateado tipo mock */
-  background: #4b5563; /* slate-600 aprox */
+  background: #4b5563;
   color: #e5e7eb;
 
   .vot-card-header {
@@ -280,7 +380,6 @@ ion-header::after {
       font-size: 1.1rem;
     }
 
-    /* pill amarillo tipo botón */
     .pill-finished {
       background: #facc15;
       color: #111827;
@@ -294,7 +393,7 @@ ion-header::after {
   }
 }
 
-/* Ajustes pequeños para iOS */
+/* Ajuste iOS */
 .ios .vot-wrapper {
   padding-top: 1rem;
 }

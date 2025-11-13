@@ -3,30 +3,35 @@
   position: fixed;
   left: 0; right: 0; bottom: 0;
   z-index: 1000;
-  /* Sombra suave y borde superior */
   box-shadow: 0 -4px 16px rgba(0,0,0,.08);
   border-top: 1px solid rgba(0,0,0,.06);
 }
+
 /* Da espacio inferior al contenido para no quedar bajo el footer */
-ion-router-outlet {
-  --rb-footer-h: 56px;
+/* Da espacio inferior SOLO al outlet principal (no a las pantallas /auth) */
+ion-router-outlet#main {
+  --rb-footer-h: 72px; /* un poco más alto para el pill */
   padding-bottom: var(--rb-footer-h);
 }
 
+
 /* ===== Barra inferior tipo tabs ===== */
 .rb-tabbar {
-  --background: #fff;
+  --background: #ffffff;
   padding: 0;
 }
 
+/* Fila de botones */
 .rb-tabbar__row {
   display: flex;
   justify-content: space-between;
   align-items: stretch;
   width: 100%;
+  padding: 8px 10px;
+  gap: 6px;
 }
 
-/* Botones en columna, sin padding extra, color de texto negro suave */
+/* Botones en columna, con pill suave */
 .rb-tabbar__row ion-button {
   flex: 1 1 0;
   margin: 0;
@@ -38,44 +43,72 @@ ion-router-outlet {
   --padding-bottom: 6px;
   min-width: 0;
 
-  /* Quitar azul/primario en estados, todo en negro/gris */
-  --color: #111;
-  --color-activated: #000;
+  border-radius: 999px;
+  --background: transparent;
+  --background-activated: transparent;
   --background-hover: transparent;
-  --background-activated: rgba(0,0,0,.06);
+
+  /* gris suave por defecto, pero más marcado */
+  --color: #6b7280; /* un poco más oscuro que antes */
 }
 
-/* Icono dentro de puck con borde negro y fondo blanco */
+/* Icono redondo */
 .rb-icon {
   display: inline-grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
-  border: 1.6px solid #000;   /* borde negro */
-  border-radius: 9999px;
-  background: #fff;           /* fondo blanco */
-  margin-bottom: 3px;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: 1.6px solid #d1d5db;
+  background: #ffffff;
+  margin-bottom: 4px;
 }
 
 .rb-icon ion-icon {
-  font-size: 18px;            /* tamaño del pictograma */
+  font-size: 18px;
   line-height: 1;
-  color: #111;                /* icono negro */
+  color: inherit;
 }
 
-/* Label compacto */
+/* Avatar dentro del icon-container (perfil) */
+.rb-icon ion-avatar,
+.rb-icon .tab-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+/* Versión especial para perfil: sin borde extra ni fondo blanco detrás */
+.rb-icon--profile {
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+/* Label compacto + más “negrita” */
 .rb-tabbar__row ion-label {
-  font-size: 10px;
-  margin-top: 2px;
-  line-height: 1;
-  text-transform: uppercase;
-  letter-spacing: .02em;
-  color: #111;
+  font-size: 11px;
+  margin-top: 0;
+  line-height: 1.1;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 600; /* más marcado */
 }
 
-/* Activo en negro (no azul) */
+/* Estado ACTIVO: pill celeste + icono/texto azules y aún más marcado */
 .rb-tabbar__row ion-button.rb-active {
-  --color: #000;
+  --background: #e6f7ff; /* celestito */
+  --color: #00a3ff;      /* azul ícono/texto */
+}
+
+.rb-tabbar__row ion-button.rb-active .rb-icon {
+  border-color: #00a3ff;
+  background: #e6f7ff;
+}
+
+.rb-tabbar__row ion-button.rb-active ion-label {
+  font-weight: 700;
 }
 
 /* Elimina anillos/contornos azules por accesibilidad visual predeterminada */
@@ -84,11 +117,42 @@ ion-router-outlet {
   outline: none !important;
 }
 
-/* Ripple oscuro (en vez de azul) */
+/* Ripple oscuro (en vez de azul fuerte) */
 .rb-tabbar__row ion-button::part(native) {
-  --ripple-color: rgba(0,0,0,.12);
+  --ripple-color: rgba(0,0,0,.05);
 }
 
 /* Páginas inactivas ocultas (no tocar más ion-router-outlet/.ion-page) */
 .ion-page.ion-page-hidden,
-.ion-page.ion-page-invisible { display: none !important; }
+.ion-page.ion-page-invisible {
+  display: none !important;
+}
+
+/* Botón flotante de IA (brillito celeste) */
+.ai-fab {
+  position: fixed;
+  right: 16px;
+  bottom: calc(72px + 16px); /* 72px ~ altura del footer + margen */
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  border: none;
+  background: #00a3ff; /* celeste */
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 24px rgba(0, 163, 255, 0.5);
+  cursor: pointer;
+  z-index: 1200; /* por encima de la barra inferior y del chat */
+}
+
+.ai-fab ion-icon {
+  font-size: 26px;
+}
+
+.ai-fab:active {
+  transform: translateY(1px) scale(0.97);
+  box-shadow: 0 6px 18px rgba(0, 163, 255, 0.4);
+}
+

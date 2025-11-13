@@ -1,80 +1,170 @@
-<ion-header [translucent]="true" class="rb-header">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
-    </ion-buttons>
-    
-    <ion-title>Nuestros Espacios</ion-title>
-    </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
-    <ion-refresher-content
-      pullingText="Desliza para refrescar"
-      refreshingSpinner="crescent"
-      refreshingText="Actualizando...">
-    </ion-refresher-content>
-  </ion-refresher>
-  
-  <div class="page-wrap ion-padding">
-    
-    <div *ngIf="isLoading" class="ion-text-center ion-padding">
-      <ion-spinner name="crescent" color="primary"></ion-spinner>
-      <p>Cargando lista de espacios...</p>
+<!-- ========================================
+     HERO HEADER SUPERIOR (igual al Home)
+========================================= -->
+<ion-header class="rb-hero-header">
+  <div class="rb-hero-container">
+    <div class="rb-hero-info">
+      <img src="assets/icon/redbarrio-icon.png" class="rb-hero-logo" />
+      <div class="rb-hero-text">
+        <h1>Espacios Comunitarios</h1>
+        <p>Arrienda espacios del barrio</p>
+      </div>
     </div>
 
-    <ng-container *ngIf="!isLoading && espacios?.length">
-      
-      <ion-card 
-        *ngFor="let espacio of espacios" 
-        class="card" 
-        button="true" 
-        detail="false"
-        (click)="goToDetail(espacio.id_espacio)" 
-      >
-          <ion-img *ngIf="espacio.imagen_url" [src]="espacio.imagen_url" alt="Imagen del espacio" style="width: 100%; height: 180px; object-fit: cover;"></ion-img>
-        <ion-card-header>
-          <ion-card-title>{{ espacio.nombre }}</ion-card-title>
-          <ion-card-subtitle>{{ espacio.direccion_completa || 'Dirección no especificada' }}</ion-card-subtitle>
-        </ion-card-header>
-        
-        <ion-card-content>
-          <ion-grid>
-            <ion-row>
-              <ion-col size="6">
-                <p><strong>Tipo:</strong> {{ getTipoNombre(espacio.tipo) }}</p>
-              </ion-col>
-              <ion-col size="6" class="ion-text-end">
-                <p><strong>Capacidad:</strong> {{ espacio.capacidad }}</p>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-          
-          <p class="ion-padding-top-sm ion-text-start ion-text-sm">
-            {{ espacio.descripcion ? (espacio.descripcion.length > 50 ? espacio.descripcion.substring(0, 50) + '...' : espacio.descripcion) : 'Sin descripción' }}
-          </p>
-        </ion-card-content>
-      </ion-card>
+    <button class="rb-hero-chat" (click)="goBack()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </button>
+  </div>
+</ion-header>
 
+
+<!-- ========================================
+            CONTENIDO
+========================================= -->
+<ion-content class="espacios-page" [fullscreen]="true">
+
+  <!-- SUBHEADER BLANCO (Figma) -->
+  <div class="subheader">
+    <button class="back-btn" (click)="goBack()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </button>
+
+    <div class="subheader-text">
+      <h2>Espacios Comunitarios</h2>
+      <p>Arrienda espacios del barrio</p>
+    </div>
+  </div>
+
+  <div class="content-wrapper">
+
+    <!-- TIP AMARILLO -->
+    <div class="tip-box">
+      <span class="tip-emoji">📅</span>
+      <p>
+        Selecciona un espacio y completa el formulario para solicitar un arriendo.
+        El administrador revisará tu solicitud y te confirmará la disponibilidad.
+      </p>
+    </div>
+
+    <!-- TÍTULO -->
+    <h3 class="section-title">Espacios Disponibles</h3>
+
+    <!-- LISTADO -->
+    <ng-container *ngIf="!isLoading && espacios?.length; else loadingOrEmpty">
+
+      <ion-card *ngFor="let espacio of espacios"
+                class="espacio-card"
+                [class.selected]="espacioSeleccionadoId === espacio.id_espacio"
+                (click)="seleccionarEspacio(espacio)">
+
+        <!-- IMAGEN -->
+        <div class="espacio-img-wrapper">
+          <img *ngIf="espacio.imagen_url" [src]="espacio.imagen_url" [alt]="espacio.nombre" />
+          
+          <!-- PRECIO -->
+          <div class="espacio-price" *ngIf="espacio.precio">{{ espacio.precio }}</div>
+
+          <!-- CHECK SELECCIONADO -->
+          <div class="espacio-check" *ngIf="espacioSeleccionadoId === espacio.id_espacio">
+            <ion-icon name="checkmark-outline"></ion-icon>
+          </div>
+        </div>
+
+        <!-- CONTENIDO -->
+        <ion-card-content>
+          <h4 class="espacio-nombre">{{ espacio.nombre }}</h4>
+          <p class="espacio-desc">{{ espacio.descripcion || 'Sin descripción' }}</p>
+
+          <div class="espacio-meta">
+            <div class="meta-item">
+              <ion-icon name="people-outline"></ion-icon>
+              <span>Capacidad: {{ espacio.capacidad }} personas</span>
+            </div>
+
+            <div class="meta-item" *ngIf="espacio.direccion_completa">
+              <ion-icon name="location-outline"></ion-icon>
+              <span>{{ espacio.direccion_completa }}</span>
+            </div>
+          </div>
+
+          <!-- SERVICIOS -->
+          <div class="espacio-servicios" *ngIf="espacio.servicios?.length">
+            <p class="servicios-title">Servicios incluidos:</p>
+
+            <div class="servicios-grid">
+              <div class="servicio-pill" *ngFor="let s of espacio.servicios">
+                <ion-icon [name]="iconoServicio(s)"></ion-icon>
+                <span>{{ nombreServicio(s) }}</span>
+              </div>
+            </div>
+          </div>
+        </ion-card-content>
+
+      </ion-card>
     </ng-container>
 
-    <div *ngIf="!isLoading && !espacios?.length" class="ion-text-center ion-padding">
-      <p>No se encontraron espacios disponibles.</p>
-      <ion-button *ngIf="isAdmin" (click)="irACrearEspacio()" fill="solid" size="large">
-        Crear Nuevo Espacio
+    <!-- LOADING / EMPTY -->
+    <ng-template #loadingOrEmpty>
+      <div *ngIf="isLoading" class="loading-wrapper">
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
+        <p>Cargando espacios...</p>
+      </div>
+
+      <div *ngIf="!isLoading && !espacios?.length" class="empty-wrapper">
+        <p>No se encontraron espacios disponibles.</p>
+        <ion-button *ngIf="isAdmin" (click)="irACrearEspacio()" fill="solid">
+          Crear nuevo espacio
+        </ion-button>
+      </div>
+    </ng-template>
+
+    <!-- FORMULARIO -->
+    <div class="solicitud-card" *ngIf="espacioSeleccionadoId">
+      <h3>Solicitar Arriendo</h3>
+
+      <!-- FECHA -->
+      <div class="field">
+        <label>Fecha <span class="req">*</span></label>
+        <div class="field-input icon-left">
+          <ion-icon name="calendar-outline"></ion-icon>
+          <input type="date" [(ngModel)]="fechaArriendo" />
+        </div>
+      </div>
+
+      <!-- HORARIO -->
+      <div class="field">
+        <label>Horario <span class="req">*</span></label>
+
+        <div class="time-grid">
+          <div class="field-input icon-left">
+            <ion-icon name="time-outline"></ion-icon>
+            <input type="time" [(ngModel)]="horaInicio" />
+          </div>
+
+          <div class="field-input icon-left">
+            <ion-icon name="time-outline"></ion-icon>
+            <input type="time" [(ngModel)]="horaFin" />
+          </div>
+        </div>
+      </div>
+
+      <!-- MOTIVO -->
+      <div class="field">
+        <label>Motivo <span class="req">*</span></label>
+        <textarea rows="3" [(ngModel)]="motivo"
+          placeholder="Describe brevemente el motivo del arriendo..."></textarea>
+      </div>
+
+      <ion-button expand="block" class="btn-submit" (click)="solicitarArriendo()">
+        Solicitar Arriendo
       </ion-button>
     </div>
 
   </div>
-  
+
+  <!-- FAB ADMIN -->
   <ion-fab *ngIf="isAdmin" slot="fixed" vertical="bottom" horizontal="end">
-    <ion-button 
-      (click)="irACrearEspacio()" 
-      class="fab-squared-button" 
-      color="primary" 
-      fill="solid"
-    >
+    <ion-button (click)="irACrearEspacio()" class="fab-squared-button" color="primary" fill="solid">
       <ion-icon name="add-outline" slot="start"></ion-icon>
       Nuevo Espacio
     </ion-button>

@@ -3,7 +3,8 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
-import { SupabaseService } from 'src/app/services/supabase.service'; // ✅ usa el servicio global
+import { SupabaseService } from 'src/app/services/supabase.service';
+
 import {
   fetchBaseTemplateBytes,
   getMyUserData,
@@ -12,7 +13,12 @@ import {
   uploadPdfForRecord,
   downloadBlob,
 } from '../../core/certificado';
+
 import { environment } from 'src/environments/environment';
+
+/*  🔥 IMPORTS NUEVOS PARA ICONOS  */
+import { addIcons } from 'ionicons';
+import { downloadOutline, mailOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-solicitar-certificado',
@@ -22,27 +28,46 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./solicitar.page.scss'],
 })
 export class SolicitarCertificadoPage implements OnInit {
+
   loading = false;
   emailDestino = '';
   placeAndDate = '';
   certificados: any[] = [];
   displayName: string | null = null;
 
-  // ✅ agregamos el constructor para inyectar el servicio global
-  constructor(private supabaseService: SupabaseService) {}
+  // === NUEVAS VARIABLES PARA EL TEMPLATE DEL MOCKUP ===
+  ultimaFecha: Date | null = null;
+  fechaValidez: Date | null = null;
+
+  constructor(private supabaseService: SupabaseService) {
+
+    /* ========================================
+       🔥 REGISTRO DE ICONOS IONICONS
+       ======================================== */
+    addIcons({
+      'download-outline': downloadOutline,
+      'mail-outline': mailOutline
+    });
+
+  }
 
   async ngOnInit() {
     await this.prefillUserInfo();
     await this.cargarHistorial();
   }
 
+  // ============================================================
+  // 🔹 Construcción de datos personales
+  // ============================================================
   private nombreCompleto(pn?: string | null, sn?: string | null, pa?: string | null, sa?: string | null) {
     return [pn, sn, pa, sa].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
   }
 
   private monthNameEs(m: number) {
     return [
-      'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
+      'enero', 'febrero', 'marzo', 'abril',
+      'mayo', 'junio', 'julio', 'agosto',
+      'septiembre', 'octubre', 'noviembre', 'diciembre',
     ][m];
   }
 
@@ -65,20 +90,25 @@ export class SolicitarCertificadoPage implements OnInit {
     return `${out}-${dv}`;
   }
 
+  // ============================================================
+  // 🔹 Cargar nombre + correo desde metadata del usuario
+  // ============================================================
   private async prefillUserInfo() {
     try {
-      // ✅ ahora usamos el cliente del servicio
       const { data: { user } } = await this.supabaseService.auth.getUser();
 
       if (user) {
         if (user.email) this.emailDestino = user.email;
-        const meta = (user.user_metadata ?? {}) as Record<string, any>;
-        const metaName = meta['full_name'] || meta['name'] || null;
+
+        const meta = user.user_metadata ?? {};
+        const metaName = meta["full_name"] || meta["name"] || null;
         if (metaName) this.displayName = metaName;
       }
 
       const who = await getMyUserData().catch(() => null as any);
+
       if (!this.emailDestino && who?.correo) this.emailDestino = who.correo;
+
       if (!this.displayName && (who?.full_name || who?.nombre)) {
         this.displayName = who.full_name || who.nombre;
       }
@@ -87,20 +117,29 @@ export class SolicitarCertificadoPage implements OnInit {
     }
   }
 
+  // ============================================================
+  // 🔹 Llamada a N8N para enviar correo
+  // ============================================================
   private async callN8nWebhook(payload: { to: string; pdf_url: string; filename?: string; subject?: string }) {
     const url = environment.N8N_WEBHOOK_URL;
+
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
+
     if (!res.ok) throw new Error(await res.text());
     return res.json().catch(() => ({}));
   }
 
+  // ============================================================
+  // 🔹 Cargar historial + calcular fechas mockup
+  // ============================================================
   async cargarHistorial() {
-    const { data: session } = await this.supabaseService.auth.getSession(); // ✅
+    const { data: session } = await this.supabaseService.auth.getSession();
     const uid = session?.session?.user?.id;
+
     if (!uid) return;
 
     const { data, error } = await this.supabaseService
@@ -109,11 +148,26 @@ export class SolicitarCertificadoPage implements OnInit {
       .eq('user_id', uid)
       .order('created_at', { ascending: false });
 
-    if (!error && data) this.certificados = data;
+    if (!error && data) {
+      this.certificados = data;
+
+      if (this.certificados.length > 0) {
+        const created = new Date(this.certificados[0].created_at);
+        this.ultimaFecha = created;
+
+        const validez = new Date(created);
+        validez.setMonth(validez.getMonth() + 2);
+        this.fechaValidez = validez;
+      }
+    }
   }
 
+  // ============================================================
+  // 🔹 Variables dinámicas para el PDF
+  // ============================================================
   private buildVars(who: any) {
     const now = new Date();
+
     const nombre =
       this.nombreCompleto(
         who?.primer_nombre,
@@ -150,9 +204,13 @@ export class SolicitarCertificadoPage implements OnInit {
     return out as T;
   }
 
+  // ============================================================
+  // 🔹 Emitir + Descargar
+  // ============================================================
   async emitirDescargar() {
     try {
       this.loading = true;
+
       const who = await getMyUserData();
 
       const baseMeta = {
@@ -164,11 +222,16 @@ export class SolicitarCertificadoPage implements OnInit {
 
       const { id } = await createCertRecord(baseMeta);
       const baseBytes = await fetchBaseTemplateBytes();
-      const vars = this.sanitizeVars({ ...this.buildVars(who), folio: String(id) });
+
+      const vars = this.sanitizeVars({
+        ...this.buildVars(who),
+        folio: String(id),
+      });
+
       const blob = await fillCertificate(baseBytes, vars);
-      const { pdf_url } = await uploadPdfForRecord(id, blob);
 
       downloadBlob(blob, `certificado-${id}.pdf`);
+
       await this.cargarHistorial();
     } catch (e: any) {
       console.error(e);
@@ -178,12 +241,16 @@ export class SolicitarCertificadoPage implements OnInit {
     }
   }
 
+  // ============================================================
+  // 🔹 Emitir + Enviar Email
+  // ============================================================
   async emitirEnviar() {
     try {
       if (!this.emailDestino) {
         alert('Ingresa un correo destino.');
         return;
       }
+
       this.loading = true;
 
       const who = await getMyUserData();
@@ -196,9 +263,15 @@ export class SolicitarCertificadoPage implements OnInit {
       };
 
       const { id } = await createCertRecord(baseMeta);
+
       const baseBytes = await fetchBaseTemplateBytes();
-      const vars = this.sanitizeVars({ ...this.buildVars(who), folio: String(id) });
+      const vars = this.sanitizeVars({
+        ...this.buildVars(who),
+        folio: String(id),
+      });
+
       const blob = await fillCertificate(baseBytes, vars);
+
       const { pdf_url } = await uploadPdfForRecord(id, blob);
 
       await this.callN8nWebhook({

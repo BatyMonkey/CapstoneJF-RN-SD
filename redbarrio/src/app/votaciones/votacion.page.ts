@@ -23,6 +23,11 @@ import {
   RealtimeChannel,
   RealtimePostgresInsertPayload,
 } from '@supabase/supabase-js';
+import { NavController } from '@ionic/angular';
+
+// 👇 registrar íconos
+import { addIcons } from 'ionicons';
+import { chevronBackOutline, checkboxOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-votacion',
@@ -59,8 +64,15 @@ export class VotacionPage
     private route: ActivatedRoute,
     private votosSvc: VotacionesService,
     private toastCtrl: ToastController,
-    private alertCtrl: AlertController
-  ) {}
+    private alertCtrl: AlertController,
+    private navCtrl: NavController,
+  ) {
+    // 🔹 Registrar íconos usados en la página
+    addIcons({
+      chevronBackOutline,
+      checkboxOutline,
+    });
+  }
 
   async ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id')!;
@@ -256,56 +268,74 @@ export class VotacionPage
   }
 
   async votar(opcion: OpcionVotacion) {
-    if (!this.votacion) return;
-    if (this.miOpcionId) {
-      await this.mostrarToast(
-        'Ya emitiste tu voto en esta votación',
-        'danger'
-      );
-      return;
-    }
-    if (this.bloqueada) {
-      await this.mostrarToast('La votación no está activa', 'warning');
-      return;
+  if (!this.votacion) return;
+  if (this.miOpcionId) {
+    await this.mostrarToast(
+      'Ya emitiste tu voto en esta votación',
+      'danger'
+    );
+    return;
+  }
+  if (this.bloqueada) {
+    await this.mostrarToast('La votación no está activa', 'warning');
+    return;
+  }
+
+  const idx = this.opciones.findIndex((o) => o.id === opcion.id);
+  const anterior = idx >= 0 ? this.opciones[idx].total_votos ?? 0 : 0;
+
+  // 🔹 Actualización optimista local
+  if (idx >= 0) {
+    this.opciones[idx] = {
+      ...this.opciones[idx],
+      total_votos: anterior + 1,
+    };
+  }
+
+  try {
+    // 🔹 Registrar voto en backend
+    await this.votosSvc.votar(this.votacion.id, opcion.id);
+    this.miOpcionId = opcion.id;
+    this.selectedOptionId = opcion.id;
+
+    if (this.selectedOp?.id === opcion.id && idx >= 0) {
+      this.selectedOp = { ...this.opciones[idx] };
     }
 
-    const idx = this.opciones.findIndex((o) => o.id === opcion.id);
-    const anterior = idx >= 0 ? this.opciones[idx].total_votos ?? 0 : 0;
+    // 🔄 Recargar datos desde Supabase para reflejar todo en tiempo real
+    await this.cargar();
+
+    // ✅ ALERT estilo confirmación, con botón OK
+    const okAlert = await this.alertCtrl.create({
+      header: 'Voto registrado',
+      message:
+        'Tu voto ha sido registrado correctamente. <br><br><strong>Gracias por participar en la votación.</strong>',
+      buttons: [
+        {
+          text: 'OK',
+          role: 'confirm',
+        },
+      ],
+    });
+    await okAlert.present();
+
+    if (this.detailOpen) this.closeDetail();
+  } catch (e: any) {
+    // rollback si falló
     if (idx >= 0) {
       this.opciones[idx] = {
         ...this.opciones[idx],
-        total_votos: anterior + 1,
+        total_votos: anterior,
       };
     }
-
-    try {
-      await this.votosSvc.votar(this.votacion.id, opcion.id);
-      this.miOpcionId = opcion.id;
-      this.selectedOptionId = opcion.id;
-
-      if (this.selectedOp?.id === opcion.id && idx >= 0) {
-        this.selectedOp = { ...this.opciones[idx] };
-      }
-
-      await this.mostrarToast(
-        'Voto registrado correctamente ✅',
-        'success'
-      );
-      if (this.detailOpen) this.closeDetail();
-    } catch (e: any) {
-      if (idx >= 0) {
-        this.opciones[idx] = {
-          ...this.opciones[idx],
-          total_votos: anterior,
-        };
-      }
-      console.error('Error al votar:', e);
-      await this.mostrarToast(
-        e?.message ?? 'No se pudo registrar tu voto',
-        'danger'
-      );
-    }
+    console.error('Error al votar:', e);
+    await this.mostrarToast(
+      e?.message ?? 'No se pudo registrar tu voto',
+      'danger'
+    );
   }
+}
+
 
   /* ==== modal detalle ==== */
 
@@ -332,5 +362,15 @@ export class VotacionPage
       color,
     });
     await toast.present();
+  }
+
+  goBack() {
+    // Si hay historial, vuelve atrás
+    if (window.history.length > 1) {
+      this.navCtrl.back();
+    } else {
+      // Si no, vuelve al listado de votaciones
+      this.navCtrl.navigateRoot('/votaciones');
+    }
   }
 }

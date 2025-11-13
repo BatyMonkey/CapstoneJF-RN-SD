@@ -1,127 +1,183 @@
-/* ===== Login look & feel (blanco + azules) ===== */
-
 :host {
-  /* Colores base del fondo (puedes ajustar tonos aquí) */
-  --bg1: #f7fbff;
-  --bg2: #e8f0ff;
-  --card-bg: #ffffff;
+  --bg-top: #06b6d4;
+  --bg-bottom: #0ea5e9;
+  --input-bg: #ffffff;
+  --input-border: rgba(15, 23, 42, 0.14);
 }
 
-ion-content {
-  /* Fondo degradado suave */
-  --background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
+/* Fondo general */
+.login-page {
+  --background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
 }
 
-/* Encabezado limpio, sin borde */
-ion-toolbar {
-  --background: transparent;
-  --color: var(--ion-text-color);
-  --border-color: transparent;
-}
-
-/* Tarjeta centrada y con sombra suave */
-ion-card {
+/* Contenedor central */
+.login-shell {
+  width: 100%;
   max-width: 420px;
-  margin: 8vh auto 0;
-  border-radius: 16px;
-  background: var(--card-bg);
-  box-shadow: 0 10px 30px rgba(43, 88, 118, 0.12);
+  margin: 0 auto;
+  padding: 56px 24px 32px;
+  box-sizing: border-box;
+  text-align: center;
+  color: #ffffff;
 }
 
-ion-card-title {
+/* Logo sin fondo blanco */
+.logo-wrapper {
+  margin: 0 auto 5px;
+}
+
+.logo-wrapper img {
+  width: 250px;
+  height: 250px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Títulos */
+.app-name {
+  margin: 40;
+  font-size: 1.7rem;
   font-weight: 700;
 }
 
-ion-card-subtitle {
-  margin-top: 4px;
-  opacity: 0.7;
-}
-
-/* Inputs con borde sutil y altura cómoda */
-ion-item {
-  --background: transparent;
-  --padding-start: 12px;
-  --inner-padding-end: 12px;
-  --min-height: 54px;
-
-  border: 1px solid rgba(25, 71, 170, 0.15);
-  border-radius: 12px;
-  margin-top: 12px;
-
-  transition: border-color 160ms ease, box-shadow 160ms ease;
-}
-
-/* Estado de foco: resalta en azul */
-ion-item.item-has-focus {
-  border-color: var(--ion-color-primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-}
-
-ion-icon[slot="start"] {
-  margin-right: 6px;
+.app-tagline {
+  margin: 4px 0 26px;
+  font-size: 0.95rem;
   opacity: 0.9;
 }
 
-ion-input {
-  font-size: 16px;
+/* Formulario */
+.form-wrapper {
+  text-align: left;
 }
 
-/* Botón principal con sombra */
-ion-button {
-  --border-radius: 12px;
-  --box-shadow: 0 6px 18px rgba(59, 130, 246, 0.35);
+/* Grupo de campo */
+.field-group {
+  margin-bottom: 14px;
 }
 
-/* Error visible pero discreto */
-ion-text[color="danger"] {
+.field-label {
   display: block;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #e0f2fe;
 }
 
-/* ===== Modo oscuro ===== */
+/* Ion-item estilizado como input blanco */
+.rb-input {
+  --background: var(--input-bg);
+  --padding-start: 10px;
+  --inner-padding-end: 10px;
+  --min-height: 50px;
+
+  border-radius: 999px;
+  border: 1px solid var(--input-border);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.18);
+  margin: 0;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.rb-input.item-has-focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3);
+}
+
+.rb-input ion-icon[slot='start'] {
+  color: #0284c7;
+  font-size: 1.2rem;
+  margin-right: 4px;
+}
+
+.rb-input ion-input {
+  font-size: 0.95rem;
+}
+
+/* Fila Recordarme / Olvidaste */
+.row-inline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.helpers-row {
+  margin-top: 8px;
+  margin-bottom: 10px;
+}
+
+.remember-me {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #e0f2fe;
+}
+
+.remember-me ion-checkbox {
+  --size: 18px;
+  --background-checked: #facc15;
+  --border-color-checked: #facc15;
+}
+
+/* Enlaces tipo texto */
+.link-button {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  font-size: 0.8rem;
+  color: #fef9c3;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.link-button.strong {
+  font-weight: 600;
+}
+
+/* Mensaje de error */
+.error-msg {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+
+/* Botón principal */
+.primary-btn {
+  margin-top: 18px;
+  --background: #fbbf24;
+  --background-hover: #facc15;
+  --background-activated: #f59e0b;
+  --color: #111827;
+  --border-radius: 999px;
+  --box-shadow: 0 12px 28px rgba(217, 119, 6, 0.6);
+  font-weight: 700;
+}
+
+/* Registro / link */
+.register-row {
+  margin-top: 22px;
+  font-size: 0.86rem;
+  color: #e0f2fe;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+/* Slogan */
+.slogan {
+  margin-top: 16px;
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+/* Modo oscuro: mantenemos el mismo look brillante del login */
 @media (prefers-color-scheme: dark) {
-  :host {
-    --bg1: #0b1220;
-    --bg2: #0f1630;
-    --card-bg: #141a2a;
-  }
-
-  ion-card {
-    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
-  }
-
-  ion-item {
-    border-color: rgba(255, 255, 255, 0.08);
+  .login-page {
+    --background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
   }
 }
-
-/* ===== Estilos para el botón de Recuperar Contraseña ===== */
-.recovery-button {
-  /* Anula cualquier box-shadow o efecto de borde */
-  --box-shadow: none !important;
-  border: none !important;
-  /* Asegura que no se vea como un botón activo principal */
-  font-weight: 500;
-}
-
-/* Estilos para el botón de Recuperar Contraseña (si lo tienes) */
-.recovery-button {
-  --box-shadow: none !important;
-  border: none !important;
-  font-weight: 500;
-}
-
-/* 🚀 NUEVA REGLA: Elimina el box-shadow de los botones con fill="clear" */
-/* Esto afectará tanto al botón de "Recuperar Contraseña" como al de "Volver a Iniciar Sesión" */
-ion-button[fill="clear"] {
-  --box-shadow: none !important;
-}
-
-/* Si quieres que los botones clear tengan un color de texto más claro o específico */
-ion-button[fill="clear"][color="medium"] {
-    color: var(--ion-color-medium-shade, #737373) !important; /* Color predeterminado de 'medium' de Ionic */
-    --background-hover: transparent !important; /* Evita que cambie de color al pasar el ratón */
-    --background-focused: transparent !important;
-    --background-activated: transparent !important;
-}
-

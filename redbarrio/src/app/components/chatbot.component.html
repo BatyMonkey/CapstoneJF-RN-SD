@@ -1,18 +1,6 @@
 <!-- src/app/components/chatbot.component.html -->
 
-<!-- LAUNCHER (aparece cuando el chat está cerrado) -->
-<button
-  class="rb-chat-launcher"
-  *ngIf="!visible"
-  type="button"
-  aria-label="Abrir chat"
-  (click)="openChat()"
->
-  <ion-icon name="chatbubbles-outline"></ion-icon>
-</button>
-
-<!-- CHAT (aparece cuando visible=true) -->
-<div class="rb-chat" *ngIf="visible">
+<div class="rb-chat">
   <!-- HEADER -->
   <div class="rb-chat__header">
     <div class="rb-chat__avatar">
@@ -20,8 +8,8 @@
       <span class="rb-chat__avatar-fallback">🤖</span>
     </div>
     <div class="rb-chat__title">
-      <h2>Asistente RedBarrio</h2>
-      <p>Hola {{ displayName || 'vecino/a' }} 👋</p>
+      <h2>RedBarrio</h2>
+      <p>Hola vecino/a 👋</p>
     </div>
 
     <!-- BOTÓN CERRAR -->
@@ -40,7 +28,7 @@
   <div class="rb-chat__quick">
     <button (click)="clickQuick('faq')">
       <ion-icon name="help-circle-outline"></ion-icon>
-      FAQ
+      Preguntas frecuentes
     </button>
     <button (click)="clickQuick('cert')">
       <ion-icon name="document-text-outline"></ion-icon>

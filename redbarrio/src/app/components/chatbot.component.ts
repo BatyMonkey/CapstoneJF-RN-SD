@@ -1,5 +1,5 @@
 // src/app/components/chatbot.component.ts
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -38,6 +38,7 @@ export class ChatbotComponent implements OnInit {
   visible = false;
   openChat() { this.visible = true; }
   closeChat() { this.visible = false; }
+  
 
   messages: ChatMessage[] = [];
   inputText = '';

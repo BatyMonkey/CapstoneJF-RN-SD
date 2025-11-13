@@ -1,162 +1,188 @@
-<ion-header class="rb-header">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Mi Perfil</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="logout()" color="light">
-        <ion-icon name="log-out-outline" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+<!-- HEADER TIPO HERO (igual estilo que votaciones) -->
+<ion-header class="rb-hero-header" slot="fixed">
+  <div class="rb-hero-container">
+    <div class="rb-hero-info">
+      <div class="rb-hero-logo">
+        <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
+      </div>
+      <div class="rb-hero-text">
+        <h1>RedBarrio</h1>
+        <p>Tu comunidad conectada</p>
+      </div>
+    </div>
+
+    <!-- Icono (por ahora sin funcionalidad) -->
+    <button class="rb-hero-chat" type="button">
+      <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+    </button>
+  </div>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <div class="perfil-page">
+<ion-content class="perfil-page" [fullscreen]="true">
+  <div class="perfil-wrapper">
 
-    <ion-card class="card ion-no-margin">
-      <ion-card-header>
-        <ion-card-title>Datos Personales</ion-card-title>
-        <ion-card-subtitle>Información básica y de contacto.</ion-card-subtitle>
-      </ion-card-header>
-
-      <ion-card-content>
-        
-        <div class="profile-photo-container ion-text-center ion-padding-bottom">
-            <img 
-                [src]="perfilActual?.url_foto_perfil || 'assets/default_avatar.svg'" 
-                alt="Foto de perfil" 
-                class="profile-avatar"
-            >
-            
-            <input type="file" 
-                   #fileInput 
-                   (change)="onFileSelected($event)" 
-                   accept="image/png, image/jpeg" 
-                   style="display: none;">
-                   
-            <ion-button 
-                fill="clear" 
-                size="small" 
-                (click)="fileInput.click()"
-                [disabled]="isUploading || isSaving"
-                style="margin-top: 8px;">
-                <ion-icon name="camera-outline" slot="start"></ion-icon>
-                {{ fotoFile ? 'Cambiar (' + fotoFile.name.substring(0, 15) + '...)' : 'Seleccionar Foto' }}
-                <ion-spinner *ngIf="isUploading" name="dots"></ion-spinner>
-            </ion-button>
+    <!-- TARJETA PRINCIPAL: CABECERA PERFIL -->
+    <section class="perfil-hero-card">
+      <div class="avatar-wrap">
+        <div class="avatar-ring">
+          <img
+            [src]="perfilActual?.url_foto_perfil || 'assets/default_avatar.svg'"
+            alt="Foto de perfil"
+          />
         </div>
-        
-        <div class="verification-status is-pending" *ngIf="perfilActual && !perfilActual.verificado">
-            Tu cuenta aún no ha sido verificada.
+
+        <!-- Botón para cambiar foto (usa el mismo flujo que tenías) -->
+        <button
+          type="button"
+          class="avatar-edit-btn"
+          (click)="fileInput.click()"
+          [disabled]="isUploading || isSaving"
+        >
+          <ion-icon name="pencil-outline"></ion-icon>
+        </button>
+
+        <input
+          type="file"
+          #fileInput
+          (change)="onFileSelected($event)"
+          accept="image/png, image/jpeg"
+          hidden
+        />
+      </div>
+
+      <h2 class="perfil-name">
+        {{ perfilActual?.nombre || 'Mi Perfil' }}
+      </h2>
+
+      <p class="perfil-role">
+        {{
+          perfilActual?.rol === 'vecino'
+            ? 'Vecino del Barrio'
+            : perfilActual?.rol === 'directorio'
+              ? 'Miembro del Directorio'
+              : perfilActual?.rol === 'administrador'
+                ? 'Administrador'
+                : 'Vecino del Barrio'
+        }}
+      </p>
+
+      <div class="perfil-status-badge" *ngIf="perfilActual">
+        <ng-container *ngIf="perfilActual.verificado; else pendienteVerif">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          <span>Cuenta verificada</span>
+        </ng-container>
+        <ng-template #pendienteVerif>
+          <ion-icon name="time-outline"></ion-icon>
+          <span>Verificación pendiente</span>
+        </ng-template>
+      </div>
+    </section>
+
+    <!-- TARJETA: DATOS DE CONTACTO -->
+    <section class="perfil-card">
+      <div class="info-row">
+        <div class="info-icon mail">
+          <ion-icon name="mail-outline"></ion-icon>
         </div>
-        
-        <form [formGroup]="perfilForm" (ngSubmit)="guardarCambios()">
+        <div class="info-text">
+          <span class="info-label">Email</span>
+          <span class="info-value">
+            {{ perfilActual?.correo || 'Sin correo registrado' }}
+          </span>
+        </div>
+      </div>
 
-          <ion-item lines="none" class="field is-static" [disabled]="true">
-            <ion-input
-              label="Nombre Completo"
-              labelPlacement="stacked"
-              placeholder="Cargando..."
-              [value]="perfilActual?.nombre || 'N/A'"
-              readonly>
-            </ion-input>
-          </ion-item>
-          
-          <ion-item lines="none" class="field is-static" [disabled]="true">
-            <ion-input
-              label="Primer Nombre"
-              labelPlacement="stacked"
-              placeholder="Cargando..."
-              [value]="perfilActual?.primer_nombre || 'N/A'"
-              readonly>
-            </ion-input>
-          </ion-item>
+      <div class="info-row">
+        <div class="info-icon phone">
+          <ion-icon name="call-outline"></ion-icon>
+        </div>
+        <div class="info-text">
+          <span class="info-label">Teléfono</span>
+          <span class="info-value">
+            {{ perfilActual?.telefono || 'Sin teléfono registrado' }}
+          </span>
+        </div>
+      </div>
 
-          <ion-item lines="none" class="field is-static" [disabled]="true">
-            <ion-input
-              label="Primer Apellido"
-              labelPlacement="stacked"
-              placeholder="Cargando..."
-              [value]="perfilActual?.primer_apellido || 'N/A'"
-              readonly>
-            </ion-input>
-          </ion-item>
+      <div class="info-row">
+        <div class="info-icon address">
+          <ion-icon name="location-outline"></ion-icon>
+        </div>
+        <div class="info-text">
+          <span class="info-label">Dirección</span>
+          <span class="info-value">
+            {{ perfilActual?.direccion || 'Sin dirección registrada' }}
+          </span>
+        </div>
+      </div>
 
-          <ion-item lines="none" class="field">
-            <ion-input
-              label="Segundo Nombre"
-              labelPlacement="stacked"
-              formControlName="segundo_nombre"
-              placeholder="Segundo nombre (Opcional)">
-            </ion-input>
-          </ion-item>
+      <div class="info-row">
+        <div class="info-icon member">
+          <ion-icon name="calendar-outline"></ion-icon>
+        </div>
+        <div class="info-text">
+          <span class="info-label">Miembro desde</span>
+          <span class="info-value">
+            {{ perfilActual?.creado_en | date: 'MMMM yyyy' : 'es-CL' }}
+          </span>
+        </div>
+      </div>
+    </section>
 
-          <ion-item lines="none" class="field">
-            <ion-input
-              label="Segundo Apellido"
-              labelPlacement="stacked"
-              formControlName="segundo_apellido"
-              placeholder="Segundo apellido (Opcional)">
-            </ion-input>
-          </ion-item>
-          
-          <ion-item lines="none" class="field">
-            <ion-input
-              label="Teléfono"
-              labelPlacement="stacked"
-              formControlName="telefono"
-              placeholder="Ej: +56912345678"
-              type="tel">
-            </ion-input>
-          </ion-item>
+    <!-- TARJETA: CONFIGURACIÓN -->
+    <section class="perfil-card config-card">
+      <h3 class="config-title">Configuración</h3>
 
-          <ion-text color="danger" *ngIf="perfilForm.get('telefono')?.errors && (perfilForm.get('telefono')?.dirty || perfilForm.get('telefono')?.touched)">
-              <p *ngIf="perfilForm.get('telefono')?.errors?.['pattern']">
-                  El formato de teléfono debe ser: **(+56) 9XXXXXXXX** (ej: +56912345678 o 912345678).
-              </p>
-          </ion-text>
-
-
-          <ion-item lines="none" class="field is-static" [disabled]="true">
-            <ion-input
-              label="Correo Electrónico"
-              labelPlacement="stacked"
-              placeholder="Cargando..."
-              [value]="perfilActual?.correo || 'N/A'"
-              readonly>
-            </ion-input>
-          </ion-item>
-
-          <div class="actions">
-            <ion-button 
-              type="submit" 
-              expand="block" 
-              [disabled]="perfilForm.invalid || (!perfilForm.dirty && !fotoFile) || isSaving || isUploading">
-              <span *ngIf="!isSaving && !isUploading">Guardar Cambios</span>
-              <span *ngIf="isSaving || isUploading">Guardando...</span>
-              <ion-spinner *ngIf="isSaving || isUploading" name="dots"></ion-spinner>
-            </ion-button>
+      <div class="config-row">
+        <div class="config-left">
+          <div class="config-icon notif">
+            <ion-icon name="notifications-outline"></ion-icon>
           </div>
-        </form>
-      </ion-card-content>
-    </ion-card>
-    
-    <ion-card class="card ion-no-margin">
-        <ion-card-header>
-            <ion-card-title>Información Adicional</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-            <ion-item lines="none" class="field is-static" [disabled]="true">
-                <ion-input
-                  label="Rol de Usuario"
-                  labelPlacement="stacked"
-                  [value]="perfilActual?.rol || 'vecino'"
-                  readonly>
-                </ion-input>
-            </ion-item>
-        </ion-card-content>
-    </ion-card>
+          <div class="config-text">
+            <span class="config-label">Notificaciones</span>
+          </div>
+        </div>
+        <!-- Solo visual, sin lógica todavía -->
+        <ion-toggle checked="true"></ion-toggle>
+      </div>
+
+      <div class="config-row">
+        <div class="config-left">
+          <div class="config-icon privacy">
+            <ion-icon name="shield-checkmark-outline"></ion-icon>
+          </div>
+          <div class="config-text">
+            <span class="config-label">Privacidad</span>
+          </div>
+        </div>
+        <ion-icon class="config-arrow" name="chevron-forward-outline"></ion-icon>
+      </div>
+
+      <div class="config-row">
+        <div class="config-left">
+          <div class="config-icon edit">
+            <ion-icon name="create-outline"></ion-icon>
+          </div>
+          <div class="config-text">
+            <span class="config-label">Editar Perfil</span>
+          </div>
+        </div>
+        <ion-icon class="config-arrow" name="chevron-forward-outline"></ion-icon>
+      </div>
+    </section>
+
+    <!-- TARJETA: CERRAR SESIÓN (SOLO DISEÑO, SIN (click)) -->
+    <section class="perfil-logout-card">
+      <button type="button" class="logout-btn">
+        <ion-icon name="log-out-outline"></ion-icon>
+        <span>Cerrar sesión</span>
+      </button>
+    </section>
+
+    <!-- Indicador de guardado/subida opcional -->
+    <div class="saving-indicator" *ngIf="isSaving || isUploading">
+      <ion-spinner name="crescent"></ion-spinner>
+      <span>Guardando cambios...</span>
+    </div>
   </div>
 </ion-content>

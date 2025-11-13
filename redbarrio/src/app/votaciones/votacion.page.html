@@ -1,13 +1,24 @@
-<ion-header class="rb-header">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
-    </ion-buttons>
-    <ion-title>Votación</ion-title>
-  </ion-toolbar>
+<!-- HERO HEADER (igual estilo que otras páginas) -->
+<ion-header class="rb-hero-header" slot="fixed">
+  <div class="rb-hero-container">
+    <div class="rb-hero-info">
+      <div class="rb-hero-logo">
+        <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
+      </div>
+      <div class="rb-hero-text">
+        <h1>RedBarrio</h1>
+        <p>Tu comunidad conectada</p>
+      </div>
+    </div>
+
+    <!-- Botón volver -->
+    <button class="rb-hero-chat" type="button" (click)="goBack()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </button>
+  </div>
 </ion-header>
 
-<ion-content class="ion-padding votacion" [fullscreen]="true">
+<ion-content class="votacion-page" [fullscreen]="true">
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
     <ion-refresher-content
       pullingText="Desliza para refrescar"
@@ -23,117 +34,119 @@
   </div>
 
   <ng-container *ngIf="!cargando && votacion">
-    <!-- Sub-header: Detalle de votación + estado -->
-    <div class="detail-header">
-      <span class="detail-title">Detalle de Votación</span>
-      <span class="detail-status" [ngClass]="estadoChipClass()">
-        {{ estadoChipLabel() }}
-      </span>
-    </div>
 
-    <!-- Tarjeta principal -->
-    <ion-card class="card">
-      <ion-card-header>
-        <div class="card-header-top">
-          <div class="card-header-text">
-            <ion-card-title>{{ votacion.titulo }}</ion-card-title>
-            <ion-card-subtitle *ngIf="votacion.descripcion">
-              {{ votacion.descripcion }}
-            </ion-card-subtitle>
-          </div>
-
-          <!-- Pill “Votación” como en el listado -->
-          <span class="type-badge">Votación</span>
-        </div>
-      </ion-card-header>
-
-      <ion-card-content>
-        <!-- Resumen participación / tiempo -->
-        <div class="summary-row">
-          <div class="summary-card">
-            <div class="summary-icon participation">
-              <ion-icon name="people-outline"></ion-icon>
-            </div>
-            <div class="summary-text">
-              <span class="summary-label">Participación</span>
-              <span class="summary-value">{{ totalVotos }} votos</span>
-            </div>
-          </div>
-
-          <div class="summary-card">
-            <div class="summary-icon time">
-              <ion-icon name="time-outline"></ion-icon>
-            </div>
-            <div class="summary-text">
-              <span class="summary-label">Tiempo restante</span>
-              <span class="summary-value">{{ tiempoResumen() }}</span>
-            </div>
-          </div>
+    <div class="page-wrapper">
+      <!-- TARJETA AZUL TIPO “CERTIFICADOS” -->
+      <div class="main-vot-card">
+        <div class="icon-circle">
+          <ion-icon name="checkbox-outline"></ion-icon>
         </div>
 
-        <h3 class="options-title">Opciones</h3>
+        <div class="main-vot-text">
+          <h2>{{ votacion.titulo }}</h2>
+          <p *ngIf="votacion.descripcion">
+            {{ votacion.descripcion }}
+          </p>
 
-        <!-- Lista de opciones -->
-        <ion-list class="opciones" lines="none">
-          <ion-item
-            class="option-card"
-            *ngFor="let op of opciones; trackBy: trackByOp"
-            (click)="seleccionarOpcion(op)"
-            [class.is-selected]="isOpcionSeleccionada(op)"
-            [style.--pct]="pct(op)"
-          >
-            <!-- radio circle -->
-            <div class="radio-wrap" slot="start">
-              <span class="radio-outer">
-                <span class="radio-inner" *ngIf="isOpcionSeleccionada(op)"></span>
-              </span>
+          <span class="status-pill" [ngClass]="estadoChipClass()">
+            {{ estadoChipLabel() }}
+          </span>
+        </div>
+      </div>
+
+      <!-- TARJETA PRINCIPAL DETALLE -->
+      <ion-card class="card">
+        
+
+        <ion-card-content>
+          <!-- Resumen participación / tiempo -->
+          <div class="summary-row">
+            <div class="summary-card">
+              <div class="summary-icon participation">
+                <ion-icon name="people-outline"></ion-icon>
+              </div>
+              <div class="summary-text">
+                <span class="summary-label">Participación</span>
+                <span class="summary-value">{{ totalVotos }} votos</span>
+              </div>
             </div>
 
-            <ion-label class="option-label">
-              <div class="option-top">
-                <h2 class="option-title">{{ op.titulo }}</h2>
-                <span class="pct-badge">{{ percent(op) }}%</span>
+            <div class="summary-card">
+              <div class="summary-icon time">
+                <ion-icon name="time-outline"></ion-icon>
+              </div>
+              <div class="summary-text">
+                <span class="summary-label">Tiempo restante</span>
+                <span class="summary-value">{{ tiempoResumen() }}</span>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="options-title">Opciones</h3>
+
+          <!-- Lista de opciones -->
+          <ion-list class="opciones" lines="none">
+            <ion-item
+              class="option-card"
+              *ngFor="let op of opciones; trackBy: trackByOp"
+              (click)="seleccionarOpcion(op)"
+              [class.is-selected]="isOpcionSeleccionada(op)"
+              [style.--pct]="pct(op)"
+            >
+              <!-- radio circle -->
+              <div class="radio-wrap" slot="start">
+                <span class="radio-outer">
+                  <span class="radio-inner" *ngIf="isOpcionSeleccionada(op)"></span>
+                </span>
               </div>
 
-              <p class="option-desc" *ngIf="op.descripcion">
-                {{ op.descripcion }}
-              </p>
+              <ion-label class="option-label">
+                <div class="option-top">
+                  <h2 class="option-title">{{ op.titulo }}</h2>
+                  <span class="pct-badge">{{ percent(op) }}%</span>
+                </div>
 
-              <!-- Imagen 16:9, se puede tap para ver detalle -->
-              <button
-                class="img-box"
-                *ngIf="op.image_url"
-                type="button"
-                (click)="openDetail(op); $event.stopPropagation()"
-                aria-label="Ver detalle de la opción"
-              >
-                <img [src]="op.image_url" alt="Imagen opción" />
-              </button>
+                <p class="option-desc" *ngIf="op.descripcion">
+                  {{ op.descripcion }}
+                </p>
 
-              <p class="option-meta">Votos: {{ op.total_votos || 0 }}</p>
-            </ion-label>
-          </ion-item>
-        </ion-list>
+                <!-- Imagen 16:9 -->
+                <button
+                  class="img-box"
+                  *ngIf="op.image_url"
+                  type="button"
+                  (click)="openDetail(op); $event.stopPropagation()"
+                  aria-label="Ver detalle de la opción"
+                >
+                  <img [src]="op.image_url" alt="Imagen opción" />
+                </button>
 
-        <ion-note color="success" *ngIf="miOpcionId">¡Voto registrado!</ion-note>
-      </ion-card-content>
-    </ion-card>
+                <p class="option-meta">Votos: {{ op.total_votos || 0 }}</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
 
-    <!-- Botón Confirmar voto -->
-    <div class="confirm-footer">
-      <ion-button
-        expand="block"
-        class="confirm-btn"
-        [disabled]="!puedeConfirmar"
-        (click)="confirmarVoto()"
-      >
-        <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
-        Confirmar voto
-      </ion-button>
+          <ion-note color="success" *ngIf="miOpcionId">¡Voto registrado!</ion-note>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Botón Confirmar voto (mismo estilo “Solicitar Arriendo”) -->
+      <div class="confirm-footer">
+        <ion-button
+          expand="block"
+          class="confirm-btn"
+          [disabled]="!puedeConfirmar"
+          (click)="confirmarVoto()"
+        >
+          <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
+          Confirmar voto
+        </ion-button>
+      </div>
     </div>
+
   </ng-container>
 
-  <!-- Modal detalle de imagen/opción (se mantiene) -->
+  <!-- Modal imagen/opción (sin cambios) -->
   <ion-modal
     [isOpen]="detailOpen"
     (didDismiss)="closeDetail()"

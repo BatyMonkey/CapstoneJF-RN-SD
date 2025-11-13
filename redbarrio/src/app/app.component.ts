@@ -1,7 +1,13 @@
 import { Component, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, MenuController, Platform } from '@ionic/angular';
-import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
+import {
+  Router,
+  RouterOutlet,
+  NavigationEnd,
+  RouterLink,
+  RouterLinkActive,
+} from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AuthService } from './auth/auth.service';
 import { SupabaseService } from 'src/app/services/supabase.service';
@@ -38,7 +44,14 @@ import {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, IonicModule, RouterOutlet, ChatbotComponent],
+  imports: [
+    CommonModule,
+    IonicModule,
+    RouterOutlet,
+    RouterLink,        // 👈 agregado
+    RouterLinkActive,  // 👈 agregado
+    ChatbotComponent,
+  ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
@@ -133,7 +146,9 @@ export class AppComponent {
         this.isAdmin = false;
         return;
       }
-      const { data: { user } } = await this.supabaseService.auth.getUser();
+      const {
+        data: { user },
+      } = await this.supabaseService.auth.getUser();
       if (!user) {
         this.isAdmin = false;
         return;
@@ -176,8 +191,12 @@ export class AppComponent {
       const u = new URL(rawUrl);
 
       if (
-        (u.protocol === 'redbarrio:' && u.host === 'app' && u.pathname.startsWith('/pago-retorno')) ||
-        (u.protocol === 'capacitor:' && u.host === 'localhost' && u.pathname === '/pago-retorno')
+        (u.protocol === 'redbarrio:' &&
+          u.host === 'app' &&
+          u.pathname.startsWith('/pago-retorno')) ||
+        (u.protocol === 'capacitor:' &&
+          u.host === 'localhost' &&
+          u.pathname === '/pago-retorno')
       ) {
         const token = u.searchParams.get('token_ws') || '';
         try {
@@ -194,7 +213,9 @@ export class AppComponent {
 
       if (u.protocol === 'myapp:' && u.host === 'auth') {
         const q = u.searchParams;
-        const hashParams = new URLSearchParams(u.hash?.startsWith('#') ? u.hash.slice(1) : u.hash);
+        const hashParams = new URLSearchParams(
+          u.hash?.startsWith('#') ? u.hash.slice(1) : u.hash
+        );
         const getParam = (k: string) => q.get(k) ?? hashParams.get(k);
         const type = getParam('type');
         const access_token = getParam('access_token');
@@ -202,15 +223,24 @@ export class AppComponent {
         const code = getParam('code');
 
         if (type === 'recovery' && access_token && refresh_token) {
-          await this.supabaseService.client.auth.setSession({ access_token, refresh_token });
+          await this.supabaseService.client.auth.setSession({
+            access_token,
+            refresh_token,
+          });
         } else if (code) {
-          await this.supabaseService.client.auth.exchangeCodeForSession(rawUrl);
+          await this.supabaseService.client.auth.exchangeCodeForSession(
+            rawUrl
+          );
         } else {
-          console.warn('Deep link sin tokens ni code. No se pudo establecer sesión.');
+          console.warn(
+            'Deep link sin tokens ni code. No se pudo establecer sesión.'
+          );
         }
 
         this.ngZone.run(() => {
-          this.router.navigateByUrl('/auth/recuperar-contrasena', { replaceUrl: true });
+          this.router.navigateByUrl('/auth/recuperar-contrasena', {
+            replaceUrl: true,
+          });
         });
         return;
       }
@@ -218,4 +248,12 @@ export class AppComponent {
       console.error('Deep link parse error', e);
     }
   }
+
+    // === Estado del chatbot IA ===
+  showChatbot = false;
+
+  toggleChatbot() {
+    this.showChatbot = !this.showChatbot;
+  }
+
 }

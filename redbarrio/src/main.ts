@@ -25,6 +25,7 @@ import {
   peopleOutline,
   timeOutline,
   checkmarkCircleOutline,
+  sparklesOutline, 
 } from 'ionicons/icons';
 
 // registra iconos que usas en footer + home
@@ -43,6 +44,7 @@ addIcons({
   'people-outline': peopleOutline,
   'time-outline': timeOutline,
   'checkmark-circle-outline': checkmarkCircleOutline,
+  'sparkles-outline': sparklesOutline, 
 });
 
 bootstrapApplication(AppComponent, {

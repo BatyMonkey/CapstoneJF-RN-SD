@@ -1,71 +1,110 @@
 <ion-app>
-  <!-- Menú lateral -->
-  <ion-menu contentId="main" menuId="main-menu" side="start">
-    <ion-header>
-      <ion-toolbar color="light">
-        <ion-title>Menú</ion-title>
+
+  <!-- 🔐 Zona de autenticación: login, register, recuperar contraseña, callback, etc -->
+  <ion-router-outlet *ngIf="isAuth"></ion-router-outlet>
+
+  <!-- 🌐 Layout principal: solo cuando NO estamos en /auth/... -->
+  <ng-container *ngIf="!isAuth">
+
+    <!-- Menú lateral -->
+    <ion-menu contentId="main" menuId="main-menu" side="start">
+      <ion-header>
+        <ion-toolbar color="light">
+          <ion-title>Menú</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <ion-list>
+          <ion-item routerLink="/home" routerDirection="root">Inicio</ion-item>
+          <ion-item routerLink="/noticias" routerDirection="root">Noticias</ion-item>
+          <ion-item routerLink="/votaciones" routerDirection="root">Votar</ion-item>
+          <ion-item routerLink="/perfil" routerDirection="root">Perfil</ion-item>
+        </ion-list>
+      </ion-content>
+    </ion-menu>
+
+    <!-- Contenedor principal -->
+    <ion-router-outlet id="main"></ion-router-outlet>
+
+    <!-- Barra inferior fija -->
+    <ion-footer class="rb-footer-fixed">
+      <ion-toolbar class="rb-tabbar">
+        <div class="rb-tabbar__row">
+          <!-- Inicio -->
+          <ion-button
+            fill="clear"
+            routerLink="/home"
+            routerDirection="root"
+            routerLinkActive="rb-active"
+          >
+            <span class="rb-icon">
+              <ion-icon name="home-outline"></ion-icon>
+            </span>
+            <ion-label>Inicio</ion-label>
+          </ion-button>
+
+          <!-- Actividades -->
+          <ion-button
+            fill="clear"
+            routerLink="/inscripcion"
+            routerDirection="root"
+            routerLinkActive="rb-active"
+          >
+            <span class="rb-icon">
+              <ion-icon name="chatbubble-outline"></ion-icon>
+            </span>
+            <ion-label>Actividades</ion-label>
+          </ion-button>
+
+          <!-- Noticias -->
+          <ion-button
+            fill="clear"
+            routerLink="/noticias"
+            routerDirection="root"
+            routerLinkActive="rb-active"
+          >
+            <span class="rb-icon">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </span>
+            <ion-label>Noticias</ion-label>
+          </ion-button>
+
+          <!-- Admin (solo si es administrador) -->
+          <ion-button
+            *ngIf="isAdmin"
+            fill="clear"
+            routerLink="/admin/gestiones"
+            routerDirection="root"
+            routerLinkActive="rb-active"
+          >
+            <span class="rb-icon">
+              <ion-icon name="shield-checkmark-outline"></ion-icon>
+            </span>
+            <ion-label>Admin</ion-label>
+          </ion-button>
+
+          <!-- Perfil (solo icono) -->
+          <ion-button
+            fill="clear"
+            routerLink="/perfil"
+            routerDirection="root"
+            routerLinkActive="rb-active"
+          >
+            <span class="rb-icon">
+              <ion-icon name="person-circle-outline"></ion-icon>
+            </span>
+          </ion-button>
+        </div>
       </ion-toolbar>
-    </ion-header>
-    <ion-content>
-      <ion-list>
-        <ion-item routerLink="/home" routerDirection="root">Inicio</ion-item>
-        <ion-item routerLink="/noticias" routerDirection="root">Noticias</ion-item>
-        <ion-item routerLink="/votaciones" routerDirection="root">Votar</ion-item>
-        <ion-item routerLink="/perfil" routerDirection="root">Perfil</ion-item>
-      </ion-list>
-    </ion-content>
-  </ion-menu>
+    </ion-footer>
 
-  <!-- Contenedor principal -->
-  <ion-router-outlet id="main"></ion-router-outlet>
+    <!-- Botón flotante IA (brillito celeste) -->
+    <button class="ai-fab" (click)="toggleChatbot()">
+      <ion-icon name="sparkles-outline"></ion-icon>
+    </button>
 
-  <!-- Barra inferior fija -->
-  <ion-footer class="rb-footer-fixed">
-    <ion-toolbar class="rb-tabbar">
-      <div class="rb-tabbar__row">
-        <ion-button
-          fill="clear"
-          routerLink="/home"
-          routerDirection="root"
-          routerLinkActive="rb-active"
-          routerLinkActiveOptions="{ exact: true }"
-        >
-          <span class="rb-icon"><ion-icon name="home-outline"></ion-icon></span>
-          <ion-label>Inicio</ion-label>
-        </ion-button>
+    <!-- Chatbot solo cuando está visible -->
+    <app-chatbot *ngIf="showChatbot"></app-chatbot>
 
-        <ion-button
-          fill="clear"
-          routerLink="/noticias"
-          routerDirection="root"
-          routerLinkActive="rb-active"
-        >
-          <span class="rb-icon"><ion-icon name="chatbubble-outline"></ion-icon></span>
-          <ion-label>Noticias</ion-label>
-        </ion-button>
-
-        <ion-button
-          fill="clear"
-          routerLink="/votaciones"
-          routerDirection="root"
-          routerLinkActive="rb-active"
-        >
-          <span class="rb-icon"><ion-icon name="checkbox-outline"></ion-icon></span>
-          <ion-label>Votar</ion-label>
-        </ion-button>
-
-        <ion-button
-          fill="clear"
-          routerLink="/perfil"
-          routerDirection="root"
-          routerLinkActive="rb-active"
-        >
-          <span class="rb-icon"><ion-icon name="person-circle-outline"></ion-icon></span>
-          <ion-label>Perfil</ion-label>
-        </ion-button>
-      </div>
-    </ion-toolbar>
-  </ion-footer>
-  <app-chatbot></app-chatbot>
+  </ng-container>
 </ion-app>
-
