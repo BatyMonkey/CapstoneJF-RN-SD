@@ -1,143 +1,402 @@
-/* src/app/pages/espacios/espacios.page.scss */
-
-/* ===== 1. FUERZA ESQUEMA CLARO Y VARIABLES BASE ===== */
-
-/* Fuerza esquema claro y colores base */
-:host,
-:host-context(html) {
-  color-scheme: light !important;
-  --rb-primary: #2563eb;
-  --rb-bg: #f5f7fb; /* fondo página muy claro */
-  --rb-text: #0f172a; /* texto principal oscuro */
-  --rb-muted: #475569; /* subtítulos/labels */
-  --ion-text-color: var(--rb-text);
-  --ion-background-color: var(--rb-bg);
-  --ion-item-background: #ffffff;
-  --ion-card-background: #ffffff;
+/* ========================================
+   HERO HEADER (igual Home)
+========================================= */
+.rb-hero-header {
+  background: linear-gradient(90deg, #06b6d4, #22d3ee);
+  border-bottom-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 }
 
-/* Header con gradiente (usando la clase .rb-header en ion-header) */
-.rb-header ion-toolbar {
-  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
-  --color: #fff;
-  --border-color: transparent;
+ion-header::after {
+  background: none !important;
+  display: none !important;
 }
 
-/* Centrado opcional del contenido para pantallas grandes */
-.page-wrap { 
-  max-width: 960px; 
-  margin: 0 auto; 
-  padding-top: 1px;
+.rb-hero-container {
+  width: 100%;
+  padding: 0 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* ===== 2. ESTILOS DE TARJETAS (Listado) ===== */
+.rb-hero-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
-/* Estilo para las tarjetas elevadas y con borde */
-ion-card.card {
+.rb-hero-logo {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
   background: #fff;
-  border-radius: 18px;
-  border: 1px solid rgba(2, 6, 23, 0.08);
-  box-shadow: 0 12px 28px rgba(2, 6, 23, 0.10);
-  overflow: hidden;
-  margin-bottom: 16px;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  
-  &:hover {
-    box-shadow: 0 14px 30px rgba(2, 6, 23, 0.15);
-  }
-  &:active {
-    transform: translateY(1px);
-    box-shadow: 0 8px 24px rgba(2, 6, 23, 0.08);
-  }
+  padding: 6px;
+  object-fit: contain;
+}
 
-  ion-card-header {
-    background: #fff;
-    border-bottom: 1px solid rgba(2, 6, 23, 0.06);
-    padding-bottom: 8px;
-  }
-  
-  ion-card-title { 
-    color: var(--rb-text); 
-    font-weight: 800; 
+.rb-hero-text h1 {
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.rb-hero-text p {
+  color: rgba(255,255,255,0.9);
+  margin: 0;
+  font-size: .9rem;
+}
+
+.rb-hero-chat {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  ion-icon {
+    color: #fff;
     font-size: 1.3rem;
   }
-  
-  ion-card-subtitle { 
-    color: #64748b; 
-    font-weight: 600; 
-    margin-top: 4px;
-    font-size: 0.9rem;
+}
+
+/* ========================================
+   CONTENIDO
+========================================= */
+.espacios-page {
+  --background: #f5f7fb;
+  margin-top: 140px;
+}
+
+/* SUBHEADER */
+.subheader {
+  width: 100%;
+  background: #fff;
+  padding: 14px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.back-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  ion-icon {
+    font-size: 1.4rem;
+    color: #1e293b;
   }
 }
 
-/* Contenido dentro de las tarjetas */
+.subheader-text h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.subheader-text p {
+  margin: 2px 0 0;
+  font-size: .85rem;
+  color: #64748b;
+}
+
+/* TIP */
+.tip-box {
+  display: flex;
+  background: #fff8db;
+  border: 1px solid #fde68a;
+  border-radius: 14px;
+  padding: 14px;
+  margin-top: 14px;
+  margin-bottom: 20px;
+  gap: 12px;
+}
+
+.tip-emoji {
+  font-size: 1.3rem;
+  margin-top: 2px;
+}
+
+.content-wrapper {
+  max-width: 430px;
+  margin: 0 auto;
+  padding: 0 16px 24px;
+}
+
+/* Títulos */
+.section-title {
+  margin: 0 0 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* ========================================
+   TARJETAS DE ESPACIOS
+========================================= */
+ion-card.espacio-card {
+  background: #fff;
+  border-radius: 18px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 10px 24px rgba(15,23,42,0.1);
+  overflow: hidden;
+  margin-bottom: 18px;
+  transition: 0.2s;
+}
+
+ion-card.espacio-card.selected {
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 2px rgba(6,182,212,0.25);
+}
+
+.espacio-img-wrapper {
+  position: relative;
+  height: 180px;
+}
+
+.espacio-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Precio */
+.espacio-price {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: #fbbf24;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: .8rem;
+}
+
+/* Check seleccionado */
+.espacio-check {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 38px;
+  height: 38px;
+  background: #06b6d4;
+  border-radius: 50%;
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  ion-icon {
+    color: #fff;
+  }
+}
+
 ion-card-content {
-  p {
-    margin: 4px 0;
-    color: var(--rb-text);
+  padding: 14px 16px;
+}
+
+.espacio-nombre {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.espacio-desc {
+  color: #64748b;
+  font-size: .88rem;
+  margin-bottom: 12px;
+}
+
+/* Meta */
+.espacio-meta {
+  margin-bottom: 12px;
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #475569;
+    font-size: .85rem;
+    ion-icon {
+      color: #06b6d4;
+      font-size: 1rem;
+    }
   }
-  strong {
-    color: var(--rb-muted);
-    font-weight: 600;
+}
+
+/* Servicios */
+.servicios-title {
+  font-weight: 600;
+  font-size: .85rem;
+  margin-bottom: 6px;
+}
+
+.servicios-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.servicio-pill {
+  background: #f1f5f9;
+  padding: 4px 6px;
+  border-radius: 999px;
+  font-size: .8rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  ion-icon {
+    color: #16a34a;
   }
 }
 
-/* Ajustes de tipografía para el grid interno (Tipo y Capacidad) */
-ion-grid {
-  p {
-    font-size: 0.95rem;
-  }
+/* ========================================
+   FORMULARIO
+========================================= */
+.solicitud-card {
+  margin-top: 22px;
+  background: #fff;
+  border-radius: 18px;
+  padding: 16px;
+  border: 1px solid #06b6d4;
+  box-shadow: 0 10px 26px rgba(15,23,42,0.1);
 }
 
-/* Pequeño padding para el resumen de la descripción */
-.ion-padding-top-sm {
-    padding-top: 8px;
-}
-.ion-text-sm {
-    font-size: 0.9rem;
-    color: var(--rb-muted);
+.field {
+  margin-bottom: 14px;
 }
 
-/* ===== 3. ESTILOS PARA EL BOTÓN FLOTANTE CUADRADO ===== */
-
-ion-fab {
-  --height: auto;
-  --width: auto;
-  --offset-bottom: 20px;
-  --offset-end: 20px;
+.field label {
+  font-size: .85rem;
+  font-weight: 600;
 }
 
+.req {
+  color: #ef4444;
+}
+
+.field-input {
+  position: relative;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding-left: 34px;
+}
+
+.field-input ion-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+}
+
+.field-input input {
+  width: 100%;
+  padding: 10px 10px;
+  background: transparent;
+  border: none;
+  font-size: .9rem;
+}
+
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  resize: none;
+}
+
+.btn-submit {
+  --background: linear-gradient(90deg,#06b6d4,#fbbf24);
+  --border-radius: 12px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* EMPTY / LOADING */
+.loading-wrapper,
+.empty-wrapper {
+  text-align: center;
+  padding: 20px;
+  p { color: #64748b; }
+}
+
+/* FAB */
 .fab-squared-button {
-  --border-radius: 12px; // Bordes ligeramente redondeados
+  --border-radius: 12px;
   --padding-start: 18px;
   --padding-end: 18px;
-  --padding-top: 14px;
-  --padding-bottom: 14px;
-  height: auto; 
   font-weight: 700;
-  font-size: 1.05rem;
-  
-  // Usamos el color primario de la paleta
-  box-shadow: 0 10px 18px rgba(37, 99, 235, 0.3); 
-  
-  ion-icon {
-    font-size: 1.4em; 
-    margin-inline-end: 8px; 
-  }
-
-  &:active {
-    transform: translateY(1px);
-    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.2);
-  }
+  box-shadow: 0 10px 20px rgba(37,99,235,0.3);
 }
 
-/* ===== 4. LIMPIEZA DEL MODO OSCURO ===== */
+/* =======================
+   FIX — Iconos visibles
+======================= */
 
-@media (prefers-color-scheme: dark) {
-  :host {
-    --ion-background-color: var(--rb-bg);
-    --ion-card-background: #ffffff;
-    --ion-item-background: #ffffff;
-    --ion-text-color: var(--rb-text);
-  }
+/* Flecha del subheader */
+.back-btn ion-icon,
+.back-icon {
+  font-size: 1.6rem !important;
+  color: #1e293b !important;
+  z-index: 20 !important;
+}
+
+/* Asegurar que no quede tapado por el header */
+.subheader {
+  position: relative;
+  z-index: 50;
+}
+
+/* Check de selección */
+.espacio-check {
+  position: absolute;
+  z-index: 30 !important;   /* << CLAVE */
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  background: #06b6d4;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.35);
+}
+
+.espacio-check ion-icon {
+  color: #ffffff !important;
+  font-size: 1.8rem !important;
+}
+
+/* FIX: Evitar que textarea se salga de la tarjeta */
+.solicitud-card {
+  overflow: hidden; /* Evita que algo se desborde visualmente */
+}
+
+.solicitud-card textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box; /* Asegura que respete el ancho real */
+  margin: 0; 
 }

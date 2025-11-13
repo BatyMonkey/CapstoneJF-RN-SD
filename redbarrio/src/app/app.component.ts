@@ -57,7 +57,9 @@ export class AppComponent {
 
   isActive(prefix: string): boolean {
     if (!this.currentUrl) return false;
-    return this.currentUrl === prefix || this.currentUrl.startsWith(prefix + '/');
+    return (
+      this.currentUrl === prefix || this.currentUrl.startsWith(prefix + '/')
+    );
   }
 
   async go(url: string) {
@@ -78,7 +80,8 @@ export class AppComponent {
       this.isAdmin = false;
     } finally {
       try {
-        if (await this.menu.isOpen('mainMenu')) await this.menu.close('mainMenu');
+        if (await this.menu.isOpen('mainMenu'))
+          await this.menu.close('mainMenu');
       } catch {}
       await this.router.navigateByUrl('/auth/login', { replaceUrl: true });
     }
@@ -144,9 +147,18 @@ export class AppComponent {
 
       // === 🔹 CASO PAGO (nuevo esquema): redbarrio://app/pago-retorno?token_ws=...
       if (
+<<<<<<< Updated upstream
         (u.protocol === 'redbarrio:' && u.host === 'app' && u.pathname.startsWith('/pago-retorno')) ||
         // === 🔹 CASO PAGO (legacy): capacitor://localhost/pago-retorno?token_ws=...
         (u.protocol === 'capacitor:' && u.host === 'localhost' && u.pathname === '/pago-retorno')
+=======
+        (u.protocol === 'redbarrio:' &&
+          u.host === 'app' &&
+          u.pathname.startsWith('/pago-retorno')) ||
+        (u.protocol === 'capacitor:' &&
+          u.host === 'localhost' &&
+          u.pathname === '/pago-retorno')
+>>>>>>> Stashed changes
       ) {
         const token = u.searchParams.get('token_ws') || '';
         // Cierra la Custom Tab si se usó @capacitor/browser
@@ -166,7 +178,9 @@ export class AppComponent {
       // === 🔹 CASO AUTH SUPABASE (mantener compatibilidad): myapp://auth/...
       if (u.protocol === 'myapp:' && u.host === 'auth') {
         const q = u.searchParams;
-        const hashParams = new URLSearchParams(u.hash?.startsWith('#') ? u.hash.slice(1) : u.hash);
+        const hashParams = new URLSearchParams(
+          u.hash?.startsWith('#') ? u.hash.slice(1) : u.hash
+        );
         const getParam = (k: string) => q.get(k) ?? hashParams.get(k);
 
         const type = getParam('type');
@@ -175,15 +189,26 @@ export class AppComponent {
         const code = getParam('code');
 
         if (type === 'recovery' && access_token && refresh_token) {
+<<<<<<< Updated upstream
           await this.supabaseService.auth.setSession({ access_token, refresh_token });
+=======
+          await this.supabaseService.client.auth.setSession({
+            access_token,
+            refresh_token,
+          });
+>>>>>>> Stashed changes
         } else if (code) {
           await this.supabaseService.auth.exchangeCodeForSession(code);
         } else {
-          console.warn('Deep link sin tokens ni code. No se pudo establecer sesión.');
+          console.warn(
+            'Deep link sin tokens ni code. No se pudo establecer sesión.'
+          );
         }
 
         this.ngZone.run(() => {
-          this.router.navigateByUrl('/auth/recuperar-contrasena', { replaceUrl: true });
+          this.router.navigateByUrl('/auth/recuperar-contrasena', {
+            replaceUrl: true,
+          });
         });
         return;
       }
@@ -192,5 +217,10 @@ export class AppComponent {
     } catch (e) {
       console.error('Deep link parse error', e);
     }
+  }
+  toggleChatbot() {
+    // Emitimos un evento al componente chatbot global
+    const ev = new CustomEvent('toggle-chatbot', { bubbles: true });
+    window.dispatchEvent(ev);
   }
 }

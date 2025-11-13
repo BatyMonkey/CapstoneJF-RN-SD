@@ -1,32 +1,50 @@
-// src/app/pages/espacios/espacios.page.ts
+// src/app/espacios/espacios.page.ts
 
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { Router, RouterModule } from '@angular/router'; // Importado: RouterModule
+import { Router, RouterModule } from '@angular/router';
 
-// Importar el Servicio y la Interfaz Espacio
 import { EspaciosService, Espacio } from 'src/app/services/espacios.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { addIcons } from 'ionicons';
+import {
+  chevronBackOutline,
+  calendarOutline,
+  timeOutline,
+  peopleOutline,
+  locationOutline,
+  checkmarkOutline,
+} from 'ionicons/icons';
+
+type EspacioUI = Espacio & {
+  precio?: string | null;
+  servicios?: string[] | null;
+};
 
 @Component({
   selector: 'app-espacios',
+  standalone: true,
   templateUrl: './espacios.page.html',
   styleUrls: ['./espacios.page.scss'],
-  standalone: true,
-  // AGREGADO: Se incluye RouterModule aquí para que [routerLink] funcione
-  imports: [IonicModule, CommonModule, FormsModule, RouterModule]
+  imports: [IonicModule, CommonModule, FormsModule, RouterModule],
 })
 export class EspaciosPage implements OnInit {
-
-  // Variables de estado
-  espacios: Espacio[] = [];
+  espacios: EspacioUI[] = [];
   isLoading = false;
   error: string | null = null;
   isAdmin = false;
 
-  // Mapeo de IDs numéricos a nombres de tipo
+  // 🔹 Solo guardamos el ID, nunca el objeto
+  espacioSeleccionadoId: number | null = null;
+
+  // 🔹 Formulario
+  fechaArriendo = '';
+  horaInicio = '';
+  horaFin = '';
+  motivo = '';
+
   private tiposEspacioMap = new Map<number, string>([
     [1, 'Cancha'],
     [2, 'Sede'],
@@ -37,7 +55,16 @@ export class EspaciosPage implements OnInit {
     private espaciosService: EspaciosService,
     private router: Router,
     private authService: AuthService
-  ) { }
+  ) {
+    addIcons({
+      'chevron-back-outline': chevronBackOutline,
+      'calendar-outline': calendarOutline,
+      'time-outline': timeOutline,
+      'people-outline': peopleOutline,
+      'location-outline': locationOutline,
+      'checkmark-outline': checkmarkOutline,
+    });
+  }
 
   ngOnInit() {
     this.checkUserRole();
@@ -49,7 +76,6 @@ export class EspaciosPage implements OnInit {
     setTimeout(() => this.cargar(), 600);
   }
 
-  // small wrapper so refresher and lifecycle match other pages
   private async cargar() {
     await this.cargarEspacios();
   }
@@ -58,7 +84,7 @@ export class EspaciosPage implements OnInit {
     try {
       this.isAdmin = await this.authService.checkIfAdmin();
     } catch (e) {
-      console.error("No se pudo determinar el rol del usuario:", e);
+      console.error('No se pudo determinar el rol del usuario:', e);
       this.isAdmin = false;
     }
   }
@@ -70,54 +96,142 @@ export class EspaciosPage implements OnInit {
     }
 
     try {
-      this.espacios = await this.espaciosService.obtenerEspacios();
+      this.espacios =
+        (await this.espaciosService.obtenerEspacios()) as EspacioUI[];
     } catch (e: any) {
       this.error = e.message || 'Error desconocido al cargar los espacios.';
       this.espacios = [];
     } finally {
       this.isLoading = false;
-      if (event) {
-        event.target.complete();
-      }
+      if (event) event.target.complete();
     }
   }
 
-  /**
-   * Convierte el ID numérico del tipo a su nombre en texto.
-   */
+  // ============================================================
+  //   🔹 Seleccionar espacio (igual al mockup React)
+  // ============================================================
+  seleccionarEspacio(espacio: EspacioUI) {
+    if (this.espacioSeleccionadoId === espacio.id_espacio) {
+      this.espacioSeleccionadoId = null; // deseleccionar
+      return;
+    }
+    this.espacioSeleccionadoId = espacio.id_espacio;
+  }
+
+  // ============================================================
+  //   🔹 ÍCONOS / nombres fancy
+  // ============================================================
+  nombreServicio(code: string): string {
+    const map: Record<string, string> = {
+      mesas_sillas: 'Mesas y sillas',
+      wifi: 'WiFi',
+      cocina: 'Cocina equipada',
+      banos: 'Baños',
+      sonido: 'Sistema de sonido',
+      iluminacion: 'Iluminación LED',
+      parrilla: 'Parrilla / Quincho',
+      pizarra: 'Pizarra',
+      proyector: 'Proyector',
+      aire_acondicionado: 'Aire acondicionado',
+      balones: 'Balones disponibles',
+      graderias: 'Graderías',
+    };
+    return map[code] || code;
+  }
+
+  iconoServicio(code: string): string {
+    switch (code) {
+      case 'mesas_sillas':
+        return 'cube-outline';
+      case 'wifi':
+        return 'wifi-outline';
+      case 'cocina':
+        return 'restaurant-outline';
+      case 'banos':
+        return 'water-outline';
+      case 'sonido':
+        return 'volume-high-outline';
+      case 'iluminacion':
+        return 'bulb-outline';
+      case 'parrilla':
+        return 'flame-outline';
+      case 'pizarra':
+        return 'create-outline';
+      case 'proyector':
+        return 'videocam-outline';
+      case 'aire_acondicionado':
+        return 'snow-outline';
+      case 'balones':
+        return 'basketball-outline';
+      case 'graderias':
+        return 'grid-outline';
+      default:
+        return 'checkmark-outline';
+    }
+  }
+
+  // ============================================================
+  //   🔹 Enviar solicitud (mockup completo)
+  // ============================================================
+  solicitarArriendo() {
+    if (!this.espacioSeleccionadoId)
+      return alert('Por favor selecciona un espacio');
+    if (!this.fechaArriendo) return alert('Por favor selecciona una fecha');
+    if (!this.horaInicio || !this.horaFin)
+      return alert('Selecciona un horario');
+    if (!this.motivo.trim()) return alert('Describe el motivo');
+
+    const espacioObj = this.espacios.find(
+      (e) => e.id_espacio === this.espacioSeleccionadoId
+    );
+
+    if (!espacioObj) {
+      alert('Error interno: espacio no encontrado');
+      return;
+    }
+
+    const solicitud = {
+      espacioId: espacioObj.id_espacio,
+      espacioNombre: espacioObj.nombre,
+      fecha: this.fechaArriendo,
+      horaInicio: this.horaInicio,
+      horaFin: this.horaFin,
+      motivo: this.motivo,
+    };
+
+    console.log('Solicitud enviada:', solicitud);
+    alert('¡Solicitud enviada exitosamente!');
+
+    // reset
+    this.espacioSeleccionadoId = null;
+    this.fechaArriendo = '';
+    this.horaInicio = '';
+    this.horaFin = '';
+    this.motivo = '';
+  }
+
   getTipoNombre(tipoId: number | string | undefined | null): string {
-    if (tipoId === undefined || tipoId === null) {
-      return 'N/A';
-    }
-    const idNumerico = parseInt(tipoId.toString(), 10);
-
-    if (isNaN(idNumerico)) {
-      return 'N/A';
-    }
-    return this.tiposEspacioMap.get(idNumerico) || 'Desconocido';
+    if (tipoId === undefined || tipoId === null) return 'N/A';
+    const num = Number(tipoId);
+    return this.tiposEspacioMap.get(num) || 'Desconocido';
   }
 
-
-  /**
-   * Navega a la página de detalle usando el ID del espacio.
-   */
   goToDetail(id: number) {
     this.router.navigateByUrl(`/espacios/${id}`);
   }
 
-  /**
-   * Navega a la página de creación de espacio.
-   */
   irACrearEspacio() {
-    this.router.navigateByUrl('espacio/crear');
+    this.router.navigateByUrl('/espacio/crear');
   }
+
   async handleRefresh(ev: CustomEvent) {
     try {
-      // Call the normal cargar method pattern used in other pages
       await this.cargarEspacios();
     } finally {
-      // Match votacion: complete via ev.target.complete()
       (ev.target as HTMLIonRefresherElement)?.complete?.();
     }
+  }
+  goBack() {
+    this.router.navigateByUrl('/home');
   }
 }

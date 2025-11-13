@@ -32,6 +32,100 @@
  * https://ionicframework.com/docs/theming/dark-mode
  */
 
+<<<<<<< Updated upstream
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+=======
+    h2 {
+      font-size: var(--text-xl);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    h3 {
+      font-size: var(--text-lg);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    h4 {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    p {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+    }
+
+    label {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    button {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    input {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+    }
+  }
+}
+
+html {
+  font-size: var(--font-size);
+}
+
+/* Páginas inactivas de Ionic fuera de vista (robusto para varias versiones) */
+.ion-page.ion-page-hidden,
+.ion-page.ion-page-invisible {
+  display: none !important;
+}
+
+/* Footer estilo tabs (unificado, sin duplicados) */
+ion-footer {
+  --background: var(--ion-color-light, #fff);
+  border-top: 1px solid rgba(0,0,0,.06);
+}
+.rb-tabbar { --background: var(--ion-color-light, #fff); padding: 0; }
+.rb-tabbar__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 100%;
+}
+.rb-tabbar__row ion-button {
+  flex: 1 1 0;
+  margin: 0;
+  height: 56px;
+  flex-direction: column;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 6px;
+  --padding-bottom: 6px;
+  min-width: 0;
+}
+.rb-tabbar__row ion-icon { font-size: 22px; line-height: 1; }
+.rb-tabbar__row ion-label {
+  font-size: 10px; margin-top: 2px; line-height: 1;
+  text-transform: uppercase; letter-spacing: .02em;
+}
+.rb-tabbar__row ion-button.rb-active { --color: var(--ion-color-primary, #3880ff); }
+
+/* ================================================
+   FIX GLOBAL PARA QUE EL TAB BAR NO TAPE EL CONTENIDO
+   ================================================ */
+ion-content {
+  --padding-bottom: calc(150px + env(safe-area-inset-bottom)) !important;
+  padding-bottom: var(--padding-bottom) !important;
+}
+>>>>>>> Stashed changes
