@@ -1,0 +1,417 @@
+/* ======= PALETA Y FONDO GENERAL ======= */
+:host {
+  color-scheme: light;
+
+  --rb-primary: #06b6d4;
+  --rb-primary-strong: #00a5c8;
+  --rb-bg: #f5f7fb;
+  --rb-text: #0f172a;
+  --rb-muted: #64748b;
+
+  --ion-background-color: var(--rb-bg);
+  --ion-text-color: var(--rb-text);
+}
+
+/* Quita la línea bajo el header de Ionic */
+ion-header::after {
+  background: none !important;
+  display: none !important;
+}
+
+/* ============== HERO HEADER ============== */
+
+.rb-hero-header {
+  background: linear-gradient(90deg, #06b6d4, #22d3ee);
+  border-bottom-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.rb-hero-container {
+  width: 100%;
+  padding: 0 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rb-hero-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rb-hero-logo {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rb-hero-logo img {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+}
+
+.rb-hero-text h1 {
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.rb-hero-text p {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 2px 0 0;
+  font-size: 0.9rem;
+}
+
+/* Botón del header: ahora flecha */
+.rb-hero-chat {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  ion-icon {
+    color: #fff;
+    font-size: 1.4rem;
+  }
+}
+
+/* ============== CONTENIDO ============== */
+
+.dashboard-page {
+  --background: #f5f7fb;
+  margin-top: 140px; /* espacio bajo el header curvo */
+}
+
+.dashboard-wrapper {
+  max-width: 430px;
+  margin: 0 auto 24px;
+  padding: 0 16px 24px;
+  box-sizing: border-box;
+}
+
+/* ---- Cabecera interna ---- */
+
+.dashboard-header-row {
+  margin-top: 18px;
+}
+
+.dash-hero-card {
+  background: linear-gradient(135deg, #00c6ff, #009fe3);
+  border-radius: 22px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 14px 26px rgba(15, 23, 42, 0.25);
+  color: #ffffff;
+}
+
+.dash-hero-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon {
+    font-size: 1.5rem;
+  }
+}
+
+.dash-hero-text h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.dash-hero-text p {
+  margin: 3px 0 0;
+  font-size: 0.86rem;
+  opacity: 0.95;
+}
+
+/* Mensaje de error */
+.err-msg {
+  display: block;
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+/* ---- Segmento filtros ---- */
+
+.segment-card {
+  margin-top: 12px;
+}
+
+.dashboard-segment {
+  --background: transparent;
+  --indicator-color: #06b6d4;
+  --border-radius: 999px;
+
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 4px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+/* IMPORTANTE: mantener el label visible cuando está seleccionado */
+.dashboard-segment ion-segment-button {
+  --border-radius: 16px;
+  --color: #0f172a;
+  --color-checked: #0f172a; /* 👈 ya no se vuelve blanco */
+  --background: transparent;
+  --background-checked: #ffffff; /* pill blanca */
+  min-height: 36px;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+/* ---- Tarjetas base ---- */
+
+.dashboard-card {
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+  margin-top: 16px;
+
+  ion-card-header {
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  }
+
+  ion-card-title {
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+}
+
+/* ---- Resumen Financiero ---- */
+
+.resumen-card ion-card-content {
+  padding-top: 10px;
+  padding-bottom: 14px;
+}
+
+.resumen-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+
+.resumen-row + .resumen-row {
+  border-top: 1px solid #e5e7eb;
+  margin-top: 4px;
+}
+
+.resumen-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.92rem;
+  color: #0f172a;
+}
+
+.resumen-label .emoji {
+  font-size: 1rem;
+}
+
+.resumen-value {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.resumen-value.ingresos {
+  color: #16a34a;
+}
+
+.resumen-value.gastos {
+  color: #dc2626;
+}
+
+.resumen-value.balance {
+  color: #0f172a;
+
+  &.positivo {
+    color: #16a34a;
+  }
+
+  &.negativo {
+    color: #dc2626;
+  }
+}
+
+/* ---- KPIs ---- */
+
+.kpi-card ion-card-content {
+  padding-top: 12px;
+  padding-bottom: 16px;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.kpi-box {
+  border-radius: 14px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.kpi-box.certificados {
+  background: #e0f2fe;
+}
+
+.kpi-box.reservas {
+  background: #fef3c7;
+}
+
+.kpi-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0ea5e9;
+
+  ion-icon {
+    color: #ffffff;
+    font-size: 1.2rem;
+  }
+}
+
+.kpi-box.reservas .kpi-icon {
+  background: #f59e0b;
+}
+
+.kpi-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.kpi-label {
+  font-size: 0.8rem;
+  color: #475569;
+}
+
+.kpi-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* ---- Gráficos ---- */
+
+.chart-card ion-card-content {
+  padding-top: 12px;
+  padding-bottom: 16px;
+}
+
+.dashboard-chart-container {
+  width: 100%;
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- Botón descarga: pill + halo ---- */
+
+.download-card {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  margin-top: 18px;
+}
+
+.download-card ion-card-content {
+  padding-top: 4px;
+  padding-bottom: 8px;
+}
+
+.download-pill-wrapper {
+  background: #f4f7fb;
+  border-radius: 999px;
+  padding: 6px 6px 10px;
+  box-shadow: 0 18px 30px rgba(148, 163, 184, 0.45);
+}
+
+.download-btn {
+  --background: #ffffff;
+  --background-activated: #ffffff;
+  --color: #0f172a;
+  --border-radius: 999px;
+  --box-shadow: 0 12px 26px rgba(15, 23, 42, 0.28);
+  --padding-start: 18px;
+  --padding-end: 18px;
+  --ripple-color: rgba(15, 23, 42, 0.08);
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0.1px;
+
+  ion-icon {
+    font-size: 1.2rem;
+  }
+}
+
+/* ---- Movimientos recientes ---- */
+
+.movimientos-card ion-card-content {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.movimientos-card ion-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  margin: 2px 0;
+}
+
+.movimientos-card h2 {
+  margin: 0 0 2px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.movimientos-card p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .dashboard-wrapper {
+    padding: 0 12px 24px;
+  }
+
+  .dashboard-header-row {
+    margin-top: 14px;
+  }
+}
