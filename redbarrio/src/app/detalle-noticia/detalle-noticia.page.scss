@@ -1,108 +1,183 @@
-/* ===== Detalle de Noticia (mobile-first) ===== */
+/* ==========================
+   HERO HEADER (igual a Proyectos)
+========================== */
+
 :host {
-  color-scheme: light;
-
-  --rb-primary: #2563eb;
-  --rb-text: #0f172a;
-  --rb-muted: #64748b;
-  --rb-sep: rgba(2, 6, 23, 0.08);
-
-  --ion-background-color: #ffffff;
-  --ion-text-color: var(--rb-text);
+  --rb-header-height: 130px;
 }
 
-/* Header consistente con el resto */
-ion-toolbar {
-  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
-  --color: #fff;
-  --border-color: transparent;
-  --min-height: 56px;
+ion-header::after {
+  background: none !important;
+  display: none !important;
 }
 
-/* Fondo blanco */
-ion-content {
-  --background: #fff;
+.rb-hero-header {
+  background: linear-gradient(90deg, #06b6d4, #22d3ee);
+  border-bottom-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  height: var(--rb-header-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Portada: alto cómodo en móvil, más alto en tablet */
-.cover-image {
+.rb-hero-container {
   width: 100%;
-  height: 220px;
+  padding: 0 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rb-hero-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rb-hero-logo img {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+}
+
+.rb-hero-text h1 {
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.rb-hero-text p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  margin: 2px 0 0;
+}
+
+.rb-hero-back {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.rb-hero-back ion-icon {
+  color: white;
+  font-size: 1.4rem;
+}
+
+
+/* ==========================
+   CONTENIDO PRINCIPAL
+========================== */
+
+.detalle-content {
+  --background: #f5f7fb;
+  margin-top: 140px;
+}
+
+.detalle-wrapper {
+  max-width: 460px;
+  margin: 0 auto;
+  padding-bottom: 30px;
+  text-align: center;
+}
+
+/* Imagen principal */
+.cover-wrapper {
+  padding: 14px;
+}
+
+.cover-img {
+  width: 100%;
+  border-radius: 16px;
   object-fit: cover;
-  display: block;
-  border-bottom: 1px solid var(--rb-sep);
-}
-@media (min-width: 768px) {
-  .cover-image { height: 300px; }
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
 
-/* Contenedores con ancho máximo para lectura agradable */
-ion-content .ion-padding,
-ion-content .ion-padding-horizontal {
-  max-width: 880px;
-  margin-left: auto;
-  margin-right: auto;
+/* Info */
+.info-wrapper {
+  padding: 0 14px;
+  margin-top: 6px;
+  text-align: center;
 }
 
-/* Título */
-h1 {
-  color: var(--rb-text);
-  font-size: 22px;         /* grande en móvil */
-  line-height: 1.25;
-  font-weight: 800;
-  margin: 12px 0 6px;
-}
-@media (min-width: 768px) {
-  h1 { font-size: 26px; }
+.titulo {
+  font-size: 1.45rem;
+  font-weight: 700;
+  margin: 12px 0 16px;
 }
 
-/* Byline (autor/fecha) dentro del ion-text[color="medium"] */
-ion-text[color="medium"] p {
-  color: var(--rb-muted) !important;
-  margin: 4px 0 10px;
-  font-weight: 600;
-  letter-spacing: .2px;
-}
-
-/* Separador sutil */
-hr {
-  border: 0;
-  height: 1px;
-  background: linear-gradient(to right, transparent, var(--rb-sep), transparent);
-  margin: 10px auto 14px;
-  max-width: 880px;
-}
-
-/* Párrafos del cuerpo */
-ion-content .ion-padding-horizontal p {
-  color: #334155;
-  font-size: 16px;
-  line-height: 1.6;
-  margin: 0 0 14px;
-  text-align: start; /* evita justificado demasiado apretado en móvil */
-}
-
-/* Card de imágenes dentro del contenido (las del *ngFor) */
-ion-content ion-card {
-  background: #fff;
-  border: 1px solid var(--rb-sep);
-  border-radius: 14px;
-  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.10);
-  overflow: hidden;
-}
-
-.content-image {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-/* Estados (cargando / vacío) */
-.ion-text-center p {
+.meta-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
   color: #475569;
+  font-size: 0.93rem;
 }
 
-/* Accesibilidad: menos animación si el usuario lo pide */
-@media (prefers-reduced-motion: reduce) {
-  .cover-image { transition: none; }
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.meta-item ion-icon {
+  font-size: 18px;
+  color: #0ea5e9;
+}
+
+.meta-dot {
+  width: 6px;
+  height: 6px;
+  background: #cbd5e1;
+  border-radius: 50%;
+}
+
+.separador {
+  width: 90%;
+  height: 1px;
+  background: rgba(0,0,0,0.07);
+  margin: 18px auto 20px;
+}
+
+/* Contenido mixto */
+.content-container {
+  padding: 0 14px;
+}
+
+.content-block {
+  margin-bottom: 20px;
+}
+
+.parrafo {
+  text-align: left;
+  font-size: 1rem;
+  line-height: 1.55;
+  margin-bottom: 16px;
+  color: #0f172a;
+}
+
+.content-img {
+  width: 100%;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  margin: 16px 0;
+}
+
+/* Estados */
+.loading,
+.empty {
+  text-align: center;
+  padding: 20px;
+  opacity: .8;
 }
