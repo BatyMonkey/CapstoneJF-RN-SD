@@ -111,7 +111,9 @@
     </div>
 
     <script>
-      // Obtener token desde la URL
+      // ==============================
+      // 1. Obtener token desde la URL
+      // ==============================
       const params = new URLSearchParams(window.location.search);
       const token =
         params.get("token_ws") || params.get("TBK_TOKEN") || params.get("token");
@@ -125,27 +127,55 @@
         statusEl.className = "status-error";
       }
 
-      // Deep link a la app (debe coincidir con tu scheme en Android / iOS)
-      const appUrl = token
-        ? `redbarrio://pago-retorno?token_ws=${encodeURIComponent(token)}`
+      // ==============================
+      // 2. URLs de destino
+      // ==============================
+
+      // Deep link a la app nativa (debe coincidir con el manifest):
+      // <data android:scheme="redbarrio" android:host="app" android:pathPrefix="/pago-retorno" />
+      const deepLink = token
+        ? `redbarrio://app/pago-retorno?token_ws=${encodeURIComponent(token)}`
         : null;
 
-      function abrirApp() {
-        if (!appUrl) return;
-        try {
-          window.location.href = appUrl;
-        } catch (e) {
-          console.error("Error abriendo deep-link:", e);
+      // Ruta web (funciona en Netlify, localhost, etc.)
+      // Asegúrate de tener route /pago-retorno en tu app (Angular/Ionic)
+      const webUrl = token
+        ? `/pago-retorno?token_ws=${encodeURIComponent(token)}`
+        : "/";
+
+      // Detección MUY simple de móvil (Android / iOS)
+      const ua = navigator.userAgent || navigator.vendor || window.opera;
+      const isMobile = /android|iphone|ipad|ipod/i.test(ua);
+
+      // ==============================
+      // 3. Lógica de retorno
+      // ==============================
+      function irAPagoRetorno() {
+        if (!token) return;
+
+        if (isMobile && deepLink) {
+          // En móvil intentamos primero abrir la app
+          window.location.href = deepLink;
+
+          // Si no hay app instalada, seguiremos en el navegador,
+          // y después de un pequeño delay redirigimos a la versión web
+          setTimeout(() => {
+            window.location.href = webUrl;
+          }, 1500);
+        } else {
+          // En PC / navegador normal → ir directo a la ruta web
+          window.location.href = webUrl;
         }
       }
 
-      // Redirección automática a la app
-      if (appUrl) {
-        setTimeout(abrirApp, 1500);
+      // Redirección automática
+      if (token) {
+        setTimeout(irAPagoRetorno, 1200);
       }
 
       // Botón manual
-      btnVolver.addEventListener("click", abrirApp);
+      btnVolver.addEventListener("click", irAPagoRetorno);
     </script>
   </body>
 </html>
+
