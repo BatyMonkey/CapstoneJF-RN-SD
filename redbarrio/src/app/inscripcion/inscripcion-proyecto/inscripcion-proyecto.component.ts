@@ -16,6 +16,15 @@ import {
 import { SupabaseService } from 'src/app/services/supabase.service';
 import { AuthService, Perfil } from 'src/app/auth/auth.service';
 
+// 👇 IMPORTS PARA ICONOS
+import { addIcons } from 'ionicons';
+import {
+  chevronBackOutline,
+  calendarOutline,
+  clipboardOutline,
+  imageOutline,
+} from 'ionicons/icons';
+
 @Component({
   standalone: true,
   selector: 'app-inscripcion-proyecto',
@@ -44,7 +53,15 @@ export class InscripcionProyectoComponent implements OnInit {
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController,
     private supabaseService: SupabaseService
-  ) {}
+  ) {
+    // 👇 REGISTRO LOCAL DE LOS ÍCONOS QUE USAS EN ESTE COMPONENTE
+    addIcons({
+      chevronBackOutline,
+      calendarOutline,
+      clipboardOutline,
+      imageOutline,
+    });
+  }
 
   async ngOnInit() {
     await this.validarSesion();
@@ -225,7 +242,6 @@ export class InscripcionProyectoComponent implements OnInit {
       );
       this.router.navigate(['/inscripcion/proyectos']);
     } catch (err: any) {
-      // 🔍 Console log detallado para ver el error real de Supabase
       console.error('Error al enviar inscripción (raw):', err);
       const detail =
         err?.message ||
@@ -251,5 +267,10 @@ export class InscripcionProyectoComponent implements OnInit {
       buttons: ['Aceptar'],
     });
     await alert.present();
+  }
+
+  // ✅ Botón volver del header tipo RedBarrio
+  goBack() {
+    this.router.navigate(['/inscripcion/proyectos']);
   }
 }

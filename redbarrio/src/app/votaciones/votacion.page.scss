@@ -43,7 +43,6 @@ ion-header::after {
 }
 
 .rb-hero-logo {
-  /* SIN fondo blanco */
   width: 80px;
   height: 80px;
   padding: 0;
@@ -60,7 +59,6 @@ ion-header::after {
   width: 130px;
   height: 130px;
   object-fit: contain;
-  border-radius: 0;
 }
 
 .rb-hero-text h1 {
@@ -97,7 +95,7 @@ ion-header::after {
 
 .votacion-page {
   --background: #f5f7fb;
-  margin-top: 140px; /* espacio bajo el header */
+  margin-top: 140px;
 }
 
 .page-wrapper {
@@ -107,7 +105,7 @@ ion-header::after {
   box-sizing: border-box;
 }
 
-/* --- tarjeta azul principal, tamaño más pequeño --- */
+/* --- tarjeta azul principal --- */
 .main-vot-card {
   background: linear-gradient(135deg, #00c6ff, #009fe3);
   border-radius: 20px;
@@ -150,7 +148,7 @@ ion-header::after {
   font-size: 0.86rem;
 }
 
-/* pill pequeño “En curso / Finalizada”, solo ancho del texto */
+/* pill “En curso / Finalizada / Pendiente” */
 .status-pill {
   display: inline-flex;
   align-items: center;
@@ -174,8 +172,7 @@ ion-header::after {
   }
 }
 
-/* ================= Detalle tarjeta blanca ================= */
-
+/* Tarjeta blanca principal */
 .card {
   background: #fff;
   border-radius: 18px;
@@ -190,33 +187,13 @@ ion-header::after {
   }
 }
 
-.card-header-top {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-}
-
-.card-header-text {
-  flex: 1;
-}
-
 ion-card-title {
   font-weight: 800;
   color: var(--rb-text);
   font-size: 1.05rem;
 }
 
-.type-badge {
-  align-self: flex-start;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  background: #f1f5f9;
-  color: #0f172a;
-}
-
-/* === resumen participación / tiempo (sin cambios grandes) === */
+/* resumen participación / tiempo */
 
 .summary-row {
   display: grid;
@@ -281,7 +258,7 @@ ion-card-title {
   color: #0f172a;
 }
 
-/* === lista de opciones (igual que antes) === */
+/* opciones */
 
 .options-title {
   margin: 8px 2px 4px;
@@ -306,7 +283,7 @@ ion-card-title {
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
     width: var(--pct, 0%);
@@ -421,7 +398,7 @@ ion-note {
   font-weight: 700;
 }
 
-/* Botón confirmar voto (igual al de “Solicitar Arriendo”) */
+/* Botón confirmar voto */
 .confirm-footer {
   margin-top: 16px;
 }
@@ -444,7 +421,7 @@ ion-note {
   --box-shadow: none;
 }
 
-/* ====== estilos del modal (igual que antes, los dejo tal cual) ====== */
+/* ====== estilos del modal ====== */
 
 .bar {
   margin: 8px 0 6px 0;

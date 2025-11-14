@@ -79,6 +79,24 @@ ion-header::after {
   margin: 2px 0 0 0;
 }
 
+/* 🔙 Botón circular de volver */
+.rb-hero-back {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  ion-icon {
+    color: #ffffff;
+    font-size: 1.3rem;
+  }
+}
+
 /* ===============================
    Layout general
    =============================== */

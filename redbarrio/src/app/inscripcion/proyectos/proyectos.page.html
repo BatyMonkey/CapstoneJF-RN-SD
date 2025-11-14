@@ -1,81 +1,135 @@
-<ion-header [translucent]="true" class="rb-header">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
-    </ion-buttons>
-    <ion-title>Proyectos y Actividades</ion-title>
-  </ion-toolbar>
+<!-- HERO HEADER TIPO REDBARRIO (igual a Dashboard/Espacios) -->
+<ion-header class="rb-hero-header" slot="fixed">
+  <div class="rb-hero-container">
+    <div class="rb-hero-info">
+      <div class="rb-hero-logo">
+        <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
+      </div>
+      <div class="rb-hero-text">
+        <h1>RedBarrio</h1>
+        <p>Tu comunidad conectada</p>
+      </div>
+    </div>
+
+    <!-- Flecha volver (igual a las otras pantallas) -->
+    <button class="rb-hero-back" type="button" (click)="goBack()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </button>
+  </div>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <div class="page-wrap ion-padding">
+<ion-content class="proyectos-page" [fullscreen]="true">
+  <div class="proyectos-wrapper">
 
-    <!-- 🔹 Filtro de tipo -->
-    <ion-segment [(ngModel)]="filtro" (ionChange)="filtrarListado()" value="todos">
-      <ion-segment-button value="todos">
-        <ion-label>Todos</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="proyectos">
-        <ion-label>Proyectos</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="actividades">
-        <ion-label>Actividades</ion-label>
-      </ion-segment-button>
-    </ion-segment>
+    <!-- TARJETA AZUL BAJO EL HEADER -->
+    <section class="proyectos-header-row">
+      <div class="proj-hero-card">
+        <div class="proj-hero-icon">
+          <ion-icon name="calendar-outline"></ion-icon>
+        </div>
+        <div class="proj-hero-text">
+          <h2>Proyectos y Actividades</h2>
+          <p>Gestión comunitaria</p>
+        </div>
+      </div>
+    </section>
 
-    <!-- 🔄 Estado de carga -->
-    <div *ngIf="isLoading" class="ion-text-center ion-padding">
+    <!-- SEGMENTO DE FILTRO (pill blanco como en el prototipo) -->
+    <div class="segment-wrapper">
+      <ion-segment
+        class="proyectos-segment"
+        [(ngModel)]="filtro"
+        (ionChange)="filtrarListado()"
+      >
+        <ion-segment-button value="todos">
+          <ion-label>Todos</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="proyectos">
+          <ion-label>Proyectos</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="actividades">
+          <ion-label>Actividades</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </div>
+
+    <!-- ESTADO DE CARGA -->
+    <div *ngIf="isLoading" class="ion-text-center loading-block">
       <ion-spinner name="crescent" color="primary"></ion-spinner>
       <p>Cargando elementos...</p>
     </div>
 
-    <!-- ✅ Listado -->
+    <!-- LISTADO -->
     <ng-container *ngIf="!isLoading && elementos?.length">
       <ion-card
         *ngFor="let item of elementosFiltrados"
-        class="card"
+        class="pro-card"
         button="true"
         detail="false"
-        (click)="verDetalle(item)">
-        
-        <ion-card-header>
-          <ion-card-title>
-            {{ item.titulo }}
-            <ion-badge
-              slot="end"
-              color="{{ item.tipo === 'actividad' ? 'success' : 'primary' }}"
-              style="margin-left: 6px;">
-              {{ item.tipo === 'actividad' ? 'Actividad' : 'Proyecto' }}
-            </ion-badge>
-          </ion-card-title>
-          <ion-card-subtitle>
-            {{ item.fecha | date:'dd/MM/yyyy HH:mm' }}
-          </ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
-          <div class="card-content">
-            <div class="text-section">
-              <p class="ion-text-justify">
-                {{ item.descripcion.length > 100
-                    ? (item.descripcion | slice:0:100) + '...'
-                    : item.descripcion }}
-              </p>
-              <small class="fecha">
-                {{ item.fecha | date:'dd/MM/yyyy HH:mm' }}
-              </small>
-            </div>
+        (click)="verDetalle(item)"
+      >
 
-            <div class="image-section" *ngIf="item.imagen_url">
-              <ion-img [src]="item.imagen_url" alt="imagen"
-                class="thumbnail-img">
-              </ion-img>
+        <!-- IMAGEN HERO + ETIQUETA TIPO -->
+        <div class="pro-card-image-wrapper" *ngIf="item.imagen_url; else noImage">
+          <img
+            [src]="item.imagen_url"
+            [alt]="item.titulo"
+            class="pro-card-image"
+          />
+
+          <div
+            class="pro-card-tag"
+            [ngClass]="item.tipo === 'actividad' ? 'tag-actividad' : 'tag-proyecto'"
+          >
+            {{ item.tipo === 'actividad' ? 'Actividad' : 'Proyecto' }}
+          </div>
+        </div>
+        <ng-template #noImage>
+          <div class="pro-card-image-wrapper placeholder">
+            <div class="pro-card-placeholder-icon">
+              <ion-icon
+                [name]="item.tipo === 'actividad' ? 'people-outline' : 'briefcase-outline'">
+              </ion-icon>
+            </div>
+            <div
+              class="pro-card-tag"
+              [ngClass]="item.tipo === 'actividad' ? 'tag-actividad' : 'tag-proyecto'"
+            >
+              {{ item.tipo === 'actividad' ? 'Actividad' : 'Proyecto' }}
+            </div>
+          </div>
+        </ng-template>
+
+        <!-- CONTENIDO DE LA TARJETA -->
+        <ion-card-content>
+          <h3 class="pro-card-title">
+            {{ item.titulo }}
+          </h3>
+
+          <p class="pro-card-description">
+            {{
+              item.descripcion.length > 130
+                ? (item.descripcion | slice:0:130) + '…'
+                : item.descripcion
+            }}
+          </p>
+
+          <div class="pro-card-footer">
+            <div class="pro-card-date">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>{{ item.fecha | date:'dd-MM-yyyy' }}</span>
+            </div>
+            <div class="pro-card-time">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>{{ item.fecha | date:'HH:mm' }}</span>
             </div>
           </div>
         </ion-card-content>
       </ion-card>
     </ng-container>
 
-    <div *ngIf="!isLoading && !elementos?.length" class="ion-text-center ion-padding">
+    <!-- SIN ELEMENTOS -->
+    <div *ngIf="!isLoading && !elementos?.length" class="ion-text-center empty-block">
       <p>No hay elementos disponibles para mostrar.</p>
     </div>
 

@@ -26,6 +26,10 @@ import {
   timeOutline,
   checkmarkCircleOutline,
   sparklesOutline, 
+  chevronBackOutline,
+  calendarOutline,
+  clipboardOutline,
+  imageOutline,
 } from 'ionicons/icons';
 
 // registra iconos que usas en footer + home

@@ -9,9 +9,12 @@
       </div>
     </div>
 
+    <!-- 🔙 Flecha volver -->
+    <button class="rb-hero-chat" type="button" (click)="goBack()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </button>
   </div>
 </ion-header>
-
 
 <!-- CONTENIDO PRINCIPAL -->
 <ion-content [fullscreen]="true" class="cert-page">
@@ -58,14 +61,22 @@
               Descargar
             </ion-button>
 
-            <ion-button class="btn-email" (click)="emitirEnviar()">
-              <ion-icon name="mail-outline" slot="start"></ion-icon>
-              Enviar Email
+            <ion-button
+              class="btn-email"
+              (click)="emitirEnviar()"
+              [disabled]="enviandoEmail"
+            >
+              <ion-spinner slot="start" *ngIf="enviandoEmail"></ion-spinner>
+              <ion-icon
+                *ngIf="!enviandoEmail"
+                name="mail-outline"
+                slot="start"
+              ></ion-icon>
+              {{ enviandoEmail ? 'Enviando…' : 'Enviar Email' }}
             </ion-button>
           </div>
         </div>
       </ion-card>
-
 
       <!-- ÚLTIMO CERTIFICADO -->
       <h2 class="section-title">Último Certificado Emitido</h2>

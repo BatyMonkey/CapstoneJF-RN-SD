@@ -9,7 +9,6 @@ import { FormsModule } from '@angular/forms';
 import {
   ViewWillEnter,
   IonicModule,
-  ToastController,
   AlertController,
 } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
@@ -63,9 +62,8 @@ export class VotacionPage
   constructor(
     private route: ActivatedRoute,
     private votosSvc: VotacionesService,
-    private toastCtrl: ToastController,
     private alertCtrl: AlertController,
-    private navCtrl: NavController,
+    private navCtrl: NavController
   ) {
     // 🔹 Registrar íconos usados en la página
     addIcons({
@@ -249,9 +247,13 @@ export class VotacionPage
     const op = this.selectedOption;
     if (!op) return;
 
+    const msg =
+      `Vas a votar por "${op.titulo}". ` +
+      'Recuerda que tu voto no se puede cambiar.';
+
     const alert = await this.alertCtrl.create({
       header: 'Confirmar voto',
-      message: `Vas a votar por <strong>${op.titulo}</strong>.<br><br>Recuerda que tu voto <strong>no se puede cambiar</strong>.`,
+      message: msg,
       buttons: [
         {
           text: 'Cancelar',
@@ -268,74 +270,77 @@ export class VotacionPage
   }
 
   async votar(opcion: OpcionVotacion) {
-  if (!this.votacion) return;
-  if (this.miOpcionId) {
-    await this.mostrarToast(
-      'Ya emitiste tu voto en esta votación',
-      'danger'
-    );
-    return;
-  }
-  if (this.bloqueada) {
-    await this.mostrarToast('La votación no está activa', 'warning');
-    return;
-  }
+    if (!this.votacion) return;
 
-  const idx = this.opciones.findIndex((o) => o.id === opcion.id);
-  const anterior = idx >= 0 ? this.opciones[idx].total_votos ?? 0 : 0;
-
-  // 🔹 Actualización optimista local
-  if (idx >= 0) {
-    this.opciones[idx] = {
-      ...this.opciones[idx],
-      total_votos: anterior + 1,
-    };
-  }
-
-  try {
-    // 🔹 Registrar voto en backend
-    await this.votosSvc.votar(this.votacion.id, opcion.id);
-    this.miOpcionId = opcion.id;
-    this.selectedOptionId = opcion.id;
-
-    if (this.selectedOp?.id === opcion.id && idx >= 0) {
-      this.selectedOp = { ...this.opciones[idx] };
+    if (this.miOpcionId) {
+      await this.mostrarAlerta(
+        'Aviso',
+        'Ya emitiste tu voto en esta votación.'
+      );
+      return;
     }
 
-    // 🔄 Recargar datos desde Supabase para reflejar todo en tiempo real
-    await this.cargar();
+    if (this.bloqueada) {
+      await this.mostrarAlerta('Aviso', 'La votación no está activa.');
+      return;
+    }
 
-    // ✅ ALERT estilo confirmación, con botón OK
-    const okAlert = await this.alertCtrl.create({
-      header: 'Voto registrado',
-      message:
-        'Tu voto ha sido registrado correctamente. <br><br><strong>Gracias por participar en la votación.</strong>',
-      buttons: [
-        {
-          text: 'OK',
-          role: 'confirm',
-        },
-      ],
-    });
-    await okAlert.present();
+    const idx = this.opciones.findIndex((o) => o.id === opcion.id);
+    const anterior = idx >= 0 ? this.opciones[idx].total_votos ?? 0 : 0;
 
-    if (this.detailOpen) this.closeDetail();
-  } catch (e: any) {
-    // rollback si falló
+    // 🔹 Actualización optimista local
     if (idx >= 0) {
       this.opciones[idx] = {
         ...this.opciones[idx],
-        total_votos: anterior,
+        total_votos: anterior + 1,
       };
     }
-    console.error('Error al votar:', e);
-    await this.mostrarToast(
-      e?.message ?? 'No se pudo registrar tu voto',
-      'danger'
-    );
-  }
-}
 
+    try {
+      // 🔹 Registrar voto en backend
+      await this.votosSvc.votar(this.votacion.id, opcion.id);
+      this.miOpcionId = opcion.id;
+      this.selectedOptionId = opcion.id;
+
+      if (this.selectedOp?.id === opcion.id && idx >= 0) {
+        this.selectedOp = { ...this.opciones[idx] };
+      }
+
+      // 🔄 Recargar datos desde Supabase
+      await this.cargar();
+
+      // ✅ ALERT de éxito sin HTML
+      const okAlert = await this.alertCtrl.create({
+        header: 'Voto registrado',
+        message:
+          'Tu voto ha sido registrado correctamente. Gracias por participar en la votación.',
+        buttons: [
+          {
+            text: 'OK',
+            role: 'confirm',
+          },
+        ],
+      });
+      await okAlert.present();
+
+      if (this.detailOpen) this.closeDetail();
+    } catch (e: any) {
+      // rollback si falló
+      if (idx >= 0) {
+        this.opciones[idx] = {
+          ...this.opciones[idx],
+          total_votos: anterior,
+        };
+      }
+      console.error('Error al votar:', e);
+
+      const msg =
+        e?.message ??
+        'No se pudo registrar tu voto. Por favor, inténtalo nuevamente.';
+
+      await this.mostrarAlerta('Error', msg);
+    }
+  }
 
   /* ==== modal detalle ==== */
 
@@ -349,27 +354,21 @@ export class VotacionPage
     this.selectedOp = undefined;
   }
 
-  /* ==== util toast ==== */
+  /* ==== helper de alerta simple ==== */
 
-  private async mostrarToast(
-    message: string,
-    color: 'success' | 'danger' | 'warning'
-  ) {
-    const toast = await this.toastCtrl.create({
+  private async mostrarAlerta(header: string, message: string) {
+    const alert = await this.alertCtrl.create({
+      header,
       message,
-      duration: 3000,
-      position: 'top',
-      color,
+      buttons: ['OK'],
     });
-    await toast.present();
+    await alert.present();
   }
 
   goBack() {
-    // Si hay historial, vuelve atrás
     if (window.history.length > 1) {
       this.navCtrl.back();
     } else {
-      // Si no, vuelve al listado de votaciones
       this.navCtrl.navigateRoot('/votaciones');
     }
   }

@@ -23,18 +23,20 @@
     <ion-refresher-content
       pullingText="Desliza para refrescar"
       refreshingSpinner="crescent"
-      refreshingText="Actualizando...">
+      refreshingText="Actualizando..."
+    >
     </ion-refresher-content>
   </ion-refresher>
 
-  <ion-text color="danger" *ngIf="errorMsg" class="err">{{ errorMsg }}</ion-text>
+  <ion-text color="danger" *ngIf="errorMsg" class="err">
+    {{ errorMsg }}
+  </ion-text>
 
   <div class="ion-text-center" *ngIf="cargando">
     <ion-spinner name="crescent"></ion-spinner>
   </div>
 
   <ng-container *ngIf="!cargando && votacion">
-
     <div class="page-wrapper">
       <!-- TARJETA AZUL TIPO “CERTIFICADOS” -->
       <div class="main-vot-card">
@@ -56,8 +58,6 @@
 
       <!-- TARJETA PRINCIPAL DETALLE -->
       <ion-card class="card">
-        
-
         <ion-card-content>
           <!-- Resumen participación / tiempo -->
           <div class="summary-row">
@@ -126,11 +126,13 @@
             </ion-item>
           </ion-list>
 
-          <ion-note color="success" *ngIf="miOpcionId">¡Voto registrado!</ion-note>
+          <ion-note color="success" *ngIf="miOpcionId">
+            ¡Voto registrado!
+          </ion-note>
         </ion-card-content>
       </ion-card>
 
-      <!-- Botón Confirmar voto (mismo estilo “Solicitar Arriendo”) -->
+      <!-- Botón Confirmar voto -->
       <div class="confirm-footer">
         <ion-button
           expand="block"
@@ -143,10 +145,9 @@
         </ion-button>
       </div>
     </div>
-
   </ng-container>
 
-  <!-- Modal imagen/opción (sin cambios) -->
+  <!-- Modal imagen/opción (SIN botón "Votar") -->
   <ion-modal
     [isOpen]="detailOpen"
     (didDismiss)="closeDetail()"
@@ -172,20 +173,14 @@
             <ion-card-content>
               <div class="detail-stats">
                 <ion-badge color="primary">{{ percent(sop) }}%</ion-badge>
-                <ion-badge color="medium">Votos: {{ sop.total_votos || 0 }}</ion-badge>
+                <ion-badge color="medium">
+                  Votos: {{ sop.total_votos || 0 }}
+                </ion-badge>
               </div>
 
               <div class="bar big">
                 <div class="fill" [style.width.%]="percent(sop)"></div>
               </div>
-
-              <ion-button
-                expand="block"
-                [disabled]="!!miOpcionId || bloqueada"
-                (click)="votar(sop)"
-              >
-                {{ miOpcionId ? (miOpcionId === sop.id ? 'Votado' : 'Votar') : 'Votar' }}
-              </ion-button>
             </ion-card-content>
           </ion-card>
         </div>

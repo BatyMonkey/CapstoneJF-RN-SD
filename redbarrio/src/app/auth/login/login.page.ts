@@ -2,7 +2,11 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, AlertController, ToastController } from '@ionic/angular';
+import {
+  IonicModule,
+  AlertController,
+  ToastController,
+} from '@ionic/angular';
 import { AuthService } from '../auth.service';
 import { RouterLink } from '@angular/router';
 
@@ -27,20 +31,78 @@ export class LoginPage {
     private toastCtrl: ToastController
   ) {}
 
+  // =========================
+  // LOGIN
+  // =========================
   async login() {
     this.loading = true;
     this.errorMsg = '';
+
     try {
       await this.auth.signIn(this.email, this.password);
       this.router.navigateByUrl('/home', { replaceUrl: true });
     } catch (e: any) {
-      this.errorMsg = e?.message ?? 'Error al iniciar sesión';
+      console.error('Error login:', e);
+
+      const mapped = this.mapLoginErrorMessage(e?.message?.toString() || '');
+      this.errorMsg = mapped;
+
+      await this.mostrarAlertaLoginError(mapped);
     } finally {
       this.loading = false;
     }
   }
 
-  private async mostrarToast(message: string, color: 'success' | 'warning' | 'danger') {
+  private mapLoginErrorMessage(raw: string): string {
+    const msg = raw.toLowerCase();
+
+    if (
+      msg.includes('invalid login credentials') ||
+      msg.includes('invalid email or password') ||
+      msg.includes('invalid login') ||
+      msg.includes('invalid credentials')
+    ) {
+      return 'Correo o contraseña incorrectos. Verifica tus datos e inténtalo nuevamente.';
+    }
+
+    if (msg.includes('email not confirmed') || msg.includes('not confirmed')) {
+      return 'Tu correo aún no ha sido confirmado. Revisa tu bandeja de entrada y la carpeta de spam.';
+    }
+
+    if (msg.includes('rate limit') || msg.includes('too many') || msg.includes('attempts')) {
+      return 'Demasiados intentos. Espera unos minutos antes de volver a intentar.';
+    }
+
+    if (raw) return raw;
+    return 'No pudimos iniciar sesión. Inténtalo nuevamente en unos minutos.';
+  }
+
+  private async mostrarAlertaLoginError(message: string) {
+    const alert = await this.alertCtrl.create({
+      header: 'No pudimos iniciar sesión',
+      message:
+        message ||
+        'Ocurrió un problema al intentar iniciar sesión. Intenta nuevamente en unos minutos.',
+      buttons: [
+        {
+          text: 'Entendido',
+          role: 'confirm',
+        },
+      ],
+      mode: 'ios',
+      backdropDismiss: false,
+    });
+
+    await alert.present();
+  }
+
+  // =========================
+  // TOAST GENÉRICO
+  // =========================
+  private async mostrarToast(
+    message: string,
+    color: 'success' | 'warning' | 'danger'
+  ) {
     const toast = await this.toastCtrl.create({
       message,
       duration: 4000,
@@ -50,6 +112,9 @@ export class LoginPage {
     await toast.present();
   }
 
+  // =========================
+  // RECUPERAR CONTRASEÑA
+  // =========================
   async requestPasswordRecovery() {
     if (!this.email.trim()) {
       await this.mostrarAlertaEmail();
@@ -58,24 +123,72 @@ export class LoginPage {
     await this.recoverPassword(this.email.trim());
   }
 
+  private mapRecoveryErrorMessage(raw: string): string {
+    const msg = raw.toLowerCase();
+
+    if (msg.includes('invalid email') || msg.includes('email not found')) {
+      return 'No encontramos una cuenta asociada a ese correo. Verifica que esté bien escrito.';
+    }
+
+    if (msg.includes('rate limit') || msg.includes('too many') || msg.includes('attempts')) {
+      return 'Has realizado demasiadas solicitudes. Espera unos minutos antes de intentar nuevamente.';
+    }
+
+    return (
+      raw ||
+      'Error al procesar la solicitud de recuperación. Verifica el correo e intenta de nuevo.'
+    );
+  }
+
   async recoverPassword(email: string) {
     this.loadingRecovery = true;
     this.errorMsg = '';
     try {
-      await this.auth.sendPasswordResetLink(email); // implementado en AuthService
-      await this.mostrarToast(
-        '¡Enlace enviado! Revisa tu correo (incluida la carpeta spam).',
-        'success'
-      );
+      await this.auth.sendPasswordResetLink(email);
+
+      // ✅ Modal “bonito” con OK, igual estilo que el resto
+      const alert = await this.alertCtrl.create({
+        header: 'Enlace enviado',
+        message:
+          'Te enviamos un enlace para restablecer tu contraseña.<br><br>' +
+          '<strong>Revisa tu bandeja de entrada y la carpeta de spam.</strong>',
+        buttons: [
+          {
+            text: 'OK',
+            role: 'confirm',
+          },
+        ],
+        mode: 'ios',
+        backdropDismiss: false,
+      });
+
+      await alert.present();
     } catch (e: any) {
       console.error('Error de recuperación:', e?.message, e);
-      this.errorMsg = 'Error al procesar la solicitud. Verifica el correo e intenta de nuevo.';
-      await this.mostrarToast(this.errorMsg, 'danger');
+      const msg = this.mapRecoveryErrorMessage(e?.message?.toString() || '');
+      this.errorMsg = msg;
+
+      const alert = await this.alertCtrl.create({
+        header: 'No se pudo enviar el enlace',
+        message: msg,
+        buttons: [
+          {
+            text: 'Entendido',
+            role: 'confirm',
+          },
+        ],
+        mode: 'ios',
+        backdropDismiss: false,
+      });
+      await alert.present();
     } finally {
       this.loadingRecovery = false;
     }
   }
 
+  // =========================
+  // ALERT CON INPUT DE CORREO
+  // =========================
   private async mostrarAlertaEmail() {
     const alert = await this.alertCtrl.create({
       header: 'Recuperar Contraseña',
@@ -91,37 +204,30 @@ export class LoginPage {
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
-          text: 'Enviar Enlace',
-          // ⚠️ Hacemos el handler async para poder cerrar la alerta correctamente
+          text: 'Enviar enlace',
           handler: async (data) => {
             const email = (data?.recoveryEmail || '').trim();
 
             if (!email) {
               await this.mostrarToast('Ingresa un correo válido', 'warning');
-              // devolver false mantiene abierta la alerta
               return false;
             }
 
-            // Actualiza el campo y dispara la recuperación
             this.email = email;
-            // Cerramos la alerta antes o después; aquí la cerramos primero para UX ágil
-            await alert.dismiss();
-
-            // Lanza el flujo de recuperación (no bloquea el cierre)
-            this.recoverPassword(email);
-
-            // devolver true permite cierre (por si el dismiss anterior no ocurrió)
+            await this.recoverPassword(email);
             return true;
           },
         },
       ],
-      // Opcional: evita cierre tocando el fondo
-      // backdropDismiss: false,
+      mode: 'ios',
     });
 
     await alert.present();
   }
 
+  // =========================
+  // NAVEGACIÓN
+  // =========================
   goToRegister() {
     if (this.loading) return;
     this.router.navigateByUrl('/auth/register');

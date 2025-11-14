@@ -67,14 +67,25 @@ ion-header::after {
   margin: 2px 0 0 0;
 }
 
+/* 🔙 Flecha con el mismo estilo que en las demás pantallas */
 .rb-hero-chat {
-  background: rgba(255, 255, 255, 0.15);
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  padding: 10px;
-  color: #fff;
+  border: none;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+
+  ion-icon {
+    color: #fff;
+    font-size: 1.3rem;
+  }
 }
-
-
 
 /* ==========================================================
    CONTENIDO PRINCIPAL + CENTRADO MÓVIL
@@ -98,8 +109,6 @@ ion-header::after {
   padding: 0 16px;
   box-sizing: border-box;
 }
-
-
 
 /* ==========================================================
    TARJETA PRINCIPAL ("Certificados")
@@ -129,7 +138,6 @@ ion-header::after {
   font-size: 1.8rem;
 }
 
-
 /* ==========================================================
    TIP BOX
    ========================================================== */
@@ -146,8 +154,6 @@ ion-header::after {
   }
 }
 
-
-
 /* ==========================================================
    SECCIÓN TÍTULO
    ========================================================== */
@@ -157,8 +163,6 @@ ion-header::after {
   font-weight: 700;
   color: #1e293b;
 }
-
-
 
 /* ==========================================================
    EMITIR CERTIFICADO — IGUAL AL MOCKUP
@@ -253,8 +257,6 @@ ion-header::after {
   }
 }
 
-
-
 /* ==========================================================
    ÚLTIMO CERTIFICADO — FIX APLICADO
    ========================================================== */
@@ -313,8 +315,6 @@ ion-header::after {
 .last-cert .meta .vigente {
   color: #34c759;
 }
-
-
 
 /* ==========================================================
    INFORMACIÓN DE ENVÍO

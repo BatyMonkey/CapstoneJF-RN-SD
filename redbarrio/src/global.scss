@@ -270,3 +270,11 @@ ion-app,
 ion-router-outlet {
   background-color: #f4f7f6 !important; /* o #f8fafc, el que uses como fondo */
 }
+/* Ajustes globales para los inputs de ion-alert (recuperar contraseña, etc.) */
+ion-alert .alert-input {
+  color: #111827 !important;           /* texto negro */
+}
+
+ion-alert .alert-input::placeholder {
+  color: #9ca3af !important;           /* placeholder gris */
+}

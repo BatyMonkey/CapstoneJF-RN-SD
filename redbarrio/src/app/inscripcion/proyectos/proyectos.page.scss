@@ -1,51 +1,221 @@
-/* ===== 1. FUERZA ESQUEMA CLARO Y VARIABLES BASE ===== */
+/* ==========================
+   1. PALETA Y FONDO GENERAL
+   ========================== */
 
-:host,
-:host-context(html) {
-  color-scheme: light !important;
+:host {
+  color-scheme: light;
 
-  /* Colores base idénticos al módulo de Espacios */
-  --rb-primary: #2563eb;
+  --rb-primary: #06b6d4;
+  --rb-primary-strong: #00a5c8;
   --rb-bg: #f5f7fb;
   --rb-text: #0f172a;
-  --rb-muted: #475569;
+  --rb-muted: #64748b;
 
-  --ion-text-color: var(--rb-text);
   --ion-background-color: var(--rb-bg);
-  --ion-item-background: #ffffff;
-  --ion-card-background: #ffffff;
+  --ion-text-color: var(--rb-text);
 }
 
-/* ===== 2. HEADER CON GRADIENTE ===== */
-
-.rb-header ion-toolbar {
-  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
-  --color: #fff;
-  --border-color: transparent;
+/* Quitar línea fea de Ionic bajo el header */
+ion-header::after {
+  background: none !important;
+  display: none !important;
 }
 
-ion-title {
+/* ==========================
+   2. HERO HEADER REDBARRIO
+   ========================== */
+
+.rb-hero-header {
+  background: linear-gradient(90deg, #06b6d4, #22d3ee);
+  border-bottom-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.rb-hero-container {
+  width: 100%;
+  padding: 0 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rb-hero-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rb-hero-logo {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rb-hero-logo img {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+}
+
+.rb-hero-text h1 {
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.rb-hero-text p {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 2px 0 0;
+  font-size: 0.9rem;
+}
+
+/* Botón redondo con flecha */
+.rb-hero-back {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  ion-icon {
+    color: #fff;
+    font-size: 1.4rem;
+  }
+}
+
+/* ==========================
+   3. CONTENIDO GENERAL
+   ========================== */
+
+.proyectos-page {
+  --background: #f5f7fb;
+  margin-top: 140px; /* espacio bajo el header curvo */
+}
+
+.proyectos-wrapper {
+  max-width: 430px;
+  margin: 0 auto 24px;
+  padding: 0 16px 24px;
+  box-sizing: border-box;
+}
+
+/* ==========================
+   4. TARJETA AZUL BAJO HEADER
+   ========================== */
+
+.proyectos-header-row {
+  margin-top: 18px;
+}
+
+.proj-hero-card {
+  background: linear-gradient(135deg, #00c6ff, #009fe3);
+  border-radius: 22px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 14px 26px rgba(15, 23, 42, 0.25);
+  color: #ffffff;
+}
+
+.proj-hero-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon {
+    font-size: 1.5rem;
+  }
+}
+
+.proj-hero-text h2 {
+  margin: 0;
+  font-size: 1rem;
   font-weight: 700;
 }
 
-/* ===== 3. CONTENEDOR GENERAL ===== */
-
-.page-wrap {
-  max-width: 960px;
-  margin: 0 auto;
-  padding-top: 1px;
+.proj-hero-text p {
+  margin: 3px 0 0;
+  font-size: 0.86rem;
+  opacity: 0.95;
 }
 
-/* ===== 4. TARJETAS ===== */
+/* ==========================
+   5. SEGMENTO (filtros)
+   ========================== */
 
-ion-card.card {
-  background: #fff;
+.segment-card {
+  margin-top: 14px;
+}
+
+.proyectos-segment {
+  --background: transparent;
+  --indicator-color: #06b6d4;
+  --border-radius: 999px;
+
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 4px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+/* pill blanca; el label nunca desaparece */
+.proyectos-segment ion-segment-button {
+  --border-radius: 16px;
+  --color: #0f172a;
+  --color-checked: #0f172a;
+  --background: transparent;
+  --background-checked: #ffffff;
+  min-height: 36px;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+/* ==========================
+   6. ESTADOS (cargando / vacío)
+   ========================== */
+
+.loading-block,
+.empty-block {
+  text-align: center;
+  padding: 20px 0;
+
+  p {
+    color: var(--rb-muted);
+    font-size: 0.95rem;
+    margin-top: 6px;
+  }
+}
+
+/* ==========================
+   7. TARJETAS DE LISTADO
+   ========================== */
+
+.pro-card {
+  background: #ffffff;
   border-radius: 18px;
   border: 1px solid rgba(2, 6, 23, 0.08);
-  box-shadow: 0 12px 28px rgba(2, 6, 23, 0.10);
+  box-shadow: 0 12px 28px rgba(2, 6, 23, 0.1);
   overflow: hidden;
-  margin-bottom: 16px;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  margin-top: 18px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 
   &:hover {
     box-shadow: 0 14px 30px rgba(2, 6, 23, 0.15);
@@ -55,100 +225,152 @@ ion-card.card {
     transform: translateY(1px);
     box-shadow: 0 8px 24px rgba(2, 6, 23, 0.08);
   }
+}
 
-  ion-card-header {
-    background: #fff;
-    border-bottom: 1px solid rgba(2, 6, 23, 0.06);
-    padding-bottom: 8px;
-  }
+/* Imagen hero */
+.pro-card-image-wrapper {
+  position: relative;
+  height: 180px;
+  background: #0f172a;
+}
 
-  ion-card-title {
-    color: var(--rb-text);
-    font-weight: 800;
-    font-size: 1.3rem;
-  }
+.pro-card-image-wrapper.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0ea5e9, #22c55e);
+}
 
-  ion-card-subtitle {
-    color: #64748b;
-    font-weight: 600;
-    margin-top: 4px;
-    font-size: 0.9rem;
+.pro-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pro-card-placeholder-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 20px;
+  background: rgba(15, 23, 42, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon {
+    color: #ffffff;
+    font-size: 2rem;
   }
 }
 
-/* ===== 5. CONTENIDO DE TARJETAS ===== */
-
-ion-card-content {
-  p {
-    margin: 4px 0;
-    color: var(--rb-text);
-    line-height: 1.4;
-    font-size: 0.95rem;
-    text-align: justify;
-  }
-
-  strong {
-    color: var(--rb-muted);
-    font-weight: 600;
-  }
+/* Etiqueta tipo (Proyecto / Actividad) */
+.pro-card-tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #ffffff;
 }
 
-/* ===== 6. SPINNER Y TEXTOS DE CARGA ===== */
-
-ion-spinner {
-  margin-bottom: 6px;
+.tag-proyecto {
+  background: #facc15;
 }
 
-.ion-text-center p {
-  color: var(--rb-muted);
-  font-size: 0.95rem;
+.tag-actividad {
+  background: #22c55e;
 }
 
-/* ===== 7. LIMPIEZA MODO OSCURO ===== */
-
-@media (prefers-color-scheme: dark) {
-  :host {
-    --ion-background-color: var(--rb-bg);
-    --ion-card-background: #ffffff;
-    --ion-item-background: #ffffff;
-    --ion-text-color: var(--rb-text);
-  }
+/* Contenido de la tarjeta */
+.pro-card ion-card-content {
+  padding: 12px 14px 12px;
 }
 
-.card-content {
+.pro-card-title {
+  margin: 0 0 6px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.pro-card-description {
+  margin: 0 0 10px;
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* Footer con fecha/hora */
+.pro-card-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  padding-top: 4px;
+  border-top: 1px solid #e5e7eb;
 }
 
-.text-section {
-  flex: 1;
-  min-width: 0;
+.pro-card-date,
+.pro-card-time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: #6b7280;
+
+  ion-icon {
+    font-size: 1rem;
+    color: #0ea5e9;
+  }
 }
 
-.text-section p {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.4;
-  color: var(--ion-color-dark);
+/* ==========================
+   8. RESPONSIVE
+   ========================== */
+
+@media (max-width: 480px) {
+  .proyectos-wrapper {
+    padding: 0 12px 24px;
+  }
+
+  .proyectos-header-row {
+    margin-top: 14px;
+  }
 }
 
-.text-section .fecha {
-  display: block;
-  margin-top: 4px;
-  font-size: 12px;
-  color: var(--ion-color-medium);
+/* ===== SEGMENTO FILTRO (Todos / Proyectos / Actividades) ===== */
+
+.segment-wrapper {
+  margin-top: 18px;
+  margin-bottom: 8px;
 }
 
-.image-section {
-  flex-shrink: 0;
+/* Pastilla de fondo */
+.proyectos-segment {
+  --background: transparent;
+  --indicator-color: transparent;
+
+  background: #ffffff;
+  border-radius: 999px;
+  padding: 4px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }
 
-.thumbnail-img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+/* Botones del segmento */
+.proyectos-segment ion-segment-button {
+  --border-radius: 999px;
+  --background: transparent;
+  --background-checked: #ffffff;  /* pastilla blanca cuando está activo */
+  --color: #0f172a;               /* color texto normal */
+  --color-checked: #0f172a;       /* texto sigue visible al estar activo */
+  --indicator-height: 0;
+
+  min-height: 36px;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+/* Borde celeste sólo al seleccionado */
+.proyectos-segment ion-segment-button.segment-button-checked {
+  box-shadow: 0 0 0 2px #06b6d4;
 }

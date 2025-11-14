@@ -65,7 +65,7 @@ export class ProyectosPage implements OnInit {
     });
     await loading.present();
 
-        try {
+    try {
       const [proyectosRes, actividadesRes] = await Promise.all([
         this.supabaseService.client
           .from('proyecto')
@@ -105,17 +105,20 @@ export class ProyectosPage implements OnInit {
       this.isLoading = false;
       loading.dismiss();
     }
-
   }
 
   // ✅ Filtro visual entre proyectos y actividades
   filtrarListado() {
     switch (this.filtro) {
       case 'proyectos':
-        this.elementosFiltrados = this.elementos.filter((e) => e.tipo === 'proyecto');
+        this.elementosFiltrados = this.elementos.filter(
+          (e) => e.tipo === 'proyecto'
+        );
         break;
       case 'actividades':
-        this.elementosFiltrados = this.elementos.filter((e) => e.tipo === 'actividad');
+        this.elementosFiltrados = this.elementos.filter(
+          (e) => e.tipo === 'actividad'
+        );
         break;
       default:
         this.elementosFiltrados = this.elementos;
@@ -145,15 +148,31 @@ export class ProyectosPage implements OnInit {
 
       // 🧭 Redirigir usando parámetro de ruta
       if (item.id_proyecto) {
-        this.router.navigate(['/inscripcion/inscripcion-proyecto', item.id_proyecto]);
+        this.router.navigate([
+          '/inscripcion/inscripcion-proyecto',
+          item.id_proyecto,
+        ]);
       } else if (item.id_actividad) {
-        this.router.navigate(['/inscripcion/inscripcion-proyecto', item.id_actividad]);
+        this.router.navigate([
+          '/inscripcion/inscripcion-proyecto',
+          item.id_actividad,
+        ]);
       } else {
         console.error('❌ Elemento sin ID de proyecto o actividad');
       }
     } catch (error) {
       console.error('Error al abrir inscripción:', error);
       this.router.navigate(['/auth/login']);
+    }
+  }
+
+  // ✅ Botón del header (flecha) — vuelve a la pantalla anterior
+  goBack() {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      // ruta de seguridad si entra directo por deep-link
+      this.router.navigate(['/']);
     }
   }
 

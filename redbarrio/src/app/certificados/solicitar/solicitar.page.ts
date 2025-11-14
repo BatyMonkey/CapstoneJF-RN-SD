@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import {
+  IonicModule,
+  AlertController,
+  ToastController,
+  NavController,
+} from '@ionic/angular';
 
 import { SupabaseService } from 'src/app/services/supabase.service';
 
@@ -18,7 +23,15 @@ import { environment } from 'src/environments/environment';
 
 /*  🔥 IMPORTS NUEVOS PARA ICONOS  */
 import { addIcons } from 'ionicons';
-import { downloadOutline, mailOutline } from 'ionicons/icons';
+import {
+  downloadOutline,
+  mailOutline,
+  documentTextOutline,
+  bulbOutline,
+  homeOutline,
+  checkmarkCircleOutline,
+  chevronBackOutline,
+} from 'ionicons/icons';
 
 @Component({
   selector: 'app-solicitar-certificado',
@@ -28,7 +41,6 @@ import { downloadOutline, mailOutline } from 'ionicons/icons';
   styleUrls: ['./solicitar.page.scss'],
 })
 export class SolicitarCertificadoPage implements OnInit {
-
   loading = false;
   emailDestino = '';
   placeAndDate = '';
@@ -39,16 +51,27 @@ export class SolicitarCertificadoPage implements OnInit {
   ultimaFecha: Date | null = null;
   fechaValidez: Date | null = null;
 
-  constructor(private supabaseService: SupabaseService) {
+  // 🔄 Estado de envío por email
+  enviandoEmail = false;
 
+  constructor(
+    private supabaseService: SupabaseService,
+    private alertCtrl: AlertController,
+    private toastCtrl: ToastController,
+    private navCtrl: NavController
+  ) {
     /* ========================================
        🔥 REGISTRO DE ICONOS IONICONS
        ======================================== */
     addIcons({
-      'download-outline': downloadOutline,
-      'mail-outline': mailOutline
+      downloadOutline,
+      mailOutline,
+      documentTextOutline,
+      bulbOutline,
+      homeOutline,
+      checkmarkCircleOutline,
+      chevronBackOutline,
     });
-
   }
 
   async ngOnInit() {
@@ -59,7 +82,12 @@ export class SolicitarCertificadoPage implements OnInit {
   // ============================================================
   // 🔹 Construcción de datos personales
   // ============================================================
-  private nombreCompleto(pn?: string | null, sn?: string | null, pa?: string | null, sa?: string | null) {
+  private nombreCompleto(
+    pn?: string | null,
+    sn?: string | null,
+    pa?: string | null,
+    sa?: string | null
+  ) {
     return [pn, sn, pa, sa].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
   }
 
@@ -95,13 +123,15 @@ export class SolicitarCertificadoPage implements OnInit {
   // ============================================================
   private async prefillUserInfo() {
     try {
-      const { data: { user } } = await this.supabaseService.auth.getUser();
+      const {
+        data: { user },
+      } = await this.supabaseService.auth.getUser();
 
       if (user) {
         if (user.email) this.emailDestino = user.email;
 
         const meta = user.user_metadata ?? {};
-        const metaName = meta["full_name"] || meta["name"] || null;
+        const metaName = meta['full_name'] || meta['name'] || null;
         if (metaName) this.displayName = metaName;
       }
 
@@ -120,7 +150,12 @@ export class SolicitarCertificadoPage implements OnInit {
   // ============================================================
   // 🔹 Llamada a N8N para enviar correo
   // ============================================================
-  private async callN8nWebhook(payload: { to: string; pdf_url: string; filename?: string; subject?: string }) {
+  private async callN8nWebhook(payload: {
+    to: string;
+    pdf_url: string;
+    filename?: string;
+    subject?: string;
+  }) {
     const url = environment.N8N_WEBHOOK_URL;
 
     const res = await fetch(url, {
@@ -235,24 +270,28 @@ export class SolicitarCertificadoPage implements OnInit {
       await this.cargarHistorial();
     } catch (e: any) {
       console.error(e);
-      alert(e?.message ?? 'Error al emitir.');
+      await this.mostrarToast(
+        e?.message ?? 'No se pudo emitir el certificado.',
+        'danger'
+      );
     } finally {
       this.loading = false;
     }
   }
 
   // ============================================================
-  // 🔹 Emitir + Enviar Email
+  // 🔹 Emitir + Enviar Email (con loading + alerta)
   // ============================================================
   async emitirEnviar() {
+    if (!this.emailDestino) {
+      await this.mostrarToast('Ingresa un correo destino.', 'warning');
+      return;
+    }
+
+    this.enviandoEmail = true;
+    this.loading = true;
+
     try {
-      if (!this.emailDestino) {
-        alert('Ingresa un correo destino.');
-        return;
-      }
-
-      this.loading = true;
-
       const who = await getMyUserData();
 
       const baseMeta = {
@@ -281,13 +320,59 @@ export class SolicitarCertificadoPage implements OnInit {
         filename: `certificado-${id}.pdf`,
       });
 
-      alert('Correo enviado correctamente ✅');
       await this.cargarHistorial();
+
+      // ✅ Mensaje simple sin HTML ni undefined
+      const msg =
+        `Tu certificado fue enviado a ${this.emailDestino}. ` +
+        `Revisa tu bandeja de entrada y la carpeta de spam.`;
+
+      const okAlert = await this.alertCtrl.create({
+        header: 'Correo enviado',
+        message: msg,
+        buttons: [
+          {
+            text: 'OK',
+            role: 'confirm',
+          },
+        ],
+      });
+
+      await okAlert.present();
     } catch (e: any) {
       console.error(e);
-      alert(e?.message ?? 'Error al emitir.');
+      await this.mostrarToast(
+        e?.message ?? 'No se pudo enviar el certificado por correo.',
+        'danger'
+      );
     } finally {
+      this.enviandoEmail = false;
       this.loading = false;
     }
+  }
+
+  // 🔙 Volver desde el header hero
+  goBack() {
+    if (window.history.length > 1) {
+      this.navCtrl.back();
+    } else {
+      this.navCtrl.navigateRoot('/home');
+    }
+  }
+
+  // ============================================================
+  // 🔹 Utilidades de UI
+  // ============================================================
+  private async mostrarToast(
+    message: string,
+    color: 'success' | 'danger' | 'warning'
+  ) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 3000,
+      position: 'top',
+      color,
+    });
+    await toast.present();
   }
 }

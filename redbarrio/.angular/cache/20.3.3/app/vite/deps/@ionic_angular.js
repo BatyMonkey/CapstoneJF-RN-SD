@@ -78,8 +78,9 @@ import {
   Router,
   RouterLink,
   UrlSerializer
-} from "./chunk-Y6KMK7BQ.js";
-import "./chunk-YBXHZPW5.js";
+} from "./chunk-LJPS7NX5.js";
+import "./chunk-LYZ2RRMW.js";
+import "./chunk-KIMTXNSS.js";
 import {
   CommonModule,
   Location,
@@ -87,7 +88,6 @@ import {
   NgIf,
   NgTemplateOutlet
 } from "./chunk-ORVGVXJZ.js";
-import "./chunk-KIMTXNSS.js";
 import "./chunk-4X6VR2I6.js";
 import {
   APP_INITIALIZER,

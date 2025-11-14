@@ -66,7 +66,7 @@ export class RegisterPage {
     private ocr: OcrMlkitService,
     private supabaseService: SupabaseService
   ) {
-    // Registrar iconos para que se vean en el standalone
+    // Registrar iconos
     addIcons({
       scanOutline,
       cloudUploadOutline,
@@ -86,7 +86,7 @@ export class RegisterPage {
   // =========================
   async scanCedula() {
     try {
-      // ✅ En web/PC: abrir selector de archivo y pasar a OCR
+      // En web: input file
       if (Capacitor.getPlatform() === 'web') {
         const input = document.createElement('input');
         input.type = 'file';
@@ -107,7 +107,10 @@ export class RegisterPage {
             await this.toast('Datos autocompletados desde imagen local ✨');
           } catch (err: any) {
             console.error('❌ OCR (web) error:', err?.message || err);
-            await this.toast(err?.message || 'No se pudo leer la imagen. Intenta otra.', 'warning');
+            await this.toast(
+              err?.message || 'No se pudo leer la imagen. Intenta otra.',
+              'warning'
+            );
           } finally {
             URL.revokeObjectURL(url);
           }
@@ -116,7 +119,7 @@ export class RegisterPage {
         return;
       }
 
-      // ✅ En dispositivo (Android/iOS): usar Cámara/Galería vía Capacitor
+      // En dispositivo: cámara/galería
       this.scanning = true;
 
       const photo = await Camera.getPhoto({
@@ -142,7 +145,9 @@ export class RegisterPage {
     } catch (e: any) {
       console.error('❌ OCR ML Kit error:', e?.message || e);
       await this.toast(
-        e?.message ? `OCR falló: ${e.message}` : 'No se pudo leer la cédula. Intenta con mejor luz/enfoque.',
+        e?.message
+          ? `OCR falló: ${e.message}`
+          : 'No se pudo leer la cédula. Intenta con mejor luz/enfoque.',
         'warning'
       );
     } finally {
@@ -150,7 +155,6 @@ export class RegisterPage {
     }
   }
 
-  // Dispara el input file desde el botón
   triggerBoleta(inputEl: HTMLInputElement) {
     if (inputEl) inputEl.click();
   }
@@ -186,7 +190,8 @@ export class RegisterPage {
   private async uploadBoleta(file: File): Promise<string | null> {
     try {
       if (!file.size) throw new Error('El archivo está vacío.');
-      if (file.size > 50 * 1024 * 1024) throw new Error('El archivo supera 50MB.');
+      if (file.size > 50 * 1024 * 1024)
+        throw new Error('El archivo supera 50MB.');
 
       const BUCKET = 'boletas';
       const safeEmail = (this.email || 'sin-email')
@@ -203,7 +208,8 @@ export class RegisterPage {
         .upload(path, file, {
           upsert: true,
           cacheControl: '3600',
-          contentType: file.type || (ext === 'pdf' ? 'application/pdf' : 'image/jpeg'),
+          contentType:
+            file.type || (ext === 'pdf' ? 'application/pdf' : 'image/jpeg'),
         });
 
       if (upErr) {
@@ -215,11 +221,17 @@ export class RegisterPage {
         throw new Error(msg);
       }
 
-      const { data } = await this.supabaseService.client.storage.from(BUCKET).getPublicUrl(path);
+      const { data } = await this.supabaseService.client.storage
+        .from(BUCKET)
+        .getPublicUrl(path);
       return data.publicUrl;
     } catch (e: any) {
       console.error('Upload boleta error:', e?.message || e);
-      await this.toast(e?.message || 'No se pudo subir la boleta. Intenta nuevamente.', 'danger');
+      await this.toast(
+        e?.message ||
+          'No se pudo subir la boleta. Intenta nuevamente o prueba con otro archivo.',
+        'danger'
+      );
       return null;
     }
   }
@@ -227,9 +239,37 @@ export class RegisterPage {
   // =========================
   // Utils
   // =========================
-  private async toast(message: string, color: 'success' | 'danger' | 'warning' = 'success') {
-    const t = await this.toastCtrl.create({ message, color, duration: 2200, position: 'top' });
+  private async toast(
+    message: string,
+    color: 'success' | 'danger' | 'warning' = 'success'
+  ) {
+    const t = await this.toastCtrl.create({
+      message,
+      color,
+      duration: 3000,
+      position: 'top',
+    });
     await t.present();
+  }
+
+  private async showSuccessAlert(message: string) {
+    const alert = await this.alertCtrl.create({
+      header: 'Registro exitoso',
+      message,
+      buttons: [
+        {
+          text: 'OK',
+          role: 'confirm',
+          handler: () => {
+            // Navegamos recién cuando el usuario pulsa OK
+            this.router.navigateByUrl('/auth/login', { replaceUrl: true });
+          },
+        },
+      ],
+      backdropDismiss: false,
+      mode: 'ios',
+    });
+    await alert.present();
   }
 
   private buildNombre(): string {
@@ -281,16 +321,26 @@ export class RegisterPage {
     this.rutInvalido = !this.validaRutDV(this.rut);
   }
 
-  private async showSuccessAlert() {
-    const alert = await this.alertCtrl.create({
-      header: '¡Registro exitoso! 🎉',
-      subHeader: 'Tu cuenta fue creada correctamente',
-      message: 'Ya puedes iniciar sesión en RedBarrio 🏡',
-      buttons: [{ text: 'OK', handler: () => this.router.navigateByUrl('/home', { replaceUrl: true }) }],
-      backdropDismiss: false,
-      mode: 'ios',
-    });
-    await alert.present();
+  private mapAuthErrorMessage(raw: string): string {
+    const msg = raw || '';
+
+    if (/email.*(registered|exists)|user.*already/i.test(msg)) {
+      return 'Este correo ya está registrado. Intenta iniciar sesión o recuperar tu contraseña.';
+    }
+
+    if (/invalid.*email|email.*format/i.test(msg)) {
+      return 'El correo ingresado no es válido.';
+    }
+
+    if (/password.*(short|weak)|at least/i.test(msg)) {
+      return 'La contraseña es demasiado débil. Usa al menos 8 caracteres combinando letras y números.';
+    }
+
+    if (/rate.*limit|too.*many.*requests|attempts.*exceeded/i.test(msg)) {
+      return 'Demasiados intentos. Espera unos minutos antes de volver a intentarlo.';
+    }
+
+    return raw || 'No se pudo crear la cuenta. Intenta nuevamente más tarde.';
   }
 
   // =========================
@@ -302,17 +352,33 @@ export class RegisterPage {
 
     try {
       this.rutInvalido = !this.validaRutDV(this.rut);
+
       if (this.rutInvalido || !this.telefonoEsValido() || !f.valid) {
-        await this.toast('Revisa los campos obligatorios.', 'warning');
+        let msg = 'Revisa los campos obligatorios.';
+
+        if (this.rutInvalido) {
+          msg = 'El RUT ingresado no es válido.';
+        } else if (!this.telefonoEsValido()) {
+          msg = 'Ingresa un número de teléfono chileno válido (+569XXXXXXXX).';
+        } else {
+          msg = 'Completa todos los campos obligatorios del formulario.';
+        }
+
+        this.errorMsg = msg;
+        await this.toast(msg, 'warning');
         this.loading = false;
         return;
       }
 
       if (!this.boletaFile) {
-        await this.toast('Debes subir una boleta de servicios para continuar.', 'warning');
+        const msg =
+          'Debes subir una boleta de servicios para continuar con el registro.';
+        this.errorMsg = msg;
+        await this.toast(msg, 'warning');
         this.loading = false;
         return;
       }
+
       const url = await this.uploadBoleta(this.boletaFile);
       if (!url) {
         this.loading = false;
@@ -342,18 +408,15 @@ export class RegisterPage {
         await (this.auth as any).signOut();
       }
 
-      if (res?.needsEmailConfirm) {
-        await this.toast('Cuenta creada. Revisa tu correo para confirmar.');
-      } else {
-        await this.toast('Cuenta creada. Inicia sesión para continuar.');
-      }
+      // 👉 Aquí mostramos el modal con OK en vez de navegar directo
+      const msgConfirm = res?.needsEmailConfirm
+        ? 'Tu cuenta fue creada correctamente. Te enviamos un correo para confirmar tu dirección. Revisa tu bandeja de entrada y la carpeta de spam.'
+        : 'Tu cuenta fue creada correctamente. Ahora puedes iniciar sesión en RedBarrio.';
 
-      await this.router.navigateByUrl('/auth/login', { replaceUrl: true });
+      await this.showSuccessAlert(msgConfirm);
     } catch (e: any) {
       const raw = e?.message || 'No se pudo crear la cuenta.';
-      const msg = /registered|exists|already/i.test(raw)
-        ? 'Este correo ya está registrado.'
-        : raw;
+      const msg = this.mapAuthErrorMessage(raw);
       this.errorMsg = msg;
       await this.toast(msg, 'danger');
     } finally {

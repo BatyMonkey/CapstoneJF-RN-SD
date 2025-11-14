@@ -1,4 +1,4 @@
-<!-- HERO HEADER (igual estilo que Certificados, sin hamburguesa) -->
+<!-- HERO HEADER (igual estilo que Certificados, ahora con flecha atrás) -->
 <ion-header class="rb-hero-header" slot="fixed">
   <div class="rb-hero-container">
     <div class="rb-hero-info">
@@ -10,6 +10,11 @@
         <p>Tu comunidad conectada</p>
       </div>
     </div>
+
+    <!-- 🔙 Botón volver -->
+    <button class="rb-hero-back" type="button" (click)="goBack()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </button>
   </div>
 </ion-header>
 
@@ -127,7 +132,8 @@
               <ion-icon name="calendar-outline"></ion-icon>
               <span class="pill pill-finished">
                 Finalizada el
-                {{ v.fecha_fin | date:'d \'de\' MMMM \'de\' y' }}
+                {{ v.fecha_fin | date: "d 'de' MMMM 'de' y" }}
+
               </span>
             </div>
           </div>

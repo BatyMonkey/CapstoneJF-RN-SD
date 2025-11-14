@@ -173,7 +173,12 @@
 
     <!-- TARJETA: CERRAR SESIÓN (SOLO DISEÑO, SIN (click)) -->
     <section class="perfil-logout-card">
-      <button type="button" class="logout-btn">
+      <button
+        type="button"
+        class="logout-btn"
+        (click)="logout()"
+        [disabled]="isSaving || isUploading"
+      >
         <ion-icon name="log-out-outline"></ion-icon>
         <span>Cerrar sesión</span>
       </button>

@@ -1,83 +1,183 @@
-/* ===== 1. FUERZA ESQUEMA CLARO Y VARIABLES BASE ===== */
-:host,
-:host-context(html) {
-  color-scheme: light !important;
+/* ===== PALETA Y ESQUEMA CLARO ===== */
+:host {
+  color-scheme: light;
 
-  --rb-primary: #2563eb;
+  --rb-primary: #06b6d4;
+  --rb-primary-strong: #00a5c8;
   --rb-bg: #f5f7fb;
   --rb-text: #0f172a;
-  --rb-muted: #475569;
+  --rb-muted: #64748b;
 
-  --ion-text-color: var(--rb-text);
   --ion-background-color: var(--rb-bg);
-  --ion-item-background: #ffffff;
-  --ion-card-background: #ffffff;
+  --ion-text-color: var(--rb-text);
 }
 
-/* ===== 2. HEADER CON GRADIENTE IGUAL A PLANTILLA ===== */
-.rb-header ion-toolbar {
-  --background: linear-gradient(135deg, #2563eb, #60a5fa);
-  --color: #fff;
-  --border-color: transparent;
+/* Quita la línea bajo el header de Ionic */
+ion-header::after {
+  background: none !important;
+  display: none !important;
 }
 
-/* ===== 3. FONDO GENERAL ===== */
-ion-content {
-  --background: var(--rb-bg);
-}
+/* ============== HERO HEADER ============== */
 
-/* ===== 4. CONTENEDOR PRINCIPAL ===== */
-.page-wrap {
+.rb-hero-header {
+  background: linear-gradient(90deg, #06b6d4, #22d3ee);
+  border-bottom-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  height: 130px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: 16px;
-  max-width: 960px;
-  margin: 0 auto;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* ===== 5. TARJETAS ===== */
-.card {
+.rb-hero-container {
   width: 100%;
-  max-width: 720px;
+  padding: 0 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rb-hero-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rb-hero-logo {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rb-hero-logo img {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+}
+
+.rb-hero-text h1 {
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.rb-hero-text p {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 2px 0 0;
+  font-size: 0.9rem;
+}
+
+/* Botón circular de volver */
+.rb-hero-back {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  ion-icon {
+    color: #fff;
+    font-size: 1.4rem;
+  }
+}
+
+/* ============== CONTENIDO ============== */
+
+.detalle-page {
+  --background: #f5f7fb;
+  margin-top: 140px; /* espacio bajo el header curvo */
+}
+
+.detalle-wrapper {
+  max-width: 430px;
+  margin: 0 auto 24px;
+  padding: 0 16px 24px;
+  box-sizing: border-box;
+}
+
+/* ---- Cabecera interna (tarjeta azul con título del proyecto) ---- */
+
+.detalle-header-row {
+  margin-top: 18px;
+}
+
+.detalle-hero-card {
+  background: linear-gradient(135deg, #00c6ff, #009fe3);
+  border-radius: 22px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 14px 26px rgba(15, 23, 42, 0.25);
+  color: #ffffff;
+}
+
+.detalle-hero-icon {
+  width: 46px;
+  height: 46px;
   border-radius: 18px;
-  background: #fff;
-  border: 1px solid rgba(2, 6, 23, 0.08);
-  box-shadow: 0 12px 28px rgba(2, 6, 23, 0.10);
-  overflow: hidden;
-  margin-bottom: 20px;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  background: rgba(255, 255, 255, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  &:hover {
-    box-shadow: 0 14px 30px rgba(2, 6, 23, 0.15);
+  ion-icon {
+    font-size: 1.5rem;
   }
+}
 
-  &:active {
-    transform: translateY(1px);
-    box-shadow: 0 8px 24px rgba(2, 6, 23, 0.08);
-  }
+.detalle-hero-text h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.detalle-hero-text p {
+  margin: 3px 0 0;
+  font-size: 0.86rem;
+  opacity: 0.95;
+}
+
+/* ---- Tarjetas blancas ---- */
+
+.detalle-card {
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+  margin-top: 16px;
 
   ion-card-header {
-    background: #fff;
-    border-bottom: 1px solid rgba(2, 6, 23, 0.06);
     padding-bottom: 8px;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
   }
 
   ion-card-title {
-    color: var(--rb-text);
-    font-weight: 800;
-    font-size: 1.3rem;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #0f172a;
   }
 
   ion-card-subtitle {
     color: #64748b;
-    font-weight: 600;
+    font-weight: 500;
     margin-top: 4px;
-    font-size: 0.9rem;
+    font-size: 0.86rem;
   }
 }
 
-/* ===== 6. IMAGEN DEL PROYECTO ===== */
+/* Imagen del proyecto / actividad */
+
 .imagen-container {
   display: flex;
   justify-content: center;
@@ -87,18 +187,13 @@ ion-content {
 .imagen-proyecto {
   width: 100%;
   max-width: 360px;
-  height: auto;
   border-radius: 12px;
   object-fit: cover;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s ease-in-out;
 }
 
-.imagen-proyecto:hover {
-  transform: scale(1.02);
-}
+/* Placeholder sin imagen */
 
-/* ===== 7. PLACEHOLDER (si no hay imagen) ===== */
 .placeholder {
   display: flex;
   flex-direction: column;
@@ -112,7 +207,8 @@ ion-content {
   margin-bottom: 6px;
 }
 
-/* ===== 8. DESCRIPCIÓN ===== */
+/* Texto descriptivo */
+
 .descripcion {
   color: var(--rb-text);
   font-size: 0.95rem;
@@ -121,38 +217,79 @@ ion-content {
   text-align: justify;
 }
 
-/* ===== 9. FORMULARIO ===== */
-ion-item {
-  --background: #fff;
-  --border-color: var(--ion-color-medium);
-  border-radius: 10px;
+/* Lista de fechas para actividades */
+
+.detalle-fechas ion-item {
+  --background: #f9fafb;
+  --inner-padding-end: 0;
+  --padding-start: 0;
+  border-radius: 12px;
+  margin-top: 8px;
+}
+
+.detalle-fechas h3 {
+  margin: 0 0 2px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.detalle-fechas p {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #64748b;
+}
+
+/* Textarea y botón de inscripción */
+
+.detalle-item-textarea {
+  --background: #f9fafb;
+  --inner-padding-end: 8px;
+  --padding-start: 8px;
+  border-radius: 12px;
   margin-bottom: 14px;
 }
 
-ion-textarea {
+.detalle-item-textarea ion-textarea {
   --min-height: 120px;
   font-size: 0.95rem;
 }
 
-ion-button {
-  --border-radius: 10px;
-  font-weight: 700;
+.btn-inscribirse {
   margin-top: 8px;
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  --border-radius: 999px;
+  --background: linear-gradient(90deg, #38bdf8, #60a5fa);
+  --background-activated: linear-gradient(90deg, #0ea5e9, #3b82f6);
+  --box-shadow: 0 10px 24px rgba(96, 165, 250, 0.55);
+  font-weight: 700;
+  text-transform: none;
+}
 
-  &:active {
-    transform: translateY(1px);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+/* Notas debajo del botón */
+ion-note {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+
+/* Responsive pequeño */
+@media (max-width: 480px) {
+  .detalle-wrapper {
+    padding: 0 12px 24px;
+  }
+
+  .detalle-card {
+    border-radius: 16px;
   }
 }
 
-/* ===== 10. LIMPIEZA MODO OSCURO ===== */
+/* Modo oscuro: mantenemos fondo claro */
 @media (prefers-color-scheme: dark) {
   :host {
     --ion-background-color: var(--rb-bg);
-    --ion-card-background: #ffffff;
-    --ion-item-background: #ffffff;
-    --ion-text-color: var(--rb-text);
+  }
+
+  .detalle-card {
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.16);
   }
 }

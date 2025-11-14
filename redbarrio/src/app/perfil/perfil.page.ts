@@ -268,4 +268,5 @@ export class PerfilPage implements OnInit {
     });
     await toast.present();
   }
+  
 }
