@@ -1,0 +1,10 @@
+[build]
+  # Estamos dentro de redbarrio-retorno (porque lo defines como Base directory en Netlify)
+  publish = "."
+  command = ""
+
+# Opcional: para que /retorno-transbank también funcione sin .html
+[[redirects]]
+  from = "/retorno-transbank"
+  to = "/retorno-transbank.html"
+  status = 200
