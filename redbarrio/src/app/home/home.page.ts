@@ -14,12 +14,12 @@ import { addIcons } from 'ionicons';
 import {
   documentTextOutline,
   callOutline,
-  // ⬇️ este es el que corresponde a tu HTML: "checkmark-done-outline"
   checkmarkDoneOutline,
   businessOutline,
   barChartOutline,
   bulbOutline,
   megaphoneOutline,
+  calendarOutline
 } from 'ionicons/icons';
 
 interface Noticia {
@@ -74,6 +74,7 @@ export class HomePage implements OnInit {
       'bar-chart-outline': barChartOutline,
       'bulb-outline': bulbOutline,
       'megaphone-outline': megaphoneOutline,
+      'calendar-outline': calendarOutline
     });
   }
 

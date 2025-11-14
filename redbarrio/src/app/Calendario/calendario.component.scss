@@ -1,0 +1,130 @@
+/* ======= PALETA Y FONDO GENERAL ======= */
+:host {
+  --rb-bg: #f5f7fb;
+  --rb-text: #0f172a;
+  --ion-background-color: var(--rb-bg);
+  --ion-text-color: var(--rb-text);
+}
+
+/* Quitar línea bajo header */
+ion-header::after {
+  background: none !important;
+  display: none !important;
+}
+
+/* ============== HERO HEADER ============== */
+
+.rb-hero-header {
+  background: linear-gradient(90deg, #06b6d4, #22d3ee);
+  border-bottom-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.rb-hero-container {
+  width: 100%;
+  padding: 0 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rb-hero-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rb-hero-logo img {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+}
+
+.rb-hero-text h1 {
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.rb-hero-text p {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 2px 0 0;
+  font-size: 0.9rem;
+}
+
+/* Botón volver */
+.rb-hero-chat {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon {
+    color: #fff;
+    font-size: 1.4rem;
+  }
+}
+
+.rb-hero-chat ion-icon {
+  color: #fff;
+}
+
+
+
+/* ============== CONTENIDO ============== */
+.calendario-page {
+  --background: #f5f7fb;
+  margin-top: 140px; /* igual que dashboard */
+}
+
+.calendario-wrapper {
+  max-width: 430px;
+  margin: 0 auto;
+  padding: 0 16px 24px;
+}
+
+/* ---------------- CALENDAR CARD ---------------- */
+.calendario-card {
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+  margin-top: 16px;
+
+  ion-card-header {
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  }
+
+  ion-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+}
+
+/* ----------- CALENDARIO EMBED ----------- */
+.calendar-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.calendar-container iframe {
+  width: 100%;
+  height: 600px;
+  border-radius: 12px;
+  border: solid 1px #d1d5db;
+}
