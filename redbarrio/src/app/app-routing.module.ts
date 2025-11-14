@@ -228,6 +228,13 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'calendario',
+    loadComponent: () =>
+      import('./Calendario/calendario.component').then(
+        (m) => m.CalendarioComponent
+      ),
+  },
+  {
     path: 'admin/actividades',
     loadComponent: () =>
       import('./admin/actividades/actividades.page').then(

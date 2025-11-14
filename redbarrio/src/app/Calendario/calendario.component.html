@@ -1,0 +1,45 @@
+<!-- HEADER HERO TIPO REDBARRIO -->
+<ion-header class="rb-hero-header" slot="fixed">
+  <div class="rb-hero-container">
+
+    <!-- Logo + texto -->
+    <div class="rb-hero-info">
+      <div class="rb-hero-logo">
+        <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
+      </div>
+      <div class="rb-hero-text">
+        <h1>RedBarrio</h1>
+        <p>Calendario Vecinal</p>
+      </div>
+    </div>
+
+  </div>
+</ion-header>
+
+
+
+<!-- CONTENIDO PRINCIPAL -->
+<ion-content class="calendario-page" [fullscreen]="true">
+
+  <div class="calendario-wrapper">
+
+    <!-- Tarjeta grande con el calendario adentro -->
+    <ion-card class="calendario-card">
+      <ion-card-header>
+        <ion-card-title>Calendario Vecinal</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="calendar-container">
+          <iframe
+            src="https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=America%2FSantiago&showCalendars=0&src=OGFiY2JhMzA4ODgwNDdkZDE1ZjkzZDdkZmMwYjNlZGYwYWE4YmVhNTViZTI5YTQxNzE4ODZlODFiMjI2MmYzM0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t&color=%237cb342"
+            frameborder="0"
+            scrolling="no">
+          </iframe>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+  </div>
+
+</ion-content>

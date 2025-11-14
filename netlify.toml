@@ -1,0 +1,8 @@
+[build]
+  publish = "redbarrio-retorno"
+  command = ""
+
+[[redirects]]
+  from = "/retorno-transbank"
+  to = "/retorno-transbank.html"
+  status = 200
