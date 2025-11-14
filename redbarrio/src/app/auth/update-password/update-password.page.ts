@@ -10,7 +10,7 @@ import { SupabaseService } from 'src/app/services/supabase.service';
   standalone: true,
   selector: 'app-update-password',
   templateUrl: './update-password.page.html',
-  styleUrls: ['../login/login.page.scss'],
+  styleUrls: ['./update-password.page.scss'],
   imports: [IonicModule, CommonModule, FormsModule],
 })
 export class UpdatePasswordPage implements OnInit {
