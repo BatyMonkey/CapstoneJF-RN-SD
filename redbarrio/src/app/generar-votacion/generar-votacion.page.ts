@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ViewWillEnter, IonicModule, ToastController } from '@ionic/angular';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
-
 import { VotacionesService } from '../services/votaciones.service';
 import { SupabaseService } from 'src/app/services/supabase.service';
+import { ViewChildren, QueryList, ElementRef } from '@angular/core';
+
 
 interface OpcionVM {
   titulo: string;
@@ -23,15 +24,29 @@ interface OpcionVM {
   styleUrls: ['./generar-votacion.page.scss'],
   imports: [IonicModule, CommonModule, FormsModule, RouterModule],
 })
-export class GenerarVotacionPage implements OnInit, ViewWillEnter {
+export class GenerarVotacionPage implements OnInit {
+  @ViewChildren('fileInput') fileInputs!: QueryList<ElementRef<HTMLInputElement>>;
+
   loading = false;
   errorMsg = '';
 
+  // ================================
+  // CAMPOS GENERALES
+  // ================================
   titulo = '';
   descripcion = '';
-  fechaInicio = '';
-  fechaFin = '';
 
+  // ================================
+  // FECHAS Y HORAS (SEPARADAS)
+  // ================================
+  fechaInicio = '';   // yyyy-mm-dd
+  horaInicio = '';    // hh:mm
+  fechaTermino = '';
+  horaTermino = '';
+
+  // ================================
+  // OPCIONES DE LA VOTACIÓN
+  // ================================
   opciones: OpcionVM[] = [{ titulo: '' }, { titulo: '' }];
 
   constructor(
@@ -42,14 +57,31 @@ export class GenerarVotacionPage implements OnInit, ViewWillEnter {
   ) {}
 
   ngOnInit(): void {
+    // Inicializamos fecha/hora actuales
     const now = new Date();
     const end = new Date(now.getTime() + 48 * 3600 * 1000);
-    this.fechaInicio = now.toISOString();
-    this.fechaFin = end.toISOString();
+
+    // Convertimos FECHA al formato YYYY-MM-DD
+    this.fechaInicio = now.toISOString().substring(0, 10);
+    this.fechaTermino = end.toISOString().substring(0, 10);
+
+    // Convertimos HORA al formato HH:mm
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    this.horaInicio = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    this.horaTermino = `${pad(end.getHours())}:${pad(end.getMinutes())}`;
   }
 
-  ionViewWillEnter() {}
+  // ============================================================
+  // BOTÓN "VOLVER" DEL HEADER PERSONALIZADO
+  // ============================================================
+  goBack() {
+    this.router.navigate(['/votaciones'], { replaceUrl: true });
+  }
 
+
+  // ============================================================
+  // OPCIONES
+  // ============================================================
   addOpcion() {
     this.opciones.push({ titulo: '' });
   }
@@ -58,10 +90,9 @@ export class GenerarVotacionPage implements OnInit, ViewWillEnter {
     if (this.opciones.length > 2) this.opciones.splice(i, 1);
   }
 
-  /**
-   * Selección de imagen desde input file (PC y móvil).
-   * Guarda blob/ext/preview en la opción correspondiente.
-   */
+  // ============================================================
+  // SUBIR IMAGEN OPCIÓN
+  // ============================================================
   async onFileSelected(i: number, event: Event) {
     try {
       const input = event.target as HTMLInputElement;
@@ -74,7 +105,6 @@ export class GenerarVotacionPage implements OnInit, ViewWillEnter {
       this.opciones[i]._ext = ext;
       this.opciones[i].previewDataUrl = await this.readFileAsDataUrl(file);
 
-      // para poder volver a elegir la misma imagen si quiere
       input.value = '';
     } catch (e: any) {
       this.errorMsg = e?.message || 'No se pudo obtener la imagen';
@@ -99,20 +129,27 @@ export class GenerarVotacionPage implements OnInit, ViewWillEnter {
     this.opciones[i].image_url = undefined;
   }
 
+  // ============================================================
+  // VALIDACIÓN PARA HABILITAR BOTÓN "CREAR VOTACIÓN"
+  // ============================================================
   get puedeGuardar(): boolean {
-    const t = (this.titulo ?? '').trim();
+    const t = this.titulo.trim();
+
+    // Validar mínimo 2 opciones con título no vacío
     const limpias = this.opciones
-      .map((o) => (o.titulo ?? '').trim())
+      .map((o) => o.titulo.trim())
       .filter((s) => s.length > 0);
+
     const unicas = new Set(limpias);
-    const ini = new Date(this.fechaInicio).getTime();
-    const fin = new Date(this.fechaFin).getTime();
-    const fechasOk =
-      !!this.fechaInicio &&
-      !!this.fechaFin &&
-      Number.isFinite(ini) &&
-      Number.isFinite(fin) &&
-      ini < fin;
+
+    // Validar fechas y horas
+    if (!this.fechaInicio || !this.horaInicio || !this.fechaTermino || !this.horaTermino)
+      return false;
+
+    const inicio = new Date(`${this.fechaInicio}T${this.horaInicio}`).getTime();
+    const fin = new Date(`${this.fechaTermino}T${this.horaTermino}`).getTime();
+    const fechasOk = Number.isFinite(inicio) && Number.isFinite(fin) && inicio < fin;
+
     return (
       t.length > 0 &&
       fechasOk &&
@@ -121,17 +158,25 @@ export class GenerarVotacionPage implements OnInit, ViewWillEnter {
     );
   }
 
+  // ============================================================
+  // GUARDAR VOTACIÓN EN SUPABASE
+  // ============================================================
   async guardar() {
     if (!this.puedeGuardar) return;
+
     this.loading = true;
     this.errorMsg = '';
 
     try {
       const { data: auth } = await this.supabaseService.client.auth.getUser();
-      const userId = auth?.user?.id || null;
+      const userId = auth?.user?.id;
       if (!userId) throw new Error('Debes iniciar sesión');
 
-      // Subir imágenes pendientes y fijar URLs
+      // FECHAS CONSTRUIDAS EN FORMATO ISO
+      const fechaInicioISO = `${this.fechaInicio}T${this.horaInicio}`;
+      const fechaFinISO = `${this.fechaTermino}T${this.horaTermino}`;
+
+      // ⇢ Subir imágenes
       for (const op of this.opciones) {
         if (op._blob && op._ext) {
           op.image_url = await this.votosSvc.uploadOptionImage(
@@ -144,42 +189,37 @@ export class GenerarVotacionPage implements OnInit, ViewWillEnter {
         }
       }
 
-      // Crear votación enviando titulo/descripcion/image_url por opción
+      // ⇢ Crear votación
       await this.votosSvc.crearVotacionConOpciones({
         titulo: this.titulo.trim(),
-        descripcion: this.descripcion?.trim() || undefined,
-        fecha_inicio: this.fechaInicio,
-        fecha_fin: this.fechaFin,
+        descripcion: this.descripcion.trim() || undefined,
+        fecha_inicio: fechaInicioISO,
+        fecha_fin: fechaFinISO,
         opciones: this.opciones
           .map((o) => ({
-            titulo: (o.titulo ?? '').trim(),
-            descripcion: (o.descripcion ?? null) as string | null,
-            image_url: o.image_url ?? null,
+            titulo: o.titulo.trim(),
+            descripcion: o.descripcion || null,
+            image_url: o.image_url || null,
           }))
           .filter((o) => o.titulo.length > 0),
       });
 
-      // 🧾 Registrar acción en auditoría
+      // Auditoría
       await this.supabaseService.registrarAuditoria(
         'crear votación',
         'votaciones',
         {
           titulo: this.titulo.trim(),
-          descripcion: this.descripcion?.trim() || '',
-          fecha_inicio: this.fechaInicio,
-          fecha_fin: this.fechaFin,
-          cantidad_opciones: this.opciones.filter((o) => o.titulo.length > 0)
-            .length,
-          opciones: this.opciones.map((o) => ({
-            titulo: o.titulo,
-            descripcion: o.descripcion,
-            image_url: o.image_url,
-          })),
+          descripcion: this.descripcion.trim(),
+          fecha_inicio: fechaInicioISO,
+          fecha_fin: fechaFinISO,
+          cantidad_opciones: this.opciones.filter((o) => o.titulo.trim()).length,
+          opciones: this.opciones,
         }
       );
 
       await this.presentToast('Votación creada correctamente ✅', 'success');
-      await this.router.navigateByUrl(`/votaciones`, { replaceUrl: true });
+      await this.router.navigateByUrl('/votaciones', { replaceUrl: true });
     } catch (e: any) {
       this.errorMsg = e?.message ?? 'No se pudo crear la votación';
       await this.presentToast(this.errorMsg, 'danger');
@@ -188,13 +228,19 @@ export class GenerarVotacionPage implements OnInit, ViewWillEnter {
     }
   }
 
+  // ============================================================
+  // TOAST
+  // ============================================================
   private async presentToast(message: string, color: 'success' | 'danger') {
-    const t = await this.toast.create({
-      message,
-      duration: 2500,
-      position: 'top',
-      color,
-    });
-    await t.present();
-  }
+  const t = await this.toast.create({
+    message,
+    duration: 2500,
+    position: 'bottom',    // 👈 Cambiado aquí
+    color,
+    animated: true,
+    cssClass: 'custom-toast'
+  });
+  await t.present();
+}
+
 }

@@ -1,195 +1,304 @@
-/* ===== Crear Votación (look & feel unificado + legible) ===== */
-:host {
-  color-scheme: light;
+/* ============================================================
+   HEADER — MISMO QUE DETALLE NOTICIA
+=============================================================== */
 
-  --rb-primary: #2563eb;
-  --rb-primary-10: rgba(37, 99, 235, 0.10);
-  --rb-primary-20: rgba(37, 99, 235, 0.20);
-
-  --rb-bg: #f8fafc;
-  --rb-text: #0f172a;
-  --rb-muted: #64748b;
-
-  --ion-background-color: var(--rb-bg);
-  --ion-text-color: var(--rb-text);
-  --ion-item-background: #ffffff;
-  --ion-card-background: #ffffff;
+.rb-hero-header {
+  background: linear-gradient(90deg, #06b6d4, #22d3ee);
+  border-bottom-left-radius: 1.6rem;
+  border-bottom-right-radius: 1.6rem;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
 }
 
-/* Header con gradiente consistente */
-.rb-header ion-toolbar {
-  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
-  --color: #fff;
-  --border-color: transparent;
-  --min-height: 56px;
+ion-header::after {
+  display: none !important;
 }
 
-/* Página */
-.crear-votacion {
-  --background: var(--rb-bg);
-
-  .card {
-    background: #fff;
-    border: 1px solid rgba(2, 6, 23, 0.06);
-    border-radius: 18px;
-    box-shadow: 0 10px 26px rgba(2, 6, 23, 0.08);
-    overflow: hidden;
-    margin-bottom: 16px;
-
-    ion-card-header {
-      background: #fff;
-      border-bottom: 1px solid rgba(2, 6, 23, 0.06);
-    }
-
-    ion-card-title {
-      font-weight: 800;
-      color: var(--rb-text);
-    }
-    ion-card-subtitle {
-      color: var(--rb-muted);
-      font-weight: 500;
-    }
-
-    /* ===== Campos (ion-item) con relieve y buena legibilidad ===== */
-    .field {
-      /* Caja blanca con borde y sombra */
-      --background: #fff;
-      background: #fff;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 14px;
-      box-shadow: 0 8px 18px rgba(2, 6, 23, 0.06);
-
-      /* Espaciado cómodo (label stacked + control) */
-      --padding-start: 12px;
-      --inner-padding-end: 12px;
-      --inner-padding-top: 12px;
-      --inner-padding-bottom: 12px;
-      --min-height: auto;
-
-      margin: 10px 0;
-      transition: border-color 160ms ease, box-shadow 160ms ease;
-
-      /* Label visible y sin recortes */
-      ion-label {
-        margin: 2px 4px 6px 2px;
-        line-height: 1.2;
-        color: #334155; /* gris oscuro legible */
-        font-weight: 700;
-      }
-
-      /* Texto del control (input/textarea) */
-      ion-input::part(native),
-      ion-textarea::part(native) {
-        color: var(--rb-text);
-        background: #fff;
-        line-height: 1.25;
-        font-weight: 600;
-        padding: 8px 10px 10px; /* suficiente alto para no cortar texto */
-      }
-
-      /* Placeholders (visibles sin competir) */
-      ion-input::part(native)::placeholder,
-      ion-textarea::part(native)::placeholder {
-        color: #6b7280;
-        opacity: 1;
-      }
-
-      /* Datetime dentro de la caja */
-      ion-datetime {
-        --background: #fff;
-        --color: var(--rb-text);
-        --wheel-highlight-background: rgba(37, 99, 235, 0.08);
-        --wheel-fade-background-rgb: 255,255,255;
-        border-radius: 12px;
-      }
-
-      /* Foco accesible */
-      &.item-has-focus,
-      &:focus-within {
-        border-color: var(--rb-primary);
-        box-shadow:
-          0 0 0 3px rgba(37, 99, 235, 0.14),
-          0 8px 18px rgba(2, 6, 23, 0.06);
-      }
-    }
-
-    /* Mensajes de error si usas ion-text[color="danger"] debajo */
-    ion-text[color="danger"] {
-      display: block;
-      margin: 4px 6px 0;
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    /* Acciones */
-    .actions {
-      margin-top: 16px;
-
-      ion-button {
-        border-radius: 12px;
-        box-shadow: 0 10px 18px var(--rb-primary-10);
-
-        &:active {
-          transform: translateY(1px);
-        }
-      }
-    }
-  }
-
-  /* Cabecera de opciones */
-  .options-header {
-    margin: 14px 2px 8px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    h3 {
-      margin: 0;
-      font-weight: 800;
-      color: var(--rb-text);
-      font-size: 16px;
-      letter-spacing: 0.2px;
-    }
-
-    ion-button[fill="outline"] {
-      --border-color: var(--rb-primary-20);
-      --color: var(--rb-primary);
-      --ripple-color: var(--rb-primary);
-      --border-radius: 12px;
-      --box-shadow: 0 6px 14px var(--rb-primary-10);
-    }
-  }
-
-  /* Lista de opciones */
-  .options {
-    /* Cada opción es un ion-item.field ya estilizado arriba */
-    .option {
-      position: relative; /* para el botón de borrar */
-    }
-
-    /* Asegura que el botón de borrar quede cómodo a la derecha */
-    .option ion-button[slot="end"] {
-      margin-left: 8px;
-    }
-  }
+.rb-hero-container {
+  width: 100%;
+  padding: 0 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* Footer de acciones fijo (si algún día lo usas) */
-.action-footer ion-toolbar {
+.rb-hero-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rb-hero-logo img {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+}
+
+.rb-hero-text h1 {
+  color: #fff;
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.rb-hero-text p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+.rb-hero-back {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.22);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rb-hero-back ion-icon {
+  color: #fff;
+  font-size: 1.4rem;
+}
+
+
+/* ============================================================
+   CONTENIDO
+=============================================================== */
+
+.votacion-content {
+  --background: #f5f7fb;
+}
+
+.page-wrapper {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px 14px 40px;
+}
+
+
+/*** TARJETAS SECCIONES ***/
+.card-section {
+  background: #fff;
+  padding: 18px 16px;
+  margin-bottom: 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(148,163,184,0.25);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.section-title {
+  margin: 0 0 18px;
+  font-size: 1.1rem;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+
+/*** FORMULARIOS ***/
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.94rem;
+  color: #1e293b;
+}
+
+.req {
+  color: #ef4444;
+}
+
+/* inputs ionic */
+.input, .textarea {
   --background: #fff;
-  --border-color: rgba(2, 6, 23, 0.08);
-  box-shadow: 0 -8px 18px rgba(2, 6, 23, 0.06);
+  --border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  padding: 10px 12px;
+  font-size: 0.95rem;
 }
 
-/* iOS: padding más agradable */
-.ios ion-item.field {
-  --padding-start: 12px;
-  --inner-padding-end: 12px;
+/* inputs de HTML puro */
+.native-input {
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: #1e293b;
 }
 
-/* Responsive: sombra un poco más liviana en móviles */
-@media (max-width: 480px) {
-  .crear-votacion .card .field {
-    box-shadow: 0 6px 12px rgba(2, 6, 23, 0.05);
+/* fila con icono */
+.input-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.input-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #eefaff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.input-icon ion-icon {
+  font-size: 20px;
+  color: #0ea5e9;
+}
+
+
+/*** OPCIONES ***/
+.options-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.options-count {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.opciones-list { margin-top: 12px; }
+
+.opcion-card {
+  border: 1px solid rgba(148,163,184,0.3);
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 14px;
+  background: #fff;
+}
+
+.opcion-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.opcion-number {
+  width: 26px;
+  height: 26px;
+  background: #facc15;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-size: 0.85rem;
+  margin-right: 10px;
+}
+
+.opcion-title {
+  flex: 1;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.delete-opcion {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #fee2e2;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.delete-opcion ion-icon {
+  color: #dc2626;
+  font-size: 1.2rem;
+}
+
+
+/*** UPLOAD BOX ***/
+.upload-box {
+  width: 100%;
+  height: 140px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  background: #f8fafc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #475569;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+
+/*** BOTONES ***/
+.add-option-btn {
+  width: 100%;
+  padding: 12px;
+  background: #f0f9ff;
+  border: 2px dashed #38bdf8;
+  border-radius: 12px;
+  color: #0284c7;
+  text-align: center;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  color: #fff;
+  font-weight: 600;
+  background: linear-gradient(to right, #06b6d4, #facc15);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+
+/* ============================================================
+   TOAST PERSONALIZADO — CENTRADO Y MÁS ARRIBA
+=============================================================== */
+
+.custom-toast {
+  --border-radius: 12px;
+  --background: rgba(15, 23, 42, 0.92);
+  --color: #fff;
+  --padding-start: 14px;
+  --padding-end: 14px;
+
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+
+  /* Subirlo bastante para evitar la barra inferior */
+  margin-bottom: 130px !important;
+
+  animation: toastSlideUp 0.35s ease-out forwards;
+}
+
+@keyframes toastSlideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 25px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
   }
 }
