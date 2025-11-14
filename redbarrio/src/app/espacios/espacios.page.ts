@@ -1,13 +1,21 @@
- //src/app/espacios/espacios.page.ts
+// src/app/espacios/espacios.page.ts
 
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import {
+  IonicModule,
+  LoadingController,
+  AlertController,
+} from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 
 import { EspaciosService, Espacio } from 'src/app/services/espacios.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { SupabaseService } from 'src/app/services/supabase.service';
+
+import { Browser } from '@capacitor/browser';
+import { environment } from 'src/environments/environment';
 import { addIcons } from 'ionicons';
 import {
   chevronBackOutline,
@@ -49,15 +57,15 @@ export class EspaciosPage implements OnInit {
   error: string | null = null;
   isAdmin = false;
 
-  // 🔹 Solo guardamos el ID, nunca el objeto
+  // 🔹 Estado de selección + formulario (tipo Figma)
   espacioSeleccionadoId: number | null = null;
 
-  // 🔹 Formulario
   fechaArriendo = '';
   horaInicio = '';
   horaFin = '';
   motivo = '';
 
+  // Mapeo de tipos
   private tiposEspacioMap = new Map<number, string>([
     [1, 'Cancha'],
     [2, 'Sede'],
@@ -67,7 +75,10 @@ export class EspaciosPage implements OnInit {
   constructor(
     private espaciosService: EspaciosService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private supabaseService: SupabaseService,
+    private loadingCtrl: LoadingController,
+    private alertCtrl: AlertController
   ) {
     addIcons({
       'chevron-back-outline': chevronBackOutline,
@@ -131,25 +142,22 @@ export class EspaciosPage implements OnInit {
       this.espacios = [];
     } finally {
       this.isLoading = false;
-      if (event) event.target.complete();
+      if (event) {
+        event.target.complete();
+      }
     }
   }
 
-  // ============================================================
-  //   🔹 Seleccionar espacio (igual al mockup React)
-  // ============================================================
+  // 🔹 Seleccionar / deseleccionar espacio
   seleccionarEspacio(espacio: EspacioUI) {
     if (this.espacioSeleccionadoId === espacio.id_espacio) {
-      this.espacioSeleccionadoId = null; // deseleccionar
+      this.espacioSeleccionadoId = null;
       return;
     }
     this.espacioSeleccionadoId = espacio.id_espacio;
   }
 
-  // ============================================================
-  //   🔹 ÍCONOS / nombres fancy
-  // ============================================================
-  // 🔹 Texto bonito para cada código de servicio
+  // 🔹 Mapeo de servicios → nombre bonito
   nombreServicio(code: string): string {
     const map: Record<string, string> = {
       mesas_sillas: 'Mesas y sillas',
@@ -158,117 +166,246 @@ export class EspaciosPage implements OnInit {
       banos: 'Baños',
       sonido: 'Sistema de sonido',
       iluminacion: 'Iluminación LED',
-      parrilla: 'Parrilla',
+      parrilla: 'Parrilla / Quincho',
       pizarra: 'Pizarra',
       proyector: 'Proyector',
       aire_acondicionado: 'Aire acondicionado',
       balones: 'Balones disponibles',
       graderias: 'Graderías',
-
-      // 🆕 Quincho
-      parrillas_2: '2 Parrillas',
-      mesas_bancas: 'Mesas con bancas',
-      lavaplatos: 'Lavaplatos',
-      area_techada: 'Área techada',
     };
-
     return map[code] || code;
   }
 
-  // 🔹 Ícono Ionic para cada código
+  // 🔹 Mapeo de servicios → ícono Ionic
   iconoServicio(code: string): string {
     switch (code) {
       case 'mesas_sillas':
-      case 'mesas_bancas':
-        return 'cube-outline'; // mesas/bancas
-
+        return 'cube-outline';
       case 'wifi':
         return 'wifi-outline';
-
       case 'cocina':
-      case 'lavaplatos':
-        return 'restaurant-outline'; // cocina / lavaplatos
-
+        return 'restaurant-outline';
       case 'banos':
         return 'water-outline';
-
       case 'sonido':
         return 'volume-high-outline';
-
       case 'iluminacion':
         return 'bulb-outline';
-
       case 'parrilla':
-      case 'parrillas_2':
         return 'flame-outline';
-
       case 'pizarra':
         return 'create-outline';
-
       case 'proyector':
         return 'videocam-outline';
-
       case 'aire_acondicionado':
         return 'snow-outline';
-
       case 'balones':
         return 'basketball-outline';
-
       case 'graderias':
         return 'grid-outline';
-
-      case 'area_techada':
-        return 'home-outline';
-
       default:
         return 'checkmark-outline';
     }
   }
 
-  // ============================================================
-  //   🔹 Enviar solicitud (mockup completo)
-  // ============================================================
-  solicitarArriendo() {
-    if (!this.espacioSeleccionadoId)
-      return alert('Por favor selecciona un espacio');
-    if (!this.fechaArriendo) return alert('Por favor selecciona una fecha');
-    if (!this.horaInicio || !this.horaFin)
-      return alert('Selecciona un horario');
-    if (!this.motivo.trim()) return alert('Describe el motivo');
+  // 🔹 Helper de alerta (equivalente a mostrarAlerta)
+  private async mostrarAlerta(header: string, message: string) {
+    const alert = await this.alertCtrl.create({
+      header,
+      message,
+      buttons: ['OK'],
+    });
+    await alert.present();
+  }
 
-    const espacioObj = this.espacios.find(
-      (e) => e.id_espacio === this.espacioSeleccionadoId
-    );
-
-    if (!espacioObj) {
-      alert('Error interno: espacio no encontrado');
+  /** 🔥 Enviar solicitud desde la vista de ESPACIOS y procesar pago (misma lógica que enviarSolicitud) */
+  async solicitarArriendo() {
+    // ✅ Validaciones equivalentes al "this.solicitudForm.invalid"
+    if (!this.espacioSeleccionadoId) {
+      await this.mostrarAlerta('Error', 'Por favor selecciona un espacio.');
+      return;
+    }
+    if (!this.fechaArriendo) {
+      await this.mostrarAlerta('Error', 'Por favor selecciona una fecha.');
+      return;
+    }
+    if (!this.horaInicio || !this.horaFin) {
+      await this.mostrarAlerta('Error', 'Por favor selecciona el horario.');
+      return;
+    }
+    if (!this.motivo.trim()) {
+      await this.mostrarAlerta(
+        'Error',
+        'Por favor describe el motivo del arriendo.'
+      );
       return;
     }
 
-    const solicitud = {
-      espacioId: espacioObj.id_espacio,
-      espacioNombre: espacioObj.nombre,
-      fecha: this.fechaArriendo,
-      horaInicio: this.horaInicio,
-      horaFin: this.horaFin,
-      motivo: this.motivo,
+    const espacio = this.espacios.find(
+      (e) => e.id_espacio === this.espacioSeleccionadoId
+    );
+
+    // 🔹 Construimos un formData equivalente al de solicitudForm
+    const fecha = this.fechaArriendo; // 'YYYY-MM-DD'
+    const evento_inicio = `${fecha}T${this.horaInicio}:00`;
+    const evento_fin = `${fecha}T${this.horaFin}:00`;
+
+    const formData: any = {
+      id_espacio: this.espacioSeleccionadoId,
+      evento_titulo: espacio?.nombre || 'Arriendo de espacio comunitario',
+      evento_descripcion: this.motivo,
+      evento_inicio,
+      evento_fin,
     };
 
-    console.log('Solicitud enviada:', solicitud);
-    alert('¡Solicitud enviada exitosamente!');
+    // ⬇️⬇️ LÓGICA COPIADA de enviarSolicitud (sin cambios de flujo) ⬇️⬇️
 
-    // reset
-    this.espacioSeleccionadoId = null;
-    this.fechaArriendo = '';
-    this.horaInicio = '';
-    this.horaFin = '';
-    this.motivo = '';
+    const session = await this.authService.session();
+    const idUsuario = session?.user?.id || null;
+
+    if (!idUsuario) {
+      this.mostrarAlerta('Error', 'No se pudo obtener el usuario autenticado.');
+      return;
+    }
+
+    const loading = await this.loadingCtrl.create({
+      message: 'Procesando solicitud...',
+      spinner: 'crescent',
+    });
+    await loading.present();
+
+    try {
+      // 1️⃣ Crear evento
+      const { data: eventoData, error: eventoError } =
+        await this.supabaseService.client
+          .from('evento')
+          .insert([
+            {
+              titulo: formData.evento_titulo,
+              descripcion: formData.evento_descripcion,
+              fecha_inicio: formData.evento_inicio,
+              fecha_fin: formData.evento_fin,
+            },
+          ])
+          .select()
+          .single();
+
+      if (eventoError) throw eventoError;
+
+      // 2️⃣ Crear reserva
+      const espacioId = Number(formData.id_espacio);
+      const { data: reservaData, error: reservaError } =
+        await this.supabaseService.client
+          .from('reserva')
+          .insert([
+            {
+              id_espacio: espacioId,
+              id_evento: eventoData.id_evento,
+              id_auth: idUsuario,
+              fecha: new Date().toISOString(),
+              creado_en: new Date().toISOString(),
+            },
+          ])
+          .select()
+          .single();
+
+      if (reservaError) throw reservaError;
+
+      // 3️⃣ Generar orden de pago local
+      const { data: ordenData, error: ordenError } =
+        await this.supabaseService.client
+          .from('orden_pago')
+          .insert([
+            {
+              id_auth: idUsuario,
+              id_evento: eventoData.id_evento,
+              id_espacio: espacioId,
+              monto: 1500,
+              estado: 'pendiente',
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            },
+          ])
+          .select()
+          .single();
+
+      if (ordenError) throw ordenError;
+
+      // 🧾 Registrar acción en auditoría
+      await this.supabaseService.registrarAuditoria(
+        'enviar solicitud de reserva',
+        'reserva',
+        {
+          evento: {
+            id_evento: eventoData.id_evento,
+            titulo: eventoData.titulo,
+            fecha_inicio: eventoData.fecha_inicio,
+            fecha_fin: eventoData.fecha_fin,
+          },
+          reserva: {
+            id_reserva: reservaData.id_reserva,
+            id_espacio: espacioId,
+            fecha: reservaData.fecha,
+          },
+          orden_pago: {
+            id_orden: ordenData.id_orden,
+            monto: ordenData.monto,
+            estado: ordenData.estado,
+          },
+          fecha_solicitud: new Date().toISOString(),
+        }
+      );
+
+      // 4️⃣ Simular pago Transbank
+      const response = await fetch(
+        `${environment.supabaseUrl}/functions/v1/transbank-simular`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id_reserva: reservaData.id_reserva,
+            monto: 1500,
+            descripcion: `Pago arriendo espacio #${espacioId}`,
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error('Error al iniciar simulación de pago');
+
+      const simData = await response.json();
+
+      if (simData.url && simData.token) {
+        await Browser.open({
+          url: `${simData.url}?token_ws=${simData.token}`,
+          presentationStyle: 'fullscreen',
+        });
+      } else {
+        throw new Error('No se recibió token o URL de Transbank.');
+      }
+
+      await loading.dismiss();
+
+      // Opcional: limpiar formulario y selección
+      this.espacioSeleccionadoId = null;
+      this.fechaArriendo = '';
+      this.horaInicio = '';
+      this.horaFin = '';
+      this.motivo = '';
+    } catch (error) {
+      console.error('Error al enviar solicitud:', error);
+      await loading.dismiss();
+      this.mostrarAlerta(
+        'Error',
+        'No se pudo completar la reserva ni el pago.'
+      );
+    }
   }
 
   getTipoNombre(tipoId: number | string | undefined | null): string {
     if (tipoId === undefined || tipoId === null) return 'N/A';
-    const num = Number(tipoId);
-    return this.tiposEspacioMap.get(num) || 'Desconocido';
+    const idNumerico = parseInt(tipoId.toString(), 10);
+    if (isNaN(idNumerico)) return String(tipoId);
+    return this.tiposEspacioMap.get(idNumerico) || 'Desconocido';
   }
 
   goToDetail(id: number) {
@@ -276,7 +413,7 @@ export class EspaciosPage implements OnInit {
   }
 
   irACrearEspacio() {
-    this.router.navigateByUrl('/espacio/crear');
+    this.router.navigateByUrl('espacio/crear');
   }
 
   async handleRefresh(ev: CustomEvent) {
@@ -286,6 +423,7 @@ export class EspaciosPage implements OnInit {
       (ev.target as HTMLIonRefresherElement)?.complete?.();
     }
   }
+
   goBack() {
     this.router.navigateByUrl('/home');
   }
