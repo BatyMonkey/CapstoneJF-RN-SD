@@ -291,9 +291,8 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: { roles: ['administrador'] },
     loadComponent: () =>
-      import('./admin/noticias/noticias.page').then((m) => m.NoticiasPage),
+      import('./admin/noticias/gestionar-noticias.page').then((m) => m.GestionarNoticiasPage),
   },
-
   {
     path: 'home',
     canActivate: [AuthGuard],

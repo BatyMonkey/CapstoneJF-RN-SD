@@ -1,0 +1,165 @@
+<!-- ========================================
+     HERO HEADER SUPERIOR (igual al Home)
+========================================= -->
+<ion-header class="rb-hero-header">
+  <div class="rb-hero-container">
+    <!-- Logo y texto -->
+    <div class="rb-hero-info">
+      <div class="rb-hero-logo">
+        <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
+      </div>
+      <div class="rb-hero-text">
+        <h1>RedBarrio</h1>
+        <p>Tu comunidad conectada</p>
+      </div>
+    </div>
+
+    <!-- sin botón de chat -->
+    <div class="rb-hero-chat-wrapper"></div>
+  </div>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="noticias-page">
+  <!-- Refresher -->
+  <ion-refresher slot="fixed" (ionRefresh)="refrescar($event)">
+    <ion-refresher-content
+      pullingText="Desliza para actualizar"
+      refreshingSpinner="crescent"
+      refreshingText="Actualizando..."
+    >
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <div class="page-container">
+    <div class="content-wrapper">
+      <!-- =======================================
+           TARJETA PRINCIPAL: HEADER + TABS
+      ======================================== -->
+      <section class="projects-manage-card">
+        <!-- Header interno de la tarjeta -->
+        <div class="projects-manage-header">
+          <div class="header-text">
+            <h2>Gestionar Noticias</h2>
+            <p>Crear y administrar noticias del barrio</p>
+          </div>
+        </div>
+
+        <!-- Tabs principales: Ver / Crear -->
+        <div class="projects-main-tabs">
+          <button
+            type="button"
+            class="main-tab"
+            [class.active]="activeTab === 'manage'"
+            (click)="activeTab = 'manage'"
+          >
+            <ion-icon name="eye-outline"></ion-icon>
+            <span>Ver Noticias</span>
+          </button>
+
+          <!-- Este botón navega a la página CrearNoticia -->
+          <button
+            type="button"
+            class="main-tab create"
+            (click)="irACrearNoticia()"
+          >
+            <ion-icon name="add-outline"></ion-icon>
+            <span>Crear Nueva</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- =======================================
+           CONTENIDO: TAB "VER NOTICIAS"
+      ======================================== -->
+      <ng-container *ngIf="activeTab === 'manage'">
+        <section class="projects-section">
+          <h3 class="section-title">
+            Noticias Publicadas ({{ newsList.length }})
+          </h3>
+
+          <!-- Cargando -->
+          <div class="empty-state" *ngIf="estaCargando">
+            <ion-spinner name="crescent" class="empty-icon"></ion-spinner>
+            <p class="empty-title">Cargando noticias...</p>
+            <p class="empty-text">Por favor, espera un momento.</p>
+          </div>
+
+          <!-- Vacío -->
+          <div
+            class="empty-state"
+            *ngIf="!estaCargando && (!newsList || newsList.length === 0)"
+          >
+            <p class="empty-title">No hay noticias publicadas</p>
+            <p class="empty-text">
+              Cuando se publiquen noticias, aparecerán aquí.
+            </p>
+            <button
+              type="button"
+              class="btn-primary warn"
+              (click)="irACrearNoticia()"
+            >
+              <ion-icon name="add-outline"></ion-icon>
+              <span>Crear Primera Noticia</span>
+            </button>
+          </div>
+
+          <!-- LISTADO DE NOTICIAS -->
+          <div
+            class="projects-list"
+            *ngIf="!estaCargando && newsList && newsList.length > 0"
+          >
+            <article class="news-card" *ngFor="let news of newsList">
+              <!-- Parte superior: imagen + contenido -->
+              <div class="news-main">
+                <!-- Imagen -->
+                <div class="news-thumb" *ngIf="news.image">
+                  <img [src]="news.image" [alt]="news.title || 'Noticia'" />
+                </div>
+
+                <!-- Contenido -->
+                <div class="news-content">
+                  <div class="news-title-group">
+                    <h4 class="news-title">{{ news.title }}</h4>
+                    <p class="news-author">
+                      Por {{ news.author || 'Autor desconocido' }}
+                    </p>
+                  </div>
+
+                  <p class="news-summary">
+                    {{ news.content }}
+                  </p>
+
+                  <div class="news-meta">
+                    <span
+                      class="status-pill"
+                      [ngClass]="news.category"
+                    >
+                      {{ getCategoryIcon(news.category) }}
+                      {{ getCategoryLabel(news.category) }}
+                    </span>
+
+                    <span class="news-date" *ngIf="news.date">
+                      {{ news.date | date: 'dd-MM-yyyy' }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Acciones inferiores -->
+              <div class="news-actions">
+                <button
+                  type="button"
+                  class="btn-delete"
+                  (click)="confirmarEliminar(news)"
+                >
+                  <ion-icon name="trash-outline"></ion-icon>
+                  <span>Eliminar</span>
+                </button>
+              </div>
+            </article>
+          </div>
+        </section>
+      </ng-container>
+    </div>
+  </div>
+</ion-content>

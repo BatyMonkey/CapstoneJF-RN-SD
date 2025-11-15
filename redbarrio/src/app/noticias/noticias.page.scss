@@ -39,7 +39,7 @@ ion-header::after {
 }
 
 .rb-hero-logo img {
-  width: 130px;     /* Igual a Proyectos */
+  width: 130px; /* Igual a Proyectos */
   height: 130px;
   object-fit: contain;
 }
@@ -61,6 +61,7 @@ ion-header::after {
 /* ==========================
    CONTENIDO
 ========================== */
+
 .news-page {
   --background: #f5f7fb;
   margin-top: 140px; /* espacio bajo el header */
@@ -84,6 +85,7 @@ ion-header::after {
   margin-bottom: 22px;
   border: 1px solid rgba(148, 163, 184, 0.3);
   cursor: pointer;
+  background: #ffffff;
 }
 
 .news-image-container {
@@ -96,8 +98,12 @@ ion-header::after {
   object-fit: cover;
 }
 
+/* ==========================
+   BADGE SOBRE LA FOTO
+   (usa getBadgeClass + getBadgeIcon)
+========================== */
 
-/* BADGE */
+/* BADGE SOBRE LA FOTO */
 .badge {
   position: absolute;
   top: 10px;
@@ -108,35 +114,65 @@ ion-header::after {
   display: flex;
   align-items: center;
   justify-content: center;
-
-  ion-icon {
-    font-size: 1.3rem;
-    color: white;
-  }
+  border: none; /* sin borde */
 }
 
-.badge.alert { background: #ef4444; }
-.badge.evento { background: #facc15; }
-.badge.info { background: #3b82f6; }
-.badge.ok { background: #22c55e; }
+/* Fondo suave + icono más cargado por categoría */
+.badge.urgent {
+  background: #fee2e2;          /* rojo muy claro */
+}
+.badge.urgent ion-icon {
+  color: #dc2626;               /* rojo fuerte */
+}
+
+.badge.event {
+  background: #fef3c7;          /* amarillo claro */
+}
+.badge.event ion-icon {
+  color: #d97706;               /* amarillo/naranjo fuerte */
+}
+
+.badge.info {
+  background: #dbeafe;          /* azul claro */
+}
+.badge.info ion-icon {
+  color: #2563eb;               /* azul fuerte */
+}
+
+.badge.success {
+  background: #dcfce7;          /* verde claro */
+}
+.badge.success ion-icon {
+  color: #16a34a;               /* verde fuerte */
+}
+
+/* tamaño del ícono */
+.badge ion-icon {
+  font-size: 1.4rem;
+}
 
 
-/* CONTENIDO */
+
+/* ==========================
+   CONTENIDO TEXTO
+========================== */
+
 .news-content {
-  padding: 14px 16px;
+  padding: 14px 16px 12px;
 }
 
 .news-title {
   font-size: 1rem;
   font-weight: 700;
   color: #0f172a;
-  margin-bottom: 6px;
+  margin: 0 0 6px;
 }
 
 .news-excerpt {
   font-size: 0.9rem;
   color: #475569;
-  margin-bottom: 10px;
+  margin: 0 0 10px;
+  line-height: 1.4;
 }
 
 .news-footer {
@@ -152,7 +188,10 @@ ion-header::after {
 }
 
 
-/* LOADING */
+/* ==========================
+   LOADING
+========================== */
+
 .loading {
   text-align: center;
   padding-top: 30px;
@@ -165,7 +204,10 @@ ion-header::after {
 }
 
 
-/* EMPTY */
+/* ==========================
+   ESTADO VACÍO
+========================== */
+
 .empty {
   text-align: center;
   padding: 40px 20px;
@@ -174,9 +216,11 @@ ion-header::after {
     color: #334155;
     font-size: 1.2rem;
     font-weight: 700;
+    margin-bottom: 6px;
   }
 
   p {
     color: #64748b;
+    font-size: 0.9rem;
   }
 }

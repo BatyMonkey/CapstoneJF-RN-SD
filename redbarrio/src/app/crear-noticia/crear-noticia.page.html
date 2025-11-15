@@ -1,126 +1,185 @@
-<ion-header class="rb-header">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
-    </ion-buttons>
-    <ion-title>Crear Nueva Noticia</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true" class="ion-padding">
-  <ion-text color="medium">
-    <p>Creando como: <strong>{{ nombreAutor || 'Cargando...' }}</strong></p>
-  </ion-text>
-
-  <form [formGroup]="noticiaForm" (ngSubmit)="crearNoticia()">
-
-    <ion-item lines="full" class="ion-margin-bottom">
-      <ion-input
-        label="Título"
-        labelPlacement="stacked"
-        formControlName="titulo"
-        placeholder="Máx 100 caracteres"
-        [maxlength]="100"
-        required>
-      </ion-input>
-    </ion-item>
-
-    <div *ngIf="noticiaForm.get('titulo')?.invalid && (noticiaForm.get('titulo')?.dirty || noticiaForm.get('titulo')?.touched)">
-      <ion-text color="danger" class="ion-padding-start">
-        <p *ngIf="noticiaForm.get('titulo')?.errors?.['required']">El título es obligatorio.</p>
-      </ion-text>
+<ion-header class="rb-hero-header">
+  <div class="rb-hero-container">
+    <div class="rb-hero-info">
+      <div class="rb-hero-logo">
+        <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
+      </div>
+      <div class="rb-hero-text">
+        <h1>RedBarrio</h1>
+        <p>Tu comunidad conectada</p>
+      </div>
     </div>
 
-    <ion-list formArrayName="parrafos" class="ion-margin-vertical">
-      <ion-list-header>
-        <ion-label>Contenido (Párrafos - Máx {{ MAX_PARRAFOS }})</ion-label>
-      </ion-list-header>
+    <div class="rb-hero-chat-wrapper"></div>
+  </div>
+</ion-header>
 
-      <div *ngFor="let parrafoControl of parrafoControls; let i = index">
-        <!-- Nota: si Angular se queja del formArray, quita [formGroupName]="i" y deja solo [formControl] -->
-        <ion-item lines="full" class="ion-margin-bottom" [formGroupName]="i">
-          <ion-textarea
-            label="Párrafo {{ i + 1 }}"
-            labelPlacement="stacked"
-            [formControl]="parrafoControl"
-            placeholder="Escribe el contenido aquí..."
-            rows="4"
-            [autoGrow]="true">
-          </ion-textarea>
+<ion-content [fullscreen]="true" class="crear-noticia-page">
+  <div class="page-container">
+    <div class="content-wrapper">
 
-          <ion-buttons slot="end">
-            <ion-button color="danger" (click)="quitarParrafo(i)" [disabled]="parrafosFormArray.length <= 1">
-              <ion-icon name="trash-outline"></ion-icon>
-            </ion-button>
-          </ion-buttons>
-        </ion-item>
+      <!-- CABECERA: Gestionar Noticias + Tabs -->
+      <section class="projects-manage-card">
+        <div class="projects-manage-header">
+          <!-- Botón volver -->
+          <button type="button" class="back-btn" (click)="goBack()">
+            <ion-icon name="chevron-back-outline"></ion-icon>
+          </button>
 
-        <div *ngIf="parrafoControl.invalid && (parrafoControl.dirty || parrafoControl.touched)">
-          <ion-text color="danger" class="ion-padding-start">
-            <p *ngIf="parrafoControl.errors?.['required']">El primer párrafo es obligatorio.</p>
-          </ion-text>
+          <div class="header-text">
+            <h2>Gestionar Noticias</h2>
+            <p>Crear y administrar noticias</p>
+          </div>
         </div>
-      </div>
-    </ion-list>
 
-    <ion-button
-      (click)="agregarParrafo()"
-      [disabled]="parrafosFormArray.length >= MAX_PARRAFOS"
-      expand="block"
-      fill="outline"
-      class="ion-margin-bottom">
-      <ion-icon name="add-circle-outline" slot="start"></ion-icon>
-      Añadir Párrafo ({{ parrafosFormArray.length }}/{{ MAX_PARRAFOS }})
-    </ion-button>
+        <!-- Tabs principales -->
+        <div class="projects-main-tabs">
+          <!-- Ver Noticias: vuelve a la lista -->
+          <button type="button" class="main-tab" (click)="goBack()">
+            <ion-icon name="eye-outline"></ion-icon>
+            <span>Ver Noticias</span>
+          </button>
 
-    <hr>
+          <!-- Crear Nueva: activo en esta pantalla -->
+          <button type="button" class="main-tab create active">
+            <ion-icon name="add-outline"></ion-icon>
+            <span>Crear Nueva</span>
+          </button>
+        </div>
+      </section>
 
-    <ion-list class="ion-margin-vertical">
-      <ion-list-header>
-        <ion-label>Imágenes (La primera es la Portada)</ion-label>
-      </ion-list-header>
+      <!-- FORMULARIO GENERAR NOTICIA -->
+      <section class="news-form">
+        <!-- Encabezado del formulario -->
+        <div class="form-title-block">
+          <h3>Generar Noticia</h3>
+          <p>Crea un nuevo anuncio para los vecinos</p>
+        </div>
 
-      <ion-item *ngFor="let archivo of archivosSeleccionados; let i = index" lines="full">
-        <ion-label slot="start" class="ion-text-wrap">
-          {{ i === 0 ? 'Imagen de Portada (Obligatoria)' : 'Imagen ' + i + ' (Opcional)' }}
-        </ion-label>
+        <!-- Título -->
+        <div class="form-group">
+          <label>
+            Título de la Noticia <span class="required">*</span>
+          </label>
+          <ion-input [(ngModel)]="title" placeholder="Ingresa el título..."></ion-input>
+        </div>
 
-        <div slot="end" class="ion-text-end">
-          <p class="ion-no-margin ion-text-wrap" style="font-size: 0.9em; color: var(--ion-color-medium);">
-            {{ archivosSeleccionados[i]?.name || 'Sin archivos seleccionados' }}
+        <!-- Párrafos -->
+        <div class="form-group">
+          <div class="label-row">
+            <label>
+              Contenido ({{ paragraphs.length }}/5 párrafos)
+            </label>
+
+            <button type="button" class="link-btn" *ngIf="paragraphs.length < 5" (click)="addParagraph()">
+              <ion-icon name="add-outline"></ion-icon>
+              <span>Agregar Párrafo</span>
+            </button>
+          </div>
+
+          <!-- Lista de párrafos -->
+          <div class="paragraph-list" *ngIf="paragraphs.length > 0">
+            <div class="paragraph-item" *ngFor="let par of paragraphs; let i = index; trackBy: trackByParagraph">
+              <ion-textarea [(ngModel)]="par.text" [autoGrow]="true"
+                [placeholder]="'Párrafo ' + (i + 1) + '...'"></ion-textarea>
+
+              <button type="button" class="icon-btn danger" (click)="removeParagraph(i)" *ngIf="paragraphs.length > 1">
+                <ion-icon name="close-outline"></ion-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- Estado sin párrafos -->
+          <div class="empty-paragraph-state" *ngIf="paragraphs.length === 0">
+            <p class="empty-title">Aún no has agregado párrafos</p>
+            <p class="empty-text">
+              Agrega contenido para que los vecinos entiendan mejor la noticia.
+            </p>
+            <button type="button" class="btn-primary" (click)="addParagraph()">
+              <ion-icon name="add-outline"></ion-icon>
+              <span>Agregar Primer Párrafo</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- IMÁGENES -->
+        <div class="form-group">
+          <div class="label-row">
+            <label>
+              Imagen de Portada <span class="required">*</span> + Imágenes
+              adicionales ({{ images.length }}/5)
+            </label>
+
+            <!-- Input de archivos REAL (oculto) -->
+            <input #fileInput type="file" accept="image/*" multiple hidden (change)="onFilesSelected($event)" />
+
+            <button type="button" class="link-btn warn" *ngIf="images.length < 5" (click)="fileInput.click()">
+              <ion-icon name="image-outline"></ion-icon>
+              <span>Agregar Imagen</span>
+            </button>
+          </div>
+
+          <!-- Con imágenes -->
+          <div *ngIf="images.length > 0">
+            <!-- Portada -->
+            <div class="cover-image-card">
+              <img [src]="images[0]" alt="Portada" />
+              <div class="cover-badge">📸 Portada</div>
+
+              <button type="button" class="icon-btn danger cover-remove" (click)="removeImage(0)">
+                <ion-icon name="close-outline"></ion-icon>
+              </button>
+            </div>
+
+            <!-- Imágenes adicionales -->
+            <div class="extra-images-grid" *ngIf="images.length > 1">
+              <div class="extra-image-card" *ngFor="let img of images.slice(1); let idx = index">
+                <img [src]="img" [alt]="'Imagen ' + (idx + 2)" />
+                <button type="button" class="icon-btn danger small" (click)="removeImage(idx + 1)">
+                  <ion-icon name="close-outline"></ion-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sin imágenes -->
+          <div class="empty-image-state" *ngIf="images.length === 0">
+            <ion-icon name="image-outline" class="empty-icon"></ion-icon>
+            <p class="empty-title">Imagen de Portada Requerida</p>
+            <p class="empty-text">
+              La primera imagen será la portada de la noticia.
+            </p>
+            <button type="button" class="btn-primary warn" (click)="fileInput.click()">
+              <ion-icon name="image-outline"></ion-icon>
+              <span>Agregar Imagen de Portada</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Categoría -->
+        <div class="form-group">
+          <label>Categoría</label>
+          <ion-select [(ngModel)]="category" interface="popover">
+            <ion-select-option value="urgent">🚨 Urgente</ion-select-option>
+            <ion-select-option value="event">📢 Evento</ion-select-option>
+            <ion-select-option value="info">ℹ️ Información</ion-select-option>
+            <ion-select-option value="success">✅ Anuncio</ion-select-option>
+          </ion-select>
+        </div>
+
+        <!-- Botón publicar -->
+        <div class="form-actions">
+          <button type="button" class="btn-publish" [class.disabled]="!canPublish" (click)="handlePublish()">
+            <ion-icon name="send-outline"></ion-icon>
+            <span>Publicar Noticia</span>
+          </button>
+
+          <p class="publish-hint" *ngIf="!canPublish">
+            * Debes agregar un título, al menos un párrafo y una imagen de
+            portada
           </p>
-
-          <input
-            type="file"
-            style="display: none;"
-            #fileInput
-            (change)="onFileSelected($event, i)"
-            accept="image/jpeg, image/png"
-            [required]="i === 0">
-
-          <ion-button size="small" (click)="fileInput.click()">
-            Seleccionar archivo
-          </ion-button>
         </div>
-      </ion-item>
-
-      <ion-text color="danger" class="ion-padding-start">
-        <p *ngIf="!archivosSeleccionados[0] && noticiaForm.touched">
-          Debe seleccionar una Imagen de Portada.
-        </p>
-      </ion-text>
-    </ion-list>
-
-    <ion-button
-      type="submit"
-      expand="block"
-      class="ion-margin-top"
-      [disabled]="estaGuardando || estaSubiendoImagen || noticiaForm.invalid">
-      <span *ngIf="!estaGuardando && !estaSubiendoImagen">Guardar Noticia</span>
-      <span *ngIf="estaSubiendoImagen">Subiendo Imágenes...</span>
-      <span *ngIf="estaGuardando && !estaSubiendoImagen">Guardando...</span>
-      <ion-spinner *ngIf="estaGuardando || estaSubiendoImagen" slot="end" name="dots"></ion-spinner>
-    </ion-button>
-
-  </form>
+      </section>
+    </div>
+  </div>
 </ion-content>

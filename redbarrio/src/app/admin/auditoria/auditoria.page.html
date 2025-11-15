@@ -1,90 +1,238 @@
-<ion-header class="rb-header">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
-    </ion-buttons>
-    <ion-title>Auditoría del Sistema</ion-title>
-  </ion-toolbar>
+<!-- ============================================================
+     HEADER — HERO REDBARRIO
+=============================================================== -->
+<ion-header class="rb-hero-header">
+  <div class="rb-hero-container">
+
+    <div class="rb-hero-info">
+      <div class="rb-hero-logo">
+        <img src="assets/icon/redbarrio.png" />
+      </div>
+
+      <div class="rb-hero-text">
+        <h1>RedBarrio</h1>
+        <p>{{ subtitulo }}</p>
+      </div>
+    </div>
+
+    <button class="rb-hero-back" type="button" (click)="goBack()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </button>
+
+  </div>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="auditoria-content">
-  <!-- 🔄 Refresher -->
+
+
+<!-- ============================================================
+     CONTENIDO
+=============================================================== -->
+<ion-content [fullscreen]="true" class="audit-content">
+
+  <!-- Refresh -->
   <ion-refresher slot="fixed" (ionRefresh)="cargarAuditoria($event)">
-    <ion-refresher-content
-      pullingText="Desliza para actualizar"
-      refreshingSpinner="crescent"
-      refreshingText="Actualizando..."
-    ></ion-refresher-content>
+    <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <!-- ✅ Lista de registros -->
-  <div class="list-container" *ngIf="!loading">
-    <ion-card *ngFor="let item of registros" class="registro-card">
-      <ion-card-header>
-        <ion-card-title>{{ item.accion | titlecase }}</ion-card-title>
+  <div class="audit-wrapper">
 
-        <!-- 📅 Fecha en hora local de Chile -->
-        <ion-card-subtitle>
-          {{ item.fecha | date:'dd/MM/yyyy HH:mm':'America/Santiago' }} — {{ item.tabla }}
-        </ion-card-subtitle>
-      </ion-card-header>
+    <!-- ========================================================
+         FILTRO DROPDOWN
+    ========================================================== -->
+    <div class="filtro-bar">
+      <div class="filtro-label">Filtrar por</div>
 
-      <ion-card-content>
-        <p><strong>Usuario:</strong> {{ item.nombre || 'Desconocido' }}</p>
+      <ion-select [(ngModel)]="filtroTabla" interface="popover" class="filtro-select">
+        <ion-select-option *ngFor="let opt of opcionesFiltro" [value]="opt.value">
+          {{ opt.label }}
+        </ion-select-option>
+      </ion-select>
+    </div>
 
-        <!-- 🔍 Detalle formateado -->
+
+    <!-- ================= LOADING ================= -->
+    <div class="loading" *ngIf="loading">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando registros...</p>
+    </div>
+
+
+    <!-- ================= EMPTY ================= -->
+    <div class="empty" *ngIf="!loading && registrosFiltrados.length === 0">
+      <ion-icon name="document-outline"></ion-icon>
+      <p>No hay registros para este filtro</p>
+    </div>
+
+
+
+    <!-- ============================================================
+         LISTADO DE REGISTROS
+    ================================================================ -->
+    <div class="audit-card" *ngFor="let item of registrosFiltrados">
+
+      <!-- ================= HEADER CARD ================= -->
+      <div class="audit-card-header">
+
+        <h3>{{ item.accion | titlecase }}</h3>
+
+        <div class="meta">
+          <ion-icon name="calendar-outline"></ion-icon>
+          <span>{{ item.fecha | date:'dd-MM-yyyy, HH:mm':'America/Santiago' }}</span>
+
+          <span class="sep">—</span>
+
+          <ion-icon [name]="getIconoTabla(item.tabla)"></ion-icon>
+          <span>{{ item.tabla }}</span>
+        </div>
+
+      </div>
+
+
+
+      <!-- ================= BODY CARD ================= -->
+      <div class="audit-card-body">
+
+        <!-- ================= USUARIO ================= -->
+        <div class="user-block">
+          <img class="avatar" [src]="getFotoPerfil(item.url_foto_perfil)" (error)="onAvatarError($event)" />
+
+          <div class="user-info">
+            <p class="label">Usuario</p>
+            <p class="name">{{ item.nombre || 'Desconocido' }}</p>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+
+
+        <!-- ============================================================
+             DETALLE ORDENADO
+        ================================================================ -->
         <div class="detalle">
-          <ng-container *ngFor="let key of orderedDetalleKeys(item.detalle)">
-            <p [attr.key]="key">
-              <strong>{{ (key + '') | titlecase }}:</strong>
 
-              <!-- 🧩 Si es un array -->
-              <ng-container *ngIf="isArray(item.detalle[key]); else notArray">
-                <ul>
-                  <li *ngFor="let op of item.detalle[key]">
-                    <ng-container *ngIf="op.titulo; else rawObj">
-                      {{ op.titulo }}
-                      <span *ngIf="op.descripcion"> – {{ op.descripcion }}</span>
-                      <span *ngIf="op.image_url"> 📷</span>
-                    </ng-container>
-                    <ng-template #rawObj>{{ op | json }}</ng-template>
-                  </li>
-                </ul>
+          <div class="detalle-field" *ngFor="let key of orderedDetalleKeys(item.detalle)">
+
+            <!-- Título del campo -->
+            <p class="detalle-title">
+              <strong>{{ normalizeKey(key) | titlecase }}:</strong>
+            </p>
+
+
+            <!-- VALOR -->
+            <div class="detalle-value">
+
+
+              <!-- ======================================================
+                   OBJETO BONITO
+              ======================================================== -->
+              <ng-container *ngIf="isObject(item.detalle[key])">
+
+                <div class="obj-block">
+
+                  <div class="obj-row" *ngFor="let k of (item.detalle[key] | keyvalue)">
+                    <span class="obj-key">{{ normalizeKey(k.key + '') | titlecase }}:</span>
+
+                    <span class="obj-val">
+
+                      <!-- Si es Fecha -->
+                      <ng-container *ngIf="isFecha(k.value); else normalValue">
+                        {{ (k.value + '') | date:'dd-MM-yyyy HH:mm':'America/Santiago' }}
+                      </ng-container>
+
+                      <!-- Valor normal -->
+                      <ng-template #normalValue>
+                        {{ k.value }}
+                      </ng-template>
+
+                    </span>
+                  </div>
+
+                </div>
+
               </ng-container>
 
-              <!-- 🧩 Si NO es un array -->
-              <ng-template #notArray>
-                <!-- Si parece una fecha ISO -->
-                <ng-container *ngIf="isFecha(item.detalle[key]); else otherType">
-                  {{ item.detalle[key] | date:'dd/MM/yyyy HH:mm:ss':'America/Santiago' }}
-                </ng-container>
-                <ng-template #otherType>
-                  <!-- Si es un objeto -->
-                  <ng-container *ngIf="item.detalle[key] instanceof Object; else plain">
-                    <pre>{{ item.detalle[key] | json }}</pre>
-                  </ng-container>
-                  <!-- Si es texto o número -->
-                  <ng-template #plain>
-                    {{ item.detalle[key] }}
-                  </ng-template>
-                </ng-template>
-              </ng-template>
-            </p>
-          </ng-container>
+
+
+
+
+              <!-- LISTA DE OPCIONES (CREAR VOTACIÓN, FORMATO MEJORADO) -->
+              <ng-container *ngIf="key === 'opciones' && isArray(item.detalle[key])">
+
+                <div class="opciones-bloque">
+                  <div class="opcion-item" *ngFor="let op of item.detalle[key]">
+
+                    <div class="opcion-titulo-strong">
+                      {{ op.titulo }}
+                    </div>
+
+                    <div class="opcion-descripcion" *ngIf="op.descripcion">
+                      {{ op.descripcion }}
+                    </div>
+
+                  </div>
+                </div>
+
+              </ng-container>
+
+              <!-- ======================================================
+                   RESULTADOS DE VOTACIÓN
+              ======================================================== -->
+              <ng-container *ngIf="key === 'resultados' && isArray(item.detalle[key])">
+
+                <div class="resultado" *ngFor="let r of item.detalle[key]">
+
+                  <div class="res-header">
+                    <span>{{ r.opcion }}</span>
+                    <span>{{ r.votos }} votos ({{ r.porcentaje }}%)</span>
+                  </div>
+
+                  <div class="res-bar">
+                    <div class="res-fill" [style.width.%]="r.porcentaje"></div>
+                  </div>
+
+                </div>
+
+              </ng-container>
+
+
+
+
+              <!-- ======================== GANADOR ======================== -->
+              <ng-container *ngIf="key === 'ganador'">
+                <div class="ganador-chip" [ngClass]="{ empate: item.detalle[key] === 'Empate' }">
+                  <span *ngIf="item.detalle[key] !== 'Empate'">🏆</span>
+                  {{ item.detalle[key] }}
+                </div>
+              </ng-container>
+
+
+
+
+              <!-- ======================================================
+                   TEXTO SIMPLE (todo lo demás)
+              ======================================================== -->
+              <ng-container *ngIf="
+                !isObject(item.detalle[key]) &&
+                key !== 'resultados' &&
+                key !== 'ganador' &&
+                key !== 'opciones'
+              ">
+                <span class="detalle-simple">
+                  {{ item.detalle[key] }}
+                </span>
+              </ng-container>
+
+
+            </div>
+          </div>
+
         </div>
-      </ion-card-content>
-    </ion-card>
+
+      </div>
+
+    </div>
+
   </div>
 
-  <!-- 🌀 Cargando -->
-  <div *ngIf="loading" class="loading">
-    <ion-spinner name="crescent"></ion-spinner>
-  </div>
-
-  <!-- 🚫 Sin registros -->
-  <div class="empty" *ngIf="!loading && (!registros || !registros.length)">
-    <ion-icon name="document-outline" color="medium" size="large"></ion-icon>
-    <h2>No hay registros de auditoría</h2>
-    <p>Las acciones del sistema aparecerán aquí automáticamente.</p>
-  </div>
 </ion-content>
