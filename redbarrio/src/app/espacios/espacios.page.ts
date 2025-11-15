@@ -17,6 +17,7 @@ import { SupabaseService } from 'src/app/services/supabase.service';
 import { Browser } from '@capacitor/browser';
 import { environment } from 'src/environments/environment';
 import { addIcons } from 'ionicons';
+
 import {
   chevronBackOutline,
   calendarOutline,
@@ -37,6 +38,7 @@ import {
   basketballOutline,
   gridOutline,
   homeOutline,
+  alertCircleOutline,
 } from 'ionicons/icons';
 
 type EspacioUI = Espacio & {
@@ -52,12 +54,54 @@ type EspacioUI = Espacio & {
   imports: [IonicModule, CommonModule, FormsModule, RouterModule],
 })
 export class EspaciosPage implements OnInit {
+
+
+    // =========================================================
+  // SERVICIOS (UI)
+  // =========================================================
+
+  nombreServicio(code: string): string {
+    const map: Record<string, string> = {
+      mesas_sillas: 'Mesas y sillas',
+      wifi: 'WiFi',
+      cocina: 'Cocina equipada',
+      banos: 'Baños',
+      sonido: 'Sistema de sonido',
+      iluminacion: 'Iluminación LED',
+      parrilla: 'Parrilla / Quincho',
+      pizarra: 'Pizarra',
+      proyector: 'Proyector',
+      aire_acondicionado: 'Aire acondicionado',
+      balones: 'Balones disponibles',
+      graderias: 'Graderías',
+    };
+    return map[code] || code;
+  }
+
+  iconoServicio(code: string): string {
+    const map: Record<string, string> = {
+      mesas_sillas: 'cube-outline',
+      wifi: 'wifi-outline',
+      cocina: 'restaurant-outline',
+      banos: 'water-outline',
+      sonido: 'volume-high-outline',
+      iluminacion: 'bulb-outline',
+      parrilla: 'flame-outline',
+      pizarra: 'create-outline',
+      proyector: 'videocam-outline',
+      aire_acondicionado: 'snow-outline',
+      balones: 'basketball-outline',
+      graderias: 'grid-outline',
+    };
+    return map[code] ?? 'checkmark-outline';
+  }
+
+
   espacios: EspacioUI[] = [];
   isLoading = false;
   error: string | null = null;
   isAdmin = false;
 
-  // 🔹 Estado de selección + formulario (tipo Figma)
   espacioSeleccionadoId: number | null = null;
 
   fechaArriendo = '';
@@ -65,12 +109,7 @@ export class EspaciosPage implements OnInit {
   horaFin = '';
   motivo = '';
 
-  // Mapeo de tipos
-  private tiposEspacioMap = new Map<number, string>([
-    [1, 'Cancha'],
-    [2, 'Sede'],
-    [3, 'Parque'],
-  ]);
+  errorHorario: string | null = null;
 
   constructor(
     private espaciosService: EspaciosService,
@@ -87,8 +126,7 @@ export class EspaciosPage implements OnInit {
       'people-outline': peopleOutline,
       'location-outline': locationOutline,
       'checkmark-outline': checkmarkOutline,
-
-      // 🔹 Iconos usados en los servicios
+      'alert-circle-outline': alertCircleOutline,
       'cube-outline': cubeOutline,
       'wifi-outline': wifiOutline,
       'restaurant-outline': restaurantOutline,
@@ -112,7 +150,7 @@ export class EspaciosPage implements OnInit {
 
   ionViewWillEnter() {
     this.isLoading = true;
-    setTimeout(() => this.cargar(), 600);
+    setTimeout(() => this.cargar(), 500);
   }
 
   private async cargar() {
@@ -122,149 +160,117 @@ export class EspaciosPage implements OnInit {
   async checkUserRole() {
     try {
       this.isAdmin = await this.authService.checkIfAdmin();
-    } catch (e) {
-      console.error('No se pudo determinar el rol del usuario:', e);
+    } catch {
       this.isAdmin = false;
     }
   }
 
   async cargarEspacios(event?: any) {
-    if (!event) {
-      this.isLoading = true;
-      this.error = null;
-    }
+    if (!event) this.isLoading = true;
 
     try {
-      this.espacios =
-        (await this.espaciosService.obtenerEspacios()) as EspacioUI[];
+      this.espacios = (await this.espaciosService.obtenerEspacios()) as EspacioUI[];
     } catch (e: any) {
-      this.error = e.message || 'Error desconocido al cargar los espacios.';
+      this.error = e.message;
       this.espacios = [];
     } finally {
       this.isLoading = false;
-      if (event) {
-        event.target.complete();
+      if (event) event.target.complete();
+    }
+  }
+
+  seleccionarEspacio(espacio: EspacioUI) {
+    this.errorHorario = null;
+    this.espacioSeleccionadoId =
+      this.espacioSeleccionadoId === espacio.id_espacio ? null : espacio.id_espacio;
+  }
+
+  // =========================================================
+  //  🔥 VALIDAR HORARIO — SIEMPRE COMPARAR EN UTC
+  // =========================================================
+  async validarHorario() {
+    this.errorHorario = null;
+
+    if (!this.espacioSeleccionadoId) return;
+    if (!this.fechaArriendo || !this.horaInicio || !this.horaFin) return;
+
+    // Convertir ingreso del usuario → UTC
+    const inicioLocal = new Date(`${this.fechaArriendo}T${this.horaInicio}`);
+    const finLocal = new Date(`${this.fechaArriendo}T${this.horaFin}`);
+
+    const inicioUTC = new Date(inicioLocal.getTime() - inicioLocal.getTimezoneOffset() * 60000);
+    const finUTC = new Date(finLocal.getTime() - finLocal.getTimezoneOffset() * 60000);
+
+    // Validaciones básicas
+    if (inicioUTC >= finUTC) {
+      this.errorHorario = 'La hora de inicio debe ser menor a la hora de fin.';
+      return;
+    }
+
+    const diffHoras = (finUTC.getTime() - inicioUTC.getTime()) / 3600000;
+
+    if (diffHoras < 1) {
+      this.errorHorario = 'El arriendo debe durar mínimo 1 hora.';
+      return;
+    }
+
+    if (diffHoras > 3) {
+      this.errorHorario = 'El arriendo no puede exceder 3 horas.';
+      return;
+    }
+
+    // ================================
+    // CONSULTAR LA VISTA DE RESERVAS PAGADAS (ya en UTC)
+    // ================================
+    const { data, error } = await this.supabaseService.client
+      .from('vw_reservas_pagadas')
+      .select('*')
+      .eq('id_espacio', this.espacioSeleccionadoId);
+
+    if (error) {
+      console.error('Error obteniendo reservas:', error);
+      this.errorHorario = 'No se pudo validar disponibilidad.';
+      return;
+    }
+
+    for (const r of data || []) {
+      const rInicio = new Date(r.fecha_inicio); // UTC ya
+      const rFin = new Date(r.fecha_fin);
+
+      // Comparar en UTC (ambos lados iguales)
+      if (inicioUTC < rFin && finUTC > rInicio) {
+        this.errorHorario = 'Este espacio ya está reservado en ese horario.';
+        return;
       }
     }
+
+    this.errorHorario = null;
   }
 
-  // 🔹 Seleccionar / deseleccionar espacio
-  seleccionarEspacio(espacio: EspacioUI) {
-    if (this.espacioSeleccionadoId === espacio.id_espacio) {
-      this.espacioSeleccionadoId = null;
-      return;
-    }
-    this.espacioSeleccionadoId = espacio.id_espacio;
-  }
-
-  // 🔹 Mapeo de servicios → nombre bonito
-  nombreServicio(code: string): string {
-    const map: Record<string, string> = {
-      mesas_sillas: 'Mesas y sillas',
-      wifi: 'WiFi',
-      cocina: 'Cocina equipada',
-      banos: 'Baños',
-      sonido: 'Sistema de sonido',
-      iluminacion: 'Iluminación LED',
-      parrilla: 'Parrilla / Quincho',
-      pizarra: 'Pizarra',
-      proyector: 'Proyector',
-      aire_acondicionado: 'Aire acondicionado',
-      balones: 'Balones disponibles',
-      graderias: 'Graderías',
-    };
-    return map[code] || code;
-  }
-
-  // 🔹 Mapeo de servicios → ícono Ionic
-  iconoServicio(code: string): string {
-    switch (code) {
-      case 'mesas_sillas':
-        return 'cube-outline';
-      case 'wifi':
-        return 'wifi-outline';
-      case 'cocina':
-        return 'restaurant-outline';
-      case 'banos':
-        return 'water-outline';
-      case 'sonido':
-        return 'volume-high-outline';
-      case 'iluminacion':
-        return 'bulb-outline';
-      case 'parrilla':
-        return 'flame-outline';
-      case 'pizarra':
-        return 'create-outline';
-      case 'proyector':
-        return 'videocam-outline';
-      case 'aire_acondicionado':
-        return 'snow-outline';
-      case 'balones':
-        return 'basketball-outline';
-      case 'graderias':
-        return 'grid-outline';
-      default:
-        return 'checkmark-outline';
-    }
-  }
-
-  // 🔹 Helper de alerta (equivalente a mostrarAlerta)
-  private async mostrarAlerta(header: string, message: string) {
-    const alert = await this.alertCtrl.create({
-      header,
-      message,
-      buttons: ['OK'],
-    });
-    await alert.present();
-  }
-
-  /** 🔥 Enviar solicitud desde la vista de ESPACIOS y procesar pago (misma lógica que enviarSolicitud) */
+  // =========================================================
+  //  SOLICITAR ARRIENDO
+  // =========================================================
   async solicitarArriendo() {
-    // ✅ Validaciones equivalentes al "this.solicitudForm.invalid"
-    if (!this.espacioSeleccionadoId) {
-      await this.mostrarAlerta('Error', 'Por favor selecciona un espacio.');
+    if (this.errorHorario) {
+      this.mostrarAlerta('Horario no disponible', this.errorHorario);
       return;
     }
-    if (!this.fechaArriendo) {
-      await this.mostrarAlerta('Error', 'Por favor selecciona una fecha.');
+
+    if (!this.espacioSeleccionadoId || !this.fechaArriendo || !this.horaInicio || !this.horaFin) {
+      this.mostrarAlerta('Error', 'Completa todos los campos.');
       return;
     }
-    if (!this.horaInicio || !this.horaFin) {
-      await this.mostrarAlerta('Error', 'Por favor selecciona el horario.');
-      return;
-    }
+
     if (!this.motivo.trim()) {
-      await this.mostrarAlerta(
-        'Error',
-        'Por favor describe el motivo del arriendo.'
-      );
+      this.mostrarAlerta('Error', 'Debe ingresar un motivo.');
       return;
     }
-
-    const espacio = this.espacios.find(
-      (e) => e.id_espacio === this.espacioSeleccionadoId
-    );
-
-    // 🔹 Construimos un formData equivalente al de solicitudForm
-    const fecha = this.fechaArriendo; // 'YYYY-MM-DD'
-    const evento_inicio = `${fecha}T${this.horaInicio}:00`;
-    const evento_fin = `${fecha}T${this.horaFin}:00`;
-
-    const formData: any = {
-      id_espacio: this.espacioSeleccionadoId,
-      evento_titulo: espacio?.nombre || 'Arriendo de espacio comunitario',
-      evento_descripcion: this.motivo,
-      evento_inicio,
-      evento_fin,
-    };
-
-    // ⬇️⬇️ LÓGICA COPIADA de enviarSolicitud (sin cambios de flujo) ⬇️⬇️
 
     const session = await this.authService.session();
-    const idUsuario = session?.user?.id || null;
+    const idUsuario = session?.user?.id;
 
     if (!idUsuario) {
-      this.mostrarAlerta('Error', 'No se pudo obtener el usuario autenticado.');
+      this.mostrarAlerta('Error', 'No se pudo obtener el usuario.');
       return;
     }
 
@@ -274,154 +280,122 @@ export class EspaciosPage implements OnInit {
     });
     await loading.present();
 
+    // Guardar siempre en UTC
+    const inicioLocal = new Date(`${this.fechaArriendo}T${this.horaInicio}`);
+    const finLocal = new Date(`${this.fechaArriendo}T${this.horaFin}`);
+
+    const inicioUTC = new Date(inicioLocal.getTime() - inicioLocal.getTimezoneOffset() * 60000);
+    const finUTC = new Date(finLocal.getTime() - finLocal.getTimezoneOffset() * 60000);
+
+    const evento_inicio = inicioUTC.toISOString();
+    const evento_fin = finUTC.toISOString();
+
     try {
-      // 1️⃣ Crear evento
-      const { data: eventoData, error: eventoError } =
+      // Crear evento
+      const { data: evento, error: errEvento } =
         await this.supabaseService.client
           .from('evento')
           .insert([
             {
-              titulo: formData.evento_titulo,
-              descripcion: formData.evento_descripcion,
-              fecha_inicio: formData.evento_inicio,
-              fecha_fin: formData.evento_fin,
+              titulo: 'Arriendo de espacio',
+              descripcion: this.motivo,
+              fecha_inicio: evento_inicio,
+              fecha_fin: evento_fin,
             },
           ])
           .select()
           .single();
+      if (errEvento) throw errEvento;
 
-      if (eventoError) throw eventoError;
-
-      // 2️⃣ Crear reserva
-      const espacioId = Number(formData.id_espacio);
-      const { data: reservaData, error: reservaError } =
+      // Crear reserva
+      const { data: reserva, error: errReserva } =
         await this.supabaseService.client
           .from('reserva')
           .insert([
             {
-              id_espacio: espacioId,
-              id_evento: eventoData.id_evento,
+              id_espacio: this.espacioSeleccionadoId,
+              id_evento: evento.id_evento,
               id_auth: idUsuario,
-              fecha: new Date().toISOString(),
-              creado_en: new Date().toISOString(),
             },
           ])
           .select()
           .single();
+      if (errReserva) throw errReserva;
 
-      if (reservaError) throw reservaError;
-
-      // 3️⃣ Generar orden de pago local
-      const { data: ordenData, error: ordenError } =
+      // Crear orden pago
+      const { error: errOrden } =
         await this.supabaseService.client
           .from('orden_pago')
           .insert([
             {
               id_auth: idUsuario,
-              id_evento: eventoData.id_evento,
-              id_espacio: espacioId,
+              id_evento: evento.id_evento,
+              id_espacio: this.espacioSeleccionadoId,
               monto: 1500,
               estado: 'pendiente',
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
             },
           ])
           .select()
           .single();
+      if (errOrden) throw errOrden;
 
-      if (ordenError) throw ordenError;
-
-      // 🧾 Registrar acción en auditoría
-      await this.supabaseService.registrarAuditoria(
-        'enviar solicitud de reserva',
-        'reserva',
-        {
-          evento: {
-            id_evento: eventoData.id_evento,
-            titulo: eventoData.titulo,
-            fecha_inicio: eventoData.fecha_inicio,
-            fecha_fin: eventoData.fecha_fin,
-          },
-          reserva: {
-            id_reserva: reservaData.id_reserva,
-            id_espacio: espacioId,
-            fecha: reservaData.fecha,
-          },
-          orden_pago: {
-            id_orden: ordenData.id_orden,
-            monto: ordenData.monto,
-            estado: ordenData.estado,
-          },
-          fecha_solicitud: new Date().toISOString(),
-        }
-      );
-
-      // 4️⃣ Simular pago Transbank
+      // Simular Transbank
       const response = await fetch(
         `${environment.supabaseUrl}/functions/v1/transbank-simular`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            id_reserva: reservaData.id_reserva,
+            id_reserva: reserva.id_reserva,
             monto: 1500,
-            descripcion: `Pago arriendo espacio #${espacioId}`,
+            descripcion: `Pago arriendo espacio #${this.espacioSeleccionadoId}`,
           }),
         }
       );
 
-      if (!response.ok) throw new Error('Error al iniciar simulación de pago');
+      const sim = await response.json();
 
-      const simData = await response.json();
-
-      if (simData.url && simData.token) {
+      if (sim.url && sim.token) {
         await Browser.open({
-          url: `${simData.url}?token_ws=${simData.token}`,
+          url: `${sim.url}?token_ws=${sim.token}`,
           presentationStyle: 'fullscreen',
         });
-      } else {
-        throw new Error('No se recibió token o URL de Transbank.');
       }
 
-      await loading.dismiss();
+      loading.dismiss();
 
-      // Opcional: limpiar formulario y selección
+      // Reset
       this.espacioSeleccionadoId = null;
       this.fechaArriendo = '';
       this.horaInicio = '';
       this.horaFin = '';
       this.motivo = '';
-    } catch (error) {
-      console.error('Error al enviar solicitud:', error);
-      await loading.dismiss();
-      this.mostrarAlerta(
-        'Error',
-        'No se pudo completar la reserva ni el pago.'
-      );
+
+    } catch (e) {
+      console.error('Error al solicitar arriendo:', e);
+      loading.dismiss();
+      this.mostrarAlerta('Error', 'No se pudo completar la solicitud.');
     }
   }
 
-  getTipoNombre(tipoId: number | string | undefined | null): string {
-    if (tipoId === undefined || tipoId === null) return 'N/A';
-    const idNumerico = parseInt(tipoId.toString(), 10);
-    if (isNaN(idNumerico)) return String(tipoId);
-    return this.tiposEspacioMap.get(idNumerico) || 'Desconocido';
-  }
-
-  goToDetail(id: number) {
-    this.router.navigateByUrl(`/espacios/${id}`);
+  // =========================================================
+  // UTILIDADES
+  // =========================================================
+  async mostrarAlerta(h: string, m: string) {
+    const alert = await this.alertCtrl.create({
+      header: h,
+      message: m,
+      buttons: ['OK'],
+    });
+    await alert.present();
   }
 
   irACrearEspacio() {
     this.router.navigateByUrl('espacio/crear');
   }
 
-  async handleRefresh(ev: CustomEvent) {
-    try {
-      await this.cargarEspacios();
-    } finally {
-      (ev.target as HTMLIonRefresherElement)?.complete?.();
-    }
+  handleRefresh(ev: any) {
+    this.cargarEspacios().finally(() => ev.target.complete());
   }
 
   goBack() {
@@ -430,13 +404,8 @@ export class EspaciosPage implements OnInit {
 
   formatearPrecio(precio: string): string {
     if (!precio) return '';
-
-    // Elimina caracteres que no sean números
     const soloNumero = precio.replace(/\D/g, '');
-
-    // Formatea con puntos como miles
     const conMiles = soloNumero.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
     return `$${conMiles}/hora`;
   }
 }
