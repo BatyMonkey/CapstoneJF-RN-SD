@@ -47,7 +47,6 @@ import {
   imports: [
     CommonModule,
     IonicModule,
-    RouterOutlet,
     RouterLink,        // 👈 agregado
     RouterLinkActive,  // 👈 agregado
     ChatbotComponent,

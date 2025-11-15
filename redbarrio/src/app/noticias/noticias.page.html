@@ -1,7 +1,6 @@
-<!-- HERO HEADER (igual al módulo Proyectos) -->
+<!-- HERO HEADER -->
 <ion-header class="rb-hero-header" slot="fixed">
   <div class="rb-hero-container">
-
     <div class="rb-hero-info">
       <div class="rb-hero-logo">
         <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
@@ -12,15 +11,11 @@
         <p>Todas las Noticias</p>
       </div>
     </div>
-
-    <!-- No hay botón de back aquí (correcto) -->
-
   </div>
 </ion-header>
 
 <!-- CONTENIDO -->
 <ion-content class="news-page" [fullscreen]="true">
-
   <!-- LOADING -->
   <div class="loading" *ngIf="estaCargando">
     <ion-spinner name="crescent"></ion-spinner>
@@ -35,14 +30,12 @@
 
   <!-- LISTADO -->
   <div class="news-wrapper" *ngIf="!estaCargando && noticias.length > 0">
-
     <ion-card
       class="news-card"
       *ngFor="let n of noticias"
       (click)="verDetalle(n.id)"
     >
-
-      <!-- Imagen -->
+      <!-- Imagen con badge encima -->
       <div class="news-image-container">
         <img
           *ngIf="n.url_foto && n.url_foto.length > 0"
@@ -50,18 +43,18 @@
           alt="Imagen Noticia"
         />
 
-        <!-- Badge -->
+        <!-- Badge redonda SOBRE la foto -->
         <div class="badge" [ngClass]="getBadgeClass(n)">
           <ion-icon [name]="getBadgeIcon(n)"></ion-icon>
         </div>
       </div>
 
-      <!-- Texto -->
+      <!-- Contenido de la tarjeta -->
       <div class="news-content">
         <h3 class="news-title">{{ n.titulo }}</h3>
 
         <p class="news-excerpt">
-          {{ n.parrafos?.[0] || 'Sin descripción.' }}
+          {{ n.parrafos && n.parrafos.length ? n.parrafos[0] : 'Sin descripción.' }}
         </p>
 
         <div class="news-footer">
@@ -69,9 +62,6 @@
           <span class="author">Por {{ n.nombre_autor || 'Directiva' }}</span>
         </div>
       </div>
-
     </ion-card>
-
   </div>
-
 </ion-content>

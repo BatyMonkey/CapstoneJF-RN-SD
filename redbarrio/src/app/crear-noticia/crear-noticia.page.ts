@@ -1,151 +1,146 @@
 // src/app/crear-noticia/crear-noticia.page.ts
 
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-  FormArray,
-  FormControl,
-} from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-import { NoticiasService } from '../services/noticias';
+  IonicModule,
+  NavController,
+  ToastController,
+  LoadingController,
+  AlertController,
+  IonicSafeString,
+} from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import {
+  chevronBackOutline,
+  addOutline,
+  closeOutline,
+  imageOutline,
+  sendOutline,
+  eyeOutline,
+} from 'ionicons/icons';
 
-// Vuelve la inicialización directa del cliente
-import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
-import { environment } from 'src/environments/environment';
 import { SupabaseService } from 'src/app/services/supabase.service';
+import { NoticiasService } from 'src/app/services/noticias';
+import { SupabaseClient, User } from '@supabase/supabase-js';
 
-import { IonicModule } from '@ionic/angular';
-
-// Constantes de límites
 const IMAGES_BUCKET = 'noticias-bucket';
-const MAX_PARRAFOS = 6;
+const MAX_PARRAFOS = 5;
 const MAX_IMAGENES = 5;
 
+type NewsCategory = 'urgent' | 'event' | 'info' | 'success';
+
+interface Paragraph {
+  id: number;
+  text: string;
+}
+
 @Component({
+  standalone: true,
   selector: 'app-crear-noticia',
   templateUrl: './crear-noticia.page.html',
   styleUrls: ['./crear-noticia.page.scss'],
-  standalone: true,
-  imports: [CommonModule, IonicModule, RouterModule, ReactiveFormsModule],
+  imports: [CommonModule, IonicModule, FormsModule],
 })
 export class CrearNoticiaPage implements OnInit {
-  public supabase: SupabaseClient;
+  // ===== STATE =====
+  title = '';
+  paragraphs: Paragraph[] = [];
+  images: string[] = [];
 
-  noticiaForm!: FormGroup;
+  category: NewsCategory = 'info';
+
+  archivosSeleccionados: (File | null)[] = new Array(MAX_IMAGENES).fill(null);
+  estaSubiendoImagen = false;
   estaGuardando = false;
 
+  supabase: SupabaseClient;
   usuarioAutenticado: User | null = null;
   nombreAutor: string | null = null;
 
-  // Array para manejar 5 posibles selecciones de archivos (inicializado con nulls)
-  archivosSeleccionados: (File | null)[] = new Array(MAX_IMAGENES).fill(null);
-  estaSubiendoImagen = false;
-
-  MAX_PARRAFOS = MAX_PARRAFOS;
-  MAX_IMAGENES = MAX_IMAGENES;
-
   constructor(
-    private fb: FormBuilder,
-    private router: Router,
+    private navCtrl: NavController,
+    private supabaseService: SupabaseService,
     private noticiasService: NoticiasService,
-    private supabaseService: SupabaseService
+    private toastCtrl: ToastController,
+    private loadingCtrl: LoadingController,
+    private alertCtrl: AlertController
   ) {
-    // Inicialización directa del cliente (versión funcional)
     this.supabase = this.supabaseService.client;
-  }
 
-  // --- GETTERS TIPADOS PARA EL HTML ---
-  get parrafosFormArray(): FormArray<FormControl<string | null>> {
-    // Obtiene el FormArray de párrafos
-    return this.noticiaForm.get('parrafos') as FormArray<
-      FormControl<string | null>
-    >;
+    addIcons({
+      'chevron-back-outline': chevronBackOutline,
+      'add-outline': addOutline,
+      'close-outline': closeOutline,
+      'image-outline': imageOutline,
+      'send-outline': sendOutline,
+      'eye-outline': eyeOutline,
+    });
   }
-
-  get parrafoControls(): FormControl<string | null>[] {
-    // Obtiene los controles individuales
-    return this.parrafosFormArray.controls;
-  }
-
-  // ------------------------------------
 
   async ngOnInit() {
-    this.noticiaForm = this.fb.group({
-      titulo: ['', [Validators.required, Validators.maxLength(100)]],
-      parrafos: this.fb.array([]), // Array dinámico para los párrafos
-    });
-
-    // Inicializa el formulario con el párrafo obligatorio
-    this.agregarParrafo(true);
-    this.noticiaForm.reset();
-
-    // Obtener el usuario y el nombre del autor
+    // Párrafo inicial
+    this.addParagraph();
     await this.inicializarUsuarioYAutor();
   }
 
-  // --- Helpers para Párrafos ---
-
-  crearParrafoControl(esObligatorio: boolean = false): FormControl {
-    const validators = esObligatorio ? [Validators.required] : [];
-    // Inicializa el control con null
-    return new FormControl<string | null>(null, validators) as FormControl;
+  // ============================
+  // NAV
+  // ============================
+  goBack() {
+    this.navCtrl.back();
   }
 
-  agregarParrafo(esObligatorio: boolean = false) {
-    if (this.parrafosFormArray.length < MAX_PARRAFOS) {
-      this.parrafosFormArray.push(this.crearParrafoControl(esObligatorio));
-    }
+  // ============================
+  // ALERTA ESTILO ACCIÓN
+  // ============================
+  async mostrarAlertaAccion(titulo: string, mensajeHtml: string) {
+    const alerta = await this.alertCtrl.create({
+      header: titulo,
+      message: new IonicSafeString(mensajeHtml),
+      mode: 'ios',
+      cssClass: 'rb-action-alert',
+      buttons: [
+        {
+          text: 'Cerrar',
+          role: 'cancel',
+        },
+      ],
+    });
+
+    await alerta.present();
+    await alerta.onDidDismiss();
   }
 
-  quitarParrafo(index: number) {
-    // Debe haber al menos un párrafo (el obligatorio)
-    if (this.parrafosFormArray.length > 1) {
-      this.parrafosFormArray.removeAt(index);
-
-      // Si el elemento eliminado era el primero, el nuevo índice 0 debe ser obligatorio
-      if (index === 0 && this.parrafosFormArray.length > 0) {
-        this.parrafosFormArray.at(0).setValidators([Validators.required]);
-        this.parrafosFormArray.at(0).updateValueAndValidity();
-      }
-    }
-  }
-
-  // --- Lógica de Usuario ---
-
+  // ============================
+  // USUARIO / AUTOR
+  // ============================
   async inicializarUsuarioYAutor() {
-    // Usamos el cliente para obtener el usuario
     const {
       data: { user },
     } = await this.supabase.auth.getUser();
     this.usuarioAutenticado = user;
 
     if (!user) {
-      // Intentamos usar el perfil forzado persistido localmente (modo desarrollo)
       try {
         const perfilLocal = this.noticiasService.getUsuarioForzado?.() ?? null;
         if (perfilLocal) {
-          // Construimos un objeto minimal de User con el id esperado por el resto del código
           this.usuarioAutenticado = {
-            id: perfilLocal.id_auth || perfilLocal.user_id,
+            id: (perfilLocal.id_auth || perfilLocal.user_id) as string,
           } as any;
           this.nombreAutor = perfilLocal.nombre || 'Autor Desconocido';
           return;
         }
       } catch {
-        // ignore and fall through to redirect
+        // ignore
       }
 
-      // Redirige al login si no hay usuario ni perfil forzado
-      this.router.navigate(['/login']);
+      this.navCtrl.navigateRoot('/login');
       return;
     }
 
     try {
-      // Asume que la tabla 'usuario' tiene la columna 'user_id' para el enlace
       const { data: perfil, error } = await this.supabase
         .from('usuario')
         .select('nombre')
@@ -154,221 +149,265 @@ export class CrearNoticiaPage implements OnInit {
 
       if (error && error.code !== 'PGRST116') throw error;
       this.nombreAutor = perfil?.nombre || 'Autor Desconocido';
-    } catch (err) {
+    } catch {
       this.nombreAutor = 'Autor Desconocido';
     }
   }
 
-  // --- Manejo de Múltiples Archivos ---
+  // ============================
+  // PÁRRAFOS
+  // ============================
+  private crearParrafo(): Paragraph {
+    return {
+      id: Date.now() + Math.floor(Math.random() * 1000),
+      text: '',
+    };
+  }
 
-  onFileSelected(event: any, index: number) {
-    const file: File = event.target.files[0];
-    if (file) {
-      this.archivosSeleccionados[index] = file;
-    } else {
-      this.archivosSeleccionados[index] = null;
+  addParagraph() {
+    if (this.paragraphs.length < MAX_PARRAFOS) {
+      this.paragraphs = [...this.paragraphs, this.crearParrafo()];
     }
   }
 
-  // --- Subida de Múltiples Imágenes ---
+  removeParagraph(index: number) {
+    if (this.paragraphs.length <= 1) return;
+    this.paragraphs = this.paragraphs.filter((_, i) => i !== index);
+  }
 
-  async subirImagenes(): Promise<string[] | null> {
-    // Verificamos que haya un usuario autenticado real en Supabase.
+  trackByParagraph(index: number, item: Paragraph) {
+    return item.id;
+  }
+
+  // ============================
+  // MANEJO DE ARCHIVOS / IMÁGENES
+  // ============================
+  onFilesSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const files = Array.from(input.files);
+
+    for (const file of files) {
+      const usados = this.archivosSeleccionados.filter((f) => f !== null).length;
+      if (usados >= MAX_IMAGENES) break;
+
+      const slotIndex = this.archivosSeleccionados.findIndex((f) => f === null);
+      const idx = slotIndex === -1 ? usados : slotIndex;
+      this.archivosSeleccionados[idx] = file;
+    }
+
+    this.rebuildImagePreviews();
+    input.value = '';
+  }
+
+  private rebuildImagePreviews() {
+    // Revocación de URLs antiguas opcional si quieres evitar fugas, aquí simple
+    this.images = this.archivosSeleccionados
+      .filter((f): f is File => !!f)
+      .map((file) => URL.createObjectURL(file));
+  }
+
+  removeImage(index: number) {
+    const usados = this.archivosSeleccionados
+      .map((f, i) => ({ f, i }))
+      .filter((x) => x.f);
+
+    if (index < 0 || index >= usados.length) return;
+
+    const realIndex = usados[index].i;
+    this.archivosSeleccionados[realIndex] = null;
+    this.rebuildImagePreviews();
+  }
+
+  // ============================
+  // SUBIDA A SUPABASE STORAGE
+  // ============================
+  private async subirImagenes(): Promise<string[] | null> {
     const fullSession = await this.supabaseService.auth.getSession();
     const session = fullSession.data.session;
     const user = this.usuarioAutenticado;
 
-    // Diagnostics: log session, forced profile and user so we can see why uploads fail at runtime
-    try {
-      const perfilForzado = this.noticiasService?.getUsuarioForzado?.() ?? null;
-      console.debug('[crear-noticia] Supabase getSession result:', fullSession);
-      console.debug('[crear-noticia] usuarioAutenticado:', user);
-      console.debug('[crear-noticia] perfil forzado (local):', perfilForzado);
-    } catch (e) {
-      console.debug('[crear-noticia] error al leer perfil forzado:', e);
-    }
-
     if (!session) {
-      // Si no hay sesión, indicamos claramente que las subidas requieren inicio de sesión real.
-      console.warn(
-        'Intento de subir imágenes sin sesión Supabase activa. Perfil forzado presente:',
-        this.noticiasService?.getUsuarioForzado?.()
-      );
-      alert(
-        'No hay una sesión activa en Supabase. Para subir imágenes debes iniciar sesión. Si estás en modo desarrollo y usas un perfil forzado, inicia sesión real para habilitar Storage.'
-      );
+      alert('No hay sesión activa en Supabase. Debes iniciar sesión para subir imágenes.');
       return null;
     }
 
     if (!user) {
-      console.warn('Usuario nulo en subirImagenes despite active session');
       alert(
         'No se pudo determinar el usuario para la subida de imágenes. Inicia sesión y vuelve a intentarlo.'
       );
       return null;
     }
 
-    this.estaSubiendoImagen = true;
-    const urls: string[] = [];
-
-    // Validar que la primera imagen (índice 0) sea obligatoria
-    if (!this.archivosSeleccionados[0]) {
-      alert('La primera imagen es obligatoria.');
-      this.estaSubiendoImagen = false;
+    const archivosValidos = this.archivosSeleccionados.filter(
+      (f): f is File => !!f
+    );
+    if (archivosValidos.length === 0) {
+      alert('Debes seleccionar al menos una imagen (portada).');
       return null;
     }
 
+    this.estaSubiendoImagen = true;
+    const urls: string[] = [];
+
     try {
-      for (let i = 0; i < MAX_IMAGENES; i++) {
-        const file = this.archivosSeleccionados[i];
+      for (let previewIndex = 0; previewIndex < archivosValidos.length; previewIndex++) {
+        const file = archivosValidos[previewIndex];
+        const filePath = `${
+          user.id
+        }/noticias/${Date.now()}_${previewIndex}_${file.name.replace(/ /g, '_')}`;
 
-        if (file) {
-          // Crea una ruta única para el archivo
-          const filePath = `${
-            user.id
-          }/noticias/${Date.now()}_${i}_${file.name.replace(/ /g, '_')}`;
+        const uploadResp = await this.supabase.storage
+          .from(IMAGES_BUCKET)
+          .upload(filePath, file);
 
-          // Usamos el cliente global (que comparte sesión) para tener la misma auth
-          const uploadResp = await this.supabaseService.client.storage
-            .from(IMAGES_BUCKET)
-            .upload(filePath, file);
-          console.debug(
-            '[crear-noticia] upload response for',
-            filePath,
-            uploadResp
+        if (uploadResp.error) {
+          console.error('Supabase upload error:', uploadResp.error);
+          alert(
+            'Error subiendo imágenes: ' +
+              (uploadResp.error.message || JSON.stringify(uploadResp.error))
           );
-
-          if (uploadResp.error) {
-            console.error(
-              'Supabase upload error for',
-              filePath,
-              uploadResp.error
-            );
-            alert(
-              'Error subiendo imágenes: ' +
-                (uploadResp.error.message || JSON.stringify(uploadResp.error))
-            );
-            this.estaSubiendoImagen = false;
-            return null;
-          }
-
-          const publicUrlResp = await this.supabaseService.client.storage
-            .from(IMAGES_BUCKET)
-            .getPublicUrl(filePath);
-          console.debug(
-            '[crear-noticia] getPublicUrl response for',
-            filePath,
-            publicUrlResp
-          );
-
-          const publicUrl = publicUrlResp?.data?.publicUrl;
-          if (!publicUrl) {
-            console.error(
-              'No public URL returned for',
-              filePath,
-              publicUrlResp
-            );
-            alert('No se pudo obtener la URL pública de la imagen.');
-            this.estaSubiendoImagen = false;
-            return null;
-          }
-
-          urls.push(publicUrl);
+          this.estaSubiendoImagen = false;
+          return null;
         }
+
+        const publicUrlResp = await this.supabase.storage
+          .from(IMAGES_BUCKET)
+          .getPublicUrl(filePath);
+
+        const publicUrl = publicUrlResp?.data?.publicUrl;
+        if (!publicUrl) {
+          alert('No se pudo obtener la URL pública de la imagen.');
+          this.estaSubiendoImagen = false;
+          return null;
+        }
+
+        urls.push(publicUrl);
       }
+
       this.estaSubiendoImagen = false;
       return urls;
     } catch (error) {
-      this.estaSubiendoImagen = false;
       console.error('Error subiendo imágenes:', error);
+      this.estaSubiendoImagen = false;
       alert('Error subiendo las imágenes. Intenta de nuevo.');
       return null;
     }
   }
 
-  // --- Lógica Final de Creación de Noticia ---
+  // ============================
+  // CREAR / PUBLICAR NOTICIA
+  // ============================
+  get canPublish(): boolean {
+    const tieneTitulo = !!this.title.trim();
+    const tieneImagen = this.images.length > 0;
+    const tieneContenido = this.paragraphs.some(
+      (p) => p.text && p.text.trim().length > 0
+    );
+    return tieneTitulo && tieneImagen && tieneContenido && !this.estaGuardando;
+  }
 
-  async crearNoticia() {
-    this.noticiaForm.markAllAsTouched();
-
-    // Verificaciones antes de guardar
-    if (
-      this.parrafosFormArray.invalid ||
-      this.noticiaForm.invalid ||
-      this.estaGuardando ||
-      this.estaSubiendoImagen ||
-      !this.usuarioAutenticado
-    ) {
-      alert(
-        'Por favor, completa el título y el primer párrafo antes de continuar.'
-      );
+  async handlePublish() {
+    if (!this.canPublish) {
+      const toast = await this.toastCtrl.create({
+        message:
+          'Debes agregar título, al menos un párrafo y una imagen de portada.',
+        duration: 2500,
+        color: 'warning',
+      });
+      await toast.present();
       return;
     }
 
     this.estaGuardando = true;
+    const loader = await this.loadingCtrl.create({
+      message: 'Publicando noticia...',
+    });
+    await loader.present();
 
-    // 1. Subir todas las imágenes seleccionadas (valida que la primera exista)
-    const urlsFotos = await this.subirImagenes();
-    if (urlsFotos === null) {
-      this.estaGuardando = false;
-      return;
-    }
-
-    // 2. Extraer los textos de los párrafos (filtrando los vacíos)
-    const parrafos = this.parrafosFormArray.controls
-      .map((control) => control.value as string)
-      .filter((text) => text && text.trim().length > 0);
-
-    // 3. Preparar los datos
-    const nuevaNoticia = {
-      titulo: this.noticiaForm.value.titulo,
-      parrafos: parrafos, // Array de strings
-
-      url_foto: urlsFotos, // Array de URLs
-
-      nombre_autor: this.nombreAutor,
-      fecha_creacion: new Date().toISOString(),
-      user_id: this.usuarioAutenticado.id,
-    };
-
-    // 4. Insertar en la base de datos
     try {
-      // Use the shared globalSupabase client so the persisted session (if any) is used
-      const { error } = await this.supabaseService.client
+      const urlsFotos = await this.subirImagenes();
+      if (!urlsFotos) {
+        await loader.dismiss();
+        this.estaGuardando = false;
+        return;
+      }
+
+      const parrafosLimpios = this.paragraphs
+        .map((p) => p.text.trim())
+        .filter((p) => p.length > 0);
+
+      const nuevaNoticia: any = {
+        titulo: this.title.trim(),
+        parrafos: parrafosLimpios,
+        url_foto: urlsFotos,
+        nombre_autor: this.nombreAutor,
+        categoria: this.category,
+        fecha_creacion: new Date().toISOString(),
+      };
+
+      if (this.usuarioAutenticado?.id) {
+        nuevaNoticia.user_id = this.usuarioAutenticado.id;
+      }
+
+      const { error } = await this.supabase
         .from('noticias')
-        .insert(nuevaNoticia as any);
+        .insert(nuevaNoticia);
 
       if (error) {
         console.error('Error al guardar noticia en Supabase:', error);
-        alert('Hubo un error al crear la noticia. Detalle: ' + error.message);
+        const toast = await this.toastCtrl.create({
+          message:
+            'Hubo un error al crear la noticia. Detalle: ' + error.message,
+          duration: 3000,
+          color: 'danger',
+        });
+        await toast.present();
       } else {
-        // 🧾 Registrar acción en auditoría
-        await this.supabaseService.registrarAuditoria(
-          'crear noticia',
-          'noticias',
-          {
-            titulo: nuevaNoticia.titulo,
-            user_id: nuevaNoticia.user_id,
-            nombre_autor: nuevaNoticia.nombre_autor,
-            url_foto: nuevaNoticia.url_foto,
-          }
+        // Auditoría
+        try {
+          await this.supabaseService.registrarAuditoria(
+            'crear noticia',
+            'noticias',
+            {
+              titulo: nuevaNoticia.titulo,
+              user_id: nuevaNoticia.user_id,
+              nombre_autor: nuevaNoticia.nombre_autor,
+              url_foto: nuevaNoticia.url_foto,
+              categoria: nuevaNoticia.categoria,
+            }
+          );
+        } catch (e) {
+          console.warn('Error registrando auditoría de noticia', e);
+        }
+
+        // ✅ ALERTA ESTILO ACCIÓN
+        await this.mostrarAlertaAccion(
+          'Noticia creada',
+          `<p>La noticia <b>${nuevaNoticia.titulo}</b> se creó correctamente y ya está disponible para los vecinos.</p>`
         );
 
-        alert('Noticia creada con éxito!');
-
-        this.noticiaForm.reset();
-        this.parrafosFormArray.clear();
-        this.agregarParrafo(true);
+        // Reset
+        this.title = '';
+        this.paragraphs = [];
+        this.addParagraph();
+        this.images = [];
         this.archivosSeleccionados = new Array(MAX_IMAGENES).fill(null);
+        this.category = 'info';
 
-        // 🚀 CORRECCIÓN: Usamos navigateByUrl con replaceUrl: true
-        // para una navegación más limpia que fuerza la actualización del destino.
-        this.router.navigateByUrl('/home', { replaceUrl: true });
+        this.goBack();
       }
     } catch (err) {
-      console.error('Error inesperado:', err);
-      alert('Ocurrió un error inesperado.');
+      console.error('Error inesperado al crear noticia:', err);
+      const toast = await this.toastCtrl.create({
+        message: 'Ocurrió un error inesperado.',
+        duration: 2500,
+        color: 'danger',
+      });
+      await toast.present();
     } finally {
+      await loader.dismiss();
       this.estaGuardando = false;
     }
   }

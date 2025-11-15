@@ -24,15 +24,9 @@ import { AuthService } from 'src/app/auth/auth.service';
   imports: [
     CommonModule,
     DatePipe,
-
     IonHeader,
     IonContent,
     IonIcon,
-    IonButtons,
-    IonButton,
-    IonChip,
-    IonLabel,
-    IonSpinner,
   ],
 })
 export class SolicitudesPage implements OnInit {
