@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, ToastController, AlertController } from '@ionic/angular';
+import {
+  IonicModule,
+  ToastController,
+  AlertController,
+} from '@ionic/angular';
 import {
   FormBuilder,
   FormGroup,
@@ -26,8 +30,6 @@ import {
   createOutline,
   trashOutline,
   imageOutline,
-  sendOutline,
-  bulbOutline,
 } from 'ionicons/icons';
 
 import { SupabaseService } from 'src/app/services/supabase.service';
@@ -49,10 +51,9 @@ export class SugerirProyectoPage implements OnInit {
   submitted = false;
   cargando = false;
 
-  // Imagen
-  selectedFile: File | null = null;
-  previewUrl: string | null = null;
-  uploadedUrl: string | null = null;
+  // Imagen seleccionada
+  selectedImageFile: File | null = null;
+  imagenPreview: string | null = null;
 
   get esAdmin(): boolean {
     return (this.perfil?.rol || '').toLowerCase() === 'administrador';
@@ -84,60 +85,93 @@ export class SugerirProyectoPage implements OnInit {
       'create-outline': createOutline,
       'trash-outline': trashOutline,
       'image-outline': imageOutline,
-      'send-outline': sendOutline,
-      'bulb-outline': bulbOutline,
     });
   }
 
   async ngOnInit() {
-    // Primero obtenemos el perfil para saber si es admin
-    this.perfil = await this.auth.miPerfil();
-    console.log('🟦 Perfil cargado:', this.perfil);
-
-    const fechaValidators = this.esAdmin ? [Validators.required] : [];
-
+    // Formulario unificado (admin / vecino)
     this.form = this.fb.group({
       titulo: ['', [Validators.required, Validators.minLength(3)]],
       descripcion: ['', [Validators.required, Validators.minLength(10)]],
       responsable: [''],
-      presupuesto: [''],
-      fecha_inicio: [null, fechaValidators],
-      fecha_fin: [null, fechaValidators],
+      presupuesto: [''], // numérico opcional
+      fecha_inicio: [null], // requeridas solo en admin (validamos en enviar)
+      fecha_fin: [null],
       estado_proyecto: ['Planificación', Validators.required],
     });
+
+    this.perfil = await this.auth.miPerfil();
+    console.log('🟦 Perfil cargado:', this.perfil);
   }
 
   // ============================
   // MANEJO DE IMAGEN
   // ============================
-  async onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (!file) return;
 
-    this.selectedFile = file;
+  onImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
 
-    // Preview local
-    const reader = new FileReader();
-    reader.onload = () => (this.previewUrl = reader.result as string);
-    reader.readAsDataURL(file);
-
-    // Subir a Supabase Storage (bucket "proyectos")
-    const fileName = `${Date.now()}_${file.name}`;
-    const { error: uploadError } = await this.supabaseService.client.storage
-      .from('proyectos')
-      .upload(fileName, file);
-
-    if (uploadError) {
-      console.error('Error al subir imagen:', uploadError.message);
-      this.showAlert('Error', 'No se pudo subir la imagen al servidor.');
+    if (!input.files || input.files.length === 0) {
       return;
     }
 
-    const { data: urlData } = this.supabaseService.client.storage
-      .from('proyectos')
-      .getPublicUrl(fileName);
+    const file = input.files[0];
+    this.selectedImageFile = file;
 
-    this.uploadedUrl = urlData.publicUrl;
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagenPreview = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+
+    console.log('📷 Imagen seleccionada:', file.name, file.size, 'bytes');
+  }
+
+  eliminarImagen() {
+    this.selectedImageFile = null;
+    this.imagenPreview = null;
+  }
+
+  private async subirImagenProyecto(
+    file: File,
+    idAuth: string | number
+  ): Promise<string | null> {
+    try {
+      const safeName = file.name.replace(/\s+/g, '_');
+      const timestamp = Date.now();
+      const path = `${idAuth}/${timestamp}-${safeName}`;
+
+      const { data, error } = await this.supabaseService
+        .storage()
+        .from('proyectos')
+        .upload(path, file, {
+          cacheControl: '3600',
+          upsert: true,
+          contentType: file.type,
+        });
+
+      if (error) {
+        console.error('💥 Error al subir imagen a Supabase Storage:', error);
+        await this.mostrarToast('No se pudo subir la imagen del proyecto');
+        return null;
+      }
+
+      console.log('✅ Imagen subida en ruta:', data?.path);
+
+      const { data: publicData } = this.supabaseService
+        .storage()
+        .from('proyectos')
+        .getPublicUrl(path);
+
+      const publicUrl = publicData?.publicUrl || null;
+      console.log('🌐 URL pública imagen:', publicUrl);
+
+      return publicUrl;
+    } catch (err) {
+      console.error('💥 Excepción al subir imagen:', err);
+      await this.mostrarToast('Ocurrió un error al subir la imagen');
+      return null;
+    }
   }
 
   // ============================
@@ -146,6 +180,15 @@ export class SugerirProyectoPage implements OnInit {
   async enviar() {
     if (this.form.invalid) {
       this.mostrarToast('Completa todos los campos obligatorios');
+      return;
+    }
+
+    // Para administradores, exigimos fechas
+    if (
+      this.esAdmin &&
+      (!this.form.value.fecha_inicio || !this.form.value.fecha_fin)
+    ) {
+      this.mostrarToast('Debes indicar fecha de inicio y término');
       return;
     }
 
@@ -160,15 +203,32 @@ export class SugerirProyectoPage implements OnInit {
         return;
       }
 
-      // Estado automático según rol
-      const estado = rol === 'administrador' ? 'publicada' : 'pendiente';
+      // 1️⃣ Subir imagen si existe
+      let imagenUrl: string | null = null;
 
-      const presupuestoValor = this.form.value.presupuesto;
-      const presupuesto =
-        presupuestoValor !== null &&
-        presupuestoValor !== undefined &&
-        presupuestoValor !== ''
-          ? Number(presupuestoValor)
+      if (this.selectedImageFile) {
+        imagenUrl = await this.subirImagenProyecto(
+          this.selectedImageFile,
+          id_auth
+        );
+
+        if (!imagenUrl) {
+          // si falló la subida, cortamos el flujo
+          throw new Error('No se pudo subir la imagen del proyecto');
+        }
+      }
+
+      // Estado automático según rol
+      const estado = rol.toLowerCase() === 'administrador' ? 'publicada' : 'pendiente';
+
+      // Origen de la solicitud
+      const solicitado = this.esAdmin
+        ? 'Panel administración'
+        : 'Sugerencia vecino';
+
+      const presupuestoNumero =
+        this.form.value.presupuesto && this.form.value.presupuesto !== ''
+          ? Number(this.form.value.presupuesto)
           : null;
 
       const datos = {
@@ -178,11 +238,14 @@ export class SugerirProyectoPage implements OnInit {
         estado,
         fecha_creacion: new Date().toISOString(),
         actualizado_en: new Date().toISOString(),
-        imagen_url: this.uploadedUrl || null,
+        imagen_url: imagenUrl,
         estado_proyecto: this.form.value.estado_proyecto || 'Planificación',
-        presupuesto,
-        responsable: this.form.value.responsable || null,
-        solicitado: null, // ya no usamos categoría
+        presupuesto: presupuestoNumero,
+        responsable:
+          this.form.value.responsable && this.form.value.responsable.trim() !== ''
+            ? this.form.value.responsable.trim()
+            : null,
+        solicitado,
         fecha_inicio: this.form.value.fecha_inicio || null,
         fecha_fin: this.form.value.fecha_fin || null,
       };
@@ -197,20 +260,28 @@ export class SugerirProyectoPage implements OnInit {
 
       // Auditoría
       await this.supabaseService.registrarAuditoria(
-        'crear sugerencia proyecto',
+        this.esAdmin
+          ? 'crear proyecto desde panel admin'
+          : 'crear sugerencia proyecto',
         'proyecto',
         {
           titulo: datos.titulo,
-          presupuesto: datos.presupuesto,
-          estado,
+          estado: datos.estado,
           estado_proyecto: datos.estado_proyecto,
+          presupuesto: datos.presupuesto,
+          responsable: datos.responsable,
+          solicitado,
           rol_creador: rol,
         }
       );
 
       this.submitted = true;
+
+      // limpiamos imagen en memoria
+      this.selectedImageFile = null;
+      this.imagenPreview = null;
     } catch (err: any) {
-      console.error('🔥 Error al enviar sugerencia:', err);
+      console.error('🔥 Error al enviar proyecto/sugerencia:', err);
       this.mostrarToast('Error al enviar la propuesta');
     } finally {
       this.cargando = false;
@@ -218,7 +289,7 @@ export class SugerirProyectoPage implements OnInit {
   }
 
   // ============================
-  // NUEVA SUGERENCIA
+  // NUEVA SUGERENCIA / PROYECTO
   // ============================
   nuevaPropuesta() {
     this.form.reset({
@@ -230,10 +301,9 @@ export class SugerirProyectoPage implements OnInit {
       fecha_fin: null,
       estado_proyecto: 'Planificación',
     });
-    this.previewUrl = null;
-    this.uploadedUrl = null;
-    this.selectedFile = null;
     this.submitted = false;
+    this.selectedImageFile = null;
+    this.imagenPreview = null;
   }
 
   // ============================

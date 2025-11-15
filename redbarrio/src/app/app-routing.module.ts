@@ -273,6 +273,13 @@ const routes: Routes = [
       import('./admin/proyectos/proyectos.page').then((m) => m.ProyectosPage),
   },
   {
+    path: 'admin/proyectos/editar/:id',
+    loadComponent: () =>
+      import('./admin/proyectos/editar/editar-proyecto.page').then(
+        (m) => m.EditarProyectoPage
+      ),
+  },
+  {
     path: 'admin/auditoria',
     canActivate: [AuthGuard],
     data: { roles: ['administrador'] },

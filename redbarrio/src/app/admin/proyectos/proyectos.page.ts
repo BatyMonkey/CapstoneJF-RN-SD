@@ -580,10 +580,18 @@ export class ProyectosPage implements OnInit {
     return 'document-text-outline';
   }
 
-  // Botón EDITAR (placeholder)
+  // Botón EDITAR
   editarProyecto(proyecto: any) {
-    console.log('✏️ Editar proyecto', proyecto);
-    // this.router.navigate(['editar/proyecto', proyecto.id_proyecto]);
+    // Tomamos el id desde id_proyecto o id, según venga de Supabase
+    const id = proyecto.id_proyecto ?? proyecto.id;
+
+    if (!id) {
+      console.warn('⚠️ Proyecto sin id válido:', proyecto);
+      return;
+    }
+
+    // Navegar a /admin/proyectos/editar/:id
+    this.router.navigate(['/admin/proyectos/editar', id]);
   }
 
   // ==========================================================

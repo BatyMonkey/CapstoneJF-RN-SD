@@ -1,4 +1,4 @@
-/* =========== HEADER REDBARRIO (tal cual) =========== */
+/* =========== HEADER REDBARRIO (hero) =========== */
 
 .rb-hero-header {
   background: linear-gradient(90deg, #06b6d4 0%, #22d3ee 100%);
@@ -48,7 +48,6 @@ ion-header::after {
   width: 130px;
   height: 130px;
   object-fit: contain;
-  border-radius: 0;
 }
 
 .rb-hero-text {
@@ -81,7 +80,7 @@ ion-header::after {
   --background: #f9fafb;
 }
 
-/* =========== SUBHEADER BLANCO (interior) =========== */
+/* =========== SUBHEADER BLANCO =========== */
 
 .page-subheader {
   background: #ffffff;
@@ -138,48 +137,72 @@ ion-header::after {
   color: #6b7280;
 }
 
-/* Tabs "Ver proyectos / Crear nuevo" */
+/* ===================== BOTONES "VER PROYECTOS" / "CREAR NUEVO" ===================== */
 
-.tabs-row {
+.page-subheader-main {
   display: flex;
-  gap: 0.6rem;
-  margin-top: 0.15rem;
+  flex-direction: column;
+  gap: 0.55rem;
 }
 
+/* Contenedor de los dos botones */
+.tabs-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Botón base (misma lógica que .main-tab del otro módulo) */
 .tab {
   flex: 0 0 auto;
-  padding: 0.55rem 1.2rem;
-  border-radius: 9999px;
   border: none;
-  font-size: 0.85rem;
-  font-weight: 700;
+  outline: none;
+  border-radius: 12px;              /* 🔹 más cuadrado, como el mockup */
+  padding: 8px 14px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.35rem;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.07s ease;
+  transition:
+    background 0.16s ease,
+    color 0.16s ease,
+    box-shadow 0.16s ease,
+    transform 0.06s ease;
 
   ion-icon {
-    font-size: 1rem;
+    font-size: 1.05rem;
   }
 
   &:active {
-    transform: scale(0.97);
+    transform: translateY(1px);
+    box-shadow: none;
   }
 }
 
+/* Ver Proyectos — gris suave, texto oscuro (como en el otro módulo) */
 .tab-secondary {
-  background: #f4f4f5;
+  background: #f3f4f6;
   color: #111827;
-  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.25);
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.35);
+
+  ion-icon {
+    color: #4b5563;
+  }
 }
 
+/* Crear Nuevo — amarillo con sombra, igual al mockup */
 .tab-primary {
-  background: #fbbf24;
+  background: #f6b515; /* amarillo tipo botón principal */
   color: #111827;
-  box-shadow: 0 4px 10px rgba(245, 158, 11, 0.4);
+  box-shadow: 0 8px 18px rgba(245, 158, 11, 0.45);
+
+  ion-icon {
+    color: #92400e;
+  }
 }
 
 /* =========== CUERPO / FORMULARIO =========== */
@@ -193,38 +216,6 @@ ion-header::after {
   flex-direction: column;
   gap: 1.1rem;
 }
-
-/* Banner turquesa (solo vecino) */
-
-.info-banner {
-  background: linear-gradient(135deg, #06b6d4, #22d3ee);
-  border-radius: 0.9rem;
-  padding: 1.25rem 1.1rem;
-  display: flex;
-  gap: 0.9rem;
-  color: #ffffff;
-  margin-bottom: 1.4rem;
-  box-shadow: 0 4px 18px rgba(8, 145, 178, 0.35);
-}
-
-.banner-icon ion-icon {
-  font-size: 1.7rem;
-  margin-top: 2px;
-}
-
-.banner-text h3 {
-  margin: 0 0 0.25rem 0;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.banner-text p {
-  margin: 0;
-  font-size: 0.85rem;
-  color: rgba(240, 249, 255, 0.9);
-}
-
-/* Grupos de campos */
 
 .form-group {
   display: flex;
@@ -266,7 +257,18 @@ ion-header::after {
   box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.35);
 }
 
-/* Select nativo (estado del proyecto) */
+/* Fechas lado a lado */
+
+.form-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.form-half {
+  flex: 1;
+}
+
+/* Select nativo para Estado del Proyecto */
 
 .native-select {
   width: 100%;
@@ -290,33 +292,10 @@ ion-header::after {
   box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.35);
 }
 
-.counter {
-  margin: 0;
-  font-size: 0.75rem;
-  color: #6b7280;
-}
-
-.helper {
-  margin: 0;
-  font-size: 0.75rem;
-  color: #6b7280;
-}
-
-/* Fechas lado a lado */
-
-.form-row {
-  display: flex;
-  gap: 0.75rem;
-}
-
-.form-half {
-  flex: 1;
-}
-
 /* =========== TARJETA DE IMAGEN =========== */
 
 .image-upload-card {
-  margin-top: 0.4rem;
+  margin-top: 0.2rem;
   border-radius: 1rem;
   border: 1px dashed #facc15;
   background: #fffbeb;
@@ -362,31 +341,11 @@ ion-header::after {
   font-size: 1rem;
 }
 
-.upload-btn.secondary {
-  background: #e5e7eb;
-  color: #374151;
-  box-shadow: none;
-}
-
 .upload-btn:active {
   transform: scale(0.97);
 }
 
-.upload-preview {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.8rem;
-}
-
-.preview-img {
-  width: 100%;
-  max-height: 220px;
-  object-fit: cover;
-  border-radius: 0.8rem;
-}
-
-/* =========== BOTÓN ENVIAR =========== */
+/* =========== BOTÓN CREAR PROYECTO =========== */
 
 .submit-btn {
   width: 100%;
@@ -401,8 +360,8 @@ ion-header::after {
   justify-content: center;
   gap: 0.4rem;
   color: #ffffff;
-  background: linear-gradient(90deg, #facc15, #eab308);
-  box-shadow: 0 4px 15px rgba(234, 179, 8, 0.45);
+  background: #22c5e9;
+  box-shadow: 0 4px 15px rgba(34, 197, 235, 0.45);
   transition: transform 0.07s ease, box-shadow 0.07s ease;
 }
 
@@ -418,128 +377,18 @@ ion-header::after {
 
 .submit-btn:not(:disabled):active {
   transform: scale(0.97);
-  box-shadow: 0 2px 10px rgba(234, 179, 8, 0.35);
+  box-shadow: 0 2px 10px rgba(34, 197, 235, 0.35);
 }
 
-/* =========== EJEMPLOS =========== */
+/* Mensaje "* Completa todos los campos obligatorios" */
 
-.examples-card {
-  margin-top: 1.8rem;
-  padding: 1rem 1.1rem;
-  background: #fefce8;
-  border-radius: 0.9rem;
-  border: 1px solid #fef3c7;
-}
-
-.examples-card h4 {
-  margin: 0 0 0.6rem 0;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #854d0e;
-}
-
-.examples-card ul {
+.helper {
   margin: 0;
-  padding-left: 1.1rem;
-  font-size: 0.8rem;
-  color: #a16207;
+  font-size: 0.75rem;
+  color: #6b7280;
 }
 
-/* =========== ESTADO ENVIADO =========== */
-
-.success-wrapper {
-  margin-top: 1rem;
-}
-
-.success-card {
-  background: #ecfdf5;
-  border: 2px solid #bbf7d0;
-  border-radius: 1rem;
-  padding: 1.3rem;
+.required-helper {
   text-align: center;
-}
-
-.success-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 9999px;
-  background: #22c55e;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1rem;
-  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.45);
-}
-
-.success-icon ion-icon {
-  font-size: 2rem;
-  color: #ffffff;
-}
-
-.success-card h3 {
-  margin: 0 0 0.4rem 0;
-  font-size: 1.2rem;
-  color: #14532d;
-  font-weight: 700;
-}
-
-.success-card p {
-  margin: 0 0 1rem 0;
-  font-size: 0.9rem;
-  color: #166534;
-}
-
-.success-detail {
-  background: #ffffff;
-  border-radius: 0.7rem;
-  padding: 0.9rem;
-  text-align: left;
-  font-size: 0.82rem;
-  color: #065f46;
-}
-
-.success-detail h4 {
-  margin: 0 0 0.4rem 0;
-  font-size: 0.9rem;
-  color: #064e3b;
-}
-
-.success-detail ul {
-  margin: 0;
-  padding-left: 1.1rem;
-}
-
-/* Botones finales */
-
-.success-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.7rem;
-  margin-top: 1rem;
-}
-
-.new-btn,
-.back-main-btn {
-  padding: 0.8rem;
-  border-radius: 0.9rem;
-  border: none;
-  font-size: 0.95rem;
-  font-weight: 600;
-  transition: transform 0.08s ease, box-shadow 0.08s ease;
-}
-
-.new-btn {
-  background: #06b6d4;
-  color: #ffffff;
-  box-shadow: 0 3px 12px rgba(8, 145, 178, 0.45);
-}
-
-.back-main-btn {
-  background: #e5e7eb;
-  color: #374151;
-}
-
-.new-btn:active,
-.back-main-btn:active {
-  transform: scale(0.97);
+  margin-top: 0.3rem;
 }

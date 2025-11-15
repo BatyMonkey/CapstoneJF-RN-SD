@@ -1,0 +1,466 @@
+/* =========================================
+   PALETA BASE
+========================================= */
+:host {
+  --rb-primary: #06b6d4;
+  --rb-primary-strong: #0e7490;
+  --rb-bg: #f3f4f6;
+  --rb-text: #0f172a;
+
+  --ion-background-color: var(--rb-bg);
+  --ion-text-color: var(--rb-text);
+}
+
+/* =========================================
+   HEADER GRADIENT (tipo React)
+========================================= */
+.edit-header {
+  background: linear-gradient(90deg, #06b6d4 0%, #0ea5e9 100%);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.25);
+}
+
+ion-header::after {
+  background: none !important;
+  display: none !important;
+}
+
+.edit-header-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.5rem 1rem;
+}
+
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: none;
+  outline: none;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+  transition: background 0.15s ease, transform 0.07s ease;
+
+  ion-icon {
+    font-size: 1.2rem;
+    color: #ffffff;
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+.header-text h1 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.header-text p {
+  margin: 2px 0 0;
+  font-size: 0.82rem;
+  color: #e0f2fe;
+}
+
+/* =========================================
+   LAYOUT CONTENIDO
+========================================= */
+.edit-page {
+  --background: #f9fafb;
+}
+
+.edit-content {
+  padding: 1.5rem;
+  padding-bottom: 2rem;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* =========================================
+   BANNER GUARDADO
+========================================= */
+.save-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.1rem;
+  border-radius: 0.9rem;
+  background: #ecfdf5;
+  border: 2px solid #bbf7d0;
+  box-shadow: 0 6px 18px rgba(22, 163, 74, 0.25);
+}
+
+.save-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: #22c55e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon {
+    font-size: 1.4rem;
+    color: #ffffff;
+  }
+}
+
+.save-text {
+  .save-title {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #166534;
+  }
+
+  .save-subtitle {
+    margin: 2px 0 0;
+    font-size: 0.78rem;
+    color: #15803d;
+  }
+}
+
+/* =========================================
+   FORM CARDS
+========================================= */
+.form-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.form-card {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 10px rgba(148, 163, 184, 0.18);
+}
+
+.field-label {
+  display: block;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.35rem;
+}
+
+.req {
+  color: #ef4444;
+}
+
+/* Inputs genéricos */
+.text-input,
+.text-area,
+.select-input {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  font-size: 0.9rem;
+  color: #111827;
+  padding: 0.75rem 0.85rem;
+  outline: none;
+  transition: border 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.text-area {
+  resize: none;
+  min-height: 120px;
+}
+
+.text-input:focus,
+.text-area:focus,
+.select-input:focus {
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.25);
+}
+
+/* Placeholders */
+.text-input::placeholder,
+.text-area::placeholder {
+  color: #9ca3af;
+}
+
+/* Select específico */
+.select-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 8L10 12L14 8' stroke='%2394A3B8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  background-size: 1rem;
+}
+
+/* Dos columnas (fechas) */
+.two-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.field-help {
+  margin: 0.4rem 0 0;
+  font-size: 0.76rem;
+  color: #6b7280;
+}
+
+/* =========================================
+   INFO CARD (azul)
+========================================= */
+.info-card {
+  margin-top: 0.25rem;
+  border-radius: 1rem;
+  padding: 0.95rem 1rem;
+  background: linear-gradient(135deg, #eff6ff, #ecfeff);
+  border: 1px solid #bfdbfe;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.info-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: #dbeafe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  ion-icon {
+    font-size: 1.3rem;
+    color: #1d4ed8;
+  }
+}
+
+.info-text h4 {
+  margin: 0 0 0.3rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1e3a8a;
+}
+
+.info-text p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #1d4ed8;
+
+  &+p {
+    margin-top: 2px;
+  }
+}
+
+/* =========================================
+   ACCIONES (Guardar / Eliminar)
+========================================= */
+.actions-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-top: 0.6rem;
+}
+
+.btn-save {
+  flex: 1;
+  border: none;
+  outline: none;
+  border-radius: 0.9rem;
+  padding: 0.9rem 1rem;
+  background: linear-gradient(90deg, #06b6d4, #0e7490);
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  box-shadow: 0 10px 20px rgba(8, 47, 73, 0.35);
+  transition: transform 0.07s ease, box-shadow 0.1s ease, filter 0.1s ease;
+
+  ion-icon {
+    font-size: 1.1rem;
+  }
+}
+
+.btn-save:active:not(:disabled) {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 6px 14px rgba(8, 47, 73, 0.3);
+}
+
+.btn-save:disabled {
+  background: #d1d5db;
+  box-shadow: none;
+  color: #9ca3af;
+}
+
+.btn-delete {
+  width: 52px;
+  height: 52px;
+  border-radius: 1rem;
+  border: none;
+  outline: none;
+  background: #ef4444;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 20px rgba(239, 68, 68, 0.35);
+  transition: transform 0.07s ease, box-shadow 0.1s ease;
+
+  ion-icon {
+    font-size: 1.3rem;
+  }
+}
+
+.btn-delete:active {
+  transform: translateY(1px) scale(0.97);
+  box-shadow: 0 6px 14px rgba(239, 68, 68, 0.3);
+}
+
+/* =========================================
+   MODAL ELIMINAR
+========================================= */
+.delete-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 9999;
+}
+
+.delete-modal {
+  width: 100%;
+  max-width: 380px;
+  background: #ffffff;
+  border-radius: 1.4rem;
+  padding: 1.4rem 1.5rem 1.2rem;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.5);
+  text-align: center;
+}
+
+.delete-icon-wrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  background: #fee2e2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.9rem;
+
+  ion-icon {
+    font-size: 2rem;
+    color: #b91c1c;
+  }
+}
+
+.delete-modal h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.delete-modal p {
+  margin: 0 0 1.2rem;
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.delete-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-cancel,
+.btn-confirm-delete {
+  flex: 1;
+  border-radius: 0.85rem;
+  padding: 0.75rem 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  outline: none;
+}
+
+.btn-cancel {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.btn-confirm-delete {
+  background: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(239, 68, 68, 0.35);
+}
+
+/* Forzar modo claro para que el select no se oscurezca en auto-dark */
+:host {
+  color-scheme: light !important;
+}
+
+/* Campo genérico de formulario (si ya lo tienes, déjalo igual) */
+.field-input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: 0.9rem;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  font-size: 0.95rem;
+  color: #111827;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* ===========================
+   SELECT ESTADO (mockup)
+=========================== */
+
+.select-estado {
+  /* hereda de .field-input pero reforzamos por si acaso */
+  width: 100%;
+  padding-right: 2.5rem; // espacio para la flecha
+  border-radius: 0.9rem;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  font-size: 0.95rem;
+  color: #111827;
+  outline: none;
+  /* flecha custom */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 8L10 12L14 8' stroke='%2306b6d4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  background-size: 1rem;
+}
+
+/* Borde celeste y glow como el mockup cuando está en foco */
+.select-estado:focus {
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.35);
+}
+
+/* Opciones internas (lista desplegada en claro) */
+.select-estado option {
+  background-color: #ffffff;
+  color: #111827;
+  font-size: 0.95rem;
+}
+
+/* Por si el navegador insiste con tema oscuro */
+select.select-estado {
+  color-scheme: light;
+}

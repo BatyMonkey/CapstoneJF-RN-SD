@@ -1,0 +1,149 @@
+<ion-header class="edit-header">
+    <div class="edit-header-container">
+        <button type="button" class="back-btn" (click)="goBack()">
+            <ion-icon name="chevron-back-outline"></ion-icon>
+        </button>
+
+        <div class="header-text">
+            <h1>Editar Proyecto</h1>
+            <p>Modificar información del proyecto</p>
+        </div>
+    </div>
+</ion-header>
+
+<ion-content class="edit-page" [fullscreen]="true">
+    <div class="edit-content">
+
+        <!-- Mensaje de éxito -->
+        <div class="save-banner" *ngIf="saved">
+            <div class="save-icon">
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+            </div>
+            <div class="save-text">
+                <p class="save-title">Cambios guardados exitosamente</p>
+                <p class="save-subtitle">El proyecto ha sido actualizado</p>
+            </div>
+        </div>
+
+        <!-- Formulario -->
+        <form [formGroup]="form" (ngSubmit)="guardarCambios()" class="form-layout">
+
+            <!-- Título -->
+            <div class="form-card">
+                <label class="field-label">
+                    Título del Proyecto <span class="req">*</span>
+                </label>
+                <input type="text" formControlName="titulo" placeholder="Nombre del proyecto" class="text-input" />
+            </div>
+
+            <!-- Estado del proyecto -->
+            <div class="form-card">
+                <label class="field-label">
+                    Estado del proyecto <span class="req">*</span>
+                </label>
+
+                <select formControlName="estado_proyecto" class="field-input select-estado">
+                    <option value="planificacion">📋 Planificación</option>
+                    <option value="en-progreso">⚙️ En Progreso</option>
+                    <option value="completado">✅ Completado</option>
+                    <option value="cancelado">❌ Cancelado</option>
+                </select>
+            </div>
+
+
+            <!-- Descripción -->
+            <div class="form-card">
+                <label class="field-label">
+                    Descripción <span class="req">*</span>
+                </label>
+                <textarea formControlName="descripcion" rows="5" placeholder="Describe el proyecto detalladamente..."
+                    class="text-area"></textarea>
+            </div>
+
+            <!-- Responsable -->
+            <div class="form-card">
+                <label class="field-label">
+                    Responsable <span class="req">*</span>
+                </label>
+                <input type="text" formControlName="responsable" placeholder="Nombre del responsable"
+                    class="text-input" />
+            </div>
+
+            <!-- Fechas -->
+            <div class="two-columns">
+                <div class="form-card">
+                    <label class="field-label">
+                        Fecha de Inicio <span class="req">*</span>
+                    </label>
+                    <input type="date" formControlName="fecha_inicio" class="text-input" />
+                </div>
+
+                <div class="form-card">
+                    <label class="field-label">
+                        Fecha de Término (Estimada)
+                    </label>
+                    <input type="date" formControlName="fecha_fin" class="text-input" />
+                </div>
+            </div>
+
+            <!-- Presupuesto -->
+            <div class="form-card">
+                <label class="field-label">
+                    Presupuesto
+                </label>
+                <input type="text" formControlName="presupuesto" placeholder="Ej: $8.500.000" class="text-input" />
+                <p class="field-help">
+                    Ingresa el monto estimado o real del proyecto
+                </p>
+            </div>
+
+            <!-- Información adicional -->
+            <div class="info-card">
+                <div class="info-icon">
+                    <ion-icon name="alert-circle-outline"></ion-icon>
+                </div>
+                <div class="info-text">
+                    <h4>Información Adicional</h4>
+                    <p>• Participantes actuales: <strong>{{ proyecto?.participantes }}</strong></p>
+                    <p>• ID del proyecto: <strong>#{{ proyecto?.id }}</strong></p>
+                    <p>• Los cambios se guardarán en el registro de auditoría</p>
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="actions-row">
+                <button type="submit" class="btn-save" [disabled]="form.invalid || cargando">
+                    <ion-icon name="save-outline"></ion-icon>
+                    Guardar Cambios
+                </button>
+
+                <button type="button" class="btn-delete" (click)="abrirConfirmarEliminar()">
+                    <ion-icon name="trash-outline"></ion-icon>
+                </button>
+            </div>
+        </form>
+
+        <!-- Modal de confirmación de borrado -->
+        <div class="delete-backdrop" *ngIf="showDeleteConfirm">
+            <div class="delete-modal">
+                <div class="delete-icon-wrapper">
+                    <ion-icon name="trash-outline"></ion-icon>
+                </div>
+                <h3>¿Eliminar Proyecto?</h3>
+                <p>
+                    Esta acción no se puede deshacer. Se eliminará el proyecto
+                    "<strong>{{ proyecto?.titulo }}</strong>" y toda su información.
+                </p>
+
+                <div class="delete-actions">
+                    <button type="button" class="btn-cancel" (click)="cerrarConfirmarEliminar()">
+                        Cancelar
+                    </button>
+                    <button type="button" class="btn-confirm-delete" (click)="eliminarProyecto()">
+                        Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ion-content>
