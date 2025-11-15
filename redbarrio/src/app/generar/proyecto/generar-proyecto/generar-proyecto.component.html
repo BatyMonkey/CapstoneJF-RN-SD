@@ -11,110 +11,123 @@
 <ion-content fullscreen>
   <div class="page-wrap ion-padding">
 
-    <!-- 🔹 Tarjeta principal -->
+    <!-- 🔹 Tarjeta principal tipo header -->
     <ion-card class="card hero">
       <ion-card-header>
-        <ion-card-title>Nuevo {{ isActividad ? 'Actividad' : 'Proyecto' }}</ion-card-title>
+        <ion-card-title>Nuevo Proyecto</ion-card-title>
         <ion-card-subtitle>
-          Completa la información básica de la {{ isActividad ? 'actividad' : 'proyecto' }}.
+          Completa la información básica del proyecto que quieres publicar.
         </ion-card-subtitle>
       </ion-card-header>
 
       <!-- 🔹 Mensaje dinámico según rol -->
       <ion-card-content *ngIf="perfil?.rol">
         <ion-note color="medium" *ngIf="perfil?.rol === 'administrador'">
-          Estás creando una {{ isActividad ? 'actividad' : 'proyecto' }} como <strong>administrador</strong>.
+          Estás creando un proyecto como <strong>administrador</strong>.
           El estado quedará automáticamente como <strong>publicada</strong>.
         </ion-note>
 
         <ion-note color="warning" *ngIf="perfil?.rol === 'vecino'">
-          Estás creando una {{ isActividad ? 'actividad' : 'proyecto' }} como <strong>vecino</strong>.
+          Estás creando un proyecto como <strong>vecino</strong>.
           Tu publicación quedará con estado <strong>pendiente</strong> hasta ser aprobada por un administrador.
         </ion-note>
       </ion-card-content>
     </ion-card>
 
-    <!-- 🔹 Formulario -->
-    <form [formGroup]="proyectoForm" (ngSubmit)="generarProyecto()">
-      <!-- Tipo de publicación -->
-      <ion-item class="tipo-publicacion" lines="none">
-        <ion-label>Tipo de publicación</ion-label>
-        <ion-segment formControlName="tipo" (ionChange)="onTipoChange()">
-          <ion-segment-button value="proyecto">
-            <ion-label>Proyecto</ion-label>
-          </ion-segment-button>
-          <ion-segment-button value="actividad">
-            <ion-label>Actividad</ion-label>
-          </ion-segment-button>
-        </ion-segment>
-      </ion-item>
+    <!-- 🔹 Formulario "solo proyecto" con estilo del mockup -->
+    <form [formGroup]="proyectoForm" (ngSubmit)="generarProyecto()" class="create-form">
 
-      <!-- Título -->
-      <ion-item class="field" lines="none">
-        <ion-label position="stacked">
-          {{ isActividad ? 'Título de la actividad' : 'Título del proyecto' }}
-        </ion-label>
+      <!-- Si tu form tiene control 'tipo', déjalo fijo a 'proyecto' en el .ts -->
+      <!-- <input type="hidden" [formControl]="proyectoForm.get('tipo')" /> -->
+
+      <!-- Nombre del Proyecto -->
+      <div class="field-group">
+        <label class="field-label">
+          Nombre del Proyecto <span class="required">*</span>
+        </label>
         <ion-input
           formControlName="titulo"
-          placeholder="{{ isActividad ? 'Ej: Taller de reciclaje' : 'Ej: Plaza comunitaria' }}"
-          maxlength="80">
+          placeholder="Ej: Mejoramiento Plaza Central"
+          maxlength="80"
+          class="field-input">
         </ion-input>
-        <ion-note class="char-counter">{{ proyectoForm.value.titulo?.length || 0 }}/80</ion-note>
-      </ion-item>
+        <p class="field-helper">
+          {{ proyectoForm.value.titulo?.length || 0 }}/80
+        </p>
+      </div>
 
       <!-- Descripción -->
-      <ion-item class="field" lines="none">
-        <ion-label position="stacked">
-          {{ isActividad ? 'Descripción de la actividad' : 'Descripción del proyecto' }}
-        </ion-label>
+      <div class="field-group">
+        <label class="field-label">
+          Descripción <span class="required">*</span>
+        </label>
         <ion-textarea
           formControlName="descripcion"
-          placeholder="{{ isActividad ? 'Ej: Actividad comunitaria de limpieza y reciclaje en el parque central.' : 'Describe el propósito, etapas y beneficios del proyecto.' }}"
-          autoGrow="true">
+          placeholder="Describe el proyecto en detalle..."
+          autoGrow="true"
+          class="field-textarea">
         </ion-textarea>
-      </ion-item>
+      </div>
 
-      <!-- Imagen -->
-      <div class="image-upload">
-        <label class="upload-label">Imagen de referencia</label>
-        <input type="file" accept="image/*" (change)="onFileSelected($event)" />
-        <div class="preview-card" *ngIf="previewUrl">
-          <img [src]="previewUrl" alt="Vista previa" class="preview-img" />
+      <!-- Imagen del proyecto -->
+      <div class="field-group">
+        <label class="field-label">Imagen del Proyecto</label>
+
+        <div class="image-upload-box" [class.has-image]="previewUrl">
+          <!-- Estado sin imagen (como el cuadro amarillo del mockup) -->
+          <ng-container *ngIf="!previewUrl; else previewTpl">
+            <div class="image-icon-wrap">
+              <ion-icon name="image-outline"></ion-icon>
+            </div>
+            <p class="image-title">Agregar imagen del proyecto</p>
+            <p class="image-subtitle">
+              Selecciona una imagen desde tu dispositivo
+            </p>
+
+            <button
+              type="button"
+              class="image-select-btn"
+              (click)="fileInput.click()">
+              <ion-icon name="cloud-upload-outline"></ion-icon>
+              <span>Seleccionar Imagen</span>
+            </button>
+
+            <input
+              #fileInput
+              type="file"
+              accept="image/*"
+              (change)="onFileSelected($event)"
+              hidden />
+          </ng-container>
+
+          <!-- Estado con imagen cargada -->
+          <ng-template #previewTpl>
+            <div class="preview-card">
+              <img
+                [src]="previewUrl"
+                alt="Vista previa"
+                class="preview-img" />
+            </div>
+          </ng-template>
         </div>
       </div>
 
-      <!-- Campos adicionales (solo actividad) -->
-      <ion-item class="field" *ngIf="isActividad" lines="none">
-        <ion-label position="stacked">Cupos disponibles</ion-label>
-        <ion-input formControlName="cupos_total" type="number" placeholder="Ej: 20"></ion-input>
-      </ion-item>
+      <!-- (Opcional) Si más adelante agregas responsable/presupuesto/fechas/estado,
+           se pueden insertar aquí manteniendo este mismo estilo. -->
 
-      <ion-item class="field" *ngIf="isActividad" lines="none">
-        <ion-label position="stacked">Fecha de inicio</ion-label>
-        <ion-datetime
-          formControlName="fecha_inicio"
-          presentation="date-time"
-          (ionChange)="onDateChange('fecha_inicio', $event)">
-        </ion-datetime>
-      </ion-item>
-
-      <ion-item class="field" *ngIf="isActividad" lines="none">
-        <ion-label position="stacked">Fecha de término</ion-label>
-        <ion-datetime
-          formControlName="fecha_fin"
-          presentation="date-time"
-          (ionChange)="onDateChange('fecha_fin', $event)">
-        </ion-datetime>
-      </ion-item>
-
-      <!-- Botones -->
+      <!-- Botón Crear -->
       <div class="buttons-container">
-        <ion-button type="button" color="medium" fill="outline" (click)="limpiarFormulario()">
-          Limpiar
+        <ion-button
+          expand="block"
+          type="submit"
+          [disabled]="proyectoForm.invalid"
+          class="btn-create">
+          Crear Proyecto
         </ion-button>
-        <ion-button expand="block" type="submit" [disabled]="proyectoForm.invalid">
-          {{ isActividad ? 'Crear Actividad' : 'Crear Proyecto' }}
-        </ion-button>
+
+        <p class="submit-hint" *ngIf="proyectoForm.invalid">
+          * Completa todos los campos obligatorios
+        </p>
       </div>
     </form>
 

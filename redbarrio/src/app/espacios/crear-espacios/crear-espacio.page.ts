@@ -74,14 +74,7 @@ export class CrearEspacioPage implements OnInit {
     private toastCtrl: ToastController,
     private http: HttpClient, // Inyección de HttpClient
     private supabaseService: SupabaseService
-  ) {
-    this.tiposEspacio = [
-      { id: 1, nombre: 'Cancha' },
-      { id: 2, nombre: 'Sede' },
-      { id: 3, nombre: 'Parque' },
-    ];
-    this.initForm(); // Inicializa el formulario al inicio
-  }
+  ) {}
 
   async ngOnInit() {
     // Verificar autenticación al inicio

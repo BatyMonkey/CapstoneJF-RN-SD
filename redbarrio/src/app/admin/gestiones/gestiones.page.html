@@ -1,55 +1,150 @@
-<ion-header class="rb-header">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
-    </ion-buttons>
-    <ion-title>Gestiones Administrativas</ion-title>
-  </ion-toolbar>
+<!-- ========================================
+     HERO HEADER SUPERIOR (igual al Home)
+========================================= -->
+<ion-header class="rb-hero-header">
+  <div class="rb-hero-container">
+    <div class="rb-hero-info">
+      <div class="rb-hero-logo">
+        <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
+      </div>
+      <div class="rb-hero-text">
+        <h1>RedBarrio</h1>
+        <p>Tu comunidad conectada</p>
+      </div>
+    </div>
+
+    <!-- Botón atrás (círculo con flecha) -->
+    <button class="rb-hero-chat" type="button" (click)="goBack()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </button>
+  </div>
 </ion-header>
 
-<ion-content>
-  <div class="gestiones-container">
-    <h1>Panel de Gestiones</h1>
-    <p>Selecciona la gestión que deseas administrar:</p>
+<ion-content class="gestiones-page" [fullscreen]="true">
+  <div class="page-container">
+    <div class="content-wrapper">
 
-    <!-- Generar Proyecto -->
-    <ion-button expand="block" shape="round" routerLink="/generar/proyecto" routerDirection="forward">
-      <ion-icon name="briefcase-outline" slot="start"></ion-icon>
-      Generar Proyecto
-    </ion-button>
+      <!-- SUBHEADER + TARJETA AZUL TIPO DASHBOARD -->
+      <div class="subheader">
+        <div class="admin-hero-card">
+          <div class="admin-hero-icon">
+            <ion-icon name="shield-checkmark-outline"></ion-icon>
+          </div>
+          <div class="admin-hero-text">
+            <h2>Panel Administrador</h2>
+            <p>Gestión de la Junta de Vecinos</p>
+          </div>
+        </div>
+      </div>
 
-    <!-- Generar Votación -->
-    <ion-button expand="block" shape="round" routerLink="/generar/votacion" routerDirection="forward">
-      <ion-icon name="checkmark-done-outline" slot="start"></ion-icon>
-      Generar Votación
-    </ion-button>
+      <!-- SECCIÓN: FUNCIONES ADMINISTRATIVAS -->
+      <section class="admin-section">
+        <h3 class="section-title">Funciones Administrativas</h3>
 
-    <!-- Generar Noticia -->
-    <ion-button expand="block" shape="round" routerLink="/noticias/crear" routerDirection="forward">
-      <ion-icon name="newspaper-outline" slot="start"></ion-icon>
-      Generar Noticia
-    </ion-button>
+        <div class="actions-list">
+          <!-- Gestionar Proyectos -->
+          <button type="button" class="admin-action-card" routerLink="/admin/proyectos" routerDirection="forward">
+            <div class="admin-action-icon cyan">
+              <ion-icon name="briefcase-outline"></ion-icon>
+            </div>
+            <div class="admin-action-text">
+              <h4>Gestionar Proyectos</h4>
+              <p>Crear y administrar proyectos del barrio</p>
+            </div>
+          </button>
 
-    <!-- Registros de Vecinos -->
-    <ion-button expand="block" shape="round" routerLink="/admin/solicitudes" routerDirection="forward">
-      <ion-icon name="people-outline" slot="start"></ion-icon>
-      Registros de Vecinos
-    </ion-button>
-    <ion-button expand="block" shape="round" routerLink="/admin/actividades" routerDirection="forward">
-      <ion-icon name="people-outline" slot="start"></ion-icon>
-      Gestionar actividaes
-    </ion-button>
-    <ion-button expand="block" shape="round" routerLink="/admin/proyectos" routerDirection="forward">
-      <ion-icon name="people-outline" slot="start"></ion-icon>
-      Gestionar proyectos
-    </ion-button>
-    <ion-button expand="block" shape="round" routerLink="/admin/auditoria" routerDirection="forward">
-      <ion-icon name="people-outline" slot="start"></ion-icon>
-      Registro Auditoria
-    </ion-button>
-    <ion-button expand="block" shape="round" routerLink="/admin/noticias" routerDirection="forward">
-      <ion-icon name="people-outline" slot="start"></ion-icon>
-      Gestionar noticias
-    </ion-button>
+          <!-- Generar Votación -->
+          <button type="button" class="admin-action-card" routerLink="/generar/votacion" routerDirection="forward">
+            <div class="admin-action-icon yellow">
+              <ion-icon name="checkbox-outline"></ion-icon>
+            </div>
+            <div class="admin-action-text">
+              <h4>Generar Votación</h4>
+              <p>Crear nueva votación para vecinos</p>
+            </div>
+          </button>
+
+          <!-- Gestionar Noticias -->
+          <button type="button" class="admin-action-card" routerLink="/admin/noticias" routerDirection="forward">
+            <div class="admin-action-icon cyan">
+              <ion-icon name="newspaper-outline"></ion-icon>
+            </div>
+            <div class="admin-action-text">
+              <h4>Gestionar Noticias</h4>
+              <p>Crear, editar y eliminar noticias</p>
+            </div>
+          </button>
+
+          <!-- Registros de Vecinos -->
+          <button type="button" class="admin-action-card" routerLink="/admin/vecinos" routerDirection="forward">
+            <div class="admin-action-icon yellow">
+              <ion-icon name="people-outline"></ion-icon>
+            </div>
+            <div class="admin-action-text">
+              <h4>Registros de Vecinos</h4>
+              <p>Activar/desactivar vecinos del barrio</p>
+            </div>
+          </button>
+
+          <!-- Gestionar Actividades -->
+          <button type="button" class="admin-action-card" routerLink="/admin/actividades" routerDirection="forward">
+            <div class="admin-action-icon cyan">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </div>
+            <div class="admin-action-text">
+              <h4>Gestionar Actividades</h4>
+              <p>Administrar eventos del barrio</p>
+            </div>
+          </button>
+
+          <!-- Registro de Auditoría -->
+          <button type="button" class="admin-action-card" routerLink="/admin/auditoria" routerDirection="forward">
+            <div class="admin-action-icon yellow">
+              <ion-icon name="search-outline"></ion-icon>
+            </div>
+            <div class="admin-action-text">
+              <h4>Registro de Auditoría</h4>
+              <p>Ver historial de acciones y cambios</p>
+            </div>
+          </button>
+
+          <!-- Gestionar Solicitudes -->
+          <button type="button" class="admin-action-card" routerLink="/admin/solicitudes" routerDirection="forward">
+            <div class="admin-action-icon cyan">
+              <ion-icon name="clipboard-outline"></ion-icon>
+            </div>
+            <div class="admin-action-text">
+              <h4>Gestionar Solicitudes</h4>
+              <p>Revisar y aprobar solicitudes</p>
+            </div>
+          </button>
+        </div>
+      </section>
+
+      <!-- SECCIÓN: ESTADÍSTICAS -->
+      <section class="admin-section">
+        <h3 class="section-title">Estadísticas</h3>
+        <div class="stats-grid">
+          <div class="stat-card cyan">
+            <p class="stat-label">Solicitudes Pendientes</p>
+            <p class="stat-value">{{ solicitudesPendientes }}</p>
+          </div>
+          <div class="stat-card yellow">
+            <p class="stat-label">Proyectos Activos</p>
+            <p class="stat-value">{{ proyectosActivos }}</p>
+          </div>
+          <div class="stat-card cyan">
+            <p class="stat-label">Eventos este Mes</p>
+            <p class="stat-value">{{ eventosEsteMes }}</p>
+          </div>
+          <div class="stat-card yellow">
+            <p class="stat-label">Vecinos Registrados</p>
+            <p class="stat-value">{{ vecinosRegistrados }}</p>
+          </div>
+        </div>
+      </section>
+
+
+    </div>
   </div>
 </ion-content>

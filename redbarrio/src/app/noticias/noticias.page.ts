@@ -30,6 +30,28 @@ interface Noticia {
 })
 export class NoticiasPage implements OnInit {
 
+    getBadgeClass(n: Noticia) {
+    if (!n || !n.titulo) return 'info';
+
+    const t = n.titulo.toLowerCase();
+
+    if (t.includes('corte') || t.includes('urgencia')) return 'alert';
+    if (t.includes('reunión') || t.includes('evento')) return 'evento';
+    if (t.includes('nuevo') || t.includes('informa')) return 'info';
+    return 'ok';
+  }
+
+  getBadgeIcon(n: Noticia) {
+    const cls = this.getBadgeClass(n);
+
+    switch (cls) {
+      case 'alert': return 'alert-circle-outline';
+      case 'evento': return 'megaphone-outline';
+      case 'ok': return 'checkmark-circle-outline';
+      default: return 'information-circle-outline';
+    }
+  }
+
   supabase: SupabaseClient; 
   noticias: Noticia[] = [];
   estaCargando = false;

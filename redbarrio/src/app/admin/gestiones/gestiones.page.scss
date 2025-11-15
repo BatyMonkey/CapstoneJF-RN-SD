@@ -1,237 +1,321 @@
-/* ==========================================================
-   ===== ESTILOS UNIFICADOS (Gestiones Admin)
-   ========================================================== */
+/* =========================================
+   ESQUEMA BASE / COLORES
+========================================= */
+:host,
+:host-context(html) {
+  color-scheme: light !important;
 
-:host {
-  /* Paleta base coherente con Home / Noticias */
-  --rb-primary: #2563eb;
-  --rb-primary-10: rgba(37, 99, 235, 0.10);
+  --rb-primary: #06b6d4;
+  --rb-primary-strong: #0e7490;
+  --rb-bg: #f5f7fb;
   --rb-text: #0f172a;
   --rb-muted: #64748b;
-  --rb-sep: rgba(2, 6, 23, 0.06);
-  --rb-bg: #f8fafc;
 
-  color-scheme: light;
   --ion-background-color: var(--rb-bg);
   --ion-text-color: var(--rb-text);
 }
 
-/* ==========================================================
-   ===== Header consistente con el resto del sistema
-   ========================================================== */
-.rb-header ion-toolbar {
-  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
-  --color: #fff;
-  --border-color: transparent;
-  --min-height: 56px;
+/* =========================================
+   HERO HEADER (igual al Home)
+========================================= */
+.rb-hero-header {
+  background: linear-gradient(90deg, #06b6d4 0%, #22d3ee 100%);
+  border-bottom-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  z-index: 10;
 }
 
-/* ==========================================================
-   ===== Estructura principal del módulo
-   ========================================================== */
-ion-content {
+/* quita la línea gris default de ion-header */
+ion-header::after {
+  background: none !important;
+  display: none !important;
+}
+
+.rb-hero-container {
+  width: 100%;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rb-hero-info {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.rb-hero-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #ffffff;
+  padding: 6px;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+.rb-hero-text h1 {
+  color: #ffffff;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.rb-hero-text p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  margin: 2px 0 0 0;
+}
+
+.rb-hero-chat {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  padding: 10px;
+  color: #fff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon {
+    font-size: 1.3rem;
+  }
+}
+
+/* =========================================
+   LAYOUT CONTENIDO
+========================================= */
+
+.gestiones-page {
   --background: var(--rb-bg);
-  padding: 28px 20px;
+  margin-top: 140px; /* deja el espacio del hero */
+  position: relative;
+  z-index: 1;
+}
+
+.page-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.content-wrapper {
+  width: 100%;
+  max-width: 430px;
+  padding: 0 16px 24px;
+  box-sizing: border-box;
+}
+
+/* =========================================
+   SUBHEADER + TARJETA AZUL
+========================================= */
+
+.subheader {
+  width: 100%;
+  margin: 10px 0 18px;
+}
+
+.admin-hero-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 18px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #0ea5e9, #22c1c3);
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.16);
+  color: #ffffff;
+}
+
+.admin-hero-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon {
+    font-size: 1.6rem;
+  }
+}
+
+.admin-hero-text h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.admin-hero-text p {
+  margin: 2px 0 0;
+  font-size: 0.85rem;
+  opacity: 0.95;
+}
+
+/* =========================================
+   SECCIONES
+========================================= */
+
+.admin-section {
+  margin-top: 20px;
+}
+
+.section-title {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* =========================================
+   ACCIONES ADMIN (tarjetas)
+========================================= */
+
+.actions-list {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+  gap: 10px;
 }
 
-/* Contenedor central con sombra estilo “Hero” */
-.gestiones-container {
-  background: #fff;
+.admin-action-card {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: #ffffff;
   border-radius: 18px;
-  padding: 30px 24px;
-  width: min(600px, 100%);
-  box-shadow:
-    0 10px 30px rgba(2, 6, 23, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  border: 1px solid var(--rb-sep);
-  text-align: center;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  text-align: left;
+  gap: 14px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
 
-  h1 {
-    margin: 0 0 12px 0;
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--rb-text);
+  &:active {
+    transform: translateY(1px);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  }
+}
+
+.admin-action-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  ion-icon {
+    font-size: 1.6rem;
+  }
+
+  &.cyan {
+    background: #ecfeff;
+    ion-icon {
+      color: #0891b2;
+    }
+  }
+
+  &.yellow {
+    background: #fef9c3;
+    ion-icon {
+      color: #ca8a04;
+    }
+  }
+}
+
+.admin-action-text {
+  flex: 1;
+
+  h4 {
+    margin: 0 0 4px;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #0f172a;
   }
 
   p {
-    margin: 0 0 24px;
-    color: var(--rb-muted);
-    font-weight: 500;
+    margin: 0;
+    font-size: 0.86rem;
+    color: #6b7280;
   }
 }
 
-/* ==========================================================
-   ===== Botones de acción
-   ========================================================== */
-ion-button {
-  width: 100%;
-  margin: 10px 0;
+/* =========================================
+   ESTADÍSTICAS
+========================================= */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.stat-card {
+  border-radius: 16px;
+  padding: 10px 12px;
+  border-width: 1px;
+  border-style: solid;
+
+  &.cyan {
+    background: #ecfeff;
+    border-color: #bae6fd;
+    .stat-label {
+      color: #0891b2;
+    }
+    .stat-value {
+      color: #0369a1;
+    }
+  }
+
+  &.yellow {
+    background: #fef9c3;
+    border-color: #fef08a;
+    .stat-label {
+      color: #ca8a04;
+    }
+    .stat-value {
+      color: #a16207;
+    }
+  }
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  margin: 0 0 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.stat-value {
+  margin: 0;
+  font-size: 1.3rem;
   font-weight: 700;
-  letter-spacing: 0.4px;
-  border-radius: 14px;
-  --background: #ffffff;
-  --color: var(--rb-text);
-  border: 1px solid var(--rb-primary-10);
-  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.08);
-  transition: all 0.2s ease;
+}
 
-  &:hover {
-    --background: var(--rb-primary);
-    --color: #fff;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
+/* =========================================
+   MODO OSCURO (forzado claro)
+========================================= */
+@media (prefers-color-scheme: dark) {
+  :host {
+    --ion-background-color: var(--rb-bg);
+    --ion-text-color: var(--rb-text);
   }
-
-  &:active {
-    transform: scale(0.98);
-  }
-
-  ion-icon {
-    font-size: 1.2em;
-    margin-inline-end: 6px;
-  }
-}
-
-/* ==========================================================
-   ===== Botón de acción flotante (opcional)
-   ========================================================== */
-.fixed-action-button {
-  position: fixed;
-  bottom: 20px;
-  right: 18px;
-  z-index: 100;
-
-  --background: var(--rb-primary);
-  --color: white;
-  --border-radius: 12px;
-  --box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35);
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  height: 48px;
-  min-width: 140px;
-
-  transition: transform 0.2s ease;
-  &:active {
-    transform: scale(0.97);
-  }
-
-  ion-icon {
-    font-size: 1.3em;
-    margin-inline-start: 8px;
-  }
-}
-
-/* ==========================================================
-   ===== Estados de carga o vacío
-   ========================================================== */
-.loading, .empty {
-  text-align: center;
-  color: var(--rb-muted);
-  padding: 24px;
-  font-weight: 600;
-}
-
-/* ==========================================================
-   ===== Responsive
-   ========================================================== */
-@media (max-width: 520px) {
-  ion-content {
-    padding: 18px 14px;
-  }
-
-  .gestiones-container {
-    padding: 22px 16px;
-  }
-
-  ion-button {
-    font-size: 0.95rem;
-    margin: 8px 0;
-  }
-
-  .fixed-action-button {
-    bottom: 12px;
-    right: 12px;
-    min-width: 120px;
-    height: 44px;
-    font-size: 0.9em;
-  }
-}
-
-/* ==========================================================
-   ===== Corrección visual: quitar color activo persistente
-   ========================================================== */
-
-ion-button {
-  --background: #fff;
-  --color: var(--rb-text);
-  --background-hover: var(--rb-primary);
-  --color-hover: #fff;
-
-  /* 🔹 Elimina cualquier color aplicado por Ionic al “pressed/activated” */
-  --background-activated: #fff !important;
-  --background-activated-opacity: 0 !important;
-  --background-focused: #fff !important;
-  --color-activated: var(--rb-text) !important;
-  --color-focused: var(--rb-text) !important;
-
-  /* 🔹 Elimina ripple azul que Ionic dibuja dentro del shadow DOM */
-  --ripple-color: transparent !important;
-
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-ion-button::part(native):focus {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-/* 🔹 Si algún botón queda marcado por aria-pressed, lo devolvemos al estado normal */
-ion-button[aria-pressed='true'] {
-  --background: #fff !important;
-  --color: var(--rb-text) !important;
-  --ion-color-base: #fff !important;
-  --ripple-color: transparent !important;
-}
-
-/* ==========================================================
-   ===== Eliminación total del color “pegado” en ion-button
-   ========================================================== */
-
-/* 1️⃣ Forzamos todos los estados a fondo blanco y texto original */
-ion-button::part(native),
-ion-button[aria-pressed="true"]::part(native),
-ion-button.ion-activated::part(native) {
-  background: #fff !important;
-  color: var(--rb-text) !important;
-  box-shadow: none !important;
-}
-
-/* 2️⃣ Anulamos colores internos de activación/foco */
-ion-button {
-  --background: #fff !important;
-  --color: var(--rb-text) !important;
-  --background-activated: #fff !important;
-  --color-activated: var(--rb-text) !important;
-  --background-focused: #fff !important;
-  --color-focused: var(--rb-text) !important;
-  --ripple-color: transparent !important;
-  --ion-color-primary: #fff !important;
-  --ion-color-base: #fff !important;
-}
-
-/* 3️⃣ Elimina el overlay del ripple azul (el responsable final) */
-ion-button::part(ripple),
-ion-button::part(container) {
-  background: transparent !important;
-}
-
-/* 4️⃣ Elimina cualquier focus residual */
-ion-button::part(native):focus {
-  outline: none !important;
-  box-shadow: none !important;
 }

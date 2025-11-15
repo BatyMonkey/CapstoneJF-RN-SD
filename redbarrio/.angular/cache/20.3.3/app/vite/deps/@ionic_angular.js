@@ -1,13 +1,21 @@
 import {
   menuController
+<<<<<<< HEAD
 } from "./chunk-TOUZ5IF6.js";
+=======
+} from "./chunk-63HNC7K5.js";
+>>>>>>> 5e585112cf1d9f379c418981fb548978fa4c4772
 import {
   getTimeGivenProgression
 } from "./chunk-34QX6F67.js";
 import {
   IonicSafeString,
   setupConfig
+<<<<<<< HEAD
 } from "./chunk-SIMPIJID.js";
+=======
+} from "./chunk-NKENZDD4.js";
+>>>>>>> 5e585112cf1d9f379c418981fb548978fa4c4772
 import {
   actionSheetController,
   alertController,
@@ -16,6 +24,7 @@ import {
   pickerController,
   popoverController,
   toastController
+<<<<<<< HEAD
 } from "./chunk-DBORD52S.js";
 import "./chunk-7WK6LNOU.js";
 import {
@@ -44,6 +53,26 @@ import {
   createAnimation as createAnimation2
 } from "./chunk-BGRTKWPL.js";
 import "./chunk-KQ7S7CHM.js";
+=======
+} from "./chunk-E2UXIPR4.js";
+import "./chunk-RP3HP3GY.js";
+import {
+  openURL
+} from "./chunk-ZWYZ2NSP.js";
+import "./chunk-4LDBG557.js";
+import {
+  iosTransitionAnimation
+} from "./chunk-SBAYHDUJ.js";
+import {
+  mdTransitionAnimation
+} from "./chunk-MHNOHRM7.js";
+import {
+  getIonPageElement
+} from "./chunk-22D6OJ3I.js";
+import {
+  createAnimation as createAnimation2
+} from "./chunk-2X4DEYMV.js";
+>>>>>>> 5e585112cf1d9f379c418981fb548978fa4c4772
 import "./chunk-LCMILTBF.js";
 import {
   bootstrapLazy
@@ -64,12 +93,27 @@ import {
   printIonWarning
 } from "./chunk-67MFLVOH.js";
 import {
+<<<<<<< HEAD
   MaxValidator,
   MinValidator,
   NG_VALIDATORS,
   NG_VALUE_ACCESSOR,
   NgControl
 } from "./chunk-N52XZBH5.js";
+=======
+  getPlatforms,
+  initialize,
+  isPlatform
+} from "./chunk-OAREROME.js";
+import "./chunk-3UAQNBCT.js";
+import {
+  bootstrapLazy
+} from "./chunk-5TIJP5C4.js";
+import {
+  createGesture
+} from "./chunk-Z3OEOVFM.js";
+import "./chunk-QA2SYHF5.js";
+>>>>>>> 5e585112cf1d9f379c418981fb548978fa4c4772
 import {
   ActivatedRoute,
   ChildrenOutletContexts,
@@ -81,6 +125,13 @@ import {
 } from "./chunk-LJPS7NX5.js";
 import "./chunk-LYZ2RRMW.js";
 import "./chunk-KIMTXNSS.js";
+import {
+  MaxValidator,
+  MinValidator,
+  NG_VALIDATORS,
+  NG_VALUE_ACCESSOR,
+  NgControl
+} from "./chunk-N52XZBH5.js";
 import {
   CommonModule,
   Location,
@@ -155,10 +206,10 @@ import {
   ɵɵtemplate,
   ɵɵviewQuery
 } from "./chunk-O3TFJGNF.js";
+import "./chunk-UQGLAMHP.js";
 import {
   fromEvent
 } from "./chunk-576P5TAG.js";
-import "./chunk-UQGLAMHP.js";
 import {
   BehaviorSubject,
   Subject,

@@ -1,54 +1,102 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/noticias"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Detalle de Noticia</ion-title>
-  </ion-toolbar>
+<!-- ============================================================
+     HERO HEADER (igual al módulo Proyectos)
+=============================================================== -->
+<ion-header class="rb-hero-header">
+  <div class="rb-hero-container">
+
+    <div class="rb-hero-info">
+      <div class="rb-hero-logo">
+        <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
+      </div>
+
+      <div class="rb-hero-text">
+        <h1>RedBarrio</h1>
+        <p>Tu comunidad conectada</p>
+      </div>
+    </div>
+
+    <!-- Botón volver -->
+    <button class="rb-hero-back" type="button" (click)="goBack()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </button>
+
+  </div>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  
-  <div *ngIf="estaCargando" class="ion-text-center ion-padding">
-    <ion-spinner name="crescent"></ion-spinner>
-    <p>Cargando detalle de noticia...</p>
+
+<!-- ============================================================
+     CONTENIDO PRINCIPAL (RESTABLECIDO Y SIN ERRORES)
+=============================================================== -->
+<ion-content class="detalle-content">
+
+  <div class="detalle-wrapper">
+
+    <!-- FOTO PRINCIPAL (segura para strictTemplates) -->
+    <div class="cover-wrapper" *ngIf="noticia?.url_foto?.length">
+      <img
+        [src]="noticia?.url_foto?.[0] || ''"
+        alt="Imagen de la noticia"
+        class="cover-img"
+      />
+    </div>
+
+    <!-- TÍTULO + META -->
+    <div class="info-wrapper">
+
+      <h1 class="titulo">{{ noticia?.titulo }}</h1>
+
+      <div class="meta-row">
+
+        <!-- Fecha -->
+        <div class="meta-item">
+          <ion-icon name="calendar-outline"></ion-icon>
+          <span>{{ formatearFecha(noticia?.fecha_creacion!) }}</span>
+        </div>
+
+        <div class="meta-dot"></div>
+
+        <!-- Publicado por -->
+        <div class="meta-item">
+          <ion-icon name="person-circle-outline"></ion-icon>
+          <span>
+            Publicado por <strong>{{ noticia?.nombre_autor || 'Directiva' }}</strong>
+          </span>
+        </div>
+
+      </div>
+
+      <div class="separador"></div>
+    </div>
+
+    <!-- CONTENIDO MIXTO -->
+    <div class="content-container">
+      <div class="content-block" *ngFor="let item of contenidoMixto">
+
+        <!-- PÁRRAFO -->
+        <p class="parrafo" *ngIf="item.type === 'parrafo'">
+          {{ item.value }}
+        </p>
+
+        <!-- FOTO -->
+        <img
+          *ngIf="item.type === 'foto'"
+          [src]="item.value"
+          class="content-img"
+          alt="Imagen adicional"
+        />
+
+      </div>
+    </div>
+
   </div>
 
-  <div *ngIf="!estaCargando && noticia">
-    
-    <div *ngIf="noticia.url_foto && noticia.url_foto.length > 0">
-        <img [src]="noticia.url_foto[0]" class="cover-image" alt="Imagen de Portada de la Noticia">
-    </div>
-
-    <div class="ion-padding">
-        <h1>{{ noticia.titulo }}</h1>
-        
-        <ion-text color="medium">
-            <p class="ion-margin-bottom">
-                Autor: <strong>{{ noticia.nombre_autor || 'Anónimo' }}</strong> | {{ formatearFecha(noticia.fecha_creacion) }}
-            </p>
-        </ion-text>
-    </div>
-    
-    <hr>
-
-    <div *ngFor="let item of contenidoMixto" class="ion-padding-horizontal">
-      
-      <p *ngIf="item.type === 'parrafo'">{{ item.value }}</p>
-
-      <ion-card *ngIf="item.type === 'foto'" class="ion-margin-vertical">
-        <img [src]="item.value" class="content-image" alt="Imagen de contenido"/>
-      </ion-card>
-      
-    </div>
-    
-    <div class="ion-padding"></div>
-    
+  <!-- ESTADOS -->
+  <div class="loading" *ngIf="estaCargando">
+    Cargando detalle...
   </div>
 
-  <div *ngIf="!estaCargando && !noticia" class="ion-text-center ion-padding">
-    <h2>Noticia no encontrada</h2>
-    <p>Lo sentimos, no pudimos cargar el detalle de la noticia. Por favor, verifica el ID.</p>
+  <div class="empty" *ngIf="!estaCargando && !noticia">
+    No se encontró información para esta noticia.
   </div>
 
 </ion-content>

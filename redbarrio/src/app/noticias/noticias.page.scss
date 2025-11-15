@@ -1,106 +1,182 @@
-/* ===== Paleta base ===== */
+/* ==========================
+   HERO HEADER (igual a Proyectos)
+========================== */
+
 :host {
-  --rb-primary: #2563eb;
-  --rb-bg: #f8fafc;
-  --rb-text: #0f172a;
-  --rb-muted: #64748b;
-  --rb-danger: #ef4444;
-
   color-scheme: light;
-  --ion-background-color: var(--rb-bg);
-  --ion-text-color: var(--rb-text);
 }
 
-/* Header degradado */
-ion-header ion-toolbar {
-  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
-  --color: #fff;
+/* Quitar línea inferior de Ionic */
+ion-header::after {
+  display: none !important;
 }
 
-/* Fondo general */
-ion-content.news {
-  --background: var(--rb-bg);
-  padding: 18px;
-}
-
-/* === Loading === */
-.loading {
+.rb-hero-header {
+  background: linear-gradient(90deg, #06b6d4, #22d3ee);
+  border-bottom-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  height: 130px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px 0;
-  color: var(--rb-muted);
+  padding: 0;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
 }
 
-.loading ion-spinner {
-  margin-bottom: 8px;
-}
-
-/* === Cards === */
-ion-card {
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
-  transition: transform 0.15s ease;
-}
-
-ion-card:hover {
-  transform: translateY(-3px);
-}
-
-.card-image-container {
+.rb-hero-container {
   width: 100%;
-  height: 160px;
-  overflow: hidden;
+  padding: 0 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.card-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+/* Contenido del header */
+.rb-hero-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.card-title {
+.rb-hero-logo img {
+  width: 130px;     /* Igual a Proyectos */
+  height: 130px;
+  object-fit: contain;
+}
+
+.rb-hero-text h1 {
+  color: #fff;
+  font-size: 1.25rem;
   font-weight: 700;
-  color: var(--rb-text);
-  font-size: 1.05rem;
+  margin: 0;
 }
 
-ion-card-subtitle {
-  color: var(--rb-muted);
+.rb-hero-text p {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 2px 0 0;
   font-size: 0.9rem;
 }
 
-.card-excerpt {
-  color: var(--rb-text);
+
+/* ==========================
+   CONTENIDO
+========================== */
+.news-page {
+  --background: #f5f7fb;
+  margin-top: 140px; /* espacio bajo el header */
+}
+
+.news-wrapper {
+  max-width: 430px;
+  margin: 0 auto;
+  padding: 0 12px 30px;
+}
+
+
+/* ==========================
+   TARJETAS DE NOTICIAS
+========================== */
+
+.news-card {
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+  margin-bottom: 22px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  cursor: pointer;
+}
+
+.news-image-container {
+  position: relative;
+}
+
+.news-image-container img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+
+/* BADGE */
+.badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon {
+    font-size: 1.3rem;
+    color: white;
+  }
+}
+
+.badge.alert { background: #ef4444; }
+.badge.evento { background: #facc15; }
+.badge.info { background: #3b82f6; }
+.badge.ok { background: #22c55e; }
+
+
+/* CONTENIDO */
+.news-content {
+  padding: 14px 16px;
+}
+
+.news-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.news-excerpt {
+  font-size: 0.9rem;
+  color: #475569;
   margin-bottom: 10px;
 }
 
-.card-excerpt-placeholder {
-  color: var(--rb-muted);
-  font-style: italic;
+.news-footer {
+  font-size: 0.78rem;
+  color: #64748b;
+  display: flex;
+  justify-content: space-between;
 }
 
-/* === Botón Eliminar === */
-.delete-btn {
-  --background: var(--rb-danger);
-  --background-activated: #b91c1c;
-  --color: #fff;
-  font-weight: 600;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25);
-  margin-top: 10px;
+.author {
+  color: #0284c7;
+  font-weight: 500;
 }
 
-/* === Sin noticias === */
+
+/* LOADING */
+.loading {
+  text-align: center;
+  padding-top: 30px;
+
+  p {
+    margin-top: 10px;
+    font-size: 0.95rem;
+    color: #64748b;
+  }
+}
+
+
+/* EMPTY */
 .empty {
   text-align: center;
-  color: var(--rb-muted);
-  margin-top: 40px;
-}
+  padding: 40px 20px;
 
-.empty h2 {
-  font-weight: 700;
-  margin-bottom: 4px;
+  h2 {
+    color: #334155;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  p {
+    color: #64748b;
+  }
 }

@@ -1,186 +1,187 @@
 <!DOCTYPE html>
 <html lang="es">
   <head>
-    <meta charset="utf-8" />
-    <title>Procesando pago…</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+    <title>Retorno Pago Transbank</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
       :root {
-        --primary: #3b82f6;
-        --ok: #16a34a;
-        --error: #e11d48;
-        --text: #333;
-        --muted: #6b7280;
+        color-scheme: dark;
       }
+
       body {
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-        text-align: center;
         margin: 0;
-        padding: 4rem 1.25rem 2rem;
-        color: var(--text);
-        background: #fafafa;
+        padding: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        background: #020617;
+        color: #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
       }
-      h3 { margin: 0.5rem 0 0.25rem; font-weight: 700; }
-      .loader {
-        border: 6px solid #f3f3f3;
-        border-top: 6px solid var(--primary);
-        border-radius: 50%;
-        width: 44px;
-        height: 44px;
+
+      .card {
+        background: #020617;
+        border-radius: 14px;
+        padding: 32px 32px 28px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+        max-width: 520px;
+        text-align: center;
+        border: 1px solid rgba(148, 163, 184, 0.3);
+      }
+
+      .spinner {
+        width: 42px;
+        height: 42px;
+        border-radius: 999px;
+        border: 4px solid rgba(148, 163, 184, 0.4);
+        border-top-color: #22c55e;
+        margin: 0 auto 18px;
         animation: spin 0.9s linear infinite;
-        margin: 0 auto 0.75rem;
       }
-      @keyframes spin { 0% { transform: rotate(0deg) } 100% { transform: rotate(360deg) } }
-      .msg { margin: 0.5rem auto 1rem; font-size: 1.05rem; color: var(--muted); max-width: 680px; }
-      .msg.ok { color: var(--ok); }
-      .msg.error { color: var(--error); }
-      button {
-        padding: 10px 18px;
-        border: none;
-        background: var(--primary);
-        color: #fff;
-        border-radius: 6px;
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 1.25rem;
+      }
+
+      p {
+        margin: 4px 0;
         font-size: 0.95rem;
+        color: #cbd5f5;
+      }
+
+      .status-ok {
+        color: #4ade80;
+        margin-bottom: 18px;
+      }
+
+      .status-error {
+        color: #fca5a5;
+        margin-bottom: 18px;
+      }
+
+      .btn {
+        margin-top: 8px;
+        padding: 10px 20px;
+        border-radius: 999px;
+        border: none;
         cursor: pointer;
+        font-weight: 600;
+        font-size: 0.95rem;
+        background: linear-gradient(90deg, #06b6d4, #22c55e);
+        color: #0f172a;
       }
-      button[disabled] { opacity: 0.6; cursor: default; }
-      .wrap {
-        max-width: 880px;
-        margin: 0 auto;
-        background: #fff;
-        border-radius: 12px;
-        padding: 2rem 1.25rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+
+      .btn:hover {
+        filter: brightness(1.05);
       }
-      .muted { color: var(--muted); font-size: 0.9rem; }
+
+      small {
+        display: block;
+        margin-top: 16px;
+        font-size: 0.8rem;
+        color: #9ca3af;
+      }
     </style>
   </head>
+
   <body>
-    <div class="wrap">
-      <div class="loader" aria-hidden="true"></div>
-      <h3 id="titulo">Procesando pago…</h3>
-      <p class="msg" id="mensaje">Confirmando transacción con el proveedor de pago…</p>
-
-      <p>
-        <button id="btnVolver" style="display:none;">Volver a la aplicación</button>
+    <div class="card">
+      <div class="spinner"></div>
+      <h1>Procesando pago...</h1>
+      <p id="statusText" class="status-ok">
+        Pago realizado correctamente. Redirigiendo a la aplicación...
       </p>
 
-      <p class="muted" id="nota" style="display:none;">
-        Si no se produce la redirección automática, utilice el botón para regresar a la aplicación.
-      </p>
+      <button id="btnVolver" class="btn">Volver a la aplicación</button>
+
+      <small>
+        Si no se produce la redirección automática, utiliza el botón para
+        regresar a la aplicación.
+      </small>
     </div>
 
     <script>
-      (async () => {
-        // ====== Configuración de deep link ======
-        const PKG = "io.ionic.starter"; // Reemplazar si el applicationId difiere
-        const DL_SCHEME = "redbarrio";
-        const DL_HOST = "app";
-        const DL_PATH = "/pago-retorno";
+      // =====================================
+      // 1. Configuración de la URL de la app
+      // =====================================
+      // 👉 En desarrollo PC:
+      //    tu app corre en http://localhost:8100
+      // 👉 En producción web:
+      //    cambia esto por tu dominio (ej: https://redbarrio.cl)
+      const WEB_APP_BASE_URL = "http://localhost:8100";
 
-        // Delays parametrizados
-        const DELAY_DEEP_LINK = 450;   // ms antes de intentar abrir deep link
-        const DELAY_INTENT    = 1200;  // ms antes de intentar Intent fallback (solo Android)
-        const DELAY_SHOW_BTN  = 1800;  // ms antes de mostrar el botón manual
+      // =====================================
+      // 2. Obtener token desde la URL
+      // =====================================
+      const params = new URLSearchParams(window.location.search);
+      const token =
+        params.get("token_ws") || params.get("TBK_TOKEN") || params.get("token");
 
-        // Detección de plataforma
-        const isAndroid = /Android/i.test(navigator.userAgent);
-        const isIOS     = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const statusEl = document.getElementById("statusText");
+      const btnVolver = document.getElementById("btnVolver");
 
-        // Utilidades
-        const $ = (id) => document.getElementById(id);
+      if (!token) {
+        statusEl.textContent =
+          "No se encontró el token del pago (token_ws). Revisa la configuración de Transbank.";
+        statusEl.className = "status-error";
+      }
 
-        function getTokenFromQuery() {
-          const p = new URLSearchParams(window.location.search);
-          return p.get("token_ws") || p.get("token") || p.get("TBK_TOKEN") || "";
+      // =====================================
+      // 3. URLs de destino
+      // =====================================
+
+      // Deep link a la app nativa (coincide con tu manifest):
+      // <data android:scheme="redbarrio" android:host="app" android:pathPrefix="/pago-retorno" />
+      const deepLink = token
+        ? `redbarrio://app/pago-retorno?token_ws=${encodeURIComponent(token)}`
+        : null;
+
+      // Versión web (PC / navegador), apunta a tu app Ionic
+      const webUrl = token
+        ? `${WEB_APP_BASE_URL}/pago-retorno?token_ws=${encodeURIComponent(token)}`
+        : `${WEB_APP_BASE_URL}/`;
+
+      // Detección simple de móvil
+      const ua = navigator.userAgent || navigator.vendor || window.opera;
+      const isMobile = /android|iphone|ipad|ipod/i.test(ua);
+
+      // =====================================
+      // 4. Lógica de retorno
+      // =====================================
+      function irAPagoRetorno() {
+        if (!token) return;
+
+        if (isMobile && deepLink) {
+          // En móvil intentamos abrir la app nativa
+          window.location.href = deepLink;
+
+          // Si no hay app instalada, tras un pequeño delay vamos a la versión web
+          setTimeout(() => {
+            window.location.href = webUrl;
+          }, 1500);
+        } else {
+          // En PC vamos directo a la app web (localhost:8100 en dev)
+          window.location.href = webUrl;
         }
+      }
 
-        function deepLinkUrl(token) {
-          return `${DL_SCHEME}://${DL_HOST}${DL_PATH}?token_ws=${encodeURIComponent(token || "")}`;
-        }
+      // Redirección automática
+      if (token) {
+        setTimeout(irAPagoRetorno, 1200);
+      }
 
-        function intentUrl(token) {
-          return `intent://${DL_HOST}${DL_PATH}?token_ws=${encodeURIComponent(token || "")}#Intent;scheme=${DL_SCHEME};package=${PKG};end`;
-        }
-
-        function showButton() {
-          $("btnVolver").style.display = "inline-block";
-          $("nota").style.display = "block";
-        }
-
-        async function confirmPayment(token) {
-          // Confirmación con timeout para evitar esperas indefinidas
-          const controller = new AbortController();
-          const to = setTimeout(() => controller.abort(), 8000); // 8s
-          try {
-            const resp = await fetch(
-              "https://sovnabbbubapqxziubuh.supabase.co/functions/v1/transbank-confirm",
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ token_ws: token }),
-                signal: controller.signal
-              }
-            );
-            clearTimeout(to);
-            let data = null;
-            try { data = await resp.json(); } catch (_) {}
-
-            const ok = data?.status === "AUTHORIZED" || data?.estado === "pagado";
-            return { ok, data };
-          } catch (err) {
-            clearTimeout(to);
-            return { ok: false, error: String(err) };
-          }
-        }
-
-        // ====== Lógica principal ======
-        const token_ws = getTokenFromQuery();
-        const btn = $("btnVolver");
-        btn.onclick = () => {
-          window.location.replace(deepLinkUrl(token_ws));
-        };
-
-        if (!token_ws) {
-          $("mensaje").innerText = "No se encontró el parámetro de token de la transacción.";
-          $("mensaje").className = "msg error";
-          showButton();
-          return;
-        }
-
-        $("titulo").innerText = "Procesando pago…";
-        $("mensaje").innerText = "Confirmando transacción con el proveedor de pago…";
-
-        const { ok } = await confirmPayment(token_ws);
-
-        $("mensaje").innerText = ok
-          ? "Pago realizado correctamente. Redirigiendo a la aplicación…"
-          : "Pago rechazado o no confirmado. Redirigiendo a la aplicación…";
-        $("mensaje").className = ok ? "msg ok" : "msg error";
-
-        // Redirección robusta:
-        // 1) Intentar Deep Link
-        // 2) En Android, Intent URI como fallback
-        // 3) Botón manual como último recurso
-        setTimeout(() => {
-          window.location.replace(deepLinkUrl(token_ws));
-
-          if (isAndroid) {
-            setTimeout(() => {
-              window.location.replace(intentUrl(token_ws));
-
-              setTimeout(() => {
-                showButton();
-              }, Math.max(0, DELAY_SHOW_BTN - DELAY_INTENT));
-            }, DELAY_INTENT);
-          } else {
-            // iOS / otros navegadores (no existe Intent fallback)
-            setTimeout(() => {
-              showButton();
-            }, Math.max(0, DELAY_SHOW_BTN - DELAY_DEEP_LINK));
-          }
-        }, DELAY_DEEP_LINK);
-      })();
+      // Botón manual
+      btnVolver.addEventListener("click", irAPagoRetorno);
     </script>
   </body>
 </html>

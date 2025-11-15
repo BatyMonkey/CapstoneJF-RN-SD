@@ -1,170 +1,204 @@
-<ion-header class="rb-header">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
-    </ion-buttons>
-    <ion-title>Crear votación</ion-title>
-  </ion-toolbar>
+<!-- ============================================================
+     HEADER — IDENTICO A DETALLE-NOTICIA
+=============================================================== -->
+<ion-header class="rb-hero-header">
+  <div class="rb-hero-container">
+
+    <div class="rb-hero-info">
+      <div class="rb-hero-logo">
+        <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
+      </div>
+
+      <div class="rb-hero-text">
+        <h1>RedBarrio</h1>
+        <p>Crear nueva votación para vecinos</p>
+      </div>
+    </div>
+
+    <!-- BOTÓN VOLVER -->
+    <button class="rb-hero-back" type="button" (click)="goBack()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </button>
+
+  </div>
 </ion-header>
 
-<ion-content class="ion-padding crear-votacion" [fullscreen]="true">
-  <ion-card class="card">
-    <ion-card-header>
-      <ion-card-title>Nueva votación</ion-card-title>
-      <ion-card-subtitle>Completa los campos y publica</ion-card-subtitle>
-    </ion-card-header>
 
-    <ion-card-content>
-      <ion-list lines="none">
-        <ion-item class="field">
-          <ion-label position="stacked">Título</ion-label>
-          <ion-input [(ngModel)]="titulo" placeholder="Ej: Prioridades de mejora del barrio"></ion-input>
-        </ion-item>
+<!-- ============================================================
+     CONTENIDO
+=============================================================== -->
+<ion-content class="votacion-content">
 
-        <ion-item class="field">
-          <ion-label position="stacked">Descripción (opcional)</ion-label>
-          <ion-textarea
-            autoGrow="true"
-            rows="3"
-            [(ngModel)]="descripcion"
-            placeholder="Describe brevemente el propósito de esta votación">
-          </ion-textarea>
-        </ion-item>
+  <div class="page-wrapper">
 
-        <!-- 🔹 Fecha de inicio -->
-        <ion-item class="field">
-          <ion-label position="stacked">Fecha de inicio</ion-label>
 
-          <ion-datetime-button datetime="dt-voto-inicio"></ion-datetime-button>
+    <!-- ======================================================
+         INFORMACIÓN GENERAL
+    ========================================================== -->
+    <div class="card-section">
+      <h3 class="section-title">Información General</h3>
 
-          <ion-modal [keepContentsMounted]="true">
-            <ng-template>
-              <ion-datetime
-                id="dt-voto-inicio"
-                [(ngModel)]="fechaInicio"
-                presentation="date-time"
-                minute-values="0,15,30,45">
-              </ion-datetime>
-            </ng-template>
-          </ion-modal>
-        </ion-item>
+      <div class="form-group">
+        <label>Título de la Votación <span class="req">*</span></label>
+        <ion-input
+          [(ngModel)]="titulo"
+          class="input"
+          placeholder="Ej: ¿Aprobar proyecto de áreas verdes?">
+        </ion-input>
+      </div>
 
-        <!-- 🔹 Fecha de término -->
-        <ion-item class="field">
-          <ion-label position="stacked">Fecha de término</ion-label>
+      <div class="form-group">
+        <label>Descripción <span class="req">*</span></label>
+        <ion-textarea
+          [(ngModel)]="descripcion"
+          class="textarea"
+          placeholder="Describe los detalles de la votación..."
+          auto-grow="true">
+        </ion-textarea>
+      </div>
 
-          <ion-datetime-button datetime="dt-voto-fin"></ion-datetime-button>
+    </div>
 
-          <ion-modal [keepContentsMounted]="true">
-            <ng-template>
-              <ion-datetime
-                id="dt-voto-fin"
-                [(ngModel)]="fechaFin"
-                presentation="date-time"
-                minute-values="0,15,30,45">
-              </ion-datetime>
-            </ng-template>
-          </ion-modal>
-        </ion-item>
 
-        <div class="options-header">
-          <h3>Opciones (mínimo 2, sin repetir)</h3>
-          <ion-button size="small" fill="outline" (click)="addOpcion()" [disabled]="loading">
-            <ion-icon name="add-outline" slot="start"></ion-icon>
-            Agregar opción
-          </ion-button>
+    <!-- ======================================================
+         PERIODO DE VOTACIÓN
+    ========================================================== -->
+    <div class="card-section">
+      <h3 class="section-title">Periodo de Votación</h3>
+
+      <!-- Inicio -->
+      <div class="form-group">
+        <label>Fecha y Hora de Inicio <span class="req">*</span></label>
+
+        <div class="input-row">
+          <div class="input-icon">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </div>
+          <input type="date" [(ngModel)]="fechaInicio" class="native-input" />
         </div>
 
-        <div class="options">
-          <ion-item class="field option op-card" *ngFor="let o of opciones; let i = index">
-            <ion-label position="stacked">Título de la opción</ion-label>
-            <ion-input [(ngModel)]="o.titulo" placeholder="Ej: Iluminación de calles"></ion-input>
+        <div class="input-row">
+          <div class="input-icon">
+            <ion-icon name="time-outline"></ion-icon>
+          </div>
+          <input type="time" [(ngModel)]="horaInicio" class="native-input" />
+        </div>
+      </div>
 
-            <ion-label position="stacked" class="ion-margin-top">Descripción</ion-label>
+      <!-- Término -->
+      <div class="form-group">
+        <label>Fecha y Hora de Término <span class="req">*</span></label>
+
+        <div class="input-row">
+          <div class="input-icon">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </div>
+          <input type="date" [(ngModel)]="fechaTermino" class="native-input" />
+        </div>
+
+        <div class="input-row">
+          <div class="input-icon">
+            <ion-icon name="time-outline"></ion-icon>
+          </div>
+          <input type="time" [(ngModel)]="horaTermino" class="native-input" />
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         OPCIONES
+    ========================================================== -->
+    <div class="card-section">
+      <div class="options-header">
+        <h3 class="section-title">Opciones de Votación</h3>
+        <span class="options-count">{{ opciones.length }} opciones</span>
+      </div>
+
+      <div class="options-list">
+
+        <div class="opcion-card" *ngFor="let o of opciones; let i = index">
+
+          <!-- Encabezado -->
+          <div class="opcion-top">
+            <div class="opcion-number">{{ i + 1 }}</div>
+            <h4 class="opcion-title">Opción {{ i + 1 }}</h4>
+
+            <button
+              class="delete-opcion"
+              *ngIf="opciones.length > 2"
+              (click)="removeOpcion(i)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </button>
+          </div>
+
+          <!-- Título -->
+          <div class="form-group">
+            <label>Título de la Opción <span class="req">*</span></label>
+            <ion-input
+              [(ngModel)]="o.titulo"
+              class="input"
+              placeholder="Ej: A favor">
+            </ion-input>
+          </div>
+
+          <!-- Descripción -->
+          <div class="form-group">
+            <label>Descripción de la Opción</label>
             <ion-textarea
               [(ngModel)]="o.descripcion"
-              autoGrow="true"
-              rows="2"
-              placeholder="Detalle breve de la opción">
+              class="textarea"
+              placeholder="Describe esta opción..."
+              auto-grow="true">
             </ion-textarea>
+          </div>
 
-            <div class="ion-margin-top img-row">
-              <!-- input de archivo oculto por opción -->
-              <input
-                type="file"
-                accept="image/*"
-                (change)="onFileSelected(i, $event)"
-                #fileInput
-                hidden
-              />
+          <!-- Imagen -->
+          <div class="form-group">
+            <label>Imagen (Opcional)</label>
 
-              <ion-button size="small" (click)="fileInput.click()" [disabled]="loading">
-                <ion-icon slot="start" name="image-outline"></ion-icon>
-                Agregar / cambiar foto
-              </ion-button>
+            <div
+              class="upload-box"
+              (click)="fileInputs.toArray()[i].nativeElement.click()">
 
-              <ion-button
-                size="small"
-                color="medium"
-                fill="outline"
-                (click)="removeImage(i)"
-                *ngIf="o.previewDataUrl || o.image_url"
-                [disabled]="loading">
-                Quitar foto
-              </ion-button>
-            </div>
+              <span *ngIf="!o.previewDataUrl">Subir imagen</span>
 
-            <!-- Contenedor de imagen de alto fijo para uniformidad -->
-            <div class="img-box" *ngIf="o.previewDataUrl || o.image_url">
               <img
-                [src]="o.previewDataUrl || o.image_url"
-                style="width:100%;height:100%;object-fit:cover;border-radius:8px;" />
+                *ngIf="o.previewDataUrl"
+                [src]="o.previewDataUrl"
+                class="preview-img" />
+
             </div>
 
-            <ion-button
-              slot="end"
-              fill="clear"
-              color="danger"
-              (click)="removeOpcion(i)"
-              [disabled]="opciones.length <= 2 || loading"
-              aria-label="Eliminar opción">
-              <ion-icon name="trash-outline"></ion-icon>
-            </ion-button>
-          </ion-item>
+            <input
+              #fileInput
+              type="file"
+              accept="image/*"
+              (change)="onFileSelected(i, $event)"
+              hidden />
+          </div>
+
         </div>
-      </ion-list>
 
-      <ion-text color="danger" *ngIf="errorMsg" style="display:block; margin-top:8px;">
-        {{ errorMsg }}
-      </ion-text>
-
-      <div class="actions">
-        <ion-button expand="block" (click)="guardar()" [disabled]="!puedeGuardar || loading">
-          <ion-spinner slot="start" *ngIf="loading"></ion-spinner>
-          {{ loading ? 'Creando…' : 'Crear votación' }}
-        </ion-button>
       </div>
-    </ion-card-content>
-  </ion-card>
 
-  <!-- estilos mínimos inline para uniformidad visual -->
-  <style>
-    .options .op-card {
-      align-items: stretch;
-      --inner-padding-end: 0; /* que el botón de borrar no achique el contenido */
-    }
-    .img-row {
-      display: flex;
-      gap: .5rem;
-      align-items: center;
-    }
-    .img-box {
-      margin-top: .5rem;
-      width: 100%;
-      height: 160px;           /* alto fijo para que todas queden iguales */
-      border-radius: 8px;
-      overflow: hidden;
-      background: #f3f4f6;     /* placeholder gris */
-    }
-  </style>
+      <!-- Botón agregar opción -->
+      <button class="add-option-btn" (click)="addOpcion()">
+        + Agregar Opción
+      </button>
+
+    </div>
+
+
+    <!-- BOTÓN FINAL -->
+    <button
+      class="submit-btn"
+      [disabled]="!puedeGuardar || loading"
+      (click)="guardar()">
+      Generar Votación
+    </button>
+
+  </div>
+
 </ion-content>

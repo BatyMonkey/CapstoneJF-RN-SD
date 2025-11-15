@@ -427,4 +427,16 @@ export class EspaciosPage implements OnInit {
   goBack() {
     this.router.navigateByUrl('/home');
   }
+
+  formatearPrecio(precio: string): string {
+    if (!precio) return '';
+
+    // Elimina caracteres que no sean números
+    const soloNumero = precio.replace(/\D/g, '');
+
+    // Formatea con puntos como miles
+    const conMiles = soloNumero.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+    return `$${conMiles}/hora`;
+  }
 }
