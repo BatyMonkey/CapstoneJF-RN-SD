@@ -13,7 +13,7 @@
       </div>
     </div>
 
-    <!-- Botón atrás (círculo con flecha) -->
+    <!-- Botón atrás -->
     <button class="rb-hero-chat" type="button" (click)="goBack()">
       <ion-icon name="chevron-back-outline"></ion-icon>
     </button>
@@ -25,7 +25,7 @@
 ========================================= -->
 <ion-content class="espacios-page" [fullscreen]="true">
 
-  <!-- SUBHEADER + TARJETA AZUL TIPO DASHBOARD -->
+  <!-- SUBHEADER -->
   <div class="subheader">
     <div class="espacio-hero-card">
       <div class="espacio-hero-icon">
@@ -40,7 +40,7 @@
 
   <div class="content-wrapper">
 
-    <!-- TIP AMARILLO -->
+    <!-- TIP -->
     <div class="tip-box">
       <span class="tip-emoji">📅</span>
       <p>
@@ -49,31 +49,28 @@
       </p>
     </div>
 
-    <!-- TÍTULO -->
     <h3 class="section-title">Espacios Disponibles</h3>
 
-    <!-- LISTADO -->
+    <!-- LISTADO ESPACIOS -->
     <ng-container *ngIf="!isLoading && espacios?.length; else loadingOrEmpty">
 
-      <ion-card *ngFor="let espacio of espacios" class="espacio-card"
-        [class.selected]="espacioSeleccionadoId === espacio.id_espacio" (click)="seleccionarEspacio(espacio)">
+      <ion-card *ngFor="let espacio of espacios"
+        class="espacio-card"
+        [class.selected]="espacioSeleccionadoId === espacio.id_espacio"
+        (click)="seleccionarEspacio(espacio)">
 
-        <!-- IMAGEN -->
         <div class="espacio-img-wrapper">
           <img *ngIf="espacio.imagen_url" [src]="espacio.imagen_url" [alt]="espacio.nombre" />
 
-          <!-- PRECIO -->
           <div class="espacio-price" *ngIf="espacio.precio">
             {{ formatearPrecio(espacio.precio) }}
           </div>
 
-          <!-- CHECK SELECCIONADO -->
           <div class="espacio-check" *ngIf="espacioSeleccionadoId === espacio.id_espacio">
             <ion-icon name="checkmark-outline"></ion-icon>
           </div>
         </div>
 
-        <!-- CONTENIDO -->
         <ion-card-content>
           <h4 class="espacio-nombre">{{ espacio.nombre }}</h4>
           <p class="espacio-desc">{{ espacio.descripcion || 'Sin descripción' }}</p>
@@ -90,7 +87,7 @@
             </div>
           </div>
 
-          <!-- SERVICIOS -->
+          <!-- Servicios -->
           <div class="espacio-servicios" *ngIf="espacio.servicios?.length">
             <p class="servicios-title">Servicios incluidos:</p>
 
@@ -121,7 +118,10 @@
       </div>
     </ng-template>
 
-    <!-- FORMULARIO -->
+    <!-- ========================================
+         FORMULARIO DE ARRIENDO / SOLICITUD
+    ========================================== -->
+
     <div class="solicitud-card" *ngIf="espacioSeleccionadoId">
       <h3>Solicitar Arriendo</h3>
 
@@ -130,7 +130,7 @@
         <label>Fecha <span class="req">*</span></label>
         <div class="field-input icon-left">
           <ion-icon name="calendar-outline"></ion-icon>
-          <input type="date" [(ngModel)]="fechaArriendo" />
+          <input type="date" [(ngModel)]="fechaArriendo" (change)="validarHorario()" />
         </div>
       </div>
 
@@ -141,21 +141,26 @@
         <div class="time-grid">
           <div class="field-input icon-left">
             <ion-icon name="time-outline"></ion-icon>
-            <input type="time" [(ngModel)]="horaInicio" />
+            <input type="time" [(ngModel)]="horaInicio" (change)="validarHorario()" />
           </div>
 
           <div class="field-input icon-left">
             <ion-icon name="time-outline"></ion-icon>
-            <input type="time" [(ngModel)]="horaFin" />
+            <input type="time" [(ngModel)]="horaFin" (change)="validarHorario()" />
           </div>
         </div>
+      </div>
+
+      <!-- MENSAJE VISUAL DE ERROR DE HORARIO -->
+      <div class="error-horario-box" *ngIf="errorHorario">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <p>{{ errorHorario }}</p>
       </div>
 
       <!-- MOTIVO -->
       <div class="field">
         <label>Motivo <span class="req">*</span></label>
-        <textarea rows="3" [(ngModel)]="motivo" placeholder="Describe brevemente el motivo del arriendo...">
-        </textarea>
+        <textarea rows="3" [(ngModel)]="motivo" placeholder="Describe brevemente el motivo del arriendo..."></textarea>
       </div>
 
       <ion-button expand="block" class="btn-submit" (click)="solicitarArriendo()">
