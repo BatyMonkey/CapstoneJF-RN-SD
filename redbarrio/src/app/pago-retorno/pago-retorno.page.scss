@@ -1,10 +1,10 @@
 :host {
   color-scheme: light;
 
-  /* Paleta consistente */
-  --rb-primary: #2563eb;
-  --rb-primary-10: rgba(37, 99, 235, 0.10);
-  --rb-primary-20: rgba(37, 99, 235, 0.20);
+  /* Paleta consistente RedBarrio */
+  --rb-primary: #06b6d4;
+  --rb-primary-10: rgba(6, 182, 212, 0.1);
+  --rb-primary-20: rgba(6, 182, 212, 0.2);
   --rb-bg: #f8fafc;
   --rb-text: #0f172a;
 
@@ -12,107 +12,366 @@
   --ion-text-color: var(--rb-text);
 }
 
-/* Header con gradiente */
-.rb-header ion-toolbar {
-  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
-  --color: #fff;
-  --border-color: transparent;
+/* ============== HERO HEADER (como referencia votación) ============== */
+.rb-hero-header {
+  background: linear-gradient(90deg, #06b6d4, #22d3ee);
+  border-bottom-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Contenido base */
-.webpay {
-  text-align: center;
-
-  p { font-size: 16px; color: var(--rb-text); }
+ion-header::after {
+  background: none !important;
+  display: none !important;
 }
 
-/* Tarjeta principal con estilo consistente */
-ion-card.card {
-  background: #fff !important;
+.rb-hero-container {
+  width: 100%;
+  padding: 0 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rb-hero-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rb-hero-logo {
+  width: 80px;
+  height: 80px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rb-hero-logo img {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+}
+
+.rb-hero-text h1 {
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.rb-hero-text p {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 2px 0 0;
+  font-size: 0.9rem;
+}
+
+.rb-hero-chat {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  ion-icon {
+    color: #fff;
+    font-size: 1.3rem;
+  }
+}
+
+/* ============== CONTENIDO PÁGINA ============== */
+
+.pago-page {
+  --background: #f5f7fb;
+  margin-top: 140px; /* deja espacio bajo el header redondeado */
+}
+
+.page-wrapper {
+  max-width: 430px;
+  margin: 0 auto 24px;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+/* Loading */
+.loading-box {
+  display: grid;
+  place-items: center;
+  gap: 0.5rem;
+  min-height: 50vh;
+}
+
+.spinner {
+  filter: drop-shadow(0 6px 16px rgba(6, 182, 212, 0.3));
+}
+
+/* Tarjeta azul principal */
+.main-pay-card {
+  background: linear-gradient(135deg, #00c6ff, #009fe3);
+  border-radius: 20px;
+  padding: 14px 16px;
+  margin: 14px 0 10px;
+  display: flex;
+  gap: 12px;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.icon-circle {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  ion-icon {
+    font-size: 1.6rem;
+  }
+}
+
+.main-pay-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.main-pay-text h2 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.main-pay-text p {
+  margin: 0;
+  font-size: 0.86rem;
+}
+
+/* Pill estado */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #e0fdf4;
+  color: #166534;
+  margin-top: 8px;
+
+  &.state-ok {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  &.state-error {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+}
+
+/* Tarjeta blanca (boleta) */
+.pay-card {
+  background: #ffffff !important;
   border-radius: 18px;
   border: 1px solid rgba(2, 6, 23, 0.06);
   box-shadow: 0 10px 26px rgba(2, 6, 23, 0.08);
   overflow: hidden;
-  text-align: left;
+  margin-top: 14px;
 
   ion-card-header {
     background: #fff;
     border-bottom: 1px solid rgba(2, 6, 23, 0.06);
+  }
 
-    ion-card-title {
-      font-weight: 800;
-      color: var(--rb-text);
-    }
+  ion-card-title {
+    font-weight: 800;
+    color: var(--rb-text);
+    font-size: 1.05rem;
+  }
+
+  ion-card-subtitle {
+    font-size: 0.8rem;
+    color: #64748b;
+    text-transform: none;
   }
 
   ion-card-content {
     padding-top: 12px;
   }
-
-
-  &[color="success"] {
-    border-left: 6px solid #16a34a; /* verde */
-  }
-  &[color="danger"] {
-    border-left: 6px solid #ef4444; /* rojo */
-  }
 }
 
+.section {
+  margin-bottom: 16px;
 
-.status-row {
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: 10px;
+  h3 {
+    margin: 0 0 4px;
+    font-size: 1rem;
+    font-weight: 700;
+  }
 
-  ion-chip {
-    --background: var(--rb-primary-10);
-    --color: var(--rb-text);
-    --border-color: var(--rb-primary-20);
+  p {
+    margin: 0;
+    font-size: 0.86rem;
   }
 }
 
-
-.kv p {
-  margin: 6px 0;
-  strong { color: #334155; }
+.success-text {
+  h3 {
+    color: #16a34a;
+  }
 }
 
+.error-text {
+  h3 {
+    color: #b91c1c;
+  }
+}
 
-.loading-box {
+/* Filas tipo ficha */
+.row-grid {
   display: grid;
-  place-items: center;
-  gap: .5rem;
-  min-height: 35vh;
-}
-.spinner {
-  filter: drop-shadow(0 6px 16px rgba(37,99,235,.25));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 12px;
 }
 
-/* Animaciones suaves */
+.info-block {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px;
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+
+  &.full {
+    margin-top: 6px;
+    margin-bottom: 10px;
+  }
+}
+
+.label {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-bottom: 2px;
+}
+
+.value {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Monto total destacado */
+.amount-card {
+  margin: 12px 0 14px;
+  border-radius: 18px;
+  padding: 12px 16px;
+  background: #facc15;
+  color: #0f172a;
+  box-shadow: 0 8px 20px rgba(250, 204, 21, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.amount-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.amount-value {
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+/* Nota final */
+.footer-note {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed #e5e7eb;
+  font-size: 0.8rem;
+  color: #6b7280;
+
+  p {
+    margin: 0;
+  }
+}
+
+/* Botones */
+.actions {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.download-btn {
+  --background: linear-gradient(90deg, #06b6d4, #0ea5e9);
+  --background-activated: linear-gradient(90deg, #0ea5e9, #0284c7);
+  --background-hover: linear-gradient(90deg, #22d3ee, #0ea5e9);
+  --color: #ffffff;
+  --border-radius: 12px;
+  --box-shadow: 0 10px 24px rgba(15, 23, 42, 0.25);
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0.2px;
+}
+
+/* Animaciones suaves (mismas que referencia) */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
 @keyframes popIn {
-  0% { opacity: 0; transform: scale(.98); }
-  100% { opacity: 1; transform: scale(1); }
+  0% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
+
 @keyframes slideUp {
-  0% { opacity: 0; transform: translateY(8px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-.fade-in { animation: fadeIn .28s ease-out both; }
-.pop-in  { animation: popIn .22s ease-out both; }
-.slide-up{ animation: slideUp .25s ease-out .05s both; }
-
-/* Botón */
-ion-button {
-  border-radius: 12px;
-  box-shadow: 0 10px 18px var(--rb-primary-10);
-  --padding-start: 14px;
-  --padding-end: 14px;
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Modo md/iOS pequeños ajustes */
-.md ion-card.card { text-align: left; }
-.ios ion-card.card { text-align: left; }
+.fade-in {
+  animation: fadeIn 0.28s ease-out both;
+}
+.pop-in {
+  animation: popIn 0.22s ease-out both;
+}
+.slide-up {
+  animation: slideUp 0.25s ease-out 0.05s both;
+}

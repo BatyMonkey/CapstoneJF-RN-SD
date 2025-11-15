@@ -1,31 +1,172 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Pago WebPay</ion-title>
-  </ion-toolbar>
+<!-- HERO HEADER (mismo estilo que otras páginas) -->
+<ion-header class="rb-hero-header" slot="fixed">
+  <div class="rb-hero-container">
+    <div class="rb-hero-info">
+      <div class="rb-hero-logo">
+        <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
+      </div>
+      <div class="rb-hero-text">
+        <h1>RedBarrio</h1>
+        <p>Tu comunidad conectada</p>
+      </div>
+    </div>
+
+    <!-- Botón volver -->
+    <button class="rb-hero-chat" type="button" (click)="goBack()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </button>
+  </div>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <div *ngIf="loading" class="ion-text-center">
-    <ion-spinner name="crescent" color="primary"></ion-spinner>
+<ion-content class="pago-page" [fullscreen]="true">
+  <!-- ESTADO CARGANDO -->
+  <div *ngIf="loading" class="loading-box ion-text-center">
+    <ion-spinner name="crescent" class="spinner"></ion-spinner>
     <p class="ion-margin-top">{{ mensaje }}</p>
   </div>
 
-  <div *ngIf="!loading">
-    <ion-card class="ion-text-center" [color]="detalles?.estado === 'Pagado' ? 'success' : 'danger'">
-      <ion-card-header>
-        <ion-card-title>{{ mensaje }}</ion-card-title>
-      </ion-card-header>
+  <!-- RESULTADO -->
+  <ng-container *ngIf="!loading">
+    <div class="page-wrapper fade-in">
+      <!-- Tarjeta azul principal -->
+      <div class="main-pay-card pop-in" *ngIf="detalles">
+        <div class="icon-circle">
+          <ion-icon
+            [name]="detalles.estado === 'Pagado'
+              ? 'checkmark-circle-outline'
+              : 'close-circle-outline'"
+          ></ion-icon>
+        </div>
 
-      <ion-card-content *ngIf="detalles">
-        <p><strong>Estado:</strong> {{ detalles.estado }}</p>
-        <p><strong>Monto:</strong> ${{ detalles.monto }}</p>
-        <p><strong>Tipo de pago:</strong> {{ detalles.tipoPago }}</p>
-        <p><strong>Código autorización:</strong> {{ detalles.codigoAutorizacion }}</p>
-      </ion-card-content>
-    </ion-card>
+        <div class="main-pay-text">
+          <h2>Resultado del Pago</h2>
+          <p>Comprobante de Pago</p>
 
-    <ion-button expand="block" color="medium" routerLink="/home">
-      Volver al inicio
-    </ion-button>
-  </div>
+          <span
+            class="status-pill"
+            [ngClass]="detalles.estado === 'Pagado' ? 'state-ok' : 'state-error'"
+          >
+            {{ detalles.estado }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Tarjeta blanca tipo "boleta" -->
+      <ion-card class="pay-card slide-up" *ngIf="detalles" #boleta>
+        <ion-card-header>
+          <ion-card-subtitle>Transacción WebPay</ion-card-subtitle>
+          <ion-card-title>Boleta electrónica</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <!-- Mensaje principal -->
+          <div
+            class="section success-text"
+            *ngIf="detalles.estado === 'Pagado'; else noPagado"
+          >
+            <h3>Pagado</h3>
+            <p>Tu pago ha sido procesado exitosamente.</p>
+          </div>
+
+          <ng-template #noPagado>
+            <div class="section error-text">
+              <h3>No Pagado</h3>
+              <p>El pago fue rechazado o no autorizado.</p>
+            </div>
+          </ng-template>
+
+          <!-- Número de orden / Fecha -->
+          <div class="row-grid">
+            <div class="info-block">
+              <span class="label">Número de orden</span>
+              <span class="value">
+                {{ detalles.numeroOrden || '—' }}
+              </span>
+            </div>
+
+            <div class="info-block">
+              <span class="label">Fecha y hora</span>
+              <span class="value">
+                {{ detalles.fechaHora || '—' }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Concepto -->
+          <div class="info-block full">
+            <span class="label">Concepto</span>
+            <span class="value">
+              {{ detalles.concepto || 'Pago realizado en RedBarrio' }}
+            </span>
+          </div>
+
+          <!-- Monto total -->
+          <div class="amount-card">
+            <span class="amount-label">Monto total</span>
+            <span class="amount-value">
+              ${{ detalles.monto | number: '1.0-0' }}
+            </span>
+          </div>
+
+          <!-- Tipo de pago / Tarjeta -->
+          <div class="row-grid">
+            <div class="info-block">
+              <span class="label">Tipo de pago</span>
+              <span class="value">
+                {{ detalles.tipoPago || '—' }}
+              </span>
+            </div>
+
+            <div class="info-block">
+              <span class="label">Tarjeta</span>
+              <span class="value">
+                {{ detalles.tarjeta || '**** **** **** 4532' }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Código de autorización -->
+          <div class="info-block full">
+            <span class="label">Código de autorización</span>
+            <span class="value">
+              {{ detalles.codigoAutorizacion || '—' }}
+            </span>
+          </div>
+
+          <!-- Nota final -->
+          <div class="footer-note">
+            <p>Junta de Vecinos - RedBarrio</p>
+            <p>Este es un comprobante válido de tu transacción.</p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Si no hay detalles pero sí mensaje -->
+      <ion-card class="pay-card slide-up" *ngIf="!detalles">
+        <ion-card-header>
+          <ion-card-title>Resultado del Pago</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>{{ mensaje }}</p>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Botones -->
+      <div class="actions slide-up">
+        <ion-button
+          expand="block"
+          class="download-btn"
+          (click)="descargarBoleta()"
+          [disabled]="!detalles"
+        >
+          <ion-icon slot="start" name="download-outline"></ion-icon>
+          Descargar comprobante
+        </ion-button>
+
+        <ion-button expand="block" fill="clear" color="medium" routerLink="/home">
+          Volver al inicio
+        </ion-button>
+      </div>
+    </div>
+  </ng-container>
 </ion-content>
