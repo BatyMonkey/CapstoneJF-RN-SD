@@ -1,138 +1,213 @@
-/* ===== Paleta base ===== */
-:host {
-  --rb-primary: #2563eb;
-  --rb-primary-soft: rgba(37, 99, 235, 0.1);
+/* ============================================================
+   HERO HEADER
+=============================================================== */
 
-  --rb-bg: #f8fafc;
-  --rb-text: #0f172a;
-  --rb-muted: #64748b;
-
-  --ion-background-color: var(--rb-bg);
-  --ion-text-color: var(--rb-text);
+.rb-hero-header {
+  background: linear-gradient(90deg, #06b6d4, #22d3ee);
+  border-bottom-left-radius: 1.6rem;
+  border-bottom-right-radius: 1.6rem;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Fondo del page */
-ion-content {
-  --background: var(--rb-bg);
-  padding: 16px;
+.rb-hero-container {
+  width: 100%;
+  padding: 0 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* Header degradado (si lo usas) */
-ion-header ion-toolbar {
-  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
-  --color: #fff;
-  --border-color: transparent;
+.rb-hero-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-/* La lista no debe tener fondo */
-ion-list {
-  background: transparent;
+.rb-hero-logo img {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
 }
 
-/* === CARD de cada solicitud === */
-ion-list > ion-item {
-  --background: #ffffff;
-  margin-bottom: 14px;
-  border-radius: 18px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
-  /* esto hace que el borde redondo se vea */
-  --inner-border-width: 0;
-  --padding-start: 14px;
-  --padding-end: 14px;
-  align-items: flex-start;
-}
-
-/* Texto dentro de la solicitud */
-ion-list > ion-item ion-label {
-  color: var(--rb-text);
-}
-
-ion-list > ion-item ion-label h2 {
+.rb-hero-text h1 {
+  color: #fff;
+  font-size: 1.3rem;
+  margin: 0;
   font-weight: 700;
-  font-size: 1.02rem;
-  margin-bottom: 4px;
-  color: var(--rb-text);
 }
 
-ion-list > ion-item ion-label p {
-  margin: 0 0 4px 0;
-  color: var(--rb-muted);
-  font-weight: 500;
-  word-break: break-word;
+.rb-hero-text p {
+  color: rgba(255,255,255,0.9);
+  margin: 0;
+  font-size: 0.88rem;
 }
 
-/* Dirección con icono de casa 🏠 */
-.direccion {
+.rb-hero-back {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.22);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rb-hero-back ion-icon {
+  color: white;
+  font-size: 1.4rem;
+}
+
+
+
+/* ============================================================
+   TABS
+=============================================================== */
+
+.tabs-container {
+  display: flex;
+  gap: 10px;
+  margin: 18px 16px 10px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 12px;
+  background: #f0f0f0;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  color: #4a4a4a;
+}
+
+.tab-btn.active {
+  background: #ffd54f;
+  color: #000;
+}
+
+
+
+/* ============================================================
+   CARD VECINO
+=============================================================== */
+
+.card-vecino {
+  background: #fff;
+  border-radius: 16px;
+  border: 2px solid #ffe9a8;
+  padding: 18px;
+  margin: 16px;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+}
+
+.card-vecino.active {
+  border-color: #a6e7ff;
+}
+
+.card-header {
+  display: flex;
+  gap: 14px;
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+
+.info .name {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.rut {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #575757;
+}
+
+.date-line {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: var(--rb-muted);
-  font-size: 0.88rem;
+  font-size: 13px;
+  color: #b68200;
   margin-top: 4px;
 }
 
-.direccion ion-icon {
-  color: var(--rb-primary);
-  font-size: 1rem;
-}
 
-/* Chip de estado */
-ion-chip[color='warning'] {
-  --background: #facc15;
-  --color: #1e293b;
-  border-radius: 8px;
-  font-weight: 600;
-  margin-top: 6px;
-}
 
-/* Botones a la derecha */
-ion-list > ion-item ion-buttons[slot='end'] {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-left: 10px;
-}
+/* ============================================================
+   DATOS BOX
+=============================================================== */
 
-ion-list > ion-item ion-buttons ion-button {
-  font-weight: 600;
+.datos-box {
+  background: #f7f7f7;
+  padding: 12px;
   border-radius: 12px;
-  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.12);
-  height: 36px;
-  min-width: 110px;
+  margin: 14px 0;
+  font-size: 14px;
 }
 
-ion-list > ion-item ion-buttons ion-button[color='success'] {
-  --background: #16a34a;
-  --background-activated: #15803d;
-  --color: #fff;
+.datos-box p {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0;
 }
 
-ion-list > ion-item ion-buttons ion-button[color='danger'] {
-  --background: #ef4444;
-  --background-activated: #b91c1c;
-  --color: #fff;
+
+
+/* ============================================================
+   BOTONES
+=============================================================== */
+
+.acciones {
+  display: flex;
+  gap: 10px;
 }
 
-/* Texto “sin solicitudes” y “cargando” */
-.texto-cargando,
-ion-content > div.ion-text-center {
-  color: var(--rb-muted);
-  font-weight: 600;
+.btn-aceptar,
+.btn-rechazar {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  color: white;
 }
 
-/* === Responsive === */
-@media (max-width: 520px) {
-  ion-list > ion-item {
-    /* el item se hace más vertical */
-    align-items: stretch;
-  }
-
-  ion-list > ion-item ion-buttons[slot='end'] {
-    flex-direction: row;
-    justify-content: flex-end;
-  }
-
-  ion-list > ion-item ion-buttons ion-button {
-    min-width: 0;
-  }
+.btn-aceptar {
+  background: #22c55e;
 }
+
+.btn-rechazar {
+  background: #ef4444;
+}
+
+.btn-desactivar {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  background: #ffe5e5;
+  color: #c62828;
+  border: none;
+  margin-top: 12px;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+

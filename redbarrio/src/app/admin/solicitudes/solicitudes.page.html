@@ -1,55 +1,155 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
-    </ion-buttons>
-    <ion-title>Solicitudes de Vecinos</ion-title>
-  </ion-toolbar>
+<!-- ============================================================
+     HEADER — HERO REDBARRIO
+=============================================================== -->
+<ion-header class="rb-hero-header">
+  <div class="rb-hero-container">
+
+    <div class="rb-hero-info">
+      <div class="rb-hero-logo">
+        <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
+      </div>
+
+      <div class="rb-hero-text">
+        <h1>RedBarrio</h1>
+        <p>{{ subtitulo }}</p>
+      </div>
+    </div>
+
+    <button class="rb-hero-back" type="button" (click)="goBack()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </button>
+
+  </div>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding">
 
-  <!-- 🌀 Cargando -->
-  <div *ngIf="cargando" class="ion-text-center ion-padding">
-    <ion-spinner name="crescent" color="primary"></ion-spinner>
-    <p class="texto-cargando">Cargando solicitudes...</p>
+<!-- ============================================================
+     CONTENIDO PRINCIPAL
+=============================================================== -->
+<ion-content>
+
+  <!-- TABS -->
+  <div class="tabs-container">
+    <button class="tab-btn" 
+            [class.active]="activeTab === 'pendientes'" 
+            (click)="activeTab = 'pendientes'">
+      <ion-icon name="time-outline"></ion-icon>
+      Pendientes ({{ solicitudesPendientes.length }})
+    </button>
+
+    <button class="tab-btn" 
+            [class.active]="activeTab === 'activos'" 
+            (click)="activeTab = 'activos'">
+      <ion-icon name="people-outline"></ion-icon>
+      Activos ({{ solicitudesAprobadas.length }})
+    </button>
   </div>
 
-  <!-- ✅ Lista de solicitudes pendientes -->
-  <ion-list *ngIf="!cargando && solicitudes.length > 0">
-    <ion-item *ngFor="let solicitud of solicitudes" lines="inset">
-      <ion-label>
-        <h2>{{ solicitud.nombre || 'Nombre no disponible' }}</h2>
-        <p>{{ solicitud.correo }}</p>
-        <div class="direccion" *ngIf="solicitud.direccion">
-          <ion-icon name="home-outline"></ion-icon>
-          <span>{{ solicitud.direccion }}</span>
+
+  <!-- ============================
+       TAB: PENDIENTES
+  ============================== -->
+  <section *ngIf="activeTab === 'pendientes'" class="section-wrapper">
+
+    <h2 class="section-title">Solicitudes Pendientes</h2>
+
+    <!-- Badge -->
+    <div class="badge" *ngIf="solicitudesPendientes.length > 0">
+      {{ solicitudesPendientes.length }} solicitud
+    </div>
+
+    <!-- Empty -->
+    <div class="empty" *ngIf="solicitudesPendientes.length === 0">
+      <ion-icon name="checkmark-done-circle-outline"></ion-icon>
+      <p>No hay solicitudes pendientes</p>
+    </div>
+
+    <!-- Cards -->
+    <div class="card-vecino"
+         *ngFor="let s of solicitudesPendientes">
+
+      <div class="card-header">
+
+        <img [attr.src]="getFotoPerfil(s.url_foto_perfil)" (error)="onAvatarError($event)" class="avatar" />
+
+        <div class="info">
+          <h3 class="name">{{ s.nombre }}</h3>
+          <p class="rut">RUT: {{ s.rut }}</p>
+
+          <div class="date-line">
+            <ion-icon name="calendar-outline"></ion-icon>
+            Solicitado: {{ s.creado_en | date:'dd-MM-yyyy' }}
+          </div>
         </div>
-        <ion-chip color="warning" *ngIf="solicitud.status === 'pendiente'">
-          <ion-label>Pendiente</ion-label>
-        </ion-chip>
-      </ion-label>
+      </div>
 
-      <!-- 🔘 Botones de acción -->
-      <ion-buttons slot="end">
-        <ion-button color="success" fill="solid" [disabled]="solicitud.procesando"
-          (click)="cambiarEstado(solicitud, 'activo')">
-          Aprobar
-        </ion-button>
+      <div class="datos-box">
+        <p><ion-icon name="mail-outline"></ion-icon> {{ s.correo }}</p>
+        <p><ion-icon name="call-outline"></ion-icon> {{ s.telefono }}</p>
+        <p><ion-icon name="location-outline"></ion-icon> {{ s.direccion }}</p>
+      </div>
 
-        <ion-button color="danger" fill="solid" [disabled]="solicitud.procesando"
-          (click)="cambiarEstado(solicitud, 'rechazado')">
-          Rechazar
-        </ion-button>
-      </ion-buttons>
-    </ion-item>
-  </ion-list>
+      <div class="acciones">
+        <button class="btn-aceptar" (click)="aprobar(s)">
+          <ion-icon name="checkmark-outline"></ion-icon> Aceptar
+        </button>
 
-  <!-- 🚫 Sin solicitudes pendientes -->
-  <div *ngIf="!cargando && solicitudes.length === 0" class="ion-text-center ion-padding">
-    <ion-icon name="checkmark-done-circle-outline" color="medium" size="large"></ion-icon>
-    <p class="ion-text-center ion-margin-top">
-      No hay solicitudes pendientes
-    </p>
-  </div>
+        <button class="btn-rechazar" (click)="rechazar(s)">
+          <ion-icon name="close-outline"></ion-icon> Rechazar
+        </button>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================
+       TAB: ACTIVOS
+  ============================== -->
+  <section *ngIf="activeTab === 'activos'" class="section-wrapper">
+
+    <h2 class="section-title">Usuarios Activos</h2>
+
+    <div class="badge badge-cyan">
+      {{ solicitudesAprobadas.length }} usuario(s)
+    </div>
+
+    <!-- Empty -->
+    <div class="empty" *ngIf="solicitudesAprobadas.length === 0">
+      <ion-icon name="people-outline"></ion-icon>
+      <p>No hay usuarios activos</p>
+    </div>
+
+    <!-- Cards -->
+    <div class="card-vecino active" *ngFor="let s of solicitudesAprobadas">
+
+      <div class="card-header">
+        <img [attr.src]="getFotoPerfil(s.url_foto_perfil)" (error)="onAvatarError($event)" class="avatar" />
+        <div class="info">
+          <div class="line">
+            <h3 class="name">{{ s.nombre }}</h3>
+            <span class="estado-activo">Activo</span>
+          </div>
+
+          <p class="rut">RUT: {{ s.rut }}</p>
+
+          <div class="date-line">
+            <ion-icon name="calendar-outline"></ion-icon>
+            Desde: {{ s.creado_en | date:'dd-MM-yyyy' }}
+          </div>
+        </div>
+      </div>
+
+      <div class="datos-box">
+        <p><ion-icon name="mail-outline"></ion-icon> {{ s.correo }}</p>
+        <p><ion-icon name="call-outline"></ion-icon> {{ s.telefono }}</p>
+        <p><ion-icon name="location-outline"></ion-icon> {{ s.direccion }}</p>
+      </div>
+
+      <button class="btn-desactivar" (click)="desactivar(s)">
+        <ion-icon name="ban-outline"></ion-icon> Desactivar Usuario
+      </button>
+
+    </div>
+  </section>
+
 </ion-content>

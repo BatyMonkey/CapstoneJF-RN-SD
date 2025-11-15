@@ -1,161 +1,145 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IonicModule, ToastController } from '@ionic/angular';
-import { AuthService } from 'src/app/auth/auth.service';
-import { SupabaseService } from 'src/app/services/supabase.service';
+import { Router } from '@angular/router';
 
-interface Perfil {
-  id_usuario: string;
-  id_auth: string;
-  email?: string;
-  nombre?: string;
-  rol?: string;
-  rol_usuario?: string;
-  status?: string;
-  [key: string]: any;
-}
+import {
+  IonHeader,
+  IonContent,
+  IonIcon,
+  IonButtons,
+  IonButton,
+  IonChip,
+  IonLabel,
+  IonSpinner,
+} from '@ionic/angular/standalone';
+
+import { CommonModule, DatePipe } from '@angular/common';
+import { SupabaseService } from 'src/app/services/supabase.service';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   standalone: true,
   selector: 'app-solicitudes',
   templateUrl: './solicitudes.page.html',
   styleUrls: ['./solicitudes.page.scss'],
-  imports: [IonicModule, CommonModule],
+  imports: [
+    CommonModule,
+    DatePipe,
+
+    IonHeader,
+    IonContent,
+    IonIcon,
+    IonButtons,
+    IonButton,
+    IonChip,
+    IonLabel,
+    IonSpinner,
+  ],
 })
 export class SolicitudesPage implements OnInit {
-  solicitudes: any[] = [];
-  cargando = false;
+  
+  subtitulo = "Registros de Vecinos";
+  activeTab: 'pendientes' | 'activos' = 'pendientes';
+
+  solicitudesPendientes: any[] = [];
+  solicitudesAprobadas: any[] = [];
 
   constructor(
-    private authService: AuthService,
+    private router: Router,
     private supabaseService: SupabaseService,
-    private toastCtrl: ToastController
+    private authService: AuthService
   ) {}
 
-  async ngOnInit() {
-    await this.cargarSolicitudes();
+  ngOnInit() {
+    this.cargar();
   }
 
-  // =====================================================
-  // 🔹 Obtener perfil del usuario autenticado
-  // =====================================================
-  async miPerfil(): Promise<Perfil | null> {
-    try {
-      const perfil = await this.authService.obtenerPerfilActual();
-      console.log('Perfil autenticado:', perfil);
-      return perfil;
-    } catch (err) {
-      console.error('Error al obtener perfil:', err);
-      return null;
+  goBack() {
+    this.router.navigate(['/admin']);
+  }
+
+  async cargar() {
+    const selectCampos = `
+      id_usuario,
+      nombre,
+      correo,
+      rut,
+      direccion,
+      telefono,
+      status,
+      url_foto_perfil,
+      creado_en
+    `;
+
+    
+
+    const { data: pendientes } = await this.supabaseService
+      .from('usuario')
+      .select(selectCampos)
+      .eq('status', 'pendiente');
+
+    const { data: activos } = await this.supabaseService
+      .from('usuario')
+      .select(selectCampos)
+      .eq('status', 'activo');
+
+    this.solicitudesPendientes = pendientes ?? [];
+    this.solicitudesAprobadas = activos ?? [];
+    
+    console.log("🔍 Pendientes:", pendientes);
+    console.log("🔍 Activos:", activos);
+  }
+
+
+  async aprobar(s: any) {
+    await this.authService.cambiarEstadoUsuario(s.id_usuario, 'activo');
+    this.cargar();
+  }
+
+  async rechazar(s: any) {
+    await this.authService.cambiarEstadoUsuario(s.id_usuario, 'rechazado');
+    this.cargar();
+  }
+
+  async desactivar(s: any) {
+    await this.authService.cambiarEstadoUsuario(s.id_usuario, 'pendiente');
+    this.cargar();
+  }
+
+  // ============================================================
+  // 🔹 GENERAR URL PÚBLICA DE SUPABASE STORAGE
+  // ============================================================
+  getFotoPerfil(path: string | null): string {
+    // Fallback universal
+    const defaultAvatar = "assets/default_avatar.png";
+
+    // Si no hay path válido → foto default
+    if (!path || path === "null" || path === "undefined" || path.trim() === "") {
+      return defaultAvatar;
     }
-  }
 
-  // =====================================================
-  // 🔹 Cargar solicitudes pendientes (solo administradores)
-  // =====================================================
-  async cargarSolicitudes() {
-    this.cargando = true;
-    try {
-      const session = await this.supabaseService.auth.getSession();
-      console.log('🔑 UID autenticado:', session.data?.session?.user?.id);
-      const perfil = await this.miPerfil();
-
-      // ✅ Verificamos que el usuario sea administrador
-      if (
-        perfil?.rol_usuario === 'administrador' ||
-        perfil?.rol === 'administrador'
-      ) {
-        const { data, error } = await this.supabaseService
-          .from('usuario')
-          .select('id_usuario, nombre, correo, status, rol')
-          .eq('status', 'pendiente');
-
-        if (error) {
-          console.error('Error al consultar solicitudes:', error);
-          await this.mostrarToast('Error al obtener solicitudes', 'danger');
-          this.solicitudes = [];
-          return;
-        }
-
-        console.log('Solicitudes obtenidas:', data);
-        this.solicitudes = data || [];
-      } else {
-        console.warn(
-          'El usuario no es administrador, no puede ver solicitudes'
-        );
-        await this.mostrarToast(
-          'No tienes permisos para ver las solicitudes',
-          'warning'
-        );
-        this.solicitudes = [];
-      }
-    } catch (err) {
-      console.error('Error general al cargar solicitudes:', err);
-      await this.mostrarToast('Error al cargar solicitudes', 'danger');
-    } finally {
-      this.cargando = false;
+    // Si ya es URL pública → úsala directo
+    if (path.startsWith("http")) {
+      return path;
     }
+
+    // Si es un path interno del bucket → generar URL pública
+    const { data } = this.supabaseService.client.storage
+      .from("perfiles-bucket")
+      .getPublicUrl(path);
+
+    return data?.publicUrl || defaultAvatar;
   }
 
-  // =====================================================
-  // 🔹 Cambiar estado (Aprobar / Rechazar)
-  // =====================================================
-  async cambiarEstado(solicitud: any, nuevoEstado: string) {
-    if (solicitud.procesando) return;
-    solicitud.procesando = true;
+  onAvatarError(event: any) {
+    const fallback = "assets/default_avatar.png";
 
-    try {
-      console.log(
-        `🟦 Cambiando estado de usuario ${solicitud.id_usuario} → ${nuevoEstado}`
-      );
-
-      const ok = await this.authService.cambiarEstadoUsuario(
-        solicitud.id_usuario,
-        nuevoEstado
-      );
-
-      if (ok) {
-        // 🧾 Registrar auditoría
-        await this.supabaseService.registrarAuditoria(
-          nuevoEstado === 'activo' ? 'aprobar solicitud' : 'rechazar solicitud',
-          'usuario',
-          {
-            nombre: solicitud.nombre || '(sin nombre)',
-            id_usuario: solicitud.id_usuario,
-            estado_anterior: solicitud.estado || 'pendiente',
-            nuevo_estado: nuevoEstado,
-          }
-        );
-
-        // 🧹 Actualizar lista en pantalla
-        this.solicitudes = this.solicitudes.filter(
-          (s) => s.id_usuario !== solicitud.id_usuario
-        );
-
-        await this.mostrarToast(
-          nuevoEstado === 'activo'
-            ? 'Solicitud aprobada correctamente'
-            : 'Solicitud rechazada correctamente',
-          nuevoEstado === 'activo' ? 'success' : 'medium'
-        );
-      }
-    } catch (err) {
-      console.error('❌ Error al cambiar estado:', err);
-      await this.mostrarToast('Error al cambiar estado', 'danger');
-    } finally {
-      solicitud.procesando = false;
+    if (event.target.src.includes(fallback)) {
+      return; // evitar loops infinitos
     }
+
+    event.target.src = fallback;
   }
 
-  // =====================================================
-  // 🔹 Mostrar toast reutilizable
-  // =====================================================
-  private async mostrarToast(mensaje: string, color: string = 'primary') {
-    const toast = await this.toastCtrl.create({
-      message: mensaje,
-      duration: 2000,
-      color,
-    });
-    await toast.present();
-  }
+
+
 }
