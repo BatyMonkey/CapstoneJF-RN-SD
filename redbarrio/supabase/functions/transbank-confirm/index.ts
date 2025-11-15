@@ -20,9 +20,11 @@ function corsHeaders() {
   };
 }
 
-// 🧩 HTML intermedio SIN JS, con meta refresh hacia la app (profundamente compatible)
+// 🧩 HTML intermedio SIN JS, con meta refresh hacia la app
 function renderDeepLinkHtml(token_ws: string) {
-  const deepLink = `capacitor://localhost/pago-retorno?token_ws=${encodeURIComponent(token_ws)}`;
+  const deepLink = `capacitor://localhost/pago-retorno?token_ws=${encodeURIComponent(
+    token_ws,
+  )}`;
   return `<!DOCTYPE html>
 <html lang="es">
   <head>
@@ -47,6 +49,70 @@ function renderDeepLinkHtml(token_ws: string) {
 </html>`;
 }
 
+// 🧱 Helper: actualizar la ÚLTIMA orden en orden_pago con token_ws + estado
+async function actualizarOrdenEnSupabase(
+  token_ws: string,
+  estadoPago: string,
+  confirmData: any,
+) {
+  try {
+    // 1) Obtener la última orden por id_orden (desc)
+    const selectUrl =
+      `${SUPABASE_URL}/rest/v1/orden_pago?select=id_orden&order=id_orden.desc&limit=1`;
+
+    const selectRes = await fetch(selectUrl, {
+      method: "GET",
+      headers: {
+        apikey: SUPABASE_SERVICE_ROLE_KEY,
+        Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const filas = await selectRes.json().catch(() => []);
+    console.log("🗃️ select última orden:", selectRes.status, filas);
+
+    if (!Array.isArray(filas) || filas.length === 0) {
+      console.warn("⚠️ No se encontró ninguna orden_pago para actualizar");
+      return;
+    }
+
+    const idOrden = filas[0].id_orden;
+    console.log("👉 Actualizando id_orden =", idOrden);
+
+    // 2) PATCH a esa fila
+    const updateBody = {
+      estado: estadoPago,
+      tbk_order_id: confirmData?.buy_order ?? null,
+      token_ws: token_ws,
+      updated_at: new Date().toISOString(),
+    };
+
+    const patchUrl =
+      `${SUPABASE_URL}/rest/v1/orden_pago?id_orden=eq.${idOrden}`;
+
+    const patchRes = await fetch(patchUrl, {
+      method: "PATCH",
+      headers: {
+        apikey: SUPABASE_SERVICE_ROLE_KEY,
+        Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      },
+      body: JSON.stringify(updateBody),
+    });
+
+    const patchData = await patchRes.json().catch(() => []);
+    console.log(
+      "🗃️ PATCH orden_pago result:",
+      patchRes.status,
+      patchData,
+    );
+  } catch (e) {
+    console.error("❌ Error al actualizar orden_pago en Supabase:", e);
+  }
+}
+
 serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders() });
@@ -56,70 +122,54 @@ serve(async (req: Request) => {
     const url = new URL(req.url);
     const tokenFromGet = url.searchParams.get("token_ws");
 
-    // ────────────────────────────────────────────────────────────────────────────
-    // 🔹 CASO 1: Retorno desde Transbank por GET
-    //    Aquí confirmamos la transacción y devolvemos HTML con meta-refresh a la app.
-    // ────────────────────────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────
+    // 🔹 CASO 1: Retorno GET desde Transbank
+    // ─────────────────────────────────────────────
     if (tokenFromGet && req.method === "GET") {
       const token_ws = tokenFromGet;
       console.log("🔁 Retorno GET desde Transbank:", token_ws);
 
       // 1) Confirmar transacción con Transbank
-      const confirmResponse = await fetch(`${TBK_URL}/transactions/${token_ws}`, {
-        method: "PUT",
-        headers: {
-          "Tbk-Api-Key-Id": TBK_API_KEY_ID,
-          "Tbk-Api-Key-Secret": TBK_API_KEY_SECRET,
-          "Content-Type": "application/json",
+      const confirmResponse = await fetch(
+        `${TBK_URL}/transactions/${token_ws}`,
+        {
+          method: "PUT",
+          headers: {
+            "Tbk-Api-Key-Id": TBK_API_KEY_ID,
+            "Tbk-Api-Key-Secret": TBK_API_KEY_SECRET,
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
 
       const confirmData = await confirmResponse.json().catch(() => ({}));
-      console.log("🧾 Respuesta Transbank (GET):", confirmResponse.status, confirmData);
+      console.log(
+        "🧾 Respuesta Transbank (GET):",
+        confirmResponse.status,
+        confirmData,
+      );
 
-      // Aunque falle la confirmación, devolvemos HTML con el token para que la app
-      // pueda mostrar el resultado correspondiente.
-      const estadoPago = confirmData?.status === "AUTHORIZED" ? "pagado" : "rechazado";
+      const estadoPago = confirmData?.status === "AUTHORIZED"
+        ? "pagado"
+        : "rechazado";
 
-      // 2) Intentar actualizar orden en Supabase (best-effort)
-      try {
-        const updateBody = {
-          estado: estadoPago,
-          tbk_order_id: confirmData?.buy_order ?? null,
-          updated_at: new Date().toISOString(),
-        };
+      // 2) Actualizar última orden en Supabase (best effort)
+      await actualizarOrdenEnSupabase(token_ws, estadoPago, confirmData);
 
-        const supabaseResponse = await fetch(
-          `${SUPABASE_URL}/rest/v1/orden_pago?token_ws=eq.${token_ws}`,
-          {
-            method: "PATCH",
-            headers: {
-              apikey: SUPABASE_SERVICE_ROLE_KEY,
-              Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
-              "Content-Type": "application/json",
-              Prefer: "return=representation",
-            },
-            body: JSON.stringify(updateBody),
-          },
-        );
-        const supabaseData = await supabaseResponse.json().catch(() => ({}));
-        console.log("🗃️ Actualización orden_pago (GET):", supabaseResponse.status, supabaseData);
-      } catch (e) {
-        console.warn("⚠️ No se pudo actualizar orden en Supabase (GET):", e);
-      }
-
-      // 3) Devolver HTML dinámico con meta refresh hacia la app
+      // 3) Devolver HTML con meta-refresh hacia la app
       const html = renderDeepLinkHtml(token_ws);
       return new Response(html, {
         status: 200,
-        headers: { "Content-Type": "text/html; charset=utf-8", ...corsHeaders() },
+        headers: {
+          "Content-Type": "text/html; charset=utf-8",
+          ...corsHeaders(),
+        },
       });
     }
 
-    // ────────────────────────────────────────────────────────────────────────────
-    // 🔹 CASO 2: Confirmación explícita por POST (desde tu app móvil)
-    //    Aquí respondemos en JSON, para que tu `pago-retorno` muestre detalles.
-    // ────────────────────────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────
+    // 🔹 CASO 2: Confirmación POST desde la app
+    // ─────────────────────────────────────────────
     if (req.method === "POST") {
       const body = await req.json().catch(() => ({}));
       const { token_ws } = body as { token_ws?: string };
@@ -134,52 +184,46 @@ serve(async (req: Request) => {
       console.log("📦 Confirmando transacción con token_ws (POST):", token_ws);
 
       // 1) Confirmar transacción con Transbank
-      const confirmResponse = await fetch(`${TBK_URL}/transactions/${token_ws}`, {
-        method: "PUT",
-        headers: {
-          "Tbk-Api-Key-Id": TBK_API_KEY_ID,
-          "Tbk-Api-Key-Secret": TBK_API_KEY_SECRET,
-          "Content-Type": "application/json",
-        },
-      });
-
-      const confirmData = await confirmResponse.json().catch(() => ({}));
-      console.log("🧾 Respuesta Transbank (POST):", confirmResponse.status, confirmData);
-
-      if (!confirmResponse.ok) {
-        return new Response(
-          JSON.stringify({ error: "Error al confirmar transacción", detalle: confirmData }),
-          { headers: { ...corsHeaders(), "Content-Type": "application/json" }, status: 400 },
-        );
-      }
-
-      const estadoPago = confirmData.status === "AUTHORIZED" ? "pagado" : "rechazado";
-
-      // 2) Actualizar estado de la orden en Supabase
-      const updateBody = {
-        estado: estadoPago,
-        tbk_order_id: confirmData.buy_order ?? null,
-        updated_at: new Date().toISOString(),
-      };
-
-      const supabaseResponse = await fetch(
-        `${SUPABASE_URL}/rest/v1/orden_pago?token_ws=eq.${token_ws}`,
+      const confirmResponse = await fetch(
+        `${TBK_URL}/transactions/${token_ws}`,
         {
-          method: "PATCH",
+          method: "PUT",
           headers: {
-            apikey: SUPABASE_SERVICE_ROLE_KEY,
-            Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+            "Tbk-Api-Key-Id": TBK_API_KEY_ID,
+            "Tbk-Api-Key-Secret": TBK_API_KEY_SECRET,
             "Content-Type": "application/json",
-            Prefer: "return=representation",
           },
-          body: JSON.stringify(updateBody),
         },
       );
 
-      const supabaseData = await supabaseResponse.json().catch(() => ({}));
-      console.log("🗃️ Actualización orden_pago (POST):", supabaseResponse.status, supabaseData);
+      const confirmData = await confirmResponse.json().catch(() => ({}));
+      console.log(
+        "🧾 Respuesta Transbank (POST):",
+        confirmResponse.status,
+        confirmData,
+      );
 
-      // 3) Responder a la app en JSON (tu pantalla pago-retorno ya maneja esto)
+      if (!confirmResponse.ok) {
+        return new Response(
+          JSON.stringify({
+            error: "Error al confirmar transacción",
+            detalle: confirmData,
+          }),
+          {
+            headers: { ...corsHeaders(), "Content-Type": "application/json" },
+            status: 400,
+          },
+        );
+      }
+
+      const estadoPago = confirmData.status === "AUTHORIZED"
+        ? "pagado"
+        : "rechazado";
+
+      // 2) Actualizar última orden en Supabase con token_ws
+      await actualizarOrdenEnSupabase(token_ws, estadoPago, confirmData);
+
+      // 3) Responder JSON a la app
       return new Response(
         JSON.stringify({
           status: confirmData.status,
@@ -187,8 +231,14 @@ serve(async (req: Request) => {
           payment_type_code: confirmData.payment_type_code,
           amount: confirmData.amount,
           estado: estadoPago,
+          buy_order: confirmData.buy_order ?? null,
+          transaction_date: confirmData.transaction_date ?? null,
+          card_detail: confirmData.card_detail ?? null,
         }),
-        { headers: { ...corsHeaders(), "Content-Type": "application/json" }, status: 200 },
+        {
+          headers: { ...corsHeaders(), "Content-Type": "application/json" },
+          status: 200,
+        },
       );
     }
 
@@ -200,8 +250,14 @@ serve(async (req: Request) => {
   } catch (err: any) {
     console.error("❌ Error general transbank-confirm:", err);
     return new Response(
-      JSON.stringify({ error: "Error interno", detalle: err?.message ?? String(err) }),
-      { headers: { ...corsHeaders(), "Content-Type": "application/json" }, status: 500 },
+      JSON.stringify({
+        error: "Error interno",
+        detalle: err?.message ?? String(err),
+      }),
+      {
+        headers: { ...corsHeaders(), "Content-Type": "application/json" },
+        status: 500,
+      },
     );
   }
 });
