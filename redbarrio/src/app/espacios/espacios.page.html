@@ -55,17 +55,17 @@
     <!-- LISTADO -->
     <ng-container *ngIf="!isLoading && espacios?.length; else loadingOrEmpty">
 
-      <ion-card *ngFor="let espacio of espacios"
-                class="espacio-card"
-                [class.selected]="espacioSeleccionadoId === espacio.id_espacio"
-                (click)="seleccionarEspacio(espacio)">
+      <ion-card *ngFor="let espacio of espacios" class="espacio-card"
+        [class.selected]="espacioSeleccionadoId === espacio.id_espacio" (click)="seleccionarEspacio(espacio)">
 
         <!-- IMAGEN -->
         <div class="espacio-img-wrapper">
           <img *ngIf="espacio.imagen_url" [src]="espacio.imagen_url" [alt]="espacio.nombre" />
 
           <!-- PRECIO -->
-          <div class="espacio-price" *ngIf="espacio.precio">{{ espacio.precio }}</div>
+          <div class="espacio-price" *ngIf="espacio.precio">
+            {{ formatearPrecio(espacio.precio) }}
+          </div>
 
           <!-- CHECK SELECCIONADO -->
           <div class="espacio-check" *ngIf="espacioSeleccionadoId === espacio.id_espacio">
@@ -154,10 +154,7 @@
       <!-- MOTIVO -->
       <div class="field">
         <label>Motivo <span class="req">*</span></label>
-        <textarea
-          rows="3"
-          [(ngModel)]="motivo"
-          placeholder="Describe brevemente el motivo del arriendo...">
+        <textarea rows="3" [(ngModel)]="motivo" placeholder="Describe brevemente el motivo del arriendo...">
         </textarea>
       </div>
 

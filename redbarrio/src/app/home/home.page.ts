@@ -13,7 +13,7 @@ import { ChatbotComponent } from 'src/app/components/chatbot.component';
 import { addIcons } from 'ionicons';
 import {
   documentTextOutline,
-  callOutline,
+  briefcaseOutline,
   checkmarkDoneOutline,
   businessOutline,
   barChartOutline,
@@ -67,7 +67,7 @@ export class HomePage implements OnInit {
     // ✅ Registra los íconos usados en esta página
     addIcons({
       'document-text-outline': documentTextOutline,
-      'call-outline': callOutline,
+      'briefcase-outline': briefcaseOutline,
       // importante: coincide con el HTML
       'checkmark-done-outline': checkmarkDoneOutline,
       'business-outline': businessOutline,

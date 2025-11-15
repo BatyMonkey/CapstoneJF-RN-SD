@@ -1,46 +1,285 @@
-<ion-header class="rb-header">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
-    </ion-buttons>
-    <ion-title>Gestión de Proyectos</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-  <ion-refresher slot="fixed" (ionRefresh)="refrescar($event)">
-    <ion-refresher-content></ion-refresher-content>
-  </ion-refresher>
-
-  <div class="proyectos-container">
-    <h1>Proyectos pendientes</h1>
-    <p>Aprueba o rechaza los proyectos en espera.</p>
-
-    <ion-list *ngIf="!cargando && proyectos.length > 0">
-      <ion-item *ngFor="let proyecto of proyectos">
-        <ion-label>
-          <h2>{{ proyecto.titulo || 'Proyecto sin título' }}</h2>
-          <p>{{ proyecto.descripcion || 'Sin descripción disponible.' }}</p>
-        </ion-label>
-
-        <ion-buttons slot="end">
-          <ion-button color="success" (click)="cambiarEstado(proyecto, 'publicada')">
-            Publicar
-          </ion-button>
-          <ion-button color="danger" (click)="cambiarEstado(proyecto, 'rechazada')">
-            Rechazar
-          </ion-button>
-        </ion-buttons>
-      </ion-item>
-    </ion-list>
-
-    <div *ngIf="cargando" class="loading">
-      <ion-spinner name="crescent"></ion-spinner>
-      <p>Cargando proyectos...</p>
+<!-- ========================================
+     HERO HEADER SUPERIOR (igual al Home)
+========================================= -->
+<ion-header class="rb-hero-header">
+  <div class="rb-hero-container">
+    <div class="rb-hero-info">
+      <div class="rb-hero-logo">
+        <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
+      </div>
+      <div class="rb-hero-text">
+        <h1>RedBarrio</h1>
+        <p>Tu comunidad conectada</p>
+      </div>
     </div>
 
-    <div *ngIf="!cargando && proyectos.length === 0" class="empty">
-      <p>No hay proyectos pendientes por revisar.</p>
+    <!-- Botón atrás (círculo con flecha) -->
+    <button class="rb-hero-chat" type="button" (click)="goBack()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </button>
+  </div>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="proyectos-page">
+  <!-- Refresher -->
+  <ion-refresher slot="fixed" (ionRefresh)="refrescar($event)">
+    <ion-refresher-content pullingText="Desliza para actualizar" refreshingSpinner="crescent"
+      refreshingText="Actualizando...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <div class="page-container">
+    <div class="content-wrapper">
+      <!-- =======================================
+           TARJETA PRINCIPAL: HEADER + TABS
+      ======================================== -->
+      <section class="projects-manage-card">
+        <!-- Header interno de la tarjeta -->
+        <div class="projects-manage-header">
+          <div class="header-text">
+            <h2>Gestionar Proyectos</h2>
+            <p>Crear y administrar proyectos del barrio</p>
+          </div>
+        </div>
+
+        <!-- Tabs principales: Ver / Crear -->
+        <div class="projects-main-tabs">
+          <button type="button" class="main-tab" [class.active]="activeTab === 'manage'" (click)="activeTab = 'manage'">
+            <ion-icon name="eye-outline"></ion-icon>
+            <span>Ver Proyectos</span>
+          </button>
+
+          <!-- Este botón navega al formulario de creación -->
+          <button type="button" class="main-tab create" (click)="irAGenerarProyecto()">
+            <ion-icon name="add-outline"></ion-icon>
+            <span>Crear Nuevo</span>
+          </button>
+        </div>
+
+        <!-- Sub-tabs: Proyectos Activos / Solicitudes -->
+        <div class="manage-subtabs" *ngIf="activeTab === 'manage'">
+          <!-- Chip Proyectos activos -->
+          <button type="button" class="subtab-chip activos" [class.active]="manageSubTab === 'active'"
+            (click)="setManageSubTab('active')">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+            <span>Proyectos Activos ({{ proyectosActivos.length }})</span>
+          </button>
+
+          <!-- Chip Solicitudes -->
+          <button type="button" class="subtab-chip solicitudes" [class.active]="manageSubTab === 'requests'"
+            (click)="setManageSubTab('requests')">
+            <ion-icon name="time-outline"></ion-icon>
+            <span>Solicitudes ({{ projectRequests.length }})</span>
+
+            <!-- Badge rojo -->
+            <span class="subtab-badge" *ngIf="projectRequests.length > 0">
+              {{ projectRequests.length }}
+            </span>
+          </button>
+        </div>
+      </section>
+
+      <!-- =======================================
+           CONTENIDO: TAB "VER PROYECTOS"
+      ======================================== -->
+      <ng-container *ngIf="activeTab === 'manage'">
+        <!-- ------------------------------
+             SUB-VISTA: PROYECTOS ACTIVOS
+        --------------------------------- -->
+        <section class="projects-section" *ngIf="manageSubTab === 'active'">
+          <h3 class="section-title">
+            Proyectos Activos ({{ proyectosActivos.length }})
+          </h3>
+
+          <!-- Cargando -->
+          <div class="loading-block" *ngIf="cargando">
+            <ion-spinner name="crescent"></ion-spinner>
+            <p>Cargando proyectos...</p>
+          </div>
+
+          <!-- Vacío -->
+          <div class="empty-state" *ngIf="!cargando && proyectosActivos.length === 0">
+            <p class="empty-title">No hay proyectos creados</p>
+            <p class="empty-text">
+              Cuando se publiquen proyectos activos, aparecerán aquí.
+            </p>
+            <button type="button" class="btn-primary" (click)="irAGenerarProyecto()">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>Crear Primer Proyecto</span>
+            </button>
+          </div>
+
+          <!-- Listado de proyectos -->
+          <div class="projects-list" *ngIf="!cargando && proyectosActivos.length > 0">
+            <article class="project-card" *ngFor="let proyecto of proyectosActivos">
+              <!-- Imagen -->
+              <div class="project-image" *ngIf="proyecto.imagen || proyecto.imagen_url">
+                <img [src]="proyecto.imagen || proyecto.imagen_url" [alt]="proyecto.titulo || 'Proyecto'" />
+                <div class="project-badge">
+                  {{ proyecto.estado ? (proyecto.estado | titlecase) : 'Activo'
+                  }}
+                </div>
+              </div>
+
+              <!-- Cuerpo -->
+              <div class="project-body">
+                <!-- Título + estado -->
+                <div class="project-title-row">
+                  <h4>{{ proyecto.titulo }}</h4>
+                  <span class="status-pill">
+                    {{ proyecto.estado ? (proyecto.estado | titlecase) : 'Publicado' }}
+                  </span>
+                </div>
+
+                <!-- Descripción -->
+                <p class="project-desc">
+                  {{ proyecto.descripcion }}
+                </p>
+
+                <!-- Info adicional -->
+                <div class="project-meta-grid">
+                  <div class="meta-item">
+                    <ion-icon name="briefcase-outline"></ion-icon>
+                    <span>
+                      {{ proyecto.presupuesto || proyecto.monto || 'Presupuesto por definir' }}
+                    </span>
+                  </div>
+                  <div class="meta-item">
+                    <ion-icon name="people-outline"></ion-icon>
+                    <span>
+                      {{ proyecto.responsable || 'Responsable por asignar' }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Fechas -->
+                <div class="project-dates"
+                  *ngIf="proyecto.fecha_inicio || proyecto.fecha_fin || proyecto.fecha_creacion">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  <span>
+                    {{ formatFecha(proyecto.fecha_inicio || proyecto.fecha_creacion) }}
+                    <ng-container *ngIf="proyecto.fecha_fin">
+                      &nbsp;– {{ formatFecha(proyecto.fecha_fin) }}
+                    </ng-container>
+                  </span>
+                </div>
+
+                <!-- Acciones (de momento solo eliminar / cambiar estado) -->
+                <div class="project-actions">
+                  <button type="button" class="btn-danger" (click)="cambiarEstado(proyecto, 'rechazada')">
+                    <ion-icon name="trash-outline"></ion-icon>
+                    <span>Eliminar</span>
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- Sub-vista: SOLICITUDES -->
+        <section class="projects-section" *ngIf="manageSubTab === 'requests'">
+          <h3 class="section-title">
+            Solicitudes de Proyectos ({{ projectRequests.length }})
+          </h3>
+
+          <!-- Estado vacío -->
+          <div class="empty-state" *ngIf="!projectRequests.length">
+            <ion-icon name="time-outline" class="empty-icon"></ion-icon>
+            <p class="empty-title">No hay solicitudes pendientes</p>
+            <p class="empty-text">
+              Las solicitudes de proyectos enviadas por los vecinos aparecerán aquí.
+            </p>
+          </div>
+
+          <!-- Listado de solicitudes -->
+          <div class="requests-list" *ngIf="projectRequests.length">
+            <article class="request-card" *ngFor="let request of projectRequests">
+
+              <!-- Header naranja con estado + fecha -->
+              <div class="request-header">
+                <div class="request-status">
+                  <ion-icon name="time-outline"></ion-icon>
+                  <span>Solicitud Pendiente</span>
+                </div>
+
+                <!-- 👉 Fecha desde proyecto.fecha_creacion -->
+                <span class="request-date">
+                  {{ formatFecha(request.fecha_creacion) }}
+                </span>
+              </div>
+
+              <!-- Imagen si existe -->
+              <div class="request-image" *ngIf="request.imagen || request.imagen_url">
+                <img [src]="request.imagen || request.imagen_url" [alt]="request.titulo || 'Solicitud de proyecto'" />
+              </div>
+
+              <div class="request-body">
+                <!-- Título -->
+                <h4 class="request-title">{{ request.titulo }}</h4>
+
+                <!-- Descripción -->
+                <p class="request-desc">
+                  {{ request.descripcion }}
+                </p>
+
+                <!-- Bloque celeste: Solicitado por + Presupuesto -->
+                <div class="request-info-box">
+                  <div class="info-row">
+                    <ion-icon name="people-outline"></ion-icon>
+                    <span>
+                      Solicitado por:
+                      <strong>{{ request.solicitante || 'Vecino' }}</strong>
+                    </span>
+                  </div>
+
+                  <div class="info-row" *ngIf="request.presupuesto">
+                    <ion-icon name="cash-outline"></ion-icon>
+                    <span>
+                      Presupuesto estimado:
+                      <!-- 👉 valor en verde -->
+                      <strong class="budget-value">
+                        {{ request.presupuesto }}
+                      </strong>
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Botones Aprobar / Rechazar -->
+                <div class="request-actions">
+                  <button type="button" class="btn-approve" (click)="aprobarSolicitud(request)">
+                    <ion-icon name="checkmark-circle-outline"></ion-icon>
+                    <span>Aprobar</span>
+                  </button>
+
+                  <button type="button" class="btn-reject" (click)="rechazarSolicitud(request)">
+                    <ion-icon name="close-circle-outline"></ion-icon>
+                    <span>Rechazar</span>
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+      </ng-container>
+
+      <!-- =======================================
+           (opcional) TAB CREATE local.
+           Ahora usas otra página, pero dejamos
+           el contenedor por si lo necesitas luego.
+      ======================================== -->
+      <ng-container *ngIf="activeTab === 'create'">
+        <section class="projects-section">
+          <h3 class="section-title">Crear nuevo proyecto</h3>
+
+          <div class="empty-state">
+            <p class="empty-title">Redirección al formulario</p>
+            <p class="empty-text">
+              Estás siendo dirigido al formulario de creación de proyectos.
+            </p>
+          </div>
+        </section>
+      </ng-container>
     </div>
   </div>
 </ion-content>

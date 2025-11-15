@@ -1,210 +1,221 @@
-/* ===== 1. FUERZA ESQUEMA CLARO Y VARIABLES BASE ===== */
-
-:host,
-:host-context(html) {
-  color-scheme: light !important;
-
-  --rb-primary: #2563eb;
-  --rb-bg: #f5f7fb;         /* mismo fondo general */
-  --rb-text: #0f172a;
-  --rb-muted: #475569;
-
-  --ion-text-color: var(--rb-text);
-  --ion-background-color: var(--rb-bg);
-  --ion-item-background: #ffffff;
-  --ion-card-background: #ffffff;
-}
-
-/* ===== 2. HEADER ===== */
-
-.rb-header ion-toolbar {
-  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
-  --color: #fff;
-  --border-color: transparent;
-}
-
-/* ===== 3. CONTENEDOR PRINCIPAL ===== */
+/* =========================================
+   CONTENEDOR FORMULARIO
+========================================= */
 
 .page-wrap {
-  max-width: 960px;
+  max-width: 480px;
   margin: 0 auto;
-  padding: 8px 16px 32px;
+  padding-bottom: 24px;
 }
 
-/* ===== 4. TARJETAS ===== */
-
-.card {
-  background: #fff;
+/* Tarjeta hero que ya tienes, por si quieres reforzar */
+.card.hero {
   border-radius: 18px;
-  border: 1px solid rgba(2, 6, 23, 0.08);
-  box-shadow: 0 12px 28px rgba(2, 6, 23, 0.08);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+/* =========================================
+   FORMULARIO "CREAR PROYECTO"
+========================================= */
+
+.create-form {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Grupo de campo (como los bloques Tailwind) */
+.field-group {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 14px 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.03);
+}
+
+/* Label arriba, similar a "block text-gray-700 mb-2" */
+.field-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+/* Asterisco rojo */
+.required {
+  color: #ef4444;
+}
+
+/* Ion-input y textarea dentro del grupo */
+.field-group ion-input,
+.field-group ion-textarea {
+  --background: transparent;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --color: #111827;
+  font-size: 0.95rem;
+}
+
+/* Bordes “input-style” usando el grupo */
+.field-group:focus-within {
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 1px rgba(6, 182, 212, 0.2), 0 10px 20px rgba(15, 23, 42, 0.06);
+}
+
+/* Contador / texto ayuda bajo el input */
+.field-helper {
+  margin: 6px 0 0;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Textarea más cómodo (aunque ion-textarea es autoGrow) */
+.field-textarea {
+  min-height: 80px;
+}
+
+/* =========================================
+   BLOQUE DE IMAGEN (amarillo tipo mockup)
+========================================= */
+
+.image-upload-box {
+  border-radius: 18px;
+  border: 2px dashed #facc15;
+  background: #fef9c3;
+  padding: 16px;
+  text-align: center;
+  position: relative;
   overflow: hidden;
-  margin-bottom: 18px;
+}
 
-  ion-card-header {
-    background: #fff;
-    border-bottom: 1px solid rgba(2, 6, 23, 0.06);
-  }
+/* Cuando ya hay imagen, se simplifica el fondo */
+.image-upload-box.has-image {
+  border-style: solid;
+  background: #fff7ed;
+}
 
-  ion-card-title {
-    color: var(--rb-text);
-    font-weight: 800;
-    font-size: 1.2rem;
-  }
+/* Icono central */
+.image-icon-wrap {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 8px;
+  border-radius: 999px;
+  background: rgba(250, 204, 21, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  ion-card-subtitle {
-    color: #64748b;
-    font-weight: 600;
+  ion-icon {
+    font-size: 1.4rem;
+    color: #ca8a04;
   }
 }
 
-/* ===== 5. SEGMENTO (Proyecto / Actividad) ===== */
+.image-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #92400e;
+  margin: 0 0 4px;
+}
 
-ion-item.tipo-publicacion {
-  background: #fff;
-  border-radius: 14px;
-  border: 1px solid rgba(2, 6, 23, 0.08);
-  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
-  margin-bottom: 18px;
-  --background: #fff;
+.image-subtitle {
+  font-size: 0.8rem;
+  color: #a16207;
+  margin: 0 0 10px;
+}
 
-  ion-label {
-    font-weight: 700;
-    color: var(--rb-muted);
-    margin-bottom: 6px;
+/* Botón "Seleccionar imagen" */
+.image-select-btn {
+  margin-top: 4px;
+  border: none;
+  outline: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: #eab308;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(234, 179, 8, 0.35);
+  transition: background 0.18s ease, transform 0.12s ease, box-shadow 0.18s ease;
+
+  ion-icon {
+    font-size: 1rem;
   }
 
-  ion-segment {
-    background: #f1f5f9;
-    border-radius: 10px;
-    padding: 4px;
-    box-shadow: inset 0 0 0 1px rgba(2, 6, 23, 0.06);
-  }
-
-  ion-segment-button {
-    --background: transparent;
-    --background-checked: var(--rb-primary);
-    --color: #334155;
-    --color-checked: #ffffff;
-    border-radius: 8px;
-    font-weight: 700;
-    text-transform: none;
+  &:active {
+    transform: translateY(1px);
+    box-shadow: 0 4px 10px rgba(234, 179, 8, 0.35);
   }
 }
 
-/* ===== 6. CAMPOS DE FORMULARIO ===== */
-
-.field {
-  margin-bottom: 18px;
-  background: #fff;
-  border-radius: 14px;
-  border: 1px solid rgba(2, 6, 23, 0.08);
-  box-shadow: 0 6px 16px rgba(2, 6, 23, 0.06);
-  --background: #fff;
-  --inner-background: #fff;
-  --padding-start: 14px;
-  --padding-end: 14px;
-  --inner-padding-top: 12px;
-  --inner-padding-bottom: 12px;
-
-  ion-label {
-    color: var(--rb-muted);
-    font-weight: 700;
-    margin: 4px 0 6px 2px;
-  }
-
-  ion-input,
-  ion-textarea,
-  ion-datetime {
-    --background: #fff;
-    --color: var(--rb-text);
-    --placeholder-color: #94a3b8;
-    font-weight: 500;
-    font-size: 0.95rem;
-    padding-top: 6px;
-    padding-bottom: 6px;
-  }
-
-  &:hover {
-    border-color: #cbd5e1;
-  }
-
-  &:focus-within {
-    border-color: var(--rb-primary);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
-  }
+/* Vista previa de imagen cuando ya hay archivo */
+.preview-card {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid #facc15;
+  background: #fffef3;
 }
 
-/* ===== 7. IMAGEN DE REFERENCIA ===== */
-
-.image-upload {
-  background: #fff;
-  border-radius: 14px;
-  border: 1px solid rgba(2, 6, 23, 0.08);
-  padding: 12px;
-  box-shadow: 0 6px 16px rgba(2, 6, 23, 0.06);
-  margin-bottom: 18px;
-
-  .upload-label {
-    font-weight: 700;
-    color: var(--rb-muted);
-    display: block;
-    margin-bottom: 6px;
-  }
-
-  input[type='file'] {
-    font-size: 0.9rem;
-    color: var(--rb-muted);
-    margin-bottom: 10px;
-  }
-
-  .preview-card {
-    border-radius: 12px;
-    overflow: hidden;
-    background: #fff;
-    box-shadow: 0 4px 12px rgba(2, 6, 23, 0.08);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    max-height: 260px;
-  }
-
-  .preview-img {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-    background: #fff;
-  }
+.preview-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 220px;
+  object-fit: cover;
 }
 
-/* ===== 8. BOTONES ===== */
+/* =========================================
+   BOTÓN CREAR PROYECTO
+========================================= */
 
 .buttons-container {
-  margin-top: 20px;
+  margin-top: 8px;
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-
-  ion-button {
-    border-radius: 10px;
-    font-weight: 700;
-    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.15);
-  }
-
-  ion-button[color='medium'] {
-    --color: #475569;
-    --border-color: #cbd5e1;
-    --background: #fff;
-  }
+  flex-direction: column;
+  gap: 6px;
 }
 
-/* ===== 9. LIMPIEZA MODO OSCURO ===== */
+/* Ion-button principal */
+.btn-create {
+  --background: #06b6d4;
+  --background-activated: #0891b2;
+  --background-hover: #0891b2;
+  --border-radius: 14px;
+  --box-shadow: 0 12px 28px rgba(8, 145, 178, 0.35);
+  font-weight: 600;
+}
 
+/* Estado disabled imitando “bg-gray-300 cursor-not-allowed” */
+ion-button.btn-create[disabled] {
+  --background: #d1d5db;
+  --background-activated: #d1d5db;
+  --background-hover: #d1d5db;
+  --box-shadow: none;
+}
+
+/* Texto de ayuda bajo el botón */
+.submit-hint {
+  font-size: 0.75rem;
+  text-align: center;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* =========================================
+   MODO OSCURO (forzamos look claro)
+========================================= */
 @media (prefers-color-scheme: dark) {
   :host {
-    --ion-background-color: var(--rb-bg);
-    --ion-card-background: #fff;
-    --ion-item-background: #fff;
-    --ion-text-color: var(--rb-text);
+    --ion-background-color: #f5f7fb;
+    --ion-text-color: #0f172a;
   }
 }
