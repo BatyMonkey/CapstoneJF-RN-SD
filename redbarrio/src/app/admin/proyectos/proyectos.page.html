@@ -83,10 +83,9 @@
            CONTENIDO: TAB "VER PROYECTOS"
       ======================================== -->
       <ng-container *ngIf="activeTab === 'manage'">
-        <!-- ------------------------------
-             SUB-VISTA: PROYECTOS ACTIVOS
-        --------------------------------- -->
+        <!-- Sub-vista: PROYECTOS ACTIVOS -->
         <section class="projects-section" *ngIf="manageSubTab === 'active'">
+
           <h3 class="section-title">
             Proyectos Activos ({{ proyectosActivos.length }})
           </h3>
@@ -98,7 +97,7 @@
           </div>
 
           <!-- Vacío -->
-          <div class="empty-state" *ngIf="!cargando && proyectosActivos.length === 0">
+          <div class="empty-state" *ngIf="!cargando && (!proyectosActivos || proyectosActivos.length === 0)">
             <p class="empty-title">No hay proyectos creados</p>
             <p class="empty-text">
               Cuando se publiquen proyectos activos, aparecerán aquí.
@@ -109,25 +108,24 @@
             </button>
           </div>
 
-          <!-- Listado de proyectos -->
-          <div class="projects-list" *ngIf="!cargando && proyectosActivos.length > 0">
+          <!-- Listado de proyectos activos -->
+          <div class="projects-list" *ngIf="!cargando && proyectosActivos && proyectosActivos.length">
+
             <article class="project-card" *ngFor="let proyecto of proyectosActivos">
+
               <!-- Imagen -->
               <div class="project-image" *ngIf="proyecto.imagen || proyecto.imagen_url">
                 <img [src]="proyecto.imagen || proyecto.imagen_url" [alt]="proyecto.titulo || 'Proyecto'" />
-                <div class="project-badge">
-                  {{ proyecto.estado ? (proyecto.estado | titlecase) : 'Activo'
-                  }}
-                </div>
               </div>
 
-              <!-- Cuerpo -->
               <div class="project-body">
-                <!-- Título + estado -->
+                <!-- Título + estado del proyecto -->
                 <div class="project-title-row">
                   <h4>{{ proyecto.titulo }}</h4>
-                  <span class="status-pill">
-                    {{ proyecto.estado ? (proyecto.estado | titlecase) : 'Publicado' }}
+
+                  <!-- Pill de estado tipo "En Progreso" -->
+                  <span class="status-pill" [ngClass]="getEstadoProyectoClase(proyecto.estado_proyecto)">
+                    {{ proyecto.estado_proyecto || 'En Progreso' }}
                   </span>
                 </div>
 
@@ -136,19 +134,17 @@
                   {{ proyecto.descripcion }}
                 </p>
 
-                <!-- Info adicional -->
+                <!-- Info adicional (presupuesto + responsable) -->
                 <div class="project-meta-grid">
                   <div class="meta-item">
-                    <ion-icon name="briefcase-outline"></ion-icon>
+                    <ion-icon name="cash-outline"></ion-icon>
                     <span>
                       {{ proyecto.presupuesto || proyecto.monto || 'Presupuesto por definir' }}
                     </span>
                   </div>
                   <div class="meta-item">
                     <ion-icon name="people-outline"></ion-icon>
-                    <span>
-                      {{ proyecto.responsable || 'Responsable por asignar' }}
-                    </span>
+                    <span>{{ proyecto.responsable || 'Responsable por asignar' }}</span>
                   </div>
                 </div>
 
@@ -164,15 +160,23 @@
                   </span>
                 </div>
 
-                <!-- Acciones (de momento solo eliminar / cambiar estado) -->
+                <!-- Acciones -->
                 <div class="project-actions">
-                  <button type="button" class="btn-danger" (click)="cambiarEstado(proyecto, 'rechazada')">
+                  <!-- Botón Editar -->
+                  <button type="button" class="btn-soft" (click)="editarProyecto(proyecto)">
+                    <ion-icon name="create-outline"></ion-icon>
+                    <span>Editar</span>
+                  </button>
+
+                  <!-- Botón Eliminar / Rechazar -->
+                  <button type="button" class="btn-danger" (click)="rechazarProyecto(proyecto)">
                     <ion-icon name="trash-outline"></ion-icon>
                     <span>Eliminar</span>
                   </button>
                 </div>
               </div>
             </article>
+
           </div>
         </section>
 
@@ -226,20 +230,18 @@
                 <div class="request-info-box">
                   <div class="info-row">
                     <ion-icon name="people-outline"></ion-icon>
-                    <span>
-                      Solicitado por:
-                      <strong>{{ request.solicitante || 'Vecino' }}</strong>
+                    <span>Solicitado por:
+                      <strong>{{ request.solicitado || 'Vecino' }}</strong>
                     </span>
                   </div>
 
-                  <div class="info-row" *ngIf="request.presupuesto">
+                  <div class="info-row budget" *ngIf="request.presupuesto">
                     <ion-icon name="cash-outline"></ion-icon>
                     <span>
                       Presupuesto estimado:
-                      <!-- 👉 valor en verde -->
-                      <strong class="budget-value">
-                        {{ request.presupuesto }}
-                      </strong>
+                      <span class="budget-value">
+                        {{ formatPresupuesto(request.presupuesto) }}
+                      </span>
                     </span>
                   </div>
                 </div>
@@ -260,6 +262,7 @@
             </article>
           </div>
         </section>
+
 
       </ng-container>
 
