@@ -3,6 +3,7 @@
 ========================================= -->
 <ion-header class="rb-hero-header">
   <div class="rb-hero-container">
+    <!-- Logo y texto -->
     <div class="rb-hero-info">
       <div class="rb-hero-logo">
         <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
@@ -13,18 +14,18 @@
       </div>
     </div>
 
-    <!-- Botón atrás (círculo con flecha) -->
-    <button class="rb-hero-chat" type="button" (click)="goBack()">
-      <ion-icon name="chevron-back-outline"></ion-icon>
-    </button>
+
+    <!-- 🔹 Ocultamos el botón de chat del header (ya tienes el FAB abajo) -->
+    <div class="rb-hero-chat-wrapper">
+      <!-- vacío / oculto por CSS -->
+    </div>
   </div>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="proyectos-page">
   <!-- Refresher -->
   <ion-refresher slot="fixed" (ionRefresh)="refrescar($event)">
-    <ion-refresher-content pullingText="Desliza para actualizar" refreshingSpinner="crescent"
-      refreshingText="Actualizando...">
+    <ion-refresher-content pullingText="Desliza para actualizar" refreshingSpinner="crescent" refreshingText="Actualizando...">
     </ion-refresher-content>
   </ion-refresher>
 
@@ -69,7 +70,7 @@
           <button type="button" class="subtab-chip solicitudes" [class.active]="manageSubTab === 'requests'"
             (click)="setManageSubTab('requests')">
             <ion-icon name="time-outline"></ion-icon>
-            <span>Solicitudes ({{ projectRequests.length }})</span>
+            <span>Solicitudes</span>
 
             <!-- Badge rojo -->
             <span class="subtab-badge" *ngIf="projectRequests.length > 0">
@@ -108,7 +109,7 @@
             </button>
           </div>
 
-          <!-- Listado de proyectos activos -->
+          <!-- LISTADO DE PROYECTOS ACTIVOS -->
           <div class="projects-list" *ngIf="!cargando && proyectosActivos && proyectosActivos.length">
 
             <article class="project-card" *ngFor="let proyecto of proyectosActivos">
@@ -119,13 +120,13 @@
               </div>
 
               <div class="project-body">
-                <!-- Título + estado del proyecto -->
+                <!-- Título + chip de estado_proyecto -->
                 <div class="project-title-row">
                   <h4>{{ proyecto.titulo }}</h4>
 
-                  <!-- Pill de estado tipo "En Progreso" -->
-                  <span class="status-pill" [ngClass]="getEstadoProyectoClase(proyecto.estado_proyecto)">
-                    {{ proyecto.estado_proyecto || 'En Progreso' }}
+                  <span class="status-pill" [ngClass]="getEstadoProyectoClass(proyecto.estado_proyecto)">
+                    <ion-icon [name]="getEstadoProyectoIcon(proyecto.estado_proyecto)"></ion-icon>
+                    <span>{{ getEstadoProyectoLabel(proyecto.estado_proyecto) }}</span>
                   </span>
                 </div>
 
@@ -134,41 +135,50 @@
                   {{ proyecto.descripcion }}
                 </p>
 
-                <!-- Info adicional (presupuesto + responsable) -->
+                <!-- Presupuesto + Responsable -->
                 <div class="project-meta-grid">
                   <div class="meta-item">
-                    <ion-icon name="cash-outline"></ion-icon>
+                    <ion-icon name="cash-outline" class="money-icon cash"></ion-icon>
                     <span>
-                      {{ proyecto.presupuesto || proyecto.monto || 'Presupuesto por definir' }}
+                      {{
+                      proyecto.presupuesto
+                      ? ('$ ' + formatNumero(proyecto.presupuesto))
+                      : 'Presupuesto por definir'
+                      }}
                     </span>
                   </div>
+
                   <div class="meta-item">
                     <ion-icon name="people-outline"></ion-icon>
                     <span>{{ proyecto.responsable || 'Responsable por asignar' }}</span>
                   </div>
                 </div>
 
-                <!-- Fechas -->
-                <div class="project-dates"
-                  *ngIf="proyecto.fecha_inicio || proyecto.fecha_fin || proyecto.fecha_creacion">
+                <!-- Fechas: SOLO fecha_inicio / fecha_fin -->
+                <div class="project-dates" *ngIf="proyecto.fecha_inicio || proyecto.fecha_fin">
                   <ion-icon name="calendar-outline"></ion-icon>
                   <span>
-                    {{ formatFecha(proyecto.fecha_inicio || proyecto.fecha_creacion) }}
+                    <ng-container *ngIf="proyecto.fecha_inicio">
+                      {{ formatFechaProyecto(proyecto.fecha_inicio) }}
+                    </ng-container>
+
+                    <ng-container *ngIf="proyecto.fecha_inicio && proyecto.fecha_fin">
+                      &nbsp;–&nbsp;
+                    </ng-container>
+
                     <ng-container *ngIf="proyecto.fecha_fin">
-                      &nbsp;– {{ formatFecha(proyecto.fecha_fin) }}
+                      {{ formatFechaProyecto(proyecto.fecha_fin) }}
                     </ng-container>
                   </span>
                 </div>
 
                 <!-- Acciones -->
                 <div class="project-actions">
-                  <!-- Botón Editar -->
                   <button type="button" class="btn-soft" (click)="editarProyecto(proyecto)">
                     <ion-icon name="create-outline"></ion-icon>
                     <span>Editar</span>
                   </button>
 
-                  <!-- Botón Eliminar / Rechazar -->
                   <button type="button" class="btn-danger" (click)="rechazarProyecto(proyecto)">
                     <ion-icon name="trash-outline"></ion-icon>
                     <span>Eliminar</span>
@@ -176,7 +186,6 @@
                 </div>
               </div>
             </article>
-
           </div>
         </section>
 

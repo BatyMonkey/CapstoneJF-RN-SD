@@ -28,11 +28,10 @@
   align-items: center;
   justify-content: center;
   padding: 0;
-  z-index: 10;
 }
 
-/* quita la línea gris default de ion-header */
 ion-header::after {
+  /* Quita la línea de borde por defecto de Ionic */
   background: none !important;
   display: none !important;
 }
@@ -52,34 +51,43 @@ ion-header::after {
 }
 
 .rb-hero-logo {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: #ffffff;
-  padding: 6px;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
+  /* Contenedor simple para el logo */
+  width: 80px;
+  height: 80px;
+  padding: 0;
+  margin: 0;
+  background: transparent;   /* 🔹 sin fondo blanco */
+  border-radius: 0;          /* 🔹 sin círculo */
+  box-shadow: none;          /* 🔹 sin borde brillante */
   display: flex;
   align-items: center;
   justify-content: center;
+}
 
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
+.rb-hero-logo img {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;       /* se ajusta al espacio sin deformarse */
+  border-radius: 0;          /* por si tenía algo heredado */
+}
+
+.rb-hero-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  h1 {
+    color: #ffffff;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0;
   }
-}
 
-.rb-hero-text h1 {
-  color: #ffffff;
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin: 0;
-}
-
-.rb-hero-text p {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 0.9rem;
-  margin: 2px 0 0 0;
+  p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    margin: 2px 0 0 0;
+  }
 }
 
 .rb-hero-chat {

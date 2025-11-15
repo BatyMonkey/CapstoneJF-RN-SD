@@ -28,11 +28,10 @@
   align-items: center;
   justify-content: center;
   padding: 0;
-  z-index: 10;
 }
 
-/* quita la línea gris default de ion-header */
 ion-header::after {
+  /* Quita la línea de borde por defecto de Ionic */
   background: none !important;
   display: none !important;
 }
@@ -52,34 +51,43 @@ ion-header::after {
 }
 
 .rb-hero-logo {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: #ffffff;
-  padding: 6px;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
+  /* Contenedor simple para el logo */
+  width: 80px;
+  height: 80px;
+  padding: 0;
+  margin: 0;
+  background: transparent;   /* 🔹 sin fondo blanco */
+  border-radius: 0;          /* 🔹 sin círculo */
+  box-shadow: none;          /* 🔹 sin borde brillante */
   display: flex;
   align-items: center;
   justify-content: center;
+}
 
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
+.rb-hero-logo img {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;       /* se ajusta al espacio sin deformarse */
+  border-radius: 0;          /* por si tenía algo heredado */
+}
+
+.rb-hero-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  h1 {
+    color: #ffffff;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0;
   }
-}
 
-.rb-hero-text h1 {
-  color: #ffffff;
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin: 0;
-}
-
-.rb-hero-text p {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 0.9rem;
-  margin: 2px 0 0 0;
+  p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    margin: 2px 0 0 0;
+  }
 }
 
 .rb-hero-chat {
@@ -430,53 +438,54 @@ ion-header::after {
   }
 }
 
+/* Pill de estado dentro de la tarjeta */
 .status-pill {
   flex-shrink: 0;
-  border-radius: 999px;
-  padding: 3px 10px;
-  font-size: 0.72rem;
-  border: 1px solid transparent;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  white-space: nowrap;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  ion-icon {
+    font-size: 0.9rem;
+  }
 }
 
-/* Planificación – azul suave */
-.status-planning {
+/* Colores por estado */
+.status-planificacion {
   background: #e0f2fe;
-  border-color: #bae6fd;
-  color: #0369a1;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
 }
 
-/* En Progreso – amarillo como el mockup */
-.status-in-progress {
+.status-en-progreso {
   background: #fef9c3;
-  border-color: #fde68a;
-  color: #854d0e;
+  color: #a16207;
+  border: 1px solid #facc15;
 }
 
-/* Completado – verde */
-.status-completed {
+.status-completado {
   background: #dcfce7;
-  border-color: #bbf7d0;
-  color: #166534;
+  color: #15803d;
+  border: 1px solid #86efac;
 }
 
-/* Pausado – gris */
-.status-paused {
-  background: #f3f4f6;
-  border-color: #e5e7eb;
-  color: #4b5563;
+.status-pausado {
+  background: #e5e7eb;
+  color: #374151;
+  border: 1px solid #d1d5db;
 }
 
-.project-desc {
-  margin: 0 0 8px;
-  font-size: 0.86rem;
-  color: #6b7280;
+.status-default {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+  color: #374151;
 }
 
-/* Meta info */
+/* Meta info (línea de presupuesto / responsable) */
 .project-meta-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -493,7 +502,12 @@ ion-header::after {
 
   ion-icon {
     font-size: 1rem;
-    color: #0ea5e9;
+    color: #0ea5e9; /* por defecto, celestito para los otros íconos */
+  }
+
+  /* 👉 sólo el ícono de dinero en verde */
+  ion-icon.money-icon {
+    color: #16a34a !important;
   }
 }
 

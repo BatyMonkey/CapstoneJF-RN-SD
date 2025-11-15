@@ -3,6 +3,7 @@
 ========================================= -->
 <ion-header class="rb-hero-header">
   <div class="rb-hero-container">
+    <!-- Logo y texto -->
     <div class="rb-hero-info">
       <div class="rb-hero-logo">
         <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
@@ -13,10 +14,11 @@
       </div>
     </div>
 
-    <!-- Botón atrás (círculo con flecha) -->
-    <button class="rb-hero-chat" type="button" (click)="goBack()">
-      <ion-icon name="chevron-back-outline"></ion-icon>
-    </button>
+
+    <!-- 🔹 Ocultamos el botón de chat del header (ya tienes el FAB abajo) -->
+    <div class="rb-hero-chat-wrapper">
+      <!-- vacío / oculto por CSS -->
+    </div>
   </div>
 </ion-header>
 

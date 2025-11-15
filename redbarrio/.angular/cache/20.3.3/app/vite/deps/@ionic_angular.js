@@ -1,21 +1,22 @@
 import {
   menuController
-<<<<<<< HEAD
-} from "./chunk-TOUZ5IF6.js";
-=======
-} from "./chunk-63HNC7K5.js";
->>>>>>> 5e585112cf1d9f379c418981fb548978fa4c4772
+} from "./chunk-GQ3MZQBJ.js";
 import {
   getTimeGivenProgression
 } from "./chunk-34QX6F67.js";
 import {
+  iosTransitionAnimation
+} from "./chunk-QREBLPPY.js";
+import {
+  mdTransitionAnimation
+} from "./chunk-ICT2BPVA.js";
+import {
+  getIonPageElement
+} from "./chunk-PQ6JLT2J.js";
+import {
   IonicSafeString,
   setupConfig
-<<<<<<< HEAD
-} from "./chunk-SIMPIJID.js";
-=======
-} from "./chunk-NKENZDD4.js";
->>>>>>> 5e585112cf1d9f379c418981fb548978fa4c4772
+} from "./chunk-QFCLYJZ4.js";
 import {
   actionSheetController,
   alertController,
@@ -24,104 +25,66 @@ import {
   pickerController,
   popoverController,
   toastController
-<<<<<<< HEAD
-} from "./chunk-DBORD52S.js";
-import "./chunk-7WK6LNOU.js";
+} from "./chunk-ZHLNS5TG.js";
+import "./chunk-HCBYVGLI.js";
 import {
   openURL
 } from "./chunk-ZWYZ2NSP.js";
+import {
+  createAnimation
+} from "./chunk-SLZTZ6YS.js";
 import {
   getPlatforms,
   initialize,
   isPlatform
-} from "./chunk-AWRZZYUW.js";
+} from "./chunk-ASSAI6LI.js";
+import "./chunk-T4VX5F6C.js";
 import {
   createGesture
 } from "./chunk-Z3OEOVFM.js";
 import "./chunk-QA2SYHF5.js";
-import "./chunk-UJJ3HD6K.js";
-import {
-  iosTransitionAnimation
-} from "./chunk-W37PZ2ML.js";
-import {
-  mdTransitionAnimation
-} from "./chunk-3OVG3PQG.js";
-import {
-  getIonPageElement
-} from "./chunk-YMKXLMD3.js";
-import {
-  createAnimation as createAnimation2
-} from "./chunk-BGRTKWPL.js";
-import "./chunk-KQ7S7CHM.js";
-=======
-} from "./chunk-E2UXIPR4.js";
-import "./chunk-RP3HP3GY.js";
-import {
-  openURL
-} from "./chunk-ZWYZ2NSP.js";
-import "./chunk-4LDBG557.js";
-import {
-  iosTransitionAnimation
-} from "./chunk-SBAYHDUJ.js";
-import {
-  mdTransitionAnimation
-} from "./chunk-MHNOHRM7.js";
-import {
-  getIonPageElement
-} from "./chunk-22D6OJ3I.js";
-import {
-  createAnimation as createAnimation2
-} from "./chunk-2X4DEYMV.js";
->>>>>>> 5e585112cf1d9f379c418981fb548978fa4c4772
+import "./chunk-QI7Y2LQP.js";
 import "./chunk-LCMILTBF.js";
 import {
   bootstrapLazy
-} from "./chunk-WJZQVC7X.js";
-import "./chunk-RA57Z6D3.js";
-import "./chunk-LTAFKWUM.js";
+} from "./chunk-34I4FW2K.js";
 import {
-  LIFECYCLE_DID_ENTER,
-  LIFECYCLE_DID_LEAVE,
-  LIFECYCLE_WILL_ENTER,
-  LIFECYCLE_WILL_LEAVE,
-  LIFECYCLE_WILL_UNLOAD,
-  componentOnReady,
-  config,
-  createAnimation,
-  doc,
-  getMode,
-  printIonWarning
-} from "./chunk-67MFLVOH.js";
-import {
-<<<<<<< HEAD
-  MaxValidator,
-  MinValidator,
-  NG_VALIDATORS,
-  NG_VALUE_ACCESSOR,
-  NgControl
-} from "./chunk-N52XZBH5.js";
-=======
-  getPlatforms,
-  initialize,
-  isPlatform
-} from "./chunk-OAREROME.js";
-import "./chunk-3UAQNBCT.js";
-import {
-  bootstrapLazy
-} from "./chunk-5TIJP5C4.js";
-import {
-  createGesture
-} from "./chunk-Z3OEOVFM.js";
-import "./chunk-QA2SYHF5.js";
->>>>>>> 5e585112cf1d9f379c418981fb548978fa4c4772
+  AngularDelegate,
+  Config,
+  ConfigToken,
+  DomController,
+  IonBackButton,
+  IonModal,
+  IonModalToken,
+  IonNav,
+  IonPopover,
+  IonRouterOutlet,
+  IonTabs,
+  IonicRouteStrategy,
+  MenuController,
+  NavController,
+  NavParams,
+  OverlayBaseController,
+  Platform,
+  RouterLinkDelegateDirective,
+  RouterLinkWithHrefDelegateDirective,
+  ValueAccessor,
+  provideComponentInputBinding,
+  raf,
+  setIonicClasses
+} from "./chunk-GTXUZT5S.js";
+import "./chunk-5XGCCERR.js";
+import "./chunk-6U2AQA2C.js";
+import "./chunk-RVYBAU3Q.js";
+import "./chunk-K2WS2MLV.js";
+import "./chunk-TFIA46FL.js";
+import "./chunk-HADXAX2I.js";
+import "./chunk-4554YRK6.js";
+import "./chunk-QEE7QVES.js";
+import "./chunk-2H3NLAAY.js";
 import {
   ActivatedRoute,
-  ChildrenOutletContexts,
-  NavigationStart,
-  PRIMARY_OUTLET,
-  Router,
-  RouterLink,
-  UrlSerializer
+  Router
 } from "./chunk-LJPS7NX5.js";
 import "./chunk-LYZ2RRMW.js";
 import "./chunk-KIMTXNSS.js";
@@ -129,20 +92,17 @@ import {
   MaxValidator,
   MinValidator,
   NG_VALIDATORS,
-  NG_VALUE_ACCESSOR,
-  NgControl
+  NG_VALUE_ACCESSOR
 } from "./chunk-N52XZBH5.js";
 import {
   CommonModule,
   Location,
-  LocationStrategy,
   NgIf,
   NgTemplateOutlet
 } from "./chunk-ORVGVXJZ.js";
 import "./chunk-4X6VR2I6.js";
 import {
   APP_INITIALIZER,
-  ApplicationRef,
   Attribute,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -153,28 +113,19 @@ import {
   Directive,
   ElementRef,
   EnvironmentInjector,
-  EventEmitter,
   HostListener,
-  Inject,
   Injectable,
-  InjectionToken,
   Injector,
-  Input,
   NgModule,
   NgZone,
   Optional,
-  Output,
   SkipSelf,
-  TemplateRef,
   ViewChild,
   ViewContainerRef,
-  createComponent,
   forwardRef,
   inject,
-  reflectComponentType,
   setClassMetadata,
   ɵɵInheritDefinitionFeature,
-  ɵɵNgOnChangesFeature,
   ɵɵProvidersFeature,
   ɵɵadvance,
   ɵɵattribute,
@@ -206,3332 +157,18 @@ import {
   ɵɵtemplate,
   ɵɵviewQuery
 } from "./chunk-O3TFJGNF.js";
-import "./chunk-UQGLAMHP.js";
 import {
   fromEvent
 } from "./chunk-576P5TAG.js";
+import "./chunk-UQGLAMHP.js";
 import {
-  BehaviorSubject,
-  Subject,
-  __decorate,
-  combineLatest,
-  distinctUntilChanged,
-  filter,
-  of,
-  switchMap
+  __decorate
 } from "./chunk-2K3BB2X3.js";
 import {
   __async,
-  __objRest,
   __spreadProps,
   __spreadValues
 } from "./chunk-QXFS4N4X.js";
-
-// node_modules/@ionic/core/components/gesture-controller.js
-var GestureController = class {
-  constructor() {
-    this.gestureId = 0;
-    this.requestedStart = /* @__PURE__ */ new Map();
-    this.disabledGestures = /* @__PURE__ */ new Map();
-    this.disabledScroll = /* @__PURE__ */ new Set();
-  }
-  /**
-   * Creates a gesture delegate based on the GestureConfig passed
-   */
-  createGesture(config2) {
-    var _a;
-    return new GestureDelegate(this, this.newID(), config2.name, (_a = config2.priority) !== null && _a !== void 0 ? _a : 0, !!config2.disableScroll);
-  }
-  /**
-   * Creates a blocker that will block any other gesture events from firing. Set in the ion-gesture component.
-   */
-  createBlocker(opts = {}) {
-    return new BlockerDelegate(this, this.newID(), opts.disable, !!opts.disableScroll);
-  }
-  start(gestureName, id, priority) {
-    if (!this.canStart(gestureName)) {
-      this.requestedStart.delete(id);
-      return false;
-    }
-    this.requestedStart.set(id, priority);
-    return true;
-  }
-  capture(gestureName, id, priority) {
-    if (!this.start(gestureName, id, priority)) {
-      return false;
-    }
-    const requestedStart = this.requestedStart;
-    let maxPriority = -1e4;
-    requestedStart.forEach((value) => {
-      maxPriority = Math.max(maxPriority, value);
-    });
-    if (maxPriority === priority) {
-      this.capturedId = id;
-      requestedStart.clear();
-      const event = new CustomEvent("ionGestureCaptured", { detail: { gestureName } });
-      document.dispatchEvent(event);
-      return true;
-    }
-    requestedStart.delete(id);
-    return false;
-  }
-  release(id) {
-    this.requestedStart.delete(id);
-    if (this.capturedId === id) {
-      this.capturedId = void 0;
-    }
-  }
-  disableGesture(gestureName, id) {
-    let set = this.disabledGestures.get(gestureName);
-    if (set === void 0) {
-      set = /* @__PURE__ */ new Set();
-      this.disabledGestures.set(gestureName, set);
-    }
-    set.add(id);
-  }
-  enableGesture(gestureName, id) {
-    const set = this.disabledGestures.get(gestureName);
-    if (set !== void 0) {
-      set.delete(id);
-    }
-  }
-  disableScroll(id) {
-    this.disabledScroll.add(id);
-    if (this.disabledScroll.size === 1) {
-      document.body.classList.add(BACKDROP_NO_SCROLL);
-    }
-  }
-  enableScroll(id) {
-    this.disabledScroll.delete(id);
-    if (this.disabledScroll.size === 0) {
-      document.body.classList.remove(BACKDROP_NO_SCROLL);
-    }
-  }
-  canStart(gestureName) {
-    if (this.capturedId !== void 0) {
-      return false;
-    }
-    if (this.isDisabled(gestureName)) {
-      return false;
-    }
-    return true;
-  }
-  isCaptured() {
-    return this.capturedId !== void 0;
-  }
-  isScrollDisabled() {
-    return this.disabledScroll.size > 0;
-  }
-  isDisabled(gestureName) {
-    const disabled = this.disabledGestures.get(gestureName);
-    if (disabled && disabled.size > 0) {
-      return true;
-    }
-    return false;
-  }
-  newID() {
-    this.gestureId++;
-    return this.gestureId;
-  }
-};
-var GestureDelegate = class {
-  constructor(ctrl, id, name, priority, disableScroll) {
-    this.id = id;
-    this.name = name;
-    this.disableScroll = disableScroll;
-    this.priority = priority * 1e6 + id;
-    this.ctrl = ctrl;
-  }
-  canStart() {
-    if (!this.ctrl) {
-      return false;
-    }
-    return this.ctrl.canStart(this.name);
-  }
-  start() {
-    if (!this.ctrl) {
-      return false;
-    }
-    return this.ctrl.start(this.name, this.id, this.priority);
-  }
-  capture() {
-    if (!this.ctrl) {
-      return false;
-    }
-    const captured = this.ctrl.capture(this.name, this.id, this.priority);
-    if (captured && this.disableScroll) {
-      this.ctrl.disableScroll(this.id);
-    }
-    return captured;
-  }
-  release() {
-    if (this.ctrl) {
-      this.ctrl.release(this.id);
-      if (this.disableScroll) {
-        this.ctrl.enableScroll(this.id);
-      }
-    }
-  }
-  destroy() {
-    this.release();
-    this.ctrl = void 0;
-  }
-};
-var BlockerDelegate = class {
-  constructor(ctrl, id, disable, disableScroll) {
-    this.id = id;
-    this.disable = disable;
-    this.disableScroll = disableScroll;
-    this.ctrl = ctrl;
-  }
-  block() {
-    if (!this.ctrl) {
-      return;
-    }
-    if (this.disable) {
-      for (const gesture of this.disable) {
-        this.ctrl.disableGesture(gesture, this.id);
-      }
-    }
-    if (this.disableScroll) {
-      this.ctrl.disableScroll(this.id);
-    }
-  }
-  unblock() {
-    if (!this.ctrl) {
-      return;
-    }
-    if (this.disable) {
-      for (const gesture of this.disable) {
-        this.ctrl.enableGesture(gesture, this.id);
-      }
-    }
-    if (this.disableScroll) {
-      this.ctrl.enableScroll(this.id);
-    }
-  }
-  destroy() {
-    this.unblock();
-    this.ctrl = void 0;
-  }
-};
-var BACKDROP_NO_SCROLL = "backdrop-no-scroll";
-var GESTURE_CONTROLLER = new GestureController();
-
-// node_modules/@ionic/core/components/ionic-global.js
-var getPlatforms2 = (win2) => setupPlatforms(win2);
-var isPlatform2 = (winOrPlatform, platform) => {
-  if (typeof winOrPlatform === "string") {
-    platform = winOrPlatform;
-    winOrPlatform = void 0;
-  }
-  return getPlatforms2(winOrPlatform).includes(platform);
-};
-var setupPlatforms = (win2 = window) => {
-  if (typeof win2 === "undefined") {
-    return [];
-  }
-  win2.Ionic = win2.Ionic || {};
-  let platforms = win2.Ionic.platforms;
-  if (platforms == null) {
-    platforms = win2.Ionic.platforms = detectPlatforms(win2);
-    platforms.forEach((p) => win2.document.documentElement.classList.add(`plt-${p}`));
-  }
-  return platforms;
-};
-var detectPlatforms = (win2) => {
-  const customPlatformMethods = config.get("platform");
-  return Object.keys(PLATFORMS_MAP).filter((p) => {
-    const customMethod = customPlatformMethods === null || customPlatformMethods === void 0 ? void 0 : customPlatformMethods[p];
-    return typeof customMethod === "function" ? customMethod(win2) : PLATFORMS_MAP[p](win2);
-  });
-};
-var isMobileWeb = (win2) => isMobile(win2) && !isHybrid(win2);
-var isIpad = (win2) => {
-  if (testUserAgent(win2, /iPad/i)) {
-    return true;
-  }
-  if (testUserAgent(win2, /Macintosh/i) && isMobile(win2)) {
-    return true;
-  }
-  return false;
-};
-var isIphone = (win2) => testUserAgent(win2, /iPhone/i);
-var isIOS = (win2) => testUserAgent(win2, /iPhone|iPod/i) || isIpad(win2);
-var isAndroid = (win2) => testUserAgent(win2, /android|sink/i);
-var isAndroidTablet = (win2) => {
-  return isAndroid(win2) && !testUserAgent(win2, /mobile/i);
-};
-var isPhablet = (win2) => {
-  const width = win2.innerWidth;
-  const height = win2.innerHeight;
-  const smallest = Math.min(width, height);
-  const largest = Math.max(width, height);
-  return smallest > 390 && smallest < 520 && largest > 620 && largest < 800;
-};
-var isTablet = (win2) => {
-  const width = win2.innerWidth;
-  const height = win2.innerHeight;
-  const smallest = Math.min(width, height);
-  const largest = Math.max(width, height);
-  return isIpad(win2) || isAndroidTablet(win2) || smallest > 460 && smallest < 820 && largest > 780 && largest < 1400;
-};
-var isMobile = (win2) => matchMedia(win2, "(any-pointer:coarse)");
-var isDesktop = (win2) => !isMobile(win2);
-var isHybrid = (win2) => isCordova(win2) || isCapacitorNative(win2);
-var isCordova = (win2) => !!(win2["cordova"] || win2["phonegap"] || win2["PhoneGap"]);
-var isCapacitorNative = (win2) => {
-  const capacitor = win2["Capacitor"];
-  return !!((capacitor === null || capacitor === void 0 ? void 0 : capacitor.isNative) || (capacitor === null || capacitor === void 0 ? void 0 : capacitor.isNativePlatform) && !!capacitor.isNativePlatform());
-};
-var isElectron = (win2) => testUserAgent(win2, /electron/i);
-var isPWA = (win2) => {
-  var _a;
-  return !!(((_a = win2.matchMedia) === null || _a === void 0 ? void 0 : _a.call(win2, "(display-mode: standalone)").matches) || win2.navigator.standalone);
-};
-var testUserAgent = (win2, expr) => expr.test(win2.navigator.userAgent);
-var matchMedia = (win2, query) => {
-  var _a;
-  return (_a = win2.matchMedia) === null || _a === void 0 ? void 0 : _a.call(win2, query).matches;
-};
-var PLATFORMS_MAP = {
-  ipad: isIpad,
-  iphone: isIphone,
-  ios: isIOS,
-  android: isAndroid,
-  phablet: isPhablet,
-  tablet: isTablet,
-  cordova: isCordova,
-  capacitor: isCapacitorNative,
-  electron: isElectron,
-  pwa: isPWA,
-  mobile: isMobile,
-  mobileweb: isMobileWeb,
-  desktop: isDesktop,
-  hybrid: isHybrid
-};
-var defaultMode;
-var getIonMode = (ref) => {
-  return ref && getMode(ref) || defaultMode;
-};
-
-// node_modules/@ionic/core/components/hardware-back-button.js
-var MENU_BACK_BUTTON_PRIORITY = 99;
-
-// node_modules/@ionic/core/components/index5.js
-var baseAnimation = (isIos) => {
-  return createAnimation().duration(isIos ? 400 : 300);
-};
-var menuOverlayAnimation = (menu) => {
-  let closedX;
-  let openedX;
-  const width = menu.width + 8;
-  const menuAnimation = createAnimation();
-  const backdropAnimation = createAnimation();
-  if (menu.isEndSide) {
-    closedX = width + "px";
-    openedX = "0px";
-  } else {
-    closedX = -width + "px";
-    openedX = "0px";
-  }
-  menuAnimation.addElement(menu.menuInnerEl).fromTo("transform", `translateX(${closedX})`, `translateX(${openedX})`);
-  const mode = getIonMode(menu);
-  const isIos = mode === "ios";
-  const opacity = isIos ? 0.2 : 0.25;
-  backdropAnimation.addElement(menu.backdropEl).fromTo("opacity", 0.01, opacity);
-  return baseAnimation(isIos).addAnimation([menuAnimation, backdropAnimation]);
-};
-var menuPushAnimation = (menu) => {
-  let contentOpenedX;
-  let menuClosedX;
-  const mode = getIonMode(menu);
-  const width = menu.width;
-  if (menu.isEndSide) {
-    contentOpenedX = -width + "px";
-    menuClosedX = width + "px";
-  } else {
-    contentOpenedX = width + "px";
-    menuClosedX = -width + "px";
-  }
-  const menuAnimation = createAnimation().addElement(menu.menuInnerEl).fromTo("transform", `translateX(${menuClosedX})`, "translateX(0px)");
-  const contentAnimation = createAnimation().addElement(menu.contentEl).fromTo("transform", "translateX(0px)", `translateX(${contentOpenedX})`);
-  const backdropAnimation = createAnimation().addElement(menu.backdropEl).fromTo("opacity", 0.01, 0.32);
-  return baseAnimation(mode === "ios").addAnimation([menuAnimation, contentAnimation, backdropAnimation]);
-};
-var menuRevealAnimation = (menu) => {
-  const mode = getIonMode(menu);
-  const openedX = menu.width * (menu.isEndSide ? -1 : 1) + "px";
-  const contentOpen = createAnimation().addElement(menu.contentEl).fromTo("transform", "translateX(0px)", `translateX(${openedX})`);
-  return baseAnimation(mode === "ios").addAnimation(contentOpen);
-};
-var createMenuController = () => {
-  const menuAnimations = /* @__PURE__ */ new Map();
-  const menus = [];
-  const open = (menu) => __async(null, null, function* () {
-    const menuEl = yield get(menu, true);
-    if (menuEl) {
-      return menuEl.open();
-    }
-    return false;
-  });
-  const close = (menu) => __async(null, null, function* () {
-    const menuEl = yield menu !== void 0 ? get(menu, true) : getOpen();
-    if (menuEl !== void 0) {
-      return menuEl.close();
-    }
-    return false;
-  });
-  const toggle = (menu) => __async(null, null, function* () {
-    const menuEl = yield get(menu, true);
-    if (menuEl) {
-      return menuEl.toggle();
-    }
-    return false;
-  });
-  const enable = (shouldEnable, menu) => __async(null, null, function* () {
-    const menuEl = yield get(menu);
-    if (menuEl) {
-      menuEl.disabled = !shouldEnable;
-    }
-    return menuEl;
-  });
-  const swipeGesture = (shouldEnable, menu) => __async(null, null, function* () {
-    const menuEl = yield get(menu);
-    if (menuEl) {
-      menuEl.swipeGesture = shouldEnable;
-    }
-    return menuEl;
-  });
-  const isOpen = (menu) => __async(null, null, function* () {
-    if (menu != null) {
-      const menuEl = yield get(menu);
-      return menuEl !== void 0 && menuEl.isOpen();
-    } else {
-      const menuEl = yield getOpen();
-      return menuEl !== void 0;
-    }
-  });
-  const isEnabled = (menu) => __async(null, null, function* () {
-    const menuEl = yield get(menu);
-    if (menuEl) {
-      return !menuEl.disabled;
-    }
-    return false;
-  });
-  const get = (menu, logOnMultipleSideMenus = false) => __async(null, null, function* () {
-    yield waitUntilReady();
-    if (menu === "start" || menu === "end") {
-      const menuRefs = menus.filter((m) => m.side === menu && !m.disabled);
-      if (menuRefs.length >= 1) {
-        if (menuRefs.length > 1 && logOnMultipleSideMenus) {
-          printIonWarning(`menuController queried for a menu on the "${menu}" side, but ${menuRefs.length} menus were found. The first menu reference will be used. If this is not the behavior you want then pass the ID of the menu instead of its side.`, menuRefs.map((m) => m.el));
-        }
-        return menuRefs[0].el;
-      }
-      const sideMenuRefs = menus.filter((m) => m.side === menu);
-      if (sideMenuRefs.length >= 1) {
-        if (sideMenuRefs.length > 1 && logOnMultipleSideMenus) {
-          printIonWarning(`menuController queried for a menu on the "${menu}" side, but ${sideMenuRefs.length} menus were found. The first menu reference will be used. If this is not the behavior you want then pass the ID of the menu instead of its side.`, sideMenuRefs.map((m) => m.el));
-        }
-        return sideMenuRefs[0].el;
-      }
-    } else if (menu != null) {
-      return find((m) => m.menuId === menu);
-    }
-    const menuEl = find((m) => !m.disabled);
-    if (menuEl) {
-      return menuEl;
-    }
-    return menus.length > 0 ? menus[0].el : void 0;
-  });
-  const getOpen = () => __async(null, null, function* () {
-    yield waitUntilReady();
-    return _getOpenSync();
-  });
-  const getMenus = () => __async(null, null, function* () {
-    yield waitUntilReady();
-    return getMenusSync();
-  });
-  const isAnimating = () => __async(null, null, function* () {
-    yield waitUntilReady();
-    return isAnimatingSync();
-  });
-  const registerAnimation = (name, animation) => {
-    menuAnimations.set(name, animation);
-  };
-  const _register = (menu) => {
-    if (menus.indexOf(menu) < 0) {
-      menus.push(menu);
-    }
-  };
-  const _unregister = (menu) => {
-    const index = menus.indexOf(menu);
-    if (index > -1) {
-      menus.splice(index, 1);
-    }
-  };
-  const _setOpen = (menu, shouldOpen, animated, role) => __async(null, null, function* () {
-    if (isAnimatingSync()) {
-      return false;
-    }
-    if (shouldOpen) {
-      const openedMenu = yield getOpen();
-      if (openedMenu && menu.el !== openedMenu) {
-        yield openedMenu.setOpen(false, false);
-      }
-    }
-    return menu._setOpen(shouldOpen, animated, role);
-  });
-  const _createAnimation = (type, menuCmp) => {
-    const animationBuilder = menuAnimations.get(type);
-    if (!animationBuilder) {
-      throw new Error("animation not registered");
-    }
-    const animation = animationBuilder(menuCmp);
-    return animation;
-  };
-  const _getOpenSync = () => {
-    return find((m) => m._isOpen);
-  };
-  const getMenusSync = () => {
-    return menus.map((menu) => menu.el);
-  };
-  const isAnimatingSync = () => {
-    return menus.some((menu) => menu.isAnimating);
-  };
-  const find = (predicate) => {
-    const instance = menus.find(predicate);
-    if (instance !== void 0) {
-      return instance.el;
-    }
-    return void 0;
-  };
-  const waitUntilReady = () => {
-    return Promise.all(Array.from(document.querySelectorAll("ion-menu")).map((menu) => new Promise((resolve) => componentOnReady(menu, resolve))));
-  };
-  registerAnimation("reveal", menuRevealAnimation);
-  registerAnimation("push", menuPushAnimation);
-  registerAnimation("overlay", menuOverlayAnimation);
-  doc === null || doc === void 0 ? void 0 : doc.addEventListener("ionBackButton", (ev) => {
-    const openMenu = _getOpenSync();
-    if (openMenu) {
-      ev.detail.register(MENU_BACK_BUTTON_PRIORITY, () => {
-        return openMenu.close();
-      });
-    }
-  });
-  return {
-    registerAnimation,
-    get,
-    getMenus,
-    getOpen,
-    isEnabled,
-    swipeGesture,
-    isAnimating,
-    isOpen,
-    enable,
-    toggle,
-    close,
-    open,
-    _getOpenSync,
-    _createAnimation,
-    _register,
-    _unregister,
-    _setOpen
-  };
-};
-var menuController2 = createMenuController();
-
-// node_modules/@ionic/core/components/overlays.js
-var createController = (tagName) => {
-  return {
-    create(options) {
-      return createOverlay(tagName, options);
-    },
-    dismiss(data, role, id) {
-      return dismissOverlay(document, data, role, tagName, id);
-    },
-    getTop() {
-      return __async(this, null, function* () {
-        return getPresentedOverlay(document, tagName);
-      });
-    }
-  };
-};
-var alertController2 = createController("ion-alert");
-var actionSheetController2 = createController("ion-action-sheet");
-var loadingController2 = createController("ion-loading");
-var modalController2 = createController("ion-modal");
-var pickerController2 = createController("ion-picker-legacy");
-var popoverController2 = createController("ion-popover");
-var toastController2 = createController("ion-toast");
-var createOverlay = (tagName, opts) => {
-  if (typeof window !== "undefined" && typeof window.customElements !== "undefined") {
-    return window.customElements.whenDefined(tagName).then(() => {
-      const element = document.createElement(tagName);
-      element.classList.add("overlay-hidden");
-      Object.assign(element, Object.assign(Object.assign({}, opts), { hasController: true }));
-      getAppRoot(document).appendChild(element);
-      return new Promise((resolve) => componentOnReady(element, resolve));
-    });
-  }
-  return Promise.resolve();
-};
-var isOverlayHidden = (overlay) => overlay.classList.contains("overlay-hidden");
-var dismissOverlay = (doc2, data, role, overlayTag, id) => {
-  const overlay = getPresentedOverlay(doc2, overlayTag, id);
-  if (!overlay) {
-    return Promise.reject("overlay does not exist");
-  }
-  return overlay.dismiss(data, role);
-};
-var getOverlays = (doc2, selector) => {
-  if (selector === void 0) {
-    selector = "ion-alert,ion-action-sheet,ion-loading,ion-modal,ion-picker-legacy,ion-popover,ion-toast";
-  }
-  return Array.from(doc2.querySelectorAll(selector)).filter((c) => c.overlayIndex > 0);
-};
-var getPresentedOverlays = (doc2, overlayTag) => {
-  return getOverlays(doc2, overlayTag).filter((o) => !isOverlayHidden(o));
-};
-var getPresentedOverlay = (doc2, overlayTag, id) => {
-  const overlays = getPresentedOverlays(doc2, overlayTag);
-  return id === void 0 ? overlays[overlays.length - 1] : overlays.find((o) => o.id === id);
-};
-var getAppRoot = (doc2) => {
-  return doc2.querySelector("ion-app") || doc2.body;
-};
-
-// node_modules/@ionic/angular/fesm2022/ionic-angular-common.mjs
-var _c0 = ["tabsInner"];
-var DomController = class _DomController {
-  /**
-   * Schedules a task to run during the READ phase of the next frame.
-   * This task should only read the DOM, but never modify it.
-   */
-  read(cb) {
-    getQueue().read(cb);
-  }
-  /**
-   * Schedules a task to run during the WRITE phase of the next frame.
-   * This task should write the DOM, but never READ it.
-   */
-  write(cb) {
-    getQueue().write(cb);
-  }
-  /** @nocollapse */
-  static ɵfac = function DomController_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _DomController)();
-  };
-  /** @nocollapse */
-  static ɵprov = ɵɵdefineInjectable({
-    token: _DomController,
-    factory: _DomController.ɵfac,
-    providedIn: "root"
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(DomController, [{
-    type: Injectable,
-    args: [{
-      providedIn: "root"
-    }]
-  }], null, null);
-})();
-var getQueue = () => {
-  const win2 = typeof window !== "undefined" ? window : null;
-  if (win2 != null) {
-    const Ionic = win2.Ionic;
-    if (Ionic?.queue) {
-      return Ionic.queue;
-    }
-    return {
-      read: (cb) => win2.requestAnimationFrame(cb),
-      write: (cb) => win2.requestAnimationFrame(cb)
-    };
-  }
-  return {
-    read: (cb) => cb(),
-    write: (cb) => cb()
-  };
-};
-var MenuController = class {
-  menuController;
-  constructor(menuController3) {
-    this.menuController = menuController3;
-  }
-  /**
-   * Programmatically open the Menu.
-   * @param [menuId]  Optionally get the menu by its id, or side.
-   * @return returns a promise when the menu is fully opened
-   */
-  open(menuId) {
-    return this.menuController.open(menuId);
-  }
-  /**
-   * Programmatically close the Menu. If no `menuId` is given as the first
-   * argument then it'll close any menu which is open. If a `menuId`
-   * is given then it'll close that exact menu.
-   * @param [menuId]  Optionally get the menu by its id, or side.
-   * @return returns a promise when the menu is fully closed
-   */
-  close(menuId) {
-    return this.menuController.close(menuId);
-  }
-  /**
-   * Toggle the menu. If it's closed, it will open, and if opened, it
-   * will close.
-   * @param [menuId]  Optionally get the menu by its id, or side.
-   * @return returns a promise when the menu has been toggled
-   */
-  toggle(menuId) {
-    return this.menuController.toggle(menuId);
-  }
-  /**
-   * Used to enable or disable a menu. For example, there could be multiple
-   * left menus, but only one of them should be able to be opened at the same
-   * time. If there are multiple menus on the same side, then enabling one menu
-   * will also automatically disable all the others that are on the same side.
-   * @param [menuId]  Optionally get the menu by its id, or side.
-   * @return Returns the instance of the menu, which is useful for chaining.
-   */
-  enable(shouldEnable, menuId) {
-    return this.menuController.enable(shouldEnable, menuId);
-  }
-  /**
-   * Used to enable or disable the ability to swipe open the menu.
-   * @param shouldEnable  True if it should be swipe-able, false if not.
-   * @param [menuId]  Optionally get the menu by its id, or side.
-   * @return Returns the instance of the menu, which is useful for chaining.
-   */
-  swipeGesture(shouldEnable, menuId) {
-    return this.menuController.swipeGesture(shouldEnable, menuId);
-  }
-  /**
-   * @param [menuId] Optionally get the menu by its id, or side.
-   * @return Returns true if the specified menu is currently open, otherwise false.
-   * If the menuId is not specified, it returns true if ANY menu is currenly open.
-   */
-  isOpen(menuId) {
-    return this.menuController.isOpen(menuId);
-  }
-  /**
-   * @param [menuId]  Optionally get the menu by its id, or side.
-   * @return Returns true if the menu is currently enabled, otherwise false.
-   */
-  isEnabled(menuId) {
-    return this.menuController.isEnabled(menuId);
-  }
-  /**
-   * Used to get a menu instance. If a `menuId` is not provided then it'll
-   * return the first menu found. If a `menuId` is `left` or `right`, then
-   * it'll return the enabled menu on that side. Otherwise, if a `menuId` is
-   * provided, then it'll try to find the menu using the menu's `id`
-   * property. If a menu is not found then it'll return `null`.
-   * @param [menuId]  Optionally get the menu by its id, or side.
-   * @return Returns the instance of the menu if found, otherwise `null`.
-   */
-  get(menuId) {
-    return this.menuController.get(menuId);
-  }
-  /**
-   * @return Returns the instance of the menu already opened, otherwise `null`.
-   */
-  getOpen() {
-    return this.menuController.getOpen();
-  }
-  /**
-   * @return Returns an array of all menu instances.
-   */
-  getMenus() {
-    return this.menuController.getMenus();
-  }
-  registerAnimation(name, animation) {
-    return this.menuController.registerAnimation(name, animation);
-  }
-  isAnimating() {
-    return this.menuController.isAnimating();
-  }
-  _getOpenSync() {
-    return this.menuController._getOpenSync();
-  }
-  _createAnimation(type, menuCmp) {
-    return this.menuController._createAnimation(type, menuCmp);
-  }
-  _register(menu) {
-    return this.menuController._register(menu);
-  }
-  _unregister(menu) {
-    return this.menuController._unregister(menu);
-  }
-  _setOpen(menu, shouldOpen, animated) {
-    return this.menuController._setOpen(menu, shouldOpen, animated);
-  }
-};
-var Platform = class _Platform {
-  doc;
-  _readyPromise;
-  win;
-  /**
-   * @hidden
-   */
-  backButton = new Subject();
-  /**
-   * The keyboardDidShow event emits when the
-   * on-screen keyboard is presented.
-   */
-  keyboardDidShow = new Subject();
-  /**
-   * The keyboardDidHide event emits when the
-   * on-screen keyboard is hidden.
-   */
-  keyboardDidHide = new Subject();
-  /**
-   * The pause event emits when the native platform puts the application
-   * into the background, typically when the user switches to a different
-   * application. This event would emit when a Cordova app is put into
-   * the background, however, it would not fire on a standard web browser.
-   */
-  pause = new Subject();
-  /**
-   * The resume event emits when the native platform pulls the application
-   * out from the background. This event would emit when a Cordova app comes
-   * out from the background, however, it would not fire on a standard web browser.
-   */
-  resume = new Subject();
-  /**
-   * The resize event emits when the browser window has changed dimensions. This
-   * could be from a browser window being physically resized, or from a device
-   * changing orientation.
-   */
-  resize = new Subject();
-  constructor(doc2, zone) {
-    this.doc = doc2;
-    zone.run(() => {
-      this.win = doc2.defaultView;
-      this.backButton.subscribeWithPriority = function(priority, callback) {
-        return this.subscribe((ev) => {
-          return ev.register(priority, (processNextHandler) => zone.run(() => callback(processNextHandler)));
-        });
-      };
-      proxyEvent(this.pause, doc2, "pause", zone);
-      proxyEvent(this.resume, doc2, "resume", zone);
-      proxyEvent(this.backButton, doc2, "ionBackButton", zone);
-      proxyEvent(this.resize, this.win, "resize", zone);
-      proxyEvent(this.keyboardDidShow, this.win, "ionKeyboardDidShow", zone);
-      proxyEvent(this.keyboardDidHide, this.win, "ionKeyboardDidHide", zone);
-      let readyResolve;
-      this._readyPromise = new Promise((res) => {
-        readyResolve = res;
-      });
-      if (this.win?.["cordova"]) {
-        doc2.addEventListener("deviceready", () => {
-          readyResolve("cordova");
-        }, {
-          once: true
-        });
-      } else {
-        readyResolve("dom");
-      }
-    });
-  }
-  /**
-   * @returns returns true/false based on platform.
-   * @description
-   * Depending on the platform the user is on, `is(platformName)` will
-   * return `true` or `false`. Note that the same app can return `true`
-   * for more than one platform name. For example, an app running from
-   * an iPad would return `true` for the platform names: `mobile`,
-   * `ios`, `ipad`, and `tablet`. Additionally, if the app was running
-   * from Cordova then `cordova` would be true, and if it was running
-   * from a web browser on the iPad then `mobileweb` would be `true`.
-   *
-   * ```
-   * import { Platform } from 'ionic-angular';
-   *
-   * @Component({...})
-   * export MyPage {
-   *   constructor(public platform: Platform) {
-   *     if (this.platform.is('ios')) {
-   *       // This will only print when on iOS
-   *       console.log('I am an iOS device!');
-   *     }
-   *   }
-   * }
-   * ```
-   *
-   * | Platform Name   | Description                        |
-   * |-----------------|------------------------------------|
-   * | android         | on a device running Android.       |
-   * | capacitor       | on a device running Capacitor.     |
-   * | cordova         | on a device running Cordova.       |
-   * | ios             | on a device running iOS.           |
-   * | ipad            | on an iPad device.                 |
-   * | iphone          | on an iPhone device.               |
-   * | phablet         | on a phablet device.               |
-   * | tablet          | on a tablet device.                |
-   * | electron        | in Electron on a desktop device.   |
-   * | pwa             | as a PWA app.                      |
-   * | mobile          | on a mobile device.                |
-   * | mobileweb       | on a mobile device in a browser.   |
-   * | desktop         | on a desktop device.               |
-   * | hybrid          | is a cordova or capacitor app.     |
-   *
-   */
-  is(platformName) {
-    return isPlatform2(this.win, platformName);
-  }
-  /**
-   * @returns the array of platforms
-   * @description
-   * Depending on what device you are on, `platforms` can return multiple values.
-   * Each possible value is a hierarchy of platforms. For example, on an iPhone,
-   * it would return `mobile`, `ios`, and `iphone`.
-   *
-   * ```
-   * import { Platform } from 'ionic-angular';
-   *
-   * @Component({...})
-   * export MyPage {
-   *   constructor(public platform: Platform) {
-   *     // This will print an array of the current platforms
-   *     console.log(this.platform.platforms());
-   *   }
-   * }
-   * ```
-   */
-  platforms() {
-    return getPlatforms2(this.win);
-  }
-  /**
-   * Returns a promise when the platform is ready and native functionality
-   * can be called. If the app is running from within a web browser, then
-   * the promise will resolve when the DOM is ready. When the app is running
-   * from an application engine such as Cordova, then the promise will
-   * resolve when Cordova triggers the `deviceready` event.
-   *
-   * The resolved value is the `readySource`, which states which platform
-   * ready was used. For example, when Cordova is ready, the resolved ready
-   * source is `cordova`. The default ready source value will be `dom`. The
-   * `readySource` is useful if different logic should run depending on the
-   * platform the app is running from. For example, only Cordova can execute
-   * the status bar plugin, so the web should not run status bar plugin logic.
-   *
-   * ```
-   * import { Component } from '@angular/core';
-   * import { Platform } from 'ionic-angular';
-   *
-   * @Component({...})
-   * export MyApp {
-   *   constructor(public platform: Platform) {
-   *     this.platform.ready().then((readySource) => {
-   *       console.log('Platform ready from', readySource);
-   *       // Platform now ready, execute any required native code
-   *     });
-   *   }
-   * }
-   * ```
-   */
-  ready() {
-    return this._readyPromise;
-  }
-  /**
-   * Returns if this app is using right-to-left language direction or not.
-   * We recommend the app's `index.html` file already has the correct `dir`
-   * attribute value set, such as `<html dir="ltr">` or `<html dir="rtl">`.
-   * [W3C: Structural markup and right-to-left text in HTML](http://www.w3.org/International/questions/qa-html-dir)
-   */
-  get isRTL() {
-    return this.doc.dir === "rtl";
-  }
-  /**
-   * Get the query string parameter
-   */
-  getQueryParam(key) {
-    return readQueryParam(this.win.location.href, key);
-  }
-  /**
-   * Returns `true` if the app is in landscape mode.
-   */
-  isLandscape() {
-    return !this.isPortrait();
-  }
-  /**
-   * Returns `true` if the app is in portrait mode.
-   */
-  isPortrait() {
-    return this.win.matchMedia?.("(orientation: portrait)").matches;
-  }
-  testUserAgent(expression) {
-    const nav = this.win.navigator;
-    return !!(nav?.userAgent && nav.userAgent.indexOf(expression) >= 0);
-  }
-  /**
-   * Get the current url.
-   */
-  url() {
-    return this.win.location.href;
-  }
-  /**
-   * Gets the width of the platform's viewport using `window.innerWidth`.
-   */
-  width() {
-    return this.win.innerWidth;
-  }
-  /**
-   * Gets the height of the platform's viewport using `window.innerHeight`.
-   */
-  height() {
-    return this.win.innerHeight;
-  }
-  /** @nocollapse */
-  static ɵfac = function Platform_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _Platform)(ɵɵinject(DOCUMENT), ɵɵinject(NgZone));
-  };
-  /** @nocollapse */
-  static ɵprov = ɵɵdefineInjectable({
-    token: _Platform,
-    factory: _Platform.ɵfac,
-    providedIn: "root"
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Platform, [{
-    type: Injectable,
-    args: [{
-      providedIn: "root"
-    }]
-  }], function() {
-    return [{
-      type: void 0,
-      decorators: [{
-        type: Inject,
-        args: [DOCUMENT]
-      }]
-    }, {
-      type: NgZone
-    }];
-  }, null);
-})();
-var readQueryParam = (url, key) => {
-  key = key.replace(/[[\]\\]/g, "\\$&");
-  const regex = new RegExp("[\\?&]" + key + "=([^&#]*)");
-  const results = regex.exec(url);
-  return results ? decodeURIComponent(results[1].replace(/\+/g, " ")) : null;
-};
-var proxyEvent = (emitter, el, eventName, zone) => {
-  if (el) {
-    el.addEventListener(eventName, (ev) => {
-      zone.run(() => {
-        const value = ev != null ? ev.detail : void 0;
-        emitter.next(value);
-      });
-    });
-  }
-};
-var NavController = class _NavController {
-  location;
-  serializer;
-  router;
-  topOutlet;
-  direction = DEFAULT_DIRECTION;
-  animated = DEFAULT_ANIMATED;
-  animationBuilder;
-  guessDirection = "forward";
-  guessAnimation;
-  lastNavId = -1;
-  constructor(platform, location, serializer, router) {
-    this.location = location;
-    this.serializer = serializer;
-    this.router = router;
-    if (router) {
-      router.events.subscribe((ev) => {
-        if (ev instanceof NavigationStart) {
-          const id = ev.restoredState ? ev.restoredState.navigationId : ev.id;
-          this.guessDirection = this.guessAnimation = id < this.lastNavId ? "back" : "forward";
-          this.lastNavId = this.guessDirection === "forward" ? ev.id : id;
-        }
-      });
-    }
-    platform.backButton.subscribeWithPriority(0, (processNextHandler) => {
-      this.pop();
-      processNextHandler();
-    });
-  }
-  /**
-   * This method uses Angular's [Router](https://angular.io/api/router/Router) under the hood,
-   * it's equivalent to calling `this.router.navigateByUrl()`, but it's explicit about the **direction** of the transition.
-   *
-   * Going **forward** means that a new page is going to be pushed to the stack of the outlet (ion-router-outlet),
-   * and that it will show a "forward" animation by default.
-   *
-   * Navigating forward can also be triggered in a declarative manner by using the `[routerDirection]` directive:
-   *
-   * ```html
-   * <a routerLink="/path/to/page" routerDirection="forward">Link</a>
-   * ```
-   */
-  navigateForward(url, options = {}) {
-    this.setDirection("forward", options.animated, options.animationDirection, options.animation);
-    return this.navigate(url, options);
-  }
-  /**
-   * This method uses Angular's [Router](https://angular.io/api/router/Router) under the hood,
-   * it's equivalent to calling:
-   *
-   * ```ts
-   * this.navController.setDirection('back');
-   * this.router.navigateByUrl(path);
-   * ```
-   *
-   * Going **back** means that all the pages in the stack until the navigated page is found will be popped,
-   * and that it will show a "back" animation by default.
-   *
-   * Navigating back can also be triggered in a declarative manner by using the `[routerDirection]` directive:
-   *
-   * ```html
-   * <a routerLink="/path/to/page" routerDirection="back">Link</a>
-   * ```
-   */
-  navigateBack(url, options = {}) {
-    this.setDirection("back", options.animated, options.animationDirection, options.animation);
-    return this.navigate(url, options);
-  }
-  /**
-   * This method uses Angular's [Router](https://angular.io/api/router/Router) under the hood,
-   * it's equivalent to calling:
-   *
-   * ```ts
-   * this.navController.setDirection('root');
-   * this.router.navigateByUrl(path);
-   * ```
-   *
-   * Going **root** means that all existing pages in the stack will be removed,
-   * and the navigated page will become the single page in the stack.
-   *
-   * Navigating root can also be triggered in a declarative manner by using the `[routerDirection]` directive:
-   *
-   * ```html
-   * <a routerLink="/path/to/page" routerDirection="root">Link</a>
-   * ```
-   */
-  navigateRoot(url, options = {}) {
-    this.setDirection("root", options.animated, options.animationDirection, options.animation);
-    return this.navigate(url, options);
-  }
-  /**
-   * Same as [Location](https://angular.io/api/common/Location)'s back() method.
-   * It will use the standard `window.history.back()` under the hood, but featuring a `back` animation
-   * by default.
-   */
-  back(options = {
-    animated: true,
-    animationDirection: "back"
-  }) {
-    this.setDirection("back", options.animated, options.animationDirection, options.animation);
-    return this.location.back();
-  }
-  /**
-   * This methods goes back in the context of Ionic's stack navigation.
-   *
-   * It recursively finds the top active `ion-router-outlet` and calls `pop()`.
-   * This is the recommended way to go back when you are using `ion-router-outlet`.
-   *
-   * Resolves to `true` if it was able to pop.
-   */
-  pop() {
-    return __async(this, null, function* () {
-      let outlet = this.topOutlet;
-      while (outlet) {
-        if (yield outlet.pop()) {
-          return true;
-        } else {
-          outlet = outlet.parentOutlet;
-        }
-      }
-      return false;
-    });
-  }
-  /**
-   * This methods specifies the direction of the next navigation performed by the Angular router.
-   *
-   * `setDirection()` does not trigger any transition, it just sets some flags to be consumed by `ion-router-outlet`.
-   *
-   * It's recommended to use `navigateForward()`, `navigateBack()` and `navigateRoot()` instead of `setDirection()`.
-   */
-  setDirection(direction, animated, animationDirection, animationBuilder) {
-    this.direction = direction;
-    this.animated = getAnimation(direction, animated, animationDirection);
-    this.animationBuilder = animationBuilder;
-  }
-  /**
-   * @internal
-   */
-  setTopOutlet(outlet) {
-    this.topOutlet = outlet;
-  }
-  /**
-   * @internal
-   */
-  consumeTransition() {
-    let direction = "root";
-    let animation;
-    const animationBuilder = this.animationBuilder;
-    if (this.direction === "auto") {
-      direction = this.guessDirection;
-      animation = this.guessAnimation;
-    } else {
-      animation = this.animated;
-      direction = this.direction;
-    }
-    this.direction = DEFAULT_DIRECTION;
-    this.animated = DEFAULT_ANIMATED;
-    this.animationBuilder = void 0;
-    return {
-      direction,
-      animation,
-      animationBuilder
-    };
-  }
-  navigate(url, options) {
-    if (Array.isArray(url)) {
-      return this.router.navigate(url, options);
-    } else {
-      const urlTree = this.serializer.parse(url.toString());
-      if (options.queryParams !== void 0) {
-        urlTree.queryParams = __spreadValues({}, options.queryParams);
-      }
-      if (options.fragment !== void 0) {
-        urlTree.fragment = options.fragment;
-      }
-      return this.router.navigateByUrl(urlTree, options);
-    }
-  }
-  /** @nocollapse */
-  static ɵfac = function NavController_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _NavController)(ɵɵinject(Platform), ɵɵinject(Location), ɵɵinject(UrlSerializer), ɵɵinject(Router, 8));
-  };
-  /** @nocollapse */
-  static ɵprov = ɵɵdefineInjectable({
-    token: _NavController,
-    factory: _NavController.ɵfac,
-    providedIn: "root"
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(NavController, [{
-    type: Injectable,
-    args: [{
-      providedIn: "root"
-    }]
-  }], function() {
-    return [{
-      type: Platform
-    }, {
-      type: Location
-    }, {
-      type: UrlSerializer
-    }, {
-      type: Router,
-      decorators: [{
-        type: Optional
-      }]
-    }];
-  }, null);
-})();
-var getAnimation = (direction, animated, animationDirection) => {
-  if (animated === false) {
-    return void 0;
-  }
-  if (animationDirection !== void 0) {
-    return animationDirection;
-  }
-  if (direction === "forward" || direction === "back") {
-    return direction;
-  } else if (direction === "root" && animated === true) {
-    return "forward";
-  }
-  return void 0;
-};
-var DEFAULT_DIRECTION = "auto";
-var DEFAULT_ANIMATED = void 0;
-var Config = class _Config {
-  get(key, fallback) {
-    const c = getConfig();
-    if (c) {
-      return c.get(key, fallback);
-    }
-    return null;
-  }
-  getBoolean(key, fallback) {
-    const c = getConfig();
-    if (c) {
-      return c.getBoolean(key, fallback);
-    }
-    return false;
-  }
-  getNumber(key, fallback) {
-    const c = getConfig();
-    if (c) {
-      return c.getNumber(key, fallback);
-    }
-    return 0;
-  }
-  /** @nocollapse */
-  static ɵfac = function Config_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _Config)();
-  };
-  /** @nocollapse */
-  static ɵprov = ɵɵdefineInjectable({
-    token: _Config,
-    factory: _Config.ɵfac,
-    providedIn: "root"
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Config, [{
-    type: Injectable,
-    args: [{
-      providedIn: "root"
-    }]
-  }], null, null);
-})();
-var ConfigToken = new InjectionToken("USERCONFIG");
-var getConfig = () => {
-  if (typeof window !== "undefined") {
-    const Ionic = window.Ionic;
-    if (Ionic?.config) {
-      return Ionic.config;
-    }
-  }
-  return null;
-};
-var NavParams = class {
-  data;
-  constructor(data = {}) {
-    this.data = data;
-    console.warn(`[Ionic Warning]: NavParams has been deprecated in favor of using Angular's input API. Developers should migrate to either the @Input decorator or the Signals-based input API.`);
-  }
-  /**
-   * Get the value of a nav-parameter for the current view
-   *
-   * ```ts
-   * import { NavParams } from 'ionic-angular';
-   *
-   * export class MyClass{
-   *  constructor(public navParams: NavParams){
-   *    // userParams is an object we have in our nav-parameters
-   *    this.navParams.get('userParams');
-   *  }
-   * }
-   * ```
-   *
-   * @param param Which param you want to look up
-   */
-  get(param) {
-    return this.data[param];
-  }
-};
-var IonModalToken = new InjectionToken("IonModalToken");
-var AngularDelegate = class _AngularDelegate {
-  zone = inject(NgZone);
-  applicationRef = inject(ApplicationRef);
-  config = inject(ConfigToken);
-  create(environmentInjector, injector, elementReferenceKey) {
-    return new AngularFrameworkDelegate(environmentInjector, injector, this.applicationRef, this.zone, elementReferenceKey, this.config.useSetInputAPI ?? false);
-  }
-  /** @nocollapse */
-  static ɵfac = function AngularDelegate_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _AngularDelegate)();
-  };
-  /** @nocollapse */
-  static ɵprov = ɵɵdefineInjectable({
-    token: _AngularDelegate,
-    factory: _AngularDelegate.ɵfac
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AngularDelegate, [{
-    type: Injectable
-  }], null, null);
-})();
-var AngularFrameworkDelegate = class {
-  environmentInjector;
-  injector;
-  applicationRef;
-  zone;
-  elementReferenceKey;
-  enableSignalsSupport;
-  elRefMap = /* @__PURE__ */ new WeakMap();
-  elEventsMap = /* @__PURE__ */ new WeakMap();
-  constructor(environmentInjector, injector, applicationRef, zone, elementReferenceKey, enableSignalsSupport) {
-    this.environmentInjector = environmentInjector;
-    this.injector = injector;
-    this.applicationRef = applicationRef;
-    this.zone = zone;
-    this.elementReferenceKey = elementReferenceKey;
-    this.enableSignalsSupport = enableSignalsSupport;
-  }
-  attachViewToDom(container, component, params, cssClasses) {
-    return this.zone.run(() => {
-      return new Promise((resolve) => {
-        const componentProps = __spreadValues({}, params);
-        if (this.elementReferenceKey !== void 0) {
-          componentProps[this.elementReferenceKey] = container;
-        }
-        const el = attachView(this.zone, this.environmentInjector, this.injector, this.applicationRef, this.elRefMap, this.elEventsMap, container, component, componentProps, cssClasses, this.elementReferenceKey, this.enableSignalsSupport);
-        resolve(el);
-      });
-    });
-  }
-  removeViewFromDom(_container, component) {
-    return this.zone.run(() => {
-      return new Promise((resolve) => {
-        const componentRef = this.elRefMap.get(component);
-        if (componentRef) {
-          componentRef.destroy();
-          this.elRefMap.delete(component);
-          const unbindEvents = this.elEventsMap.get(component);
-          if (unbindEvents) {
-            unbindEvents();
-            this.elEventsMap.delete(component);
-          }
-        }
-        resolve();
-      });
-    });
-  }
-};
-var attachView = (zone, environmentInjector, injector, applicationRef, elRefMap, elEventsMap, container, component, params, cssClasses, elementReferenceKey, enableSignalsSupport) => {
-  const providers = getProviders(params);
-  if (container.tagName.toLowerCase() === "ion-modal") {
-    providers.push({
-      provide: IonModalToken,
-      useValue: container
-    });
-  }
-  const childInjector = Injector.create({
-    providers,
-    parent: injector
-  });
-  const componentRef = createComponent(component, {
-    environmentInjector,
-    elementInjector: childInjector
-  });
-  const instance = componentRef.instance;
-  const hostElement = componentRef.location.nativeElement;
-  if (params) {
-    if (elementReferenceKey && instance[elementReferenceKey] !== void 0) {
-      console.error(`[Ionic Error]: ${elementReferenceKey} is a reserved property when using ${container.tagName.toLowerCase()}. Rename or remove the "${elementReferenceKey}" property from ${component.name}.`);
-    }
-    if (enableSignalsSupport === true && componentRef.setInput !== void 0) {
-      const _a = params, {
-        modal,
-        popover
-      } = _a, otherParams = __objRest(_a, [
-        "modal",
-        "popover"
-      ]);
-      for (const key in otherParams) {
-        componentRef.setInput(key, otherParams[key]);
-      }
-      if (modal !== void 0) {
-        Object.assign(instance, {
-          modal
-        });
-      }
-      if (popover !== void 0) {
-        Object.assign(instance, {
-          popover
-        });
-      }
-    } else {
-      Object.assign(instance, params);
-    }
-  }
-  if (cssClasses) {
-    for (const cssClass of cssClasses) {
-      hostElement.classList.add(cssClass);
-    }
-  }
-  const unbindEvents = bindLifecycleEvents(zone, instance, hostElement);
-  container.appendChild(hostElement);
-  applicationRef.attachView(componentRef.hostView);
-  elRefMap.set(hostElement, componentRef);
-  elEventsMap.set(hostElement, unbindEvents);
-  return hostElement;
-};
-var LIFECYCLES = [LIFECYCLE_WILL_ENTER, LIFECYCLE_DID_ENTER, LIFECYCLE_WILL_LEAVE, LIFECYCLE_DID_LEAVE, LIFECYCLE_WILL_UNLOAD];
-var bindLifecycleEvents = (zone, instance, element) => {
-  return zone.run(() => {
-    const unregisters = LIFECYCLES.filter((eventName) => typeof instance[eventName] === "function").map((eventName) => {
-      const handler = (ev) => instance[eventName](ev.detail);
-      element.addEventListener(eventName, handler);
-      return () => element.removeEventListener(eventName, handler);
-    });
-    return () => unregisters.forEach((fn) => fn());
-  });
-};
-var NavParamsToken = new InjectionToken("NavParamsToken");
-var getProviders = (params) => {
-  return [{
-    provide: NavParamsToken,
-    useValue: params
-  }, {
-    provide: NavParams,
-    useFactory: provideNavParamsInjectable,
-    deps: [NavParamsToken]
-  }];
-};
-var provideNavParamsInjectable = (params) => {
-  return new NavParams(params);
-};
-var proxyInputs = (Cmp, inputs) => {
-  const Prototype = Cmp.prototype;
-  inputs.forEach((item) => {
-    Object.defineProperty(Prototype, item, {
-      get() {
-        return this.el[item];
-      },
-      set(val) {
-        this.z.runOutsideAngular(() => this.el[item] = val);
-      }
-    });
-  });
-};
-var proxyMethods = (Cmp, methods) => {
-  const Prototype = Cmp.prototype;
-  methods.forEach((methodName) => {
-    Prototype[methodName] = function() {
-      const args = arguments;
-      return this.z.runOutsideAngular(() => this.el[methodName].apply(this.el, args));
-    };
-  });
-};
-var proxyOutputs = (instance, el, events) => {
-  events.forEach((eventName) => instance[eventName] = fromEvent(el, eventName));
-};
-function ProxyCmp(opts) {
-  const decorator = function(cls) {
-    const {
-      defineCustomElementFn,
-      inputs,
-      methods
-    } = opts;
-    if (defineCustomElementFn !== void 0) {
-      defineCustomElementFn();
-    }
-    if (inputs) {
-      proxyInputs(cls, inputs);
-    }
-    if (methods) {
-      proxyMethods(cls, methods);
-    }
-    return cls;
-  };
-  return decorator;
-}
-var MODAL_INPUTS = ["animated", "keepContentsMounted", "backdropBreakpoint", "backdropDismiss", "breakpoints", "canDismiss", "cssClass", "enterAnimation", "expandToScroll", "event", "focusTrap", "handle", "handleBehavior", "initialBreakpoint", "isOpen", "keyboardClose", "leaveAnimation", "mode", "presentingElement", "showBackdrop", "translucent", "trigger"];
-var MODAL_METHODS = ["present", "dismiss", "onDidDismiss", "onWillDismiss", "setCurrentBreakpoint", "getCurrentBreakpoint"];
-var IonModal = class IonModal2 {
-  z;
-  // TODO(FW-2827): type
-  template;
-  isCmpOpen = false;
-  el;
-  constructor(c, r, z) {
-    this.z = z;
-    this.el = r.nativeElement;
-    this.el.addEventListener("ionMount", () => {
-      this.isCmpOpen = true;
-      c.detectChanges();
-    });
-    this.el.addEventListener("didDismiss", () => {
-      this.isCmpOpen = false;
-      c.detectChanges();
-    });
-    proxyOutputs(this, this.el, ["ionModalDidPresent", "ionModalWillPresent", "ionModalWillDismiss", "ionModalDidDismiss", "ionBreakpointDidChange", "didPresent", "willPresent", "willDismiss", "didDismiss"]);
-  }
-  /** @nocollapse */
-  static ɵfac = function IonModal_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || IonModal2)(ɵɵdirectiveInject(ChangeDetectorRef), ɵɵdirectiveInject(ElementRef), ɵɵdirectiveInject(NgZone));
-  };
-  /** @nocollapse */
-  static ɵdir = ɵɵdefineDirective({
-    type: IonModal2,
-    selectors: [["ion-modal"]],
-    contentQueries: function IonModal_ContentQueries(rf, ctx, dirIndex) {
-      if (rf & 1) {
-        ɵɵcontentQuery(dirIndex, TemplateRef, 5);
-      }
-      if (rf & 2) {
-        let _t;
-        ɵɵqueryRefresh(_t = ɵɵloadQuery()) && (ctx.template = _t.first);
-      }
-    },
-    inputs: {
-      animated: "animated",
-      keepContentsMounted: "keepContentsMounted",
-      backdropBreakpoint: "backdropBreakpoint",
-      backdropDismiss: "backdropDismiss",
-      breakpoints: "breakpoints",
-      canDismiss: "canDismiss",
-      cssClass: "cssClass",
-      enterAnimation: "enterAnimation",
-      expandToScroll: "expandToScroll",
-      event: "event",
-      focusTrap: "focusTrap",
-      handle: "handle",
-      handleBehavior: "handleBehavior",
-      initialBreakpoint: "initialBreakpoint",
-      isOpen: "isOpen",
-      keyboardClose: "keyboardClose",
-      leaveAnimation: "leaveAnimation",
-      mode: "mode",
-      presentingElement: "presentingElement",
-      showBackdrop: "showBackdrop",
-      translucent: "translucent",
-      trigger: "trigger"
-    },
-    standalone: false
-  });
-};
-IonModal = __decorate([
-  ProxyCmp({
-    inputs: MODAL_INPUTS,
-    methods: MODAL_METHODS
-  })
-  /**
-   * @Component extends from @Directive
-   * so by defining the inputs here we
-   * do not need to re-define them for the
-   * lazy loaded popover.
-   */
-], IonModal);
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonModal, [{
-    type: Directive,
-    args: [{
-      selector: "ion-modal",
-      // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-      inputs: MODAL_INPUTS
-    }]
-  }], function() {
-    return [{
-      type: ChangeDetectorRef
-    }, {
-      type: ElementRef
-    }, {
-      type: NgZone
-    }];
-  }, {
-    template: [{
-      type: ContentChild,
-      args: [TemplateRef, {
-        static: false
-      }]
-    }]
-  });
-})();
-var POPOVER_INPUTS = ["alignment", "animated", "arrow", "keepContentsMounted", "backdropDismiss", "cssClass", "dismissOnSelect", "enterAnimation", "event", "focusTrap", "isOpen", "keyboardClose", "leaveAnimation", "mode", "showBackdrop", "translucent", "trigger", "triggerAction", "reference", "size", "side"];
-var POPOVER_METHODS = ["present", "dismiss", "onDidDismiss", "onWillDismiss"];
-var IonPopover = class IonPopover2 {
-  z;
-  // TODO(FW-2827): type
-  template;
-  isCmpOpen = false;
-  el;
-  constructor(c, r, z) {
-    this.z = z;
-    this.el = r.nativeElement;
-    this.el.addEventListener("ionMount", () => {
-      this.isCmpOpen = true;
-      c.detectChanges();
-    });
-    this.el.addEventListener("didDismiss", () => {
-      this.isCmpOpen = false;
-      c.detectChanges();
-    });
-    proxyOutputs(this, this.el, ["ionPopoverDidPresent", "ionPopoverWillPresent", "ionPopoverWillDismiss", "ionPopoverDidDismiss", "didPresent", "willPresent", "willDismiss", "didDismiss"]);
-  }
-  /** @nocollapse */
-  static ɵfac = function IonPopover_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || IonPopover2)(ɵɵdirectiveInject(ChangeDetectorRef), ɵɵdirectiveInject(ElementRef), ɵɵdirectiveInject(NgZone));
-  };
-  /** @nocollapse */
-  static ɵdir = ɵɵdefineDirective({
-    type: IonPopover2,
-    selectors: [["ion-popover"]],
-    contentQueries: function IonPopover_ContentQueries(rf, ctx, dirIndex) {
-      if (rf & 1) {
-        ɵɵcontentQuery(dirIndex, TemplateRef, 5);
-      }
-      if (rf & 2) {
-        let _t;
-        ɵɵqueryRefresh(_t = ɵɵloadQuery()) && (ctx.template = _t.first);
-      }
-    },
-    inputs: {
-      alignment: "alignment",
-      animated: "animated",
-      arrow: "arrow",
-      keepContentsMounted: "keepContentsMounted",
-      backdropDismiss: "backdropDismiss",
-      cssClass: "cssClass",
-      dismissOnSelect: "dismissOnSelect",
-      enterAnimation: "enterAnimation",
-      event: "event",
-      focusTrap: "focusTrap",
-      isOpen: "isOpen",
-      keyboardClose: "keyboardClose",
-      leaveAnimation: "leaveAnimation",
-      mode: "mode",
-      showBackdrop: "showBackdrop",
-      translucent: "translucent",
-      trigger: "trigger",
-      triggerAction: "triggerAction",
-      reference: "reference",
-      size: "size",
-      side: "side"
-    },
-    standalone: false
-  });
-};
-IonPopover = __decorate([
-  ProxyCmp({
-    inputs: POPOVER_INPUTS,
-    methods: POPOVER_METHODS
-  })
-  /**
-   * @Component extends from @Directive
-   * so by defining the inputs here we
-   * do not need to re-define them for the
-   * lazy loaded popover.
-   */
-], IonPopover);
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonPopover, [{
-    type: Directive,
-    args: [{
-      selector: "ion-popover",
-      // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-      inputs: POPOVER_INPUTS
-    }]
-  }], function() {
-    return [{
-      type: ChangeDetectorRef
-    }, {
-      type: ElementRef
-    }, {
-      type: NgZone
-    }];
-  }, {
-    template: [{
-      type: ContentChild,
-      args: [TemplateRef, {
-        static: false
-      }]
-    }]
-  });
-})();
-var insertView = (views, view, direction) => {
-  if (direction === "root") {
-    return setRoot(views, view);
-  } else if (direction === "forward") {
-    return setForward(views, view);
-  } else {
-    return setBack(views, view);
-  }
-};
-var setRoot = (views, view) => {
-  views = views.filter((v) => v.stackId !== view.stackId);
-  views.push(view);
-  return views;
-};
-var setForward = (views, view) => {
-  const index = views.indexOf(view);
-  if (index >= 0) {
-    views = views.filter((v) => v.stackId !== view.stackId || v.id <= view.id);
-  } else {
-    views.push(view);
-  }
-  return views;
-};
-var setBack = (views, view) => {
-  const index = views.indexOf(view);
-  if (index >= 0) {
-    return views.filter((v) => v.stackId !== view.stackId || v.id <= view.id);
-  } else {
-    return setRoot(views, view);
-  }
-};
-var getUrl = (router, activatedRoute) => {
-  const urlTree = router.createUrlTree(["."], {
-    relativeTo: activatedRoute
-  });
-  return router.serializeUrl(urlTree);
-};
-var isTabSwitch = (enteringView, leavingView) => {
-  if (!leavingView) {
-    return true;
-  }
-  return enteringView.stackId !== leavingView.stackId;
-};
-var computeStackId = (prefixUrl, url) => {
-  if (!prefixUrl) {
-    return void 0;
-  }
-  const segments = toSegments(url);
-  for (let i = 0; i < segments.length; i++) {
-    if (i >= prefixUrl.length) {
-      return segments[i];
-    }
-    if (segments[i] !== prefixUrl[i]) {
-      return void 0;
-    }
-  }
-  return void 0;
-};
-var toSegments = (path) => {
-  return path.split("/").map((s) => s.trim()).filter((s) => s !== "");
-};
-var destroyView = (view) => {
-  if (view) {
-    view.ref.destroy();
-    view.unlistenEvents();
-  }
-};
-var StackController = class {
-  containerEl;
-  router;
-  navCtrl;
-  zone;
-  location;
-  views = [];
-  runningTask;
-  skipTransition = false;
-  tabsPrefix;
-  activeView;
-  nextId = 0;
-  constructor(tabsPrefix, containerEl, router, navCtrl, zone, location) {
-    this.containerEl = containerEl;
-    this.router = router;
-    this.navCtrl = navCtrl;
-    this.zone = zone;
-    this.location = location;
-    this.tabsPrefix = tabsPrefix !== void 0 ? toSegments(tabsPrefix) : void 0;
-  }
-  createView(ref, activatedRoute) {
-    const url = getUrl(this.router, activatedRoute);
-    const element = ref?.location?.nativeElement;
-    const unlistenEvents = bindLifecycleEvents(this.zone, ref.instance, element);
-    return {
-      id: this.nextId++,
-      stackId: computeStackId(this.tabsPrefix, url),
-      unlistenEvents,
-      element,
-      ref,
-      url
-    };
-  }
-  getExistingView(activatedRoute) {
-    const activatedUrlKey = getUrl(this.router, activatedRoute);
-    const view = this.views.find((vw) => vw.url === activatedUrlKey);
-    if (view) {
-      view.ref.changeDetectorRef.reattach();
-    }
-    return view;
-  }
-  setActive(enteringView) {
-    const consumeResult = this.navCtrl.consumeTransition();
-    let {
-      direction,
-      animation,
-      animationBuilder
-    } = consumeResult;
-    const leavingView = this.activeView;
-    const tabSwitch = isTabSwitch(enteringView, leavingView);
-    if (tabSwitch) {
-      direction = "back";
-      animation = void 0;
-    }
-    const viewsSnapshot = this.views.slice();
-    let currentNavigation;
-    const router = this.router;
-    if (router.getCurrentNavigation) {
-      currentNavigation = router.getCurrentNavigation();
-    } else if (router.navigations?.value) {
-      currentNavigation = router.navigations.value;
-    }
-    if (currentNavigation?.extras?.replaceUrl) {
-      if (this.views.length > 0) {
-        this.views.splice(-1, 1);
-      }
-    }
-    const reused = this.views.includes(enteringView);
-    const views = this.insertView(enteringView, direction);
-    if (!reused) {
-      enteringView.ref.changeDetectorRef.detectChanges();
-    }
-    const customAnimation = enteringView.animationBuilder;
-    if (animationBuilder === void 0 && direction === "back" && !tabSwitch && customAnimation !== void 0) {
-      animationBuilder = customAnimation;
-    }
-    if (leavingView) {
-      leavingView.animationBuilder = animationBuilder;
-    }
-    return this.zone.runOutsideAngular(() => {
-      return this.wait(() => {
-        if (leavingView) {
-          leavingView.ref.changeDetectorRef.detach();
-        }
-        enteringView.ref.changeDetectorRef.reattach();
-        return this.transition(enteringView, leavingView, animation, this.canGoBack(1), false, animationBuilder).then(() => cleanupAsync(enteringView, views, viewsSnapshot, this.location, this.zone)).then(() => ({
-          enteringView,
-          direction,
-          animation,
-          tabSwitch
-        }));
-      });
-    });
-  }
-  canGoBack(deep, stackId = this.getActiveStackId()) {
-    return this.getStack(stackId).length > deep;
-  }
-  pop(deep, stackId = this.getActiveStackId()) {
-    return this.zone.run(() => {
-      const views = this.getStack(stackId);
-      if (views.length <= deep) {
-        return Promise.resolve(false);
-      }
-      const view = views[views.length - deep - 1];
-      let url = view.url;
-      const viewSavedData = view.savedData;
-      if (viewSavedData) {
-        const primaryOutlet = viewSavedData.get("primary");
-        if (primaryOutlet?.route?._routerState?.snapshot.url) {
-          url = primaryOutlet.route._routerState.snapshot.url;
-        }
-      }
-      const {
-        animationBuilder
-      } = this.navCtrl.consumeTransition();
-      return this.navCtrl.navigateBack(url, __spreadProps(__spreadValues({}, view.savedExtras), {
-        animation: animationBuilder
-      })).then(() => true);
-    });
-  }
-  startBackTransition() {
-    const leavingView = this.activeView;
-    if (leavingView) {
-      const views = this.getStack(leavingView.stackId);
-      const enteringView = views[views.length - 2];
-      const customAnimation = enteringView.animationBuilder;
-      return this.wait(() => {
-        return this.transition(
-          enteringView,
-          // entering view
-          leavingView,
-          // leaving view
-          "back",
-          this.canGoBack(2),
-          true,
-          customAnimation
-        );
-      });
-    }
-    return Promise.resolve();
-  }
-  endBackTransition(shouldComplete) {
-    if (shouldComplete) {
-      this.skipTransition = true;
-      this.pop(1);
-    } else if (this.activeView) {
-      cleanup(this.activeView, this.views, this.views, this.location, this.zone);
-    }
-  }
-  getLastUrl(stackId) {
-    const views = this.getStack(stackId);
-    return views.length > 0 ? views[views.length - 1] : void 0;
-  }
-  /**
-   * @internal
-   */
-  getRootUrl(stackId) {
-    const views = this.getStack(stackId);
-    return views.length > 0 ? views[0] : void 0;
-  }
-  getActiveStackId() {
-    return this.activeView ? this.activeView.stackId : void 0;
-  }
-  /**
-   * @internal
-   */
-  getActiveView() {
-    return this.activeView;
-  }
-  hasRunningTask() {
-    return this.runningTask !== void 0;
-  }
-  destroy() {
-    this.containerEl = void 0;
-    this.views.forEach(destroyView);
-    this.activeView = void 0;
-    this.views = [];
-  }
-  getStack(stackId) {
-    return this.views.filter((v) => v.stackId === stackId);
-  }
-  insertView(enteringView, direction) {
-    this.activeView = enteringView;
-    this.views = insertView(this.views, enteringView, direction);
-    return this.views.slice();
-  }
-  transition(enteringView, leavingView, direction, showGoBack, progressAnimation, animationBuilder) {
-    if (this.skipTransition) {
-      this.skipTransition = false;
-      return Promise.resolve(false);
-    }
-    if (leavingView === enteringView) {
-      return Promise.resolve(false);
-    }
-    const enteringEl = enteringView ? enteringView.element : void 0;
-    const leavingEl = leavingView ? leavingView.element : void 0;
-    const containerEl = this.containerEl;
-    if (enteringEl && enteringEl !== leavingEl) {
-      enteringEl.classList.add("ion-page");
-      enteringEl.classList.add("ion-page-invisible");
-      if (containerEl.commit) {
-        return containerEl.commit(enteringEl, leavingEl, {
-          duration: direction === void 0 ? 0 : void 0,
-          direction,
-          showGoBack,
-          progressAnimation,
-          animationBuilder
-        });
-      }
-    }
-    return Promise.resolve(false);
-  }
-  wait(task) {
-    return __async(this, null, function* () {
-      if (this.runningTask !== void 0) {
-        yield this.runningTask;
-        this.runningTask = void 0;
-      }
-      const promise = this.runningTask = task();
-      promise.finally(() => this.runningTask = void 0);
-      return promise;
-    });
-  }
-};
-var cleanupAsync = (activeRoute, views, viewsSnapshot, location, zone) => {
-  if (typeof requestAnimationFrame === "function") {
-    return new Promise((resolve) => {
-      requestAnimationFrame(() => {
-        cleanup(activeRoute, views, viewsSnapshot, location, zone);
-        resolve();
-      });
-    });
-  }
-  return Promise.resolve();
-};
-var cleanup = (activeRoute, views, viewsSnapshot, location, zone) => {
-  zone.run(() => viewsSnapshot.filter((view) => !views.includes(view)).forEach(destroyView));
-  views.forEach((view) => {
-    const locationWithoutParams = location.path().split("?")[0];
-    const locationWithoutFragment = locationWithoutParams.split("#")[0];
-    if (view !== activeRoute && view.url !== locationWithoutFragment) {
-      const element = view.element;
-      element.setAttribute("aria-hidden", "true");
-      element.classList.add("ion-page-hidden");
-      view.ref.changeDetectorRef.detach();
-    }
-  });
-};
-var IonRouterOutlet = class _IonRouterOutlet {
-  parentOutlet;
-  nativeEl;
-  activatedView = null;
-  tabsPrefix;
-  _swipeGesture;
-  stackCtrl;
-  // Maintain map of activated route proxies for each component instance
-  proxyMap = /* @__PURE__ */ new WeakMap();
-  // Keep the latest activated route in a subject for the proxy routes to switch map to
-  currentActivatedRoute$ = new BehaviorSubject(null);
-  activated = null;
-  /** @internal */
-  get activatedComponentRef() {
-    return this.activated;
-  }
-  _activatedRoute = null;
-  /**
-   * The name of the outlet
-   */
-  name = PRIMARY_OUTLET;
-  /** @internal */
-  stackWillChange = new EventEmitter();
-  /** @internal */
-  stackDidChange = new EventEmitter();
-  // eslint-disable-next-line @angular-eslint/no-output-rename
-  activateEvents = new EventEmitter();
-  // eslint-disable-next-line @angular-eslint/no-output-rename
-  deactivateEvents = new EventEmitter();
-  parentContexts = inject(ChildrenOutletContexts);
-  location = inject(ViewContainerRef);
-  environmentInjector = inject(EnvironmentInjector);
-  inputBinder = inject(INPUT_BINDER, {
-    optional: true
-  });
-  /** @nodoc */
-  supportsBindingToComponentInputs = true;
-  // Ionic providers
-  config = inject(Config);
-  navCtrl = inject(NavController);
-  set animation(animation) {
-    this.nativeEl.animation = animation;
-  }
-  set animated(animated) {
-    this.nativeEl.animated = animated;
-  }
-  set swipeGesture(swipe) {
-    this._swipeGesture = swipe;
-    this.nativeEl.swipeHandler = swipe ? {
-      canStart: () => this.stackCtrl.canGoBack(1) && !this.stackCtrl.hasRunningTask(),
-      onStart: () => this.stackCtrl.startBackTransition(),
-      onEnd: (shouldContinue) => this.stackCtrl.endBackTransition(shouldContinue)
-    } : void 0;
-  }
-  constructor(name, tabs, commonLocation, elementRef, router, zone, activatedRoute, parentOutlet) {
-    this.parentOutlet = parentOutlet;
-    this.nativeEl = elementRef.nativeElement;
-    this.name = name || PRIMARY_OUTLET;
-    this.tabsPrefix = tabs === "true" ? getUrl(router, activatedRoute) : void 0;
-    this.stackCtrl = new StackController(this.tabsPrefix, this.nativeEl, router, this.navCtrl, zone, commonLocation);
-    this.parentContexts.onChildOutletCreated(this.name, this);
-  }
-  ngOnDestroy() {
-    this.stackCtrl.destroy();
-    this.inputBinder?.unsubscribeFromRouteData(this);
-  }
-  getContext() {
-    return this.parentContexts.getContext(this.name);
-  }
-  ngOnInit() {
-    this.initializeOutletWithName();
-  }
-  // Note: Ionic deviates from the Angular Router implementation here
-  initializeOutletWithName() {
-    if (!this.activated) {
-      const context = this.getContext();
-      if (context?.route) {
-        this.activateWith(context.route, context.injector);
-      }
-    }
-    new Promise((resolve) => componentOnReady(this.nativeEl, resolve)).then(() => {
-      if (this._swipeGesture === void 0) {
-        this.swipeGesture = this.config.getBoolean("swipeBackEnabled", this.nativeEl.mode === "ios");
-      }
-    });
-  }
-  get isActivated() {
-    return !!this.activated;
-  }
-  get component() {
-    if (!this.activated) {
-      throw new Error("Outlet is not activated");
-    }
-    return this.activated.instance;
-  }
-  get activatedRoute() {
-    if (!this.activated) {
-      throw new Error("Outlet is not activated");
-    }
-    return this._activatedRoute;
-  }
-  get activatedRouteData() {
-    if (this._activatedRoute) {
-      return this._activatedRoute.snapshot.data;
-    }
-    return {};
-  }
-  /**
-   * Called when the `RouteReuseStrategy` instructs to detach the subtree
-   */
-  detach() {
-    throw new Error("incompatible reuse strategy");
-  }
-  /**
-   * Called when the `RouteReuseStrategy` instructs to re-attach a previously detached subtree
-   */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  attach(_ref, _activatedRoute) {
-    throw new Error("incompatible reuse strategy");
-  }
-  deactivate() {
-    if (this.activated) {
-      if (this.activatedView) {
-        const context = this.getContext();
-        this.activatedView.savedData = new Map(context.children["contexts"]);
-        const primaryOutlet = this.activatedView.savedData.get("primary");
-        if (primaryOutlet && context.route) {
-          primaryOutlet.route = __spreadValues({}, context.route);
-        }
-        this.activatedView.savedExtras = {};
-        if (context.route) {
-          const contextSnapshot = context.route.snapshot;
-          this.activatedView.savedExtras.queryParams = contextSnapshot.queryParams;
-          this.activatedView.savedExtras.fragment = contextSnapshot.fragment;
-        }
-      }
-      const c = this.component;
-      this.activatedView = null;
-      this.activated = null;
-      this._activatedRoute = null;
-      this.deactivateEvents.emit(c);
-    }
-  }
-  activateWith(activatedRoute, environmentInjector) {
-    if (this.isActivated) {
-      throw new Error("Cannot activate an already activated outlet");
-    }
-    this._activatedRoute = activatedRoute;
-    let cmpRef;
-    let enteringView = this.stackCtrl.getExistingView(activatedRoute);
-    if (enteringView) {
-      cmpRef = this.activated = enteringView.ref;
-      const saved = enteringView.savedData;
-      if (saved) {
-        const context = this.getContext();
-        context.children["contexts"] = saved;
-      }
-      this.updateActivatedRouteProxy(cmpRef.instance, activatedRoute);
-    } else {
-      const snapshot = activatedRoute._futureSnapshot;
-      const childContexts = this.parentContexts.getOrCreateContext(this.name).children;
-      const component$ = new BehaviorSubject(null);
-      const activatedRouteProxy = this.createActivatedRouteProxy(component$, activatedRoute);
-      const injector = new OutletInjector(activatedRouteProxy, childContexts, this.location.injector);
-      const component = snapshot.routeConfig.component ?? snapshot.component;
-      cmpRef = this.activated = this.outletContent.createComponent(component, {
-        index: this.outletContent.length,
-        injector,
-        environmentInjector: environmentInjector ?? this.environmentInjector
-      });
-      component$.next(cmpRef.instance);
-      enteringView = this.stackCtrl.createView(this.activated, activatedRoute);
-      this.proxyMap.set(cmpRef.instance, activatedRouteProxy);
-      this.currentActivatedRoute$.next({
-        component: cmpRef.instance,
-        activatedRoute
-      });
-    }
-    this.inputBinder?.bindActivatedRouteToOutletComponent(this);
-    this.activatedView = enteringView;
-    this.navCtrl.setTopOutlet(this);
-    const leavingView = this.stackCtrl.getActiveView();
-    this.stackWillChange.emit({
-      enteringView,
-      tabSwitch: isTabSwitch(enteringView, leavingView)
-    });
-    this.stackCtrl.setActive(enteringView).then((data) => {
-      this.activateEvents.emit(cmpRef.instance);
-      this.stackDidChange.emit(data);
-    });
-  }
-  /**
-   * Returns `true` if there are pages in the stack to go back.
-   */
-  canGoBack(deep = 1, stackId) {
-    return this.stackCtrl.canGoBack(deep, stackId);
-  }
-  /**
-   * Resolves to `true` if it the outlet was able to sucessfully pop the last N pages.
-   */
-  pop(deep = 1, stackId) {
-    return this.stackCtrl.pop(deep, stackId);
-  }
-  /**
-   * Returns the URL of the active page of each stack.
-   */
-  getLastUrl(stackId) {
-    const active = this.stackCtrl.getLastUrl(stackId);
-    return active ? active.url : void 0;
-  }
-  /**
-   * Returns the RouteView of the active page of each stack.
-   * @internal
-   */
-  getLastRouteView(stackId) {
-    return this.stackCtrl.getLastUrl(stackId);
-  }
-  /**
-   * Returns the root view in the tab stack.
-   * @internal
-   */
-  getRootView(stackId) {
-    return this.stackCtrl.getRootUrl(stackId);
-  }
-  /**
-   * Returns the active stack ID. In the context of ion-tabs, it means the active tab.
-   */
-  getActiveStackId() {
-    return this.stackCtrl.getActiveStackId();
-  }
-  /**
-   * Since the activated route can change over the life time of a component in an ion router outlet, we create
-   * a proxy so that we can update the values over time as a user navigates back to components already in the stack.
-   */
-  createActivatedRouteProxy(component$, activatedRoute) {
-    const proxy = new ActivatedRoute();
-    proxy._futureSnapshot = activatedRoute._futureSnapshot;
-    proxy._routerState = activatedRoute._routerState;
-    proxy.snapshot = activatedRoute.snapshot;
-    proxy.outlet = activatedRoute.outlet;
-    proxy.component = activatedRoute.component;
-    proxy._paramMap = this.proxyObservable(component$, "paramMap");
-    proxy._queryParamMap = this.proxyObservable(component$, "queryParamMap");
-    proxy.url = this.proxyObservable(component$, "url");
-    proxy.params = this.proxyObservable(component$, "params");
-    proxy.queryParams = this.proxyObservable(component$, "queryParams");
-    proxy.fragment = this.proxyObservable(component$, "fragment");
-    proxy.data = this.proxyObservable(component$, "data");
-    return proxy;
-  }
-  /**
-   * Create a wrapped observable that will switch to the latest activated route matched by the given component
-   */
-  proxyObservable(component$, path) {
-    return component$.pipe(
-      // First wait until the component instance is pushed
-      filter((component) => !!component),
-      switchMap((component) => this.currentActivatedRoute$.pipe(filter((current) => current !== null && current.component === component), switchMap((current) => current && current.activatedRoute[path]), distinctUntilChanged()))
-    );
-  }
-  /**
-   * Updates the activated route proxy for the given component to the new incoming router state
-   */
-  updateActivatedRouteProxy(component, activatedRoute) {
-    const proxy = this.proxyMap.get(component);
-    if (!proxy) {
-      throw new Error(`Could not find activated route proxy for view`);
-    }
-    proxy._futureSnapshot = activatedRoute._futureSnapshot;
-    proxy._routerState = activatedRoute._routerState;
-    proxy.snapshot = activatedRoute.snapshot;
-    proxy.outlet = activatedRoute.outlet;
-    proxy.component = activatedRoute.component;
-    this.currentActivatedRoute$.next({
-      component,
-      activatedRoute
-    });
-  }
-  /** @nocollapse */
-  static ɵfac = function IonRouterOutlet_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _IonRouterOutlet)(ɵɵinjectAttribute("name"), ɵɵinjectAttribute("tabs"), ɵɵdirectiveInject(Location), ɵɵdirectiveInject(ElementRef), ɵɵdirectiveInject(Router), ɵɵdirectiveInject(NgZone), ɵɵdirectiveInject(ActivatedRoute), ɵɵdirectiveInject(_IonRouterOutlet, 12));
-  };
-  /** @nocollapse */
-  static ɵdir = ɵɵdefineDirective({
-    type: _IonRouterOutlet,
-    selectors: [["ion-router-outlet"]],
-    inputs: {
-      animated: "animated",
-      animation: "animation",
-      mode: "mode",
-      swipeGesture: "swipeGesture",
-      name: "name"
-    },
-    outputs: {
-      stackWillChange: "stackWillChange",
-      stackDidChange: "stackDidChange",
-      activateEvents: "activate",
-      deactivateEvents: "deactivate"
-    },
-    exportAs: ["outlet"],
-    standalone: false
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonRouterOutlet, [{
-    type: Directive,
-    args: [{
-      selector: "ion-router-outlet",
-      exportAs: "outlet",
-      // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-      inputs: ["animated", "animation", "mode", "swipeGesture"]
-    }]
-  }], function() {
-    return [{
-      type: void 0,
-      decorators: [{
-        type: Attribute,
-        args: ["name"]
-      }]
-    }, {
-      type: void 0,
-      decorators: [{
-        type: Optional
-      }, {
-        type: Attribute,
-        args: ["tabs"]
-      }]
-    }, {
-      type: Location
-    }, {
-      type: ElementRef
-    }, {
-      type: Router
-    }, {
-      type: NgZone
-    }, {
-      type: ActivatedRoute
-    }, {
-      type: IonRouterOutlet,
-      decorators: [{
-        type: SkipSelf
-      }, {
-        type: Optional
-      }]
-    }];
-  }, {
-    name: [{
-      type: Input
-    }],
-    stackWillChange: [{
-      type: Output
-    }],
-    stackDidChange: [{
-      type: Output
-    }],
-    activateEvents: [{
-      type: Output,
-      args: ["activate"]
-    }],
-    deactivateEvents: [{
-      type: Output,
-      args: ["deactivate"]
-    }]
-  });
-})();
-var OutletInjector = class {
-  route;
-  childContexts;
-  parent;
-  constructor(route, childContexts, parent) {
-    this.route = route;
-    this.childContexts = childContexts;
-    this.parent = parent;
-  }
-  get(token, notFoundValue) {
-    if (token === ActivatedRoute) {
-      return this.route;
-    }
-    if (token === ChildrenOutletContexts) {
-      return this.childContexts;
-    }
-    return this.parent.get(token, notFoundValue);
-  }
-};
-var INPUT_BINDER = new InjectionToken("");
-var RoutedComponentInputBinder = class _RoutedComponentInputBinder {
-  outletDataSubscriptions = /* @__PURE__ */ new Map();
-  bindActivatedRouteToOutletComponent(outlet) {
-    this.unsubscribeFromRouteData(outlet);
-    this.subscribeToRouteData(outlet);
-  }
-  unsubscribeFromRouteData(outlet) {
-    this.outletDataSubscriptions.get(outlet)?.unsubscribe();
-    this.outletDataSubscriptions.delete(outlet);
-  }
-  subscribeToRouteData(outlet) {
-    const {
-      activatedRoute
-    } = outlet;
-    const dataSubscription = combineLatest([activatedRoute.queryParams, activatedRoute.params, activatedRoute.data]).pipe(switchMap(([queryParams, params, data], index) => {
-      data = __spreadValues(__spreadValues(__spreadValues({}, queryParams), params), data);
-      if (index === 0) {
-        return of(data);
-      }
-      return Promise.resolve(data);
-    })).subscribe((data) => {
-      if (!outlet.isActivated || !outlet.activatedComponentRef || outlet.activatedRoute !== activatedRoute || activatedRoute.component === null) {
-        this.unsubscribeFromRouteData(outlet);
-        return;
-      }
-      const mirror = reflectComponentType(activatedRoute.component);
-      if (!mirror) {
-        this.unsubscribeFromRouteData(outlet);
-        return;
-      }
-      for (const {
-        templateName
-      } of mirror.inputs) {
-        outlet.activatedComponentRef.setInput(templateName, data[templateName]);
-      }
-    });
-    this.outletDataSubscriptions.set(outlet, dataSubscription);
-  }
-  /** @nocollapse */
-  static ɵfac = function RoutedComponentInputBinder_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _RoutedComponentInputBinder)();
-  };
-  /** @nocollapse */
-  static ɵprov = ɵɵdefineInjectable({
-    token: _RoutedComponentInputBinder,
-    factory: _RoutedComponentInputBinder.ɵfac
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(RoutedComponentInputBinder, [{
-    type: Injectable
-  }], null, null);
-})();
-var provideComponentInputBinding = () => {
-  return {
-    provide: INPUT_BINDER,
-    useFactory: componentInputBindingFactory,
-    deps: [Router]
-  };
-};
-function componentInputBindingFactory(router) {
-  if (router?.componentInputBindingEnabled) {
-    return new RoutedComponentInputBinder();
-  }
-  return null;
-}
-var raf = (h) => {
-  if (typeof __zone_symbol__requestAnimationFrame === "function") {
-    return __zone_symbol__requestAnimationFrame(h);
-  }
-  if (typeof requestAnimationFrame === "function") {
-    return requestAnimationFrame(h);
-  }
-  return setTimeout(h);
-};
-var ValueAccessor = class _ValueAccessor {
-  injector;
-  elementRef;
-  onChange = () => {
-  };
-  onTouched = () => {
-  };
-  lastValue;
-  statusChanges;
-  constructor(injector, elementRef) {
-    this.injector = injector;
-    this.elementRef = elementRef;
-  }
-  writeValue(value) {
-    this.elementRef.nativeElement.value = this.lastValue = value;
-    setIonicClasses(this.elementRef);
-  }
-  /**
-   * Notifies the ControlValueAccessor of a change in the value of the control.
-   *
-   * This is called by each of the ValueAccessor directives when we want to update
-   * the status and validity of the form control. For example with text components this
-   * is called when the ionInput event is fired. For select components this is called
-   * when the ionChange event is fired.
-   *
-   * This also updates the Ionic form status classes on the element.
-   *
-   * @param el The component element.
-   * @param value The new value of the control.
-   */
-  handleValueChange(el, value) {
-    if (el === this.elementRef.nativeElement) {
-      if (value !== this.lastValue) {
-        this.lastValue = value;
-        this.onChange(value);
-      }
-      setIonicClasses(this.elementRef);
-    }
-  }
-  _handleBlurEvent(el) {
-    if (el === this.elementRef.nativeElement) {
-      this.onTouched();
-      setIonicClasses(this.elementRef);
-    } else if (el.closest("ion-radio-group") === this.elementRef.nativeElement) {
-      this.onTouched();
-    }
-  }
-  registerOnChange(fn) {
-    this.onChange = fn;
-  }
-  registerOnTouched(fn) {
-    this.onTouched = fn;
-  }
-  setDisabledState(isDisabled) {
-    this.elementRef.nativeElement.disabled = isDisabled;
-  }
-  ngOnDestroy() {
-    if (this.statusChanges) {
-      this.statusChanges.unsubscribe();
-    }
-  }
-  ngAfterViewInit() {
-    let ngControl;
-    try {
-      ngControl = this.injector.get(NgControl);
-    } catch {
-    }
-    if (!ngControl) {
-      return;
-    }
-    if (ngControl.statusChanges) {
-      this.statusChanges = ngControl.statusChanges.subscribe(() => setIonicClasses(this.elementRef));
-    }
-    const formControl = ngControl.control;
-    if (formControl) {
-      const methodsToPatch = ["markAsTouched", "markAllAsTouched", "markAsUntouched", "markAsDirty", "markAsPristine"];
-      methodsToPatch.forEach((method) => {
-        if (typeof formControl[method] !== "undefined") {
-          const oldFn = formControl[method].bind(formControl);
-          formControl[method] = (...params) => {
-            oldFn(...params);
-            setIonicClasses(this.elementRef);
-          };
-        }
-      });
-    }
-  }
-  /** @nocollapse */
-  static ɵfac = function ValueAccessor_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _ValueAccessor)(ɵɵdirectiveInject(Injector), ɵɵdirectiveInject(ElementRef));
-  };
-  /** @nocollapse */
-  static ɵdir = ɵɵdefineDirective({
-    type: _ValueAccessor,
-    hostBindings: function ValueAccessor_HostBindings(rf, ctx) {
-      if (rf & 1) {
-        ɵɵlistener("ionBlur", function ValueAccessor_ionBlur_HostBindingHandler($event) {
-          return ctx._handleBlurEvent($event.target);
-        });
-      }
-    },
-    standalone: false
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ValueAccessor, [{
-    type: Directive
-  }], function() {
-    return [{
-      type: Injector
-    }, {
-      type: ElementRef
-    }];
-  }, {
-    _handleBlurEvent: [{
-      type: HostListener,
-      args: ["ionBlur", ["$event.target"]]
-    }]
-  });
-})();
-var setIonicClasses = (element) => {
-  raf(() => {
-    const input = element.nativeElement;
-    const hasValue = input.value != null && input.value.toString().length > 0;
-    const classes = getClasses(input);
-    setClasses(input, classes);
-    const item = input.closest("ion-item");
-    if (item) {
-      if (hasValue) {
-        setClasses(item, [...classes, "item-has-value"]);
-      } else {
-        setClasses(item, classes);
-      }
-    }
-  });
-};
-var getClasses = (element) => {
-  const classList = element.classList;
-  const classes = [];
-  for (let i = 0; i < classList.length; i++) {
-    const item = classList.item(i);
-    if (item !== null && startsWith(item, "ng-")) {
-      classes.push(`ion-${item.substring(3)}`);
-    }
-  }
-  return classes;
-};
-var setClasses = (element, classes) => {
-  const classList = element.classList;
-  classList.remove("ion-valid", "ion-invalid", "ion-touched", "ion-untouched", "ion-dirty", "ion-pristine");
-  classList.add(...classes);
-};
-var startsWith = (input, search) => {
-  return input.substring(0, search.length) === search;
-};
-var BACK_BUTTON_INPUTS = ["color", "defaultHref", "disabled", "icon", "mode", "routerAnimation", "text", "type"];
-var IonBackButton = class IonBackButton2 {
-  routerOutlet;
-  navCtrl;
-  config;
-  r;
-  z;
-  el;
-  constructor(routerOutlet, navCtrl, config2, r, z, c) {
-    this.routerOutlet = routerOutlet;
-    this.navCtrl = navCtrl;
-    this.config = config2;
-    this.r = r;
-    this.z = z;
-    c.detach();
-    this.el = this.r.nativeElement;
-  }
-  /**
-   * @internal
-   */
-  onClick(ev) {
-    const defaultHref = this.defaultHref || this.config.get("backButtonDefaultHref");
-    if (this.routerOutlet?.canGoBack()) {
-      this.navCtrl.setDirection("back", void 0, void 0, this.routerAnimation);
-      this.routerOutlet.pop();
-      ev.preventDefault();
-    } else if (defaultHref != null) {
-      this.navCtrl.navigateBack(defaultHref, {
-        animation: this.routerAnimation
-      });
-      ev.preventDefault();
-    }
-  }
-  /** @nocollapse */
-  static ɵfac = function IonBackButton_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || IonBackButton2)(ɵɵdirectiveInject(IonRouterOutlet, 8), ɵɵdirectiveInject(NavController), ɵɵdirectiveInject(Config), ɵɵdirectiveInject(ElementRef), ɵɵdirectiveInject(NgZone), ɵɵdirectiveInject(ChangeDetectorRef));
-  };
-  /** @nocollapse */
-  static ɵdir = ɵɵdefineDirective({
-    type: IonBackButton2,
-    hostBindings: function IonBackButton_HostBindings(rf, ctx) {
-      if (rf & 1) {
-        ɵɵlistener("click", function IonBackButton_click_HostBindingHandler($event) {
-          return ctx.onClick($event);
-        });
-      }
-    },
-    inputs: {
-      color: "color",
-      defaultHref: "defaultHref",
-      disabled: "disabled",
-      icon: "icon",
-      mode: "mode",
-      routerAnimation: "routerAnimation",
-      text: "text",
-      type: "type"
-    },
-    standalone: false
-  });
-};
-IonBackButton = __decorate([ProxyCmp({
-  inputs: BACK_BUTTON_INPUTS
-})], IonBackButton);
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonBackButton, [{
-    type: Directive,
-    args: [{
-      // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-      inputs: BACK_BUTTON_INPUTS
-    }]
-  }], function() {
-    return [{
-      type: IonRouterOutlet,
-      decorators: [{
-        type: Optional
-      }]
-    }, {
-      type: NavController
-    }, {
-      type: Config
-    }, {
-      type: ElementRef
-    }, {
-      type: NgZone
-    }, {
-      type: ChangeDetectorRef
-    }];
-  }, {
-    onClick: [{
-      type: HostListener,
-      args: ["click", ["$event"]]
-    }]
-  });
-})();
-var NAV_INPUTS = ["animated", "animation", "root", "rootParams", "swipeGesture"];
-var NAV_METHODS = ["push", "insert", "insertPages", "pop", "popTo", "popToRoot", "removeIndex", "setRoot", "setPages", "getActive", "getByIndex", "canGoBack", "getPrevious"];
-var IonNav = class IonNav2 {
-  z;
-  el;
-  constructor(ref, environmentInjector, injector, angularDelegate, z, c) {
-    this.z = z;
-    c.detach();
-    this.el = ref.nativeElement;
-    ref.nativeElement.delegate = angularDelegate.create(environmentInjector, injector);
-    proxyOutputs(this, this.el, ["ionNavDidChange", "ionNavWillChange"]);
-  }
-  /** @nocollapse */
-  static ɵfac = function IonNav_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || IonNav2)(ɵɵdirectiveInject(ElementRef), ɵɵdirectiveInject(EnvironmentInjector), ɵɵdirectiveInject(Injector), ɵɵdirectiveInject(AngularDelegate), ɵɵdirectiveInject(NgZone), ɵɵdirectiveInject(ChangeDetectorRef));
-  };
-  /** @nocollapse */
-  static ɵdir = ɵɵdefineDirective({
-    type: IonNav2,
-    inputs: {
-      animated: "animated",
-      animation: "animation",
-      root: "root",
-      rootParams: "rootParams",
-      swipeGesture: "swipeGesture"
-    },
-    standalone: false
-  });
-};
-IonNav = __decorate([ProxyCmp({
-  inputs: NAV_INPUTS,
-  methods: NAV_METHODS
-})], IonNav);
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonNav, [{
-    type: Directive,
-    args: [{
-      // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-      inputs: NAV_INPUTS
-    }]
-  }], function() {
-    return [{
-      type: ElementRef
-    }, {
-      type: EnvironmentInjector
-    }, {
-      type: Injector
-    }, {
-      type: AngularDelegate
-    }, {
-      type: NgZone
-    }, {
-      type: ChangeDetectorRef
-    }];
-  }, null);
-})();
-var RouterLinkDelegateDirective = class _RouterLinkDelegateDirective {
-  locationStrategy;
-  navCtrl;
-  elementRef;
-  router;
-  routerLink;
-  routerDirection = "forward";
-  routerAnimation;
-  constructor(locationStrategy, navCtrl, elementRef, router, routerLink) {
-    this.locationStrategy = locationStrategy;
-    this.navCtrl = navCtrl;
-    this.elementRef = elementRef;
-    this.router = router;
-    this.routerLink = routerLink;
-  }
-  ngOnInit() {
-    this.updateTargetUrlAndHref();
-    this.updateTabindex();
-  }
-  ngOnChanges() {
-    this.updateTargetUrlAndHref();
-  }
-  /**
-   * The `tabindex` is set to `0` by default on the host element when
-   * the `routerLink` directive is used. This causes issues with Ionic
-   * components that wrap an `a` or `button` element, such as `ion-item`.
-   * See issue https://github.com/angular/angular/issues/28345
-   *
-   * This method removes the `tabindex` attribute from the host element
-   * to allow the Ionic component to manage the focus state correctly.
-   */
-  updateTabindex() {
-    const ionicComponents = ["ION-BACK-BUTTON", "ION-BREADCRUMB", "ION-BUTTON", "ION-CARD", "ION-FAB-BUTTON", "ION-ITEM", "ION-ITEM-OPTION", "ION-MENU-BUTTON", "ION-SEGMENT-BUTTON", "ION-TAB-BUTTON"];
-    const hostElement = this.elementRef.nativeElement;
-    if (ionicComponents.includes(hostElement.tagName)) {
-      if (hostElement.getAttribute("tabindex") === "0") {
-        hostElement.removeAttribute("tabindex");
-      }
-    }
-  }
-  updateTargetUrlAndHref() {
-    if (this.routerLink?.urlTree) {
-      const href = this.locationStrategy.prepareExternalUrl(this.router.serializeUrl(this.routerLink.urlTree));
-      this.elementRef.nativeElement.href = href;
-    }
-  }
-  /**
-   * @internal
-   */
-  onClick(ev) {
-    this.navCtrl.setDirection(this.routerDirection, void 0, void 0, this.routerAnimation);
-    ev.preventDefault();
-  }
-  /** @nocollapse */
-  static ɵfac = function RouterLinkDelegateDirective_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _RouterLinkDelegateDirective)(ɵɵdirectiveInject(LocationStrategy), ɵɵdirectiveInject(NavController), ɵɵdirectiveInject(ElementRef), ɵɵdirectiveInject(Router), ɵɵdirectiveInject(RouterLink, 8));
-  };
-  /** @nocollapse */
-  static ɵdir = ɵɵdefineDirective({
-    type: _RouterLinkDelegateDirective,
-    selectors: [["", "routerLink", "", 5, "a", 5, "area"]],
-    hostBindings: function RouterLinkDelegateDirective_HostBindings(rf, ctx) {
-      if (rf & 1) {
-        ɵɵlistener("click", function RouterLinkDelegateDirective_click_HostBindingHandler($event) {
-          return ctx.onClick($event);
-        });
-      }
-    },
-    inputs: {
-      routerDirection: "routerDirection",
-      routerAnimation: "routerAnimation"
-    },
-    standalone: false,
-    features: [ɵɵNgOnChangesFeature]
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(RouterLinkDelegateDirective, [{
-    type: Directive,
-    args: [{
-      selector: ":not(a):not(area)[routerLink]"
-    }]
-  }], function() {
-    return [{
-      type: LocationStrategy
-    }, {
-      type: NavController
-    }, {
-      type: ElementRef
-    }, {
-      type: Router
-    }, {
-      type: RouterLink,
-      decorators: [{
-        type: Optional
-      }]
-    }];
-  }, {
-    routerDirection: [{
-      type: Input
-    }],
-    routerAnimation: [{
-      type: Input
-    }],
-    onClick: [{
-      type: HostListener,
-      args: ["click", ["$event"]]
-    }]
-  });
-})();
-var RouterLinkWithHrefDelegateDirective = class _RouterLinkWithHrefDelegateDirective {
-  locationStrategy;
-  navCtrl;
-  elementRef;
-  router;
-  routerLink;
-  routerDirection = "forward";
-  routerAnimation;
-  constructor(locationStrategy, navCtrl, elementRef, router, routerLink) {
-    this.locationStrategy = locationStrategy;
-    this.navCtrl = navCtrl;
-    this.elementRef = elementRef;
-    this.router = router;
-    this.routerLink = routerLink;
-  }
-  ngOnInit() {
-    this.updateTargetUrlAndHref();
-  }
-  ngOnChanges() {
-    this.updateTargetUrlAndHref();
-  }
-  updateTargetUrlAndHref() {
-    if (this.routerLink?.urlTree) {
-      const href = this.locationStrategy.prepareExternalUrl(this.router.serializeUrl(this.routerLink.urlTree));
-      this.elementRef.nativeElement.href = href;
-    }
-  }
-  /**
-   * @internal
-   */
-  onClick() {
-    this.navCtrl.setDirection(this.routerDirection, void 0, void 0, this.routerAnimation);
-  }
-  /** @nocollapse */
-  static ɵfac = function RouterLinkWithHrefDelegateDirective_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _RouterLinkWithHrefDelegateDirective)(ɵɵdirectiveInject(LocationStrategy), ɵɵdirectiveInject(NavController), ɵɵdirectiveInject(ElementRef), ɵɵdirectiveInject(Router), ɵɵdirectiveInject(RouterLink, 8));
-  };
-  /** @nocollapse */
-  static ɵdir = ɵɵdefineDirective({
-    type: _RouterLinkWithHrefDelegateDirective,
-    selectors: [["a", "routerLink", ""], ["area", "routerLink", ""]],
-    hostBindings: function RouterLinkWithHrefDelegateDirective_HostBindings(rf, ctx) {
-      if (rf & 1) {
-        ɵɵlistener("click", function RouterLinkWithHrefDelegateDirective_click_HostBindingHandler() {
-          return ctx.onClick();
-        });
-      }
-    },
-    inputs: {
-      routerDirection: "routerDirection",
-      routerAnimation: "routerAnimation"
-    },
-    standalone: false,
-    features: [ɵɵNgOnChangesFeature]
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(RouterLinkWithHrefDelegateDirective, [{
-    type: Directive,
-    args: [{
-      selector: "a[routerLink],area[routerLink]"
-    }]
-  }], function() {
-    return [{
-      type: LocationStrategy
-    }, {
-      type: NavController
-    }, {
-      type: ElementRef
-    }, {
-      type: Router
-    }, {
-      type: RouterLink,
-      decorators: [{
-        type: Optional
-      }]
-    }];
-  }, {
-    routerDirection: [{
-      type: Input
-    }],
-    routerAnimation: [{
-      type: Input
-    }],
-    onClick: [{
-      type: HostListener,
-      args: ["click"]
-    }]
-  });
-})();
-var IonTabs = class _IonTabs {
-  navCtrl;
-  tabsInner;
-  /**
-   * Emitted before the tab view is changed.
-   */
-  ionTabsWillChange = new EventEmitter();
-  /**
-   * Emitted after the tab view is changed.
-   */
-  ionTabsDidChange = new EventEmitter();
-  tabBarSlot = "bottom";
-  hasTab = false;
-  selectedTab;
-  leavingTab;
-  constructor(navCtrl) {
-    this.navCtrl = navCtrl;
-  }
-  ngAfterViewInit() {
-    const firstTab = this.tabs.length > 0 ? this.tabs.first : void 0;
-    if (firstTab) {
-      this.hasTab = true;
-      this.setActiveTab(firstTab.tab);
-      this.tabSwitch();
-    }
-  }
-  ngAfterContentInit() {
-    this.detectSlotChanges();
-  }
-  ngAfterContentChecked() {
-    this.detectSlotChanges();
-  }
-  /**
-   * @internal
-   */
-  onStackWillChange({
-    enteringView,
-    tabSwitch
-  }) {
-    const stackId = enteringView.stackId;
-    if (tabSwitch && stackId !== void 0) {
-      this.ionTabsWillChange.emit({
-        tab: stackId
-      });
-    }
-  }
-  /**
-   * @internal
-   */
-  onStackDidChange({
-    enteringView,
-    tabSwitch
-  }) {
-    const stackId = enteringView.stackId;
-    if (tabSwitch && stackId !== void 0) {
-      if (this.tabBar) {
-        this.tabBar.selectedTab = stackId;
-      }
-      this.ionTabsDidChange.emit({
-        tab: stackId
-      });
-    }
-  }
-  /**
-   * When a tab button is clicked, there are several scenarios:
-   * 1. If the selected tab is currently active (the tab button has been clicked
-   *    again), then it should go to the root view for that tab.
-   *
-   *   a. Get the saved root view from the router outlet. If the saved root view
-   *      matches the tabRootUrl, set the route view to this view including the
-   *      navigation extras.
-   *   b. If the saved root view from the router outlet does
-   *      not match, navigate to the tabRootUrl. No navigation extras are
-   *      included.
-   *
-   * 2. If the current tab tab is not currently selected, get the last route
-   *    view from the router outlet.
-   *
-   *   a. If the last route view exists, navigate to that view including any
-   *      navigation extras
-   *   b. If the last route view doesn't exist, then navigate
-   *      to the default tabRootUrl
-   */
-  select(tabOrEvent) {
-    const isTabString = typeof tabOrEvent === "string";
-    const tab = isTabString ? tabOrEvent : tabOrEvent.detail.tab;
-    if (this.hasTab) {
-      this.setActiveTab(tab);
-      this.tabSwitch();
-      return;
-    }
-    const alreadySelected = this.outlet.getActiveStackId() === tab;
-    const tabRootUrl = `${this.outlet.tabsPrefix}/${tab}`;
-    if (!isTabString) {
-      tabOrEvent.stopPropagation();
-    }
-    if (alreadySelected) {
-      const activeStackId = this.outlet.getActiveStackId();
-      const activeView = this.outlet.getLastRouteView(activeStackId);
-      if (activeView?.url === tabRootUrl) {
-        return;
-      }
-      const rootView = this.outlet.getRootView(tab);
-      const navigationExtras = rootView && tabRootUrl === rootView.url && rootView.savedExtras;
-      return this.navCtrl.navigateRoot(tabRootUrl, __spreadProps(__spreadValues({}, navigationExtras), {
-        animated: true,
-        animationDirection: "back"
-      }));
-    } else {
-      const lastRoute = this.outlet.getLastRouteView(tab);
-      const url = lastRoute?.url || tabRootUrl;
-      const navigationExtras = lastRoute?.savedExtras;
-      return this.navCtrl.navigateRoot(url, __spreadProps(__spreadValues({}, navigationExtras), {
-        animated: true,
-        animationDirection: "back"
-      }));
-    }
-  }
-  setActiveTab(tab) {
-    const tabs = this.tabs;
-    const selectedTab = tabs.find((t) => t.tab === tab);
-    if (!selectedTab) {
-      console.error(`[Ionic Error]: Tab with id: "${tab}" does not exist`);
-      return;
-    }
-    this.leavingTab = this.selectedTab;
-    this.selectedTab = selectedTab;
-    this.ionTabsWillChange.emit({
-      tab
-    });
-    selectedTab.el.active = true;
-  }
-  tabSwitch() {
-    const {
-      selectedTab,
-      leavingTab
-    } = this;
-    if (this.tabBar && selectedTab) {
-      this.tabBar.selectedTab = selectedTab.tab;
-    }
-    if (leavingTab?.tab !== selectedTab?.tab) {
-      if (leavingTab?.el) {
-        leavingTab.el.active = false;
-      }
-    }
-    if (selectedTab) {
-      this.ionTabsDidChange.emit({
-        tab: selectedTab.tab
-      });
-    }
-  }
-  getSelected() {
-    if (this.hasTab) {
-      return this.selectedTab?.tab;
-    }
-    return this.outlet.getActiveStackId();
-  }
-  /**
-   * Detects changes to the slot attribute of the tab bar.
-   *
-   * If the slot attribute has changed, then the tab bar
-   * should be relocated to the new slot position.
-   */
-  detectSlotChanges() {
-    this.tabBars.forEach((tabBar) => {
-      const currentSlot = tabBar.el.getAttribute("slot");
-      if (currentSlot !== this.tabBarSlot) {
-        this.tabBarSlot = currentSlot;
-        this.relocateTabBar();
-      }
-    });
-  }
-  /**
-   * Relocates the tab bar to the new slot position.
-   */
-  relocateTabBar() {
-    const tabBar = this.tabBar.el;
-    if (this.tabBarSlot === "top") {
-      this.tabsInner.nativeElement.before(tabBar);
-    } else {
-      this.tabsInner.nativeElement.after(tabBar);
-    }
-  }
-  /** @nocollapse */
-  static ɵfac = function IonTabs_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _IonTabs)(ɵɵdirectiveInject(NavController));
-  };
-  /** @nocollapse */
-  static ɵdir = ɵɵdefineDirective({
-    type: _IonTabs,
-    selectors: [["ion-tabs"]],
-    viewQuery: function IonTabs_Query(rf, ctx) {
-      if (rf & 1) {
-        ɵɵviewQuery(_c0, 7, ElementRef);
-      }
-      if (rf & 2) {
-        let _t;
-        ɵɵqueryRefresh(_t = ɵɵloadQuery()) && (ctx.tabsInner = _t.first);
-      }
-    },
-    hostBindings: function IonTabs_HostBindings(rf, ctx) {
-      if (rf & 1) {
-        ɵɵlistener("ionTabButtonClick", function IonTabs_ionTabButtonClick_HostBindingHandler($event) {
-          return ctx.select($event);
-        });
-      }
-    },
-    outputs: {
-      ionTabsWillChange: "ionTabsWillChange",
-      ionTabsDidChange: "ionTabsDidChange"
-    },
-    standalone: false
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonTabs, [{
-    type: Directive,
-    args: [{
-      selector: "ion-tabs"
-    }]
-  }], function() {
-    return [{
-      type: NavController
-    }];
-  }, {
-    tabsInner: [{
-      type: ViewChild,
-      args: ["tabsInner", {
-        read: ElementRef,
-        static: true
-      }]
-    }],
-    ionTabsWillChange: [{
-      type: Output
-    }],
-    ionTabsDidChange: [{
-      type: Output
-    }],
-    select: [{
-      type: HostListener,
-      args: ["ionTabButtonClick", ["$event"]]
-    }]
-  });
-})();
-var OverlayBaseController = class {
-  ctrl;
-  constructor(ctrl) {
-    this.ctrl = ctrl;
-  }
-  /**
-   * Creates a new overlay
-   */
-  create(opts) {
-    return this.ctrl.create(opts || {});
-  }
-  /**
-   * When `id` is not provided, it dismisses the top overlay.
-   */
-  dismiss(data, role, id) {
-    return this.ctrl.dismiss(data, role, id);
-  }
-  /**
-   * Returns the top overlay.
-   */
-  getTop() {
-    return this.ctrl.getTop();
-  }
-};
-var IonicRouteStrategy = class {
-  /**
-   * Whether the given route should detach for later reuse.
-   */
-  shouldDetach(_route) {
-    return false;
-  }
-  /**
-   * Returns `false`, meaning the route (and its subtree) is never reattached
-   */
-  shouldAttach(_route) {
-    return false;
-  }
-  /**
-   * A no-op; the route is never stored since this strategy never detaches routes for later re-use.
-   */
-  store(_route, _detachedTree) {
-    return;
-  }
-  /**
-   * Returns `null` because this strategy does not store routes for later re-use.
-   */
-  retrieve(_route) {
-    return null;
-  }
-  /**
-   * Determines if a route should be reused.
-   * This strategy returns `true` when the future route config and
-   * current route config are identical and all route parameters are identical.
-   */
-  shouldReuseRoute(future, curr) {
-    if (future.routeConfig !== curr.routeConfig) {
-      return false;
-    }
-    const futureParams = future.params;
-    const currentParams = curr.params;
-    const keysA = Object.keys(futureParams);
-    const keysB = Object.keys(currentParams);
-    if (keysA.length !== keysB.length) {
-      return false;
-    }
-    for (const key of keysA) {
-      if (currentParams[key] !== futureParams[key]) {
-        return false;
-      }
-    }
-    return true;
-  }
-};
 
 // node_modules/@ionic/core/dist/esm/index.js
 var IonicSlides = (opts) => {
@@ -3637,7 +274,7 @@ var IonicSlides = (opts) => {
 var globalScripts = initialize;
 
 // node_modules/@ionic/core/dist/esm/loader.js
-var defineCustomElements = (win2, options) => __async(null, null, function* () {
+var defineCustomElements = (win, options) => __async(null, null, function* () {
   if (typeof window === "undefined") return void 0;
   yield globalScripts();
   return bootstrapLazy(JSON.parse('[["ion-menu_3",[[289,"ion-menu-button",{"color":[513],"disabled":[4],"menu":[1],"autoHide":[4,"auto-hide"],"type":[1],"visible":[32]},[[16,"ionMenuChange","visibilityChanged"],[16,"ionSplitPaneVisible","visibilityChanged"]]],[289,"ion-menu",{"contentId":[513,"content-id"],"menuId":[513,"menu-id"],"type":[1025],"disabled":[1028],"side":[513],"swipeGesture":[4,"swipe-gesture"],"maxEdgeStart":[2,"max-edge-start"],"isPaneVisible":[32],"isEndSide":[32],"isOpen":[64],"isActive":[64],"open":[64],"close":[64],"toggle":[64],"setOpen":[64]},[[16,"ionSplitPaneVisible","onSplitPaneChanged"],[2,"click","onBackdropClick"]],{"type":["typeChanged"],"disabled":["disabledChanged"],"side":["sideChanged"],"swipeGesture":["swipeGestureChanged"]}],[257,"ion-menu-toggle",{"menu":[1],"autoHide":[4,"auto-hide"],"visible":[32]},[[16,"ionMenuChange","visibilityChanged"],[16,"ionSplitPaneVisible","visibilityChanged"]]]]],["ion-input-password-toggle",[[289,"ion-input-password-toggle",{"color":[513],"showIcon":[1,"show-icon"],"hideIcon":[1,"hide-icon"],"type":[1025]},null,{"type":["onTypeChange"]}]]],["ion-fab_3",[[289,"ion-fab-button",{"color":[513],"activated":[4],"disabled":[4],"download":[1],"href":[1],"rel":[1],"routerDirection":[1,"router-direction"],"routerAnimation":[16,"router-animation"],"target":[1],"show":[4],"translucent":[4],"type":[1],"size":[1],"closeIcon":[1,"close-icon"]}],[257,"ion-fab",{"horizontal":[1],"vertical":[1],"edge":[4],"activated":[1028],"close":[64],"toggle":[64]},null,{"activated":["activatedChanged"]}],[257,"ion-fab-list",{"activated":[4],"side":[1]},null,{"activated":["activatedChanged"]}]]],["ion-refresher_2",[[256,"ion-refresher-content",{"pullingIcon":[1025,"pulling-icon"],"pullingText":[1,"pulling-text"],"refreshingSpinner":[1025,"refreshing-spinner"],"refreshingText":[1,"refreshing-text"]}],[288,"ion-refresher",{"pullMin":[2,"pull-min"],"pullMax":[2,"pull-max"],"closeDuration":[1,"close-duration"],"snapbackDuration":[1,"snapback-duration"],"pullFactor":[2,"pull-factor"],"disabled":[4],"nativeRefresher":[32],"state":[32],"complete":[64],"cancel":[64],"getProgress":[64]},null,{"disabled":["disabledChanged"]}]]],["ion-back-button",[[289,"ion-back-button",{"color":[513],"defaultHref":[1025,"default-href"],"disabled":[516],"icon":[1],"text":[1],"type":[1],"routerAnimation":[16,"router-animation"]}]]],["ion-toast",[[289,"ion-toast",{"overlayIndex":[2,"overlay-index"],"delegate":[16],"hasController":[4,"has-controller"],"color":[513],"enterAnimation":[16,"enter-animation"],"leaveAnimation":[16,"leave-animation"],"cssClass":[1,"css-class"],"duration":[2],"header":[1],"layout":[1],"message":[1],"keyboardClose":[4,"keyboard-close"],"position":[1],"positionAnchor":[1,"position-anchor"],"buttons":[16],"translucent":[4],"animated":[4],"icon":[1],"htmlAttributes":[16,"html-attributes"],"swipeGesture":[1,"swipe-gesture"],"isOpen":[4,"is-open"],"trigger":[1],"revealContentToScreenReader":[32],"present":[64],"dismiss":[64],"onDidDismiss":[64],"onWillDismiss":[64]},null,{"swipeGesture":["swipeGestureChanged"],"isOpen":["onIsOpenChange"],"trigger":["triggerChanged"]}]]],["ion-card_5",[[289,"ion-card",{"color":[513],"button":[4],"type":[1],"disabled":[4],"download":[1],"href":[1],"rel":[1],"routerDirection":[1,"router-direction"],"routerAnimation":[16,"router-animation"],"target":[1]}],[288,"ion-card-content"],[289,"ion-card-header",{"color":[513],"translucent":[4]}],[289,"ion-card-subtitle",{"color":[513]}],[289,"ion-card-title",{"color":[513]}]]],["ion-item-option_3",[[289,"ion-item-option",{"color":[513],"disabled":[4],"download":[1],"expandable":[4],"href":[1],"rel":[1],"target":[1],"type":[1]}],[288,"ion-item-options",{"side":[1],"fireSwipeEvent":[64]}],[256,"ion-item-sliding",{"disabled":[4],"state":[32],"getOpenAmount":[64],"getSlidingRatio":[64],"open":[64],"close":[64],"closeOpened":[64]},null,{"disabled":["disabledChanged"]}]]],["ion-accordion_2",[[305,"ion-accordion",{"value":[1],"disabled":[4],"readonly":[4],"toggleIcon":[1,"toggle-icon"],"toggleIconSlot":[1,"toggle-icon-slot"],"state":[32],"isNext":[32],"isPrevious":[32]},null,{"value":["valueChanged"]}],[289,"ion-accordion-group",{"animated":[4],"multiple":[4],"value":[1025],"disabled":[4],"readonly":[4],"expand":[1],"requestAccordionToggle":[64],"getAccordions":[64]},[[0,"keydown","onKeydown"]],{"value":["valueChanged"],"disabled":["disabledChanged"],"readonly":["readonlyChanged"]}]]],["ion-infinite-scroll_2",[[288,"ion-infinite-scroll-content",{"loadingSpinner":[1025,"loading-spinner"],"loadingText":[1,"loading-text"]}],[256,"ion-infinite-scroll",{"threshold":[1],"disabled":[4],"position":[1],"isLoading":[32],"complete":[64]},null,{"threshold":["thresholdChanged"],"disabled":["disabledChanged"]}]]],["ion-reorder_2",[[289,"ion-reorder",null,[[2,"click","onClick"]]],[256,"ion-reorder-group",{"disabled":[4],"state":[32],"complete":[64]},null,{"disabled":["disabledChanged"]}]]],["ion-segment_2",[[289,"ion-segment-button",{"contentId":[513,"content-id"],"disabled":[1028],"layout":[1],"type":[1],"value":[8],"checked":[32],"setFocus":[64]},null,{"value":["valueChanged"]}],[289,"ion-segment",{"color":[513],"disabled":[4],"scrollable":[4],"swipeGesture":[4,"swipe-gesture"],"value":[1032],"selectOnFocus":[4,"select-on-focus"],"activated":[32]},[[16,"ionSegmentViewScroll","handleSegmentViewScroll"],[0,"keydown","onKeyDown"]],{"color":["colorChanged"],"swipeGesture":["swipeGestureChanged"],"value":["valueChanged"],"disabled":["disabledChanged"]}]]],["ion-chip",[[289,"ion-chip",{"color":[513],"outline":[4],"disabled":[4]}]]],["ion-input",[[294,"ion-input",{"color":[513],"autocapitalize":[1],"autocomplete":[1],"autocorrect":[1],"autofocus":[4],"clearInput":[4,"clear-input"],"clearInputIcon":[1,"clear-input-icon"],"clearOnEdit":[4,"clear-on-edit"],"counter":[4],"counterFormatter":[16,"counter-formatter"],"debounce":[2],"disabled":[516],"enterkeyhint":[1],"errorText":[1,"error-text"],"fill":[1],"inputmode":[1],"helperText":[1,"helper-text"],"label":[1],"labelPlacement":[1,"label-placement"],"max":[8],"maxlength":[2],"min":[8],"minlength":[2],"multiple":[4],"name":[1],"pattern":[1],"placeholder":[1],"readonly":[516],"required":[4],"shape":[1],"spellcheck":[4],"step":[1],"type":[1],"value":[1032],"hasFocus":[32],"isInvalid":[32],"setFocus":[64],"getInputElement":[64]},[[2,"click","onClickCapture"]],{"debounce":["debounceChanged"],"type":["onTypeChange"],"value":["valueChanged"],"dir":["onDirChanged"]}]]],["ion-searchbar",[[290,"ion-searchbar",{"color":[513],"animated":[4],"autocapitalize":[1],"autocomplete":[1],"autocorrect":[1],"cancelButtonIcon":[1,"cancel-button-icon"],"cancelButtonText":[1,"cancel-button-text"],"clearIcon":[1,"clear-icon"],"debounce":[2],"disabled":[4],"inputmode":[1],"enterkeyhint":[1],"maxlength":[2],"minlength":[2],"name":[1],"placeholder":[1],"searchIcon":[1,"search-icon"],"showCancelButton":[1,"show-cancel-button"],"showClearButton":[1,"show-clear-button"],"spellcheck":[4],"type":[1],"value":[1025],"focused":[32],"noAnimate":[32],"setFocus":[64],"getInputElement":[64]},null,{"lang":["onLangChanged"],"dir":["onDirChanged"],"debounce":["debounceChanged"],"value":["valueChanged"],"showCancelButton":["showCancelButtonChanged"]}]]],["ion-toggle",[[289,"ion-toggle",{"color":[513],"name":[1],"checked":[1028],"disabled":[4],"errorText":[1,"error-text"],"helperText":[1,"helper-text"],"value":[1],"enableOnOffLabels":[4,"enable-on-off-labels"],"labelPlacement":[1,"label-placement"],"justify":[1],"alignment":[1],"required":[4],"activated":[32]},null,{"disabled":["disabledChanged"]}]]],["ion-nav_2",[[257,"ion-nav",{"delegate":[16],"swipeGesture":[1028,"swipe-gesture"],"animated":[4],"animation":[16],"rootParams":[16,"root-params"],"root":[1],"push":[64],"insert":[64],"insertPages":[64],"pop":[64],"popTo":[64],"popToRoot":[64],"removeIndex":[64],"setRoot":[64],"setPages":[64],"setRouteId":[64],"getRouteId":[64],"getActive":[64],"getByIndex":[64],"canGoBack":[64],"getPrevious":[64],"getLength":[64]},null,{"swipeGesture":["swipeGestureChanged"],"root":["rootChanged"]}],[256,"ion-nav-link",{"component":[1],"componentProps":[16,"component-props"],"routerDirection":[1,"router-direction"],"routerAnimation":[16,"router-animation"]}]]],["ion-tab_2",[[257,"ion-tab",{"active":[1028],"delegate":[16],"tab":[1],"component":[1],"setActive":[64]},null,{"active":["changeActive"]}],[257,"ion-tabs",{"useRouter":[1028,"use-router"],"selectedTab":[32],"select":[64],"getTab":[64],"getSelected":[64],"setRouteId":[64],"getRouteId":[64]}]]],["ion-textarea",[[294,"ion-textarea",{"color":[513],"autocapitalize":[1],"autofocus":[4],"clearOnEdit":[4,"clear-on-edit"],"debounce":[2],"disabled":[4],"fill":[1],"inputmode":[1],"enterkeyhint":[1],"maxlength":[2],"minlength":[2],"name":[1],"placeholder":[1],"readonly":[4],"required":[4],"spellcheck":[4],"cols":[514],"rows":[2],"wrap":[1],"autoGrow":[516,"auto-grow"],"value":[1025],"counter":[4],"counterFormatter":[16,"counter-formatter"],"errorText":[1,"error-text"],"helperText":[1,"helper-text"],"label":[1],"labelPlacement":[1,"label-placement"],"shape":[1],"hasFocus":[32],"isInvalid":[32],"setFocus":[64],"getInputElement":[64]},[[2,"click","onClickCapture"]],{"debounce":["debounceChanged"],"value":["valueChanged"],"dir":["onDirChanged"]}]]],["ion-backdrop",[[289,"ion-backdrop",{"visible":[4],"tappable":[4],"stopPropagation":[4,"stop-propagation"]},[[2,"click","onMouseDown"]]]]],["ion-loading",[[290,"ion-loading",{"overlayIndex":[2,"overlay-index"],"delegate":[16],"hasController":[4,"has-controller"],"keyboardClose":[4,"keyboard-close"],"enterAnimation":[16,"enter-animation"],"leaveAnimation":[16,"leave-animation"],"message":[1],"cssClass":[1,"css-class"],"duration":[2],"backdropDismiss":[4,"backdrop-dismiss"],"showBackdrop":[4,"show-backdrop"],"spinner":[1025],"translucent":[4],"animated":[4],"htmlAttributes":[16,"html-attributes"],"isOpen":[4,"is-open"],"trigger":[1],"present":[64],"dismiss":[64],"onDidDismiss":[64],"onWillDismiss":[64]},null,{"isOpen":["onIsOpenChange"],"trigger":["triggerChanged"]}]]],["ion-breadcrumb_2",[[289,"ion-breadcrumb",{"collapsed":[4],"last":[4],"showCollapsedIndicator":[4,"show-collapsed-indicator"],"color":[1],"active":[4],"disabled":[4],"download":[1],"href":[1],"rel":[1],"separator":[4],"target":[1],"routerDirection":[1,"router-direction"],"routerAnimation":[16,"router-animation"]}],[289,"ion-breadcrumbs",{"color":[513],"maxItems":[2,"max-items"],"itemsBeforeCollapse":[2,"items-before-collapse"],"itemsAfterCollapse":[2,"items-after-collapse"],"collapsed":[32],"activeChanged":[32]},[[0,"collapsedClick","onCollapsedClick"]],{"maxItems":["maxItemsChanged"],"itemsBeforeCollapse":["maxItemsChanged"],"itemsAfterCollapse":["maxItemsChanged"]}]]],["ion-tab-bar_2",[[289,"ion-tab-button",{"disabled":[4],"download":[1],"href":[1],"rel":[1],"layout":[1025],"selected":[1028],"tab":[1],"target":[1]},[[8,"ionTabBarChanged","onTabBarChanged"]]],[289,"ion-tab-bar",{"color":[513],"selectedTab":[1,"selected-tab"],"translucent":[4],"keyboardVisible":[32]},null,{"selectedTab":["selectedTabChanged"]}]]],["ion-datetime-button",[[289,"ion-datetime-button",{"color":[513],"disabled":[516],"datetime":[1],"datetimePresentation":[32],"dateText":[32],"timeText":[32],"datetimeActive":[32],"selectedButton":[32]}]]],["ion-route_4",[[0,"ion-route",{"url":[1],"component":[1],"componentProps":[16,"component-props"],"beforeLeave":[16,"before-leave"],"beforeEnter":[16,"before-enter"]},null,{"url":["onUpdate"],"component":["onUpdate"],"componentProps":["onComponentProps"]}],[0,"ion-route-redirect",{"from":[1],"to":[1]},null,{"from":["propDidChange"],"to":["propDidChange"]}],[0,"ion-router",{"root":[1],"useHash":[4,"use-hash"],"canTransition":[64],"push":[64],"back":[64],"printDebug":[64],"navChanged":[64]},[[8,"popstate","onPopState"],[4,"ionBackButton","onBackButton"]]],[257,"ion-router-link",{"color":[513],"href":[1],"rel":[1],"routerDirection":[1,"router-direction"],"routerAnimation":[16,"router-animation"],"target":[1]}]]],["ion-avatar_3",[[289,"ion-avatar"],[289,"ion-badge",{"color":[513]}],[257,"ion-thumbnail"]]],["ion-col_3",[[257,"ion-col",{"offset":[1],"offsetXs":[1,"offset-xs"],"offsetSm":[1,"offset-sm"],"offsetMd":[1,"offset-md"],"offsetLg":[1,"offset-lg"],"offsetXl":[1,"offset-xl"],"pull":[1],"pullXs":[1,"pull-xs"],"pullSm":[1,"pull-sm"],"pullMd":[1,"pull-md"],"pullLg":[1,"pull-lg"],"pullXl":[1,"pull-xl"],"push":[1],"pushXs":[1,"push-xs"],"pushSm":[1,"push-sm"],"pushMd":[1,"push-md"],"pushLg":[1,"push-lg"],"pushXl":[1,"push-xl"],"size":[1],"sizeXs":[1,"size-xs"],"sizeSm":[1,"size-sm"],"sizeMd":[1,"size-md"],"sizeLg":[1,"size-lg"],"sizeXl":[1,"size-xl"]},[[9,"resize","onResize"]]],[257,"ion-grid",{"fixed":[4]}],[257,"ion-row"]]],["ion-img",[[257,"ion-img",{"alt":[1],"src":[1],"loadSrc":[32],"loadError":[32]},null,{"src":["srcChanged"]}]]],["ion-input-otp",[[294,"ion-input-otp",{"autocapitalize":[1],"color":[513],"disabled":[516],"fill":[1],"inputmode":[1],"length":[2],"pattern":[1],"readonly":[516],"separators":[1],"shape":[1],"size":[1],"type":[1],"value":[1032],"inputValues":[32],"hasFocus":[32],"previousInputValues":[32],"setFocus":[64]},null,{"value":["valueChanged"],"separators":["processSeparators"],"length":["processSeparators"]}]]],["ion-progress-bar",[[289,"ion-progress-bar",{"type":[1],"reversed":[4],"value":[2],"buffer":[2],"color":[513]}]]],["ion-range",[[289,"ion-range",{"color":[513],"debounce":[2],"name":[1],"label":[1],"dualKnobs":[4,"dual-knobs"],"min":[2],"max":[2],"pin":[4],"pinFormatter":[16,"pin-formatter"],"snaps":[4],"step":[2],"ticks":[4],"activeBarStart":[1026,"active-bar-start"],"disabled":[4],"value":[1026],"labelPlacement":[1,"label-placement"],"ratioA":[32],"ratioB":[32],"pressedKnob":[32]},null,{"debounce":["debounceChanged"],"min":["minChanged"],"max":["maxChanged"],"step":["stepChanged"],"activeBarStart":["activeBarStartChanged"],"disabled":["disabledChanged"],"value":["valueChanged"]}]]],["ion-segment-content",[[257,"ion-segment-content"]]],["ion-segment-view",[[289,"ion-segment-view",{"disabled":[4],"isManualScroll":[32],"setContent":[64]},[[1,"scroll","handleScroll"],[1,"touchstart","handleScrollStart"],[1,"touchend","handleTouchEnd"]]]]],["ion-split-pane",[[289,"ion-split-pane",{"contentId":[513,"content-id"],"disabled":[4],"when":[8],"visible":[32],"isVisible":[64]},null,{"visible":["visibleChanged"],"disabled":["updateState"],"when":["updateState"]}]]],["ion-text",[[257,"ion-text",{"color":[513]}]]],["ion-select-modal",[[290,"ion-select-modal",{"header":[1],"multiple":[4],"options":[16]}]]],["ion-datetime_3",[[289,"ion-datetime",{"color":[1],"name":[1],"disabled":[4],"formatOptions":[16,"format-options"],"readonly":[4],"isDateEnabled":[16,"is-date-enabled"],"showAdjacentDays":[4,"show-adjacent-days"],"min":[1025],"max":[1025],"presentation":[1],"cancelText":[1,"cancel-text"],"doneText":[1,"done-text"],"clearText":[1,"clear-text"],"yearValues":[8,"year-values"],"monthValues":[8,"month-values"],"dayValues":[8,"day-values"],"hourValues":[8,"hour-values"],"minuteValues":[8,"minute-values"],"locale":[1],"firstDayOfWeek":[2,"first-day-of-week"],"titleSelectedDatesFormatter":[16,"title-selected-dates-formatter"],"multiple":[4],"highlightedDates":[16,"highlighted-dates"],"value":[1025],"showDefaultTitle":[4,"show-default-title"],"showDefaultButtons":[4,"show-default-buttons"],"showClearButton":[4,"show-clear-button"],"showDefaultTimeLabel":[4,"show-default-time-label"],"hourCycle":[1,"hour-cycle"],"size":[1],"preferWheel":[4,"prefer-wheel"],"showMonthAndYear":[32],"activeParts":[32],"workingParts":[32],"isTimePopoverOpen":[32],"forceRenderDate":[32],"confirm":[64],"reset":[64],"cancel":[64]},null,{"formatOptions":["formatOptionsChanged"],"disabled":["disabledChanged"],"min":["minChanged"],"max":["maxChanged"],"presentation":["presentationChanged"],"yearValues":["yearValuesChanged"],"monthValues":["monthValuesChanged"],"dayValues":["dayValuesChanged"],"hourValues":["hourValuesChanged"],"minuteValues":["minuteValuesChanged"],"value":["valueChanged"]}],[290,"ion-picker-legacy",{"overlayIndex":[2,"overlay-index"],"delegate":[16],"hasController":[4,"has-controller"],"keyboardClose":[4,"keyboard-close"],"enterAnimation":[16,"enter-animation"],"leaveAnimation":[16,"leave-animation"],"buttons":[16],"columns":[16],"cssClass":[1,"css-class"],"duration":[2],"showBackdrop":[4,"show-backdrop"],"backdropDismiss":[4,"backdrop-dismiss"],"animated":[4],"htmlAttributes":[16,"html-attributes"],"isOpen":[4,"is-open"],"trigger":[1],"presented":[32],"present":[64],"dismiss":[64],"onDidDismiss":[64],"onWillDismiss":[64],"getColumn":[64]},null,{"isOpen":["onIsOpenChange"],"trigger":["triggerChanged"]}],[288,"ion-picker-legacy-column",{"col":[16]},null,{"col":["colChanged"]}]]],["ion-action-sheet",[[290,"ion-action-sheet",{"overlayIndex":[2,"overlay-index"],"delegate":[16],"hasController":[4,"has-controller"],"keyboardClose":[4,"keyboard-close"],"enterAnimation":[16,"enter-animation"],"leaveAnimation":[16,"leave-animation"],"buttons":[16],"cssClass":[1,"css-class"],"backdropDismiss":[4,"backdrop-dismiss"],"header":[1],"subHeader":[1,"sub-header"],"translucent":[4],"animated":[4],"htmlAttributes":[16,"html-attributes"],"isOpen":[4,"is-open"],"trigger":[1],"present":[64],"dismiss":[64],"onDidDismiss":[64],"onWillDismiss":[64]},null,{"isOpen":["onIsOpenChange"],"trigger":["triggerChanged"]}]]],["ion-alert",[[290,"ion-alert",{"overlayIndex":[2,"overlay-index"],"delegate":[16],"hasController":[4,"has-controller"],"keyboardClose":[4,"keyboard-close"],"enterAnimation":[16,"enter-animation"],"leaveAnimation":[16,"leave-animation"],"cssClass":[1,"css-class"],"header":[1],"subHeader":[1,"sub-header"],"message":[1],"buttons":[16],"inputs":[1040],"backdropDismiss":[4,"backdrop-dismiss"],"translucent":[4],"animated":[4],"htmlAttributes":[16,"html-attributes"],"isOpen":[4,"is-open"],"trigger":[1],"present":[64],"dismiss":[64],"onDidDismiss":[64],"onWillDismiss":[64]},[[4,"keydown","onKeydown"]],{"isOpen":["onIsOpenChange"],"trigger":["triggerChanged"],"buttons":["buttonsChanged"],"inputs":["inputsChanged"]}]]],["ion-modal",[[289,"ion-modal",{"hasController":[4,"has-controller"],"overlayIndex":[2,"overlay-index"],"delegate":[16],"keyboardClose":[4,"keyboard-close"],"enterAnimation":[16,"enter-animation"],"leaveAnimation":[16,"leave-animation"],"breakpoints":[16],"expandToScroll":[4,"expand-to-scroll"],"initialBreakpoint":[2,"initial-breakpoint"],"backdropBreakpoint":[2,"backdrop-breakpoint"],"handle":[4],"handleBehavior":[1,"handle-behavior"],"component":[1],"componentProps":[16,"component-props"],"cssClass":[1,"css-class"],"backdropDismiss":[4,"backdrop-dismiss"],"showBackdrop":[4,"show-backdrop"],"animated":[4],"presentingElement":[16,"presenting-element"],"htmlAttributes":[16,"html-attributes"],"isOpen":[4,"is-open"],"trigger":[1],"keepContentsMounted":[4,"keep-contents-mounted"],"focusTrap":[4,"focus-trap"],"canDismiss":[4,"can-dismiss"],"presented":[32],"present":[64],"dismiss":[64],"onDidDismiss":[64],"onWillDismiss":[64],"setCurrentBreakpoint":[64],"getCurrentBreakpoint":[64]},[[9,"resize","onWindowResize"]],{"isOpen":["onIsOpenChange"],"trigger":["triggerChanged"]}]]],["ion-picker",[[289,"ion-picker",{"exitInputMode":[64]},[[1,"touchstart","preventTouchStartPropagation"]]]]],["ion-picker-column",[[257,"ion-picker-column",{"disabled":[4],"value":[1032],"color":[513],"numericInput":[4,"numeric-input"],"ariaLabel":[32],"isActive":[32],"scrollActiveItemIntoView":[64],"setValue":[64],"setFocus":[64]},null,{"aria-label":["ariaLabelChanged"],"value":["valueChange"]}]]],["ion-picker-column-option",[[289,"ion-picker-column-option",{"disabled":[4],"value":[8],"color":[513],"ariaLabel":[32]},null,{"aria-label":["onAriaLabelChange"]}]]],["ion-popover",[[289,"ion-popover",{"hasController":[4,"has-controller"],"delegate":[16],"overlayIndex":[2,"overlay-index"],"enterAnimation":[16,"enter-animation"],"leaveAnimation":[16,"leave-animation"],"component":[1],"componentProps":[16,"component-props"],"keyboardClose":[4,"keyboard-close"],"cssClass":[1,"css-class"],"backdropDismiss":[4,"backdrop-dismiss"],"event":[8],"showBackdrop":[4,"show-backdrop"],"translucent":[4],"animated":[4],"htmlAttributes":[16,"html-attributes"],"triggerAction":[1,"trigger-action"],"trigger":[1],"size":[1],"dismissOnSelect":[4,"dismiss-on-select"],"reference":[1],"side":[1],"alignment":[1025],"arrow":[4],"isOpen":[4,"is-open"],"keyboardEvents":[4,"keyboard-events"],"focusTrap":[4,"focus-trap"],"keepContentsMounted":[4,"keep-contents-mounted"],"presented":[32],"presentFromTrigger":[64],"present":[64],"dismiss":[64],"getParentPopover":[64],"onDidDismiss":[64],"onWillDismiss":[64]},null,{"trigger":["onTriggerChange"],"triggerAction":["onTriggerChange"],"isOpen":["onIsOpenChange"]}]]],["ion-checkbox",[[289,"ion-checkbox",{"color":[513],"name":[1],"checked":[1028],"indeterminate":[1028],"disabled":[4],"errorText":[1,"error-text"],"helperText":[1,"helper-text"],"value":[8],"labelPlacement":[1,"label-placement"],"justify":[1],"alignment":[1],"required":[4],"setFocus":[64]}]]],["ion-item_8",[[289,"ion-item-divider",{"color":[513],"sticky":[4]}],[288,"ion-item-group"],[289,"ion-note",{"color":[513]}],[257,"ion-skeleton-text",{"animated":[4]}],[294,"ion-label",{"color":[513],"position":[1],"noAnimate":[32]},null,{"color":["colorChanged"],"position":["positionChanged"]}],[289,"ion-list-header",{"color":[513],"lines":[1]}],[289,"ion-item",{"color":[513],"button":[4],"detail":[4],"detailIcon":[1,"detail-icon"],"disabled":[516],"download":[1],"href":[1],"rel":[1],"lines":[1],"routerAnimation":[16,"router-animation"],"routerDirection":[1,"router-direction"],"target":[1],"type":[1],"multipleInputs":[32],"focusable":[32],"isInteractive":[32]},[[0,"ionColor","labelColorChanged"],[0,"ionStyle","itemStyle"]],{"button":["buttonChanged"]}],[288,"ion-list",{"lines":[1],"inset":[4],"closeSlidingItems":[64]}]]],["ion-app_8",[[256,"ion-app",{"setFocus":[64]}],[292,"ion-footer",{"collapse":[1],"translucent":[4],"keyboardVisible":[32]}],[257,"ion-router-outlet",{"mode":[1025],"delegate":[16],"animated":[4],"animation":[16],"swipeHandler":[16,"swipe-handler"],"commit":[64],"setRouteId":[64],"getRouteId":[64]},null,{"swipeHandler":["swipeHandlerChanged"]}],[257,"ion-content",{"color":[513],"fullscreen":[4],"fixedSlotPlacement":[1,"fixed-slot-placement"],"forceOverscroll":[1028,"force-overscroll"],"scrollX":[4,"scroll-x"],"scrollY":[4,"scroll-y"],"scrollEvents":[4,"scroll-events"],"getScrollElement":[64],"getBackgroundElement":[64],"scrollToTop":[64],"scrollToBottom":[64],"scrollByPoint":[64],"scrollToPoint":[64]},[[9,"resize","onResize"]]],[292,"ion-header",{"collapse":[1],"translucent":[4]}],[289,"ion-title",{"color":[513],"size":[1]},null,{"size":["sizeChanged"]}],[289,"ion-toolbar",{"color":[513]},[[0,"ionStyle","childrenStyle"]]],[294,"ion-buttons",{"collapse":[4]}]]],["ion-select_3",[[289,"ion-select",{"cancelText":[1,"cancel-text"],"color":[513],"compareWith":[1,"compare-with"],"disabled":[4],"fill":[1],"errorText":[1,"error-text"],"helperText":[1,"helper-text"],"interface":[1],"interfaceOptions":[8,"interface-options"],"justify":[1],"label":[1],"labelPlacement":[1,"label-placement"],"multiple":[4],"name":[1],"okText":[1,"ok-text"],"placeholder":[1],"selectedText":[1,"selected-text"],"toggleIcon":[1,"toggle-icon"],"expandedIcon":[1,"expanded-icon"],"shape":[1],"value":[1032],"required":[4],"isExpanded":[32],"hasFocus":[32],"open":[64]},null,{"disabled":["styleChanged"],"isExpanded":["styleChanged"],"placeholder":["styleChanged"],"value":["styleChanged"]}],[257,"ion-select-option",{"disabled":[4],"value":[8]}],[290,"ion-select-popover",{"header":[1],"subHeader":[1,"sub-header"],"message":[1],"multiple":[4],"options":[16]}]]],["ion-spinner",[[257,"ion-spinner",{"color":[513],"duration":[2],"name":[1],"paused":[4]}]]],["ion-radio_2",[[289,"ion-radio",{"color":[513],"name":[1],"disabled":[4],"value":[8],"labelPlacement":[1,"label-placement"],"justify":[1],"alignment":[1],"checked":[32],"buttonTabindex":[32],"setFocus":[64],"setButtonTabindex":[64]},null,{"value":["valueChanged"]}],[292,"ion-radio-group",{"allowEmptySelection":[4,"allow-empty-selection"],"compareWith":[1,"compare-with"],"name":[1],"value":[1032],"helperText":[1,"helper-text"],"errorText":[1,"error-text"],"setFocus":[64]},[[4,"keydown","onKeydown"]],{"value":["valueChanged"]}]]],["ion-ripple-effect",[[257,"ion-ripple-effect",{"type":[1],"addRipple":[64]}]]],["ion-button_2",[[289,"ion-button",{"color":[513],"buttonType":[1025,"button-type"],"disabled":[516],"expand":[513],"fill":[1537],"routerDirection":[1,"router-direction"],"routerAnimation":[16,"router-animation"],"download":[1],"href":[1],"rel":[1],"shape":[513],"size":[513],"strong":[4],"target":[1],"type":[1],"form":[1],"isCircle":[32]},null,{"disabled":["disabledChanged"],"aria-checked":["onAriaChanged"],"aria-label":["onAriaChanged"]}],[257,"ion-icon",{"mode":[1025],"color":[1],"ios":[1],"md":[1],"flipRtl":[4,"flip-rtl"],"name":[513],"src":[1],"icon":[8],"size":[1],"lazy":[4],"sanitize":[4],"svgContent":[32],"isVisible":[32]},null,{"name":["loadIcon"],"src":["loadIcon"],"icon":["loadIcon"],"ios":["loadIcon"],"md":["loadIcon"]}]]]]'), options);
@@ -3657,7 +294,7 @@ var defineCustomElements = (win2, options) => __async(null, null, function* () {
 })();
 
 // node_modules/@ionic/angular/fesm2022/ionic-angular.mjs
-var _c02 = ["*"];
+var _c0 = ["*"];
 var _c1 = ["outletContent"];
 var _c2 = ["outlet"];
 var _c3 = [[["", "slot", "top"]], "*", [["ion-tab"]]];
@@ -3936,7 +573,7 @@ var TextValueAccessorDirective = class _TextValueAccessorDirective extends Value
     }]
   });
 })();
-var proxyInputs2 = (Cmp, inputs) => {
+var proxyInputs = (Cmp, inputs) => {
   const Prototype = Cmp.prototype;
   inputs.forEach((item) => {
     Object.defineProperty(Prototype, item, {
@@ -3957,7 +594,7 @@ var proxyInputs2 = (Cmp, inputs) => {
     });
   });
 };
-var proxyMethods2 = (Cmp, methods) => {
+var proxyMethods = (Cmp, methods) => {
   const Prototype = Cmp.prototype;
   methods.forEach((methodName) => {
     Prototype[methodName] = function() {
@@ -3966,10 +603,10 @@ var proxyMethods2 = (Cmp, methods) => {
     };
   });
 };
-var proxyOutputs2 = (instance, el, events) => {
+var proxyOutputs = (instance, el, events) => {
   events.forEach((eventName) => instance[eventName] = fromEvent(el, eventName));
 };
-function ProxyCmp2(opts) {
+function ProxyCmp(opts) {
   const decorator = function(cls) {
     const {
       defineCustomElementFn,
@@ -3980,10 +617,10 @@ function ProxyCmp2(opts) {
       defineCustomElementFn();
     }
     if (inputs) {
-      proxyInputs2(cls, inputs);
+      proxyInputs(cls, inputs);
     }
     if (methods) {
-      proxyMethods2(cls, methods);
+      proxyMethods(cls, methods);
     }
     return cls;
   };
@@ -4014,7 +651,7 @@ var IonAccordion = class IonAccordion2 {
       value: "value"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonAccordion_Template(rf, ctx) {
@@ -4027,7 +664,7 @@ var IonAccordion = class IonAccordion2 {
     changeDetection: 0
   });
 };
-IonAccordion = __decorate([ProxyCmp2({
+IonAccordion = __decorate([ProxyCmp({
   inputs: ["disabled", "mode", "readonly", "toggleIcon", "toggleIconSlot", "value"]
 })], IonAccordion);
 (() => {
@@ -4057,7 +694,7 @@ var IonAccordionGroup = class IonAccordionGroup2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionChange"]);
+    proxyOutputs(this, this.el, ["ionChange"]);
   }
   /** @nocollapse */
   static ɵfac = function IonAccordionGroup_Factory(__ngFactoryType__) {
@@ -4077,7 +714,7 @@ var IonAccordionGroup = class IonAccordionGroup2 {
       value: "value"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonAccordionGroup_Template(rf, ctx) {
@@ -4090,7 +727,7 @@ var IonAccordionGroup = class IonAccordionGroup2 {
     changeDetection: 0
   });
 };
-IonAccordionGroup = __decorate([ProxyCmp2({
+IonAccordionGroup = __decorate([ProxyCmp({
   inputs: ["animated", "disabled", "expand", "mode", "multiple", "readonly", "value"]
 })], IonAccordionGroup);
 (() => {
@@ -4120,7 +757,7 @@ var IonActionSheet = class IonActionSheet2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionActionSheetDidPresent", "ionActionSheetWillPresent", "ionActionSheetWillDismiss", "ionActionSheetDidDismiss", "didPresent", "willPresent", "willDismiss", "didDismiss"]);
+    proxyOutputs(this, this.el, ["ionActionSheetDidPresent", "ionActionSheetWillPresent", "ionActionSheetWillDismiss", "ionActionSheetDidDismiss", "didPresent", "willPresent", "willDismiss", "didDismiss"]);
   }
   /** @nocollapse */
   static ɵfac = function IonActionSheet_Factory(__ngFactoryType__) {
@@ -4147,7 +784,7 @@ var IonActionSheet = class IonActionSheet2 {
       trigger: "trigger"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonActionSheet_Template(rf, ctx) {
@@ -4160,7 +797,7 @@ var IonActionSheet = class IonActionSheet2 {
     changeDetection: 0
   });
 };
-IonActionSheet = __decorate([ProxyCmp2({
+IonActionSheet = __decorate([ProxyCmp({
   inputs: ["animated", "backdropDismiss", "buttons", "cssClass", "enterAnimation", "header", "htmlAttributes", "isOpen", "keyboardClose", "leaveAnimation", "mode", "subHeader", "translucent", "trigger"],
   methods: ["present", "dismiss", "onDidDismiss", "onWillDismiss"]
 })], IonActionSheet);
@@ -4191,7 +828,7 @@ var IonAlert = class IonAlert2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionAlertDidPresent", "ionAlertWillPresent", "ionAlertWillDismiss", "ionAlertDidDismiss", "didPresent", "willPresent", "willDismiss", "didDismiss"]);
+    proxyOutputs(this, this.el, ["ionAlertDidPresent", "ionAlertWillPresent", "ionAlertWillDismiss", "ionAlertDidDismiss", "didPresent", "willPresent", "willDismiss", "didDismiss"]);
   }
   /** @nocollapse */
   static ɵfac = function IonAlert_Factory(__ngFactoryType__) {
@@ -4220,7 +857,7 @@ var IonAlert = class IonAlert2 {
       trigger: "trigger"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonAlert_Template(rf, ctx) {
@@ -4233,7 +870,7 @@ var IonAlert = class IonAlert2 {
     changeDetection: 0
   });
 };
-IonAlert = __decorate([ProxyCmp2({
+IonAlert = __decorate([ProxyCmp({
   inputs: ["animated", "backdropDismiss", "buttons", "cssClass", "enterAnimation", "header", "htmlAttributes", "inputs", "isOpen", "keyboardClose", "leaveAnimation", "message", "mode", "subHeader", "translucent", "trigger"],
   methods: ["present", "dismiss", "onDidDismiss", "onWillDismiss"]
 })], IonAlert);
@@ -4274,7 +911,7 @@ var IonApp = class IonApp2 {
     type: IonApp2,
     selectors: [["ion-app"]],
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonApp_Template(rf, ctx) {
@@ -4287,7 +924,7 @@ var IonApp = class IonApp2 {
     changeDetection: 0
   });
 };
-IonApp = __decorate([ProxyCmp2({
+IonApp = __decorate([ProxyCmp({
   methods: ["setFocus"]
 })], IonApp);
 (() => {
@@ -4327,7 +964,7 @@ var IonAvatar = class IonAvatar2 {
     type: IonAvatar2,
     selectors: [["ion-avatar"]],
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonAvatar_Template(rf, ctx) {
@@ -4340,7 +977,7 @@ var IonAvatar = class IonAvatar2 {
     changeDetection: 0
   });
 };
-IonAvatar = __decorate([ProxyCmp2({})], IonAvatar);
+IonAvatar = __decorate([ProxyCmp({})], IonAvatar);
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonAvatar, [{
     type: Component,
@@ -4368,7 +1005,7 @@ var IonBackdrop = class IonBackdrop2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionBackdropTap"]);
+    proxyOutputs(this, this.el, ["ionBackdropTap"]);
   }
   /** @nocollapse */
   static ɵfac = function IonBackdrop_Factory(__ngFactoryType__) {
@@ -4384,7 +1021,7 @@ var IonBackdrop = class IonBackdrop2 {
       visible: "visible"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonBackdrop_Template(rf, ctx) {
@@ -4397,7 +1034,7 @@ var IonBackdrop = class IonBackdrop2 {
     changeDetection: 0
   });
 };
-IonBackdrop = __decorate([ProxyCmp2({
+IonBackdrop = __decorate([ProxyCmp({
   inputs: ["stopPropagation", "tappable", "visible"]
 })], IonBackdrop);
 (() => {
@@ -4441,7 +1078,7 @@ var IonBadge = class IonBadge2 {
       mode: "mode"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonBadge_Template(rf, ctx) {
@@ -4454,7 +1091,7 @@ var IonBadge = class IonBadge2 {
     changeDetection: 0
   });
 };
-IonBadge = __decorate([ProxyCmp2({
+IonBadge = __decorate([ProxyCmp({
   inputs: ["color", "mode"]
 })], IonBadge);
 (() => {
@@ -4484,7 +1121,7 @@ var IonBreadcrumb = class IonBreadcrumb2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionFocus", "ionBlur"]);
+    proxyOutputs(this, this.el, ["ionFocus", "ionBlur"]);
   }
   /** @nocollapse */
   static ɵfac = function IonBreadcrumb_Factory(__ngFactoryType__) {
@@ -4508,7 +1145,7 @@ var IonBreadcrumb = class IonBreadcrumb2 {
       target: "target"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonBreadcrumb_Template(rf, ctx) {
@@ -4521,7 +1158,7 @@ var IonBreadcrumb = class IonBreadcrumb2 {
     changeDetection: 0
   });
 };
-IonBreadcrumb = __decorate([ProxyCmp2({
+IonBreadcrumb = __decorate([ProxyCmp({
   inputs: ["active", "color", "disabled", "download", "href", "mode", "rel", "routerAnimation", "routerDirection", "separator", "target"]
 })], IonBreadcrumb);
 (() => {
@@ -4551,7 +1188,7 @@ var IonBreadcrumbs = class IonBreadcrumbs2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionCollapsedClick"]);
+    proxyOutputs(this, this.el, ["ionCollapsedClick"]);
   }
   /** @nocollapse */
   static ɵfac = function IonBreadcrumbs_Factory(__ngFactoryType__) {
@@ -4569,7 +1206,7 @@ var IonBreadcrumbs = class IonBreadcrumbs2 {
       mode: "mode"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonBreadcrumbs_Template(rf, ctx) {
@@ -4582,7 +1219,7 @@ var IonBreadcrumbs = class IonBreadcrumbs2 {
     changeDetection: 0
   });
 };
-IonBreadcrumbs = __decorate([ProxyCmp2({
+IonBreadcrumbs = __decorate([ProxyCmp({
   inputs: ["color", "itemsAfterCollapse", "itemsBeforeCollapse", "maxItems", "mode"]
 })], IonBreadcrumbs);
 (() => {
@@ -4612,7 +1249,7 @@ var IonButton = class IonButton2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionFocus", "ionBlur"]);
+    proxyOutputs(this, this.el, ["ionFocus", "ionBlur"]);
   }
   /** @nocollapse */
   static ɵfac = function IonButton_Factory(__ngFactoryType__) {
@@ -4642,7 +1279,7 @@ var IonButton = class IonButton2 {
       type: "type"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonButton_Template(rf, ctx) {
@@ -4655,7 +1292,7 @@ var IonButton = class IonButton2 {
     changeDetection: 0
   });
 };
-IonButton = __decorate([ProxyCmp2({
+IonButton = __decorate([ProxyCmp({
   inputs: ["buttonType", "color", "disabled", "download", "expand", "fill", "form", "href", "mode", "rel", "routerAnimation", "routerDirection", "shape", "size", "strong", "target", "type"]
 })], IonButton);
 (() => {
@@ -4698,7 +1335,7 @@ var IonButtons = class IonButtons2 {
       collapse: "collapse"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonButtons_Template(rf, ctx) {
@@ -4711,7 +1348,7 @@ var IonButtons = class IonButtons2 {
     changeDetection: 0
   });
 };
-IonButtons = __decorate([ProxyCmp2({
+IonButtons = __decorate([ProxyCmp({
   inputs: ["collapse"]
 })], IonButtons);
 (() => {
@@ -4764,7 +1401,7 @@ var IonCard = class IonCard2 {
       type: "type"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonCard_Template(rf, ctx) {
@@ -4777,7 +1414,7 @@ var IonCard = class IonCard2 {
     changeDetection: 0
   });
 };
-IonCard = __decorate([ProxyCmp2({
+IonCard = __decorate([ProxyCmp({
   inputs: ["button", "color", "disabled", "download", "href", "mode", "rel", "routerAnimation", "routerDirection", "target", "type"]
 })], IonCard);
 (() => {
@@ -4820,7 +1457,7 @@ var IonCardContent = class IonCardContent2 {
       mode: "mode"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonCardContent_Template(rf, ctx) {
@@ -4833,7 +1470,7 @@ var IonCardContent = class IonCardContent2 {
     changeDetection: 0
   });
 };
-IonCardContent = __decorate([ProxyCmp2({
+IonCardContent = __decorate([ProxyCmp({
   inputs: ["mode"]
 })], IonCardContent);
 (() => {
@@ -4878,7 +1515,7 @@ var IonCardHeader = class IonCardHeader2 {
       translucent: "translucent"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonCardHeader_Template(rf, ctx) {
@@ -4891,7 +1528,7 @@ var IonCardHeader = class IonCardHeader2 {
     changeDetection: 0
   });
 };
-IonCardHeader = __decorate([ProxyCmp2({
+IonCardHeader = __decorate([ProxyCmp({
   inputs: ["color", "mode", "translucent"]
 })], IonCardHeader);
 (() => {
@@ -4935,7 +1572,7 @@ var IonCardSubtitle = class IonCardSubtitle2 {
       mode: "mode"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonCardSubtitle_Template(rf, ctx) {
@@ -4948,7 +1585,7 @@ var IonCardSubtitle = class IonCardSubtitle2 {
     changeDetection: 0
   });
 };
-IonCardSubtitle = __decorate([ProxyCmp2({
+IonCardSubtitle = __decorate([ProxyCmp({
   inputs: ["color", "mode"]
 })], IonCardSubtitle);
 (() => {
@@ -4992,7 +1629,7 @@ var IonCardTitle = class IonCardTitle2 {
       mode: "mode"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonCardTitle_Template(rf, ctx) {
@@ -5005,7 +1642,7 @@ var IonCardTitle = class IonCardTitle2 {
     changeDetection: 0
   });
 };
-IonCardTitle = __decorate([ProxyCmp2({
+IonCardTitle = __decorate([ProxyCmp({
   inputs: ["color", "mode"]
 })], IonCardTitle);
 (() => {
@@ -5035,7 +1672,7 @@ var IonCheckbox = class IonCheckbox2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionChange", "ionFocus", "ionBlur"]);
+    proxyOutputs(this, this.el, ["ionChange", "ionFocus", "ionBlur"]);
   }
   /** @nocollapse */
   static ɵfac = function IonCheckbox_Factory(__ngFactoryType__) {
@@ -5061,7 +1698,7 @@ var IonCheckbox = class IonCheckbox2 {
       value: "value"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonCheckbox_Template(rf, ctx) {
@@ -5074,7 +1711,7 @@ var IonCheckbox = class IonCheckbox2 {
     changeDetection: 0
   });
 };
-IonCheckbox = __decorate([ProxyCmp2({
+IonCheckbox = __decorate([ProxyCmp({
   inputs: ["alignment", "checked", "color", "disabled", "errorText", "helperText", "indeterminate", "justify", "labelPlacement", "mode", "name", "required", "value"]
 })], IonCheckbox);
 (() => {
@@ -5120,7 +1757,7 @@ var IonChip = class IonChip2 {
       outline: "outline"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonChip_Template(rf, ctx) {
@@ -5133,7 +1770,7 @@ var IonChip = class IonChip2 {
     changeDetection: 0
   });
 };
-IonChip = __decorate([ProxyCmp2({
+IonChip = __decorate([ProxyCmp({
   inputs: ["color", "disabled", "mode", "outline"]
 })], IonChip);
 (() => {
@@ -5199,7 +1836,7 @@ var IonCol = class IonCol2 {
       sizeXs: "sizeXs"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonCol_Template(rf, ctx) {
@@ -5212,7 +1849,7 @@ var IonCol = class IonCol2 {
     changeDetection: 0
   });
 };
-IonCol = __decorate([ProxyCmp2({
+IonCol = __decorate([ProxyCmp({
   inputs: ["offset", "offsetLg", "offsetMd", "offsetSm", "offsetXl", "offsetXs", "pull", "pullLg", "pullMd", "pullSm", "pullXl", "pullXs", "push", "pushLg", "pushMd", "pushSm", "pushXl", "pushXs", "size", "sizeLg", "sizeMd", "sizeSm", "sizeXl", "sizeXs"]
 })], IonCol);
 (() => {
@@ -5242,7 +1879,7 @@ var IonContent = class IonContent2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionScrollStart", "ionScroll", "ionScrollEnd"]);
+    proxyOutputs(this, this.el, ["ionScrollStart", "ionScroll", "ionScrollEnd"]);
   }
   /** @nocollapse */
   static ɵfac = function IonContent_Factory(__ngFactoryType__) {
@@ -5262,7 +1899,7 @@ var IonContent = class IonContent2 {
       scrollY: "scrollY"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonContent_Template(rf, ctx) {
@@ -5275,7 +1912,7 @@ var IonContent = class IonContent2 {
     changeDetection: 0
   });
 };
-IonContent = __decorate([ProxyCmp2({
+IonContent = __decorate([ProxyCmp({
   inputs: ["color", "fixedSlotPlacement", "forceOverscroll", "fullscreen", "scrollEvents", "scrollX", "scrollY"],
   methods: ["getScrollElement", "scrollToTop", "scrollToBottom", "scrollByPoint", "scrollToPoint"]
 })], IonContent);
@@ -5306,7 +1943,7 @@ var IonDatetime = class IonDatetime2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionCancel", "ionChange", "ionFocus", "ionBlur"]);
+    proxyOutputs(this, this.el, ["ionCancel", "ionChange", "ionFocus", "ionBlur"]);
   }
   /** @nocollapse */
   static ɵfac = function IonDatetime_Factory(__ngFactoryType__) {
@@ -5351,7 +1988,7 @@ var IonDatetime = class IonDatetime2 {
       yearValues: "yearValues"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonDatetime_Template(rf, ctx) {
@@ -5364,7 +2001,7 @@ var IonDatetime = class IonDatetime2 {
     changeDetection: 0
   });
 };
-IonDatetime = __decorate([ProxyCmp2({
+IonDatetime = __decorate([ProxyCmp({
   inputs: ["cancelText", "clearText", "color", "dayValues", "disabled", "doneText", "firstDayOfWeek", "formatOptions", "highlightedDates", "hourCycle", "hourValues", "isDateEnabled", "locale", "max", "min", "minuteValues", "mode", "monthValues", "multiple", "name", "preferWheel", "presentation", "readonly", "showAdjacentDays", "showClearButton", "showDefaultButtons", "showDefaultTimeLabel", "showDefaultTitle", "size", "titleSelectedDatesFormatter", "value", "yearValues"],
   methods: ["confirm", "reset", "cancel"]
 })], IonDatetime);
@@ -5411,7 +2048,7 @@ var IonDatetimeButton = class IonDatetimeButton2 {
       mode: "mode"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonDatetimeButton_Template(rf, ctx) {
@@ -5424,7 +2061,7 @@ var IonDatetimeButton = class IonDatetimeButton2 {
     changeDetection: 0
   });
 };
-IonDatetimeButton = __decorate([ProxyCmp2({
+IonDatetimeButton = __decorate([ProxyCmp({
   inputs: ["color", "datetime", "disabled", "mode"]
 })], IonDatetimeButton);
 (() => {
@@ -5470,7 +2107,7 @@ var IonFab = class IonFab2 {
       vertical: "vertical"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonFab_Template(rf, ctx) {
@@ -5483,7 +2120,7 @@ var IonFab = class IonFab2 {
     changeDetection: 0
   });
 };
-IonFab = __decorate([ProxyCmp2({
+IonFab = __decorate([ProxyCmp({
   inputs: ["activated", "edge", "horizontal", "vertical"],
   methods: ["close"]
 })], IonFab);
@@ -5514,7 +2151,7 @@ var IonFabButton = class IonFabButton2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionFocus", "ionBlur"]);
+    proxyOutputs(this, this.el, ["ionFocus", "ionBlur"]);
   }
   /** @nocollapse */
   static ɵfac = function IonFabButton_Factory(__ngFactoryType__) {
@@ -5542,7 +2179,7 @@ var IonFabButton = class IonFabButton2 {
       type: "type"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonFabButton_Template(rf, ctx) {
@@ -5555,7 +2192,7 @@ var IonFabButton = class IonFabButton2 {
     changeDetection: 0
   });
 };
-IonFabButton = __decorate([ProxyCmp2({
+IonFabButton = __decorate([ProxyCmp({
   inputs: ["activated", "closeIcon", "color", "disabled", "download", "href", "mode", "rel", "routerAnimation", "routerDirection", "show", "size", "target", "translucent", "type"]
 })], IonFabButton);
 (() => {
@@ -5599,7 +2236,7 @@ var IonFabList = class IonFabList2 {
       side: "side"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonFabList_Template(rf, ctx) {
@@ -5612,7 +2249,7 @@ var IonFabList = class IonFabList2 {
     changeDetection: 0
   });
 };
-IonFabList = __decorate([ProxyCmp2({
+IonFabList = __decorate([ProxyCmp({
   inputs: ["activated", "side"]
 })], IonFabList);
 (() => {
@@ -5657,7 +2294,7 @@ var IonFooter = class IonFooter2 {
       translucent: "translucent"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonFooter_Template(rf, ctx) {
@@ -5670,7 +2307,7 @@ var IonFooter = class IonFooter2 {
     changeDetection: 0
   });
 };
-IonFooter = __decorate([ProxyCmp2({
+IonFooter = __decorate([ProxyCmp({
   inputs: ["collapse", "mode", "translucent"]
 })], IonFooter);
 (() => {
@@ -5713,7 +2350,7 @@ var IonGrid = class IonGrid2 {
       fixed: "fixed"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonGrid_Template(rf, ctx) {
@@ -5726,7 +2363,7 @@ var IonGrid = class IonGrid2 {
     changeDetection: 0
   });
 };
-IonGrid = __decorate([ProxyCmp2({
+IonGrid = __decorate([ProxyCmp({
   inputs: ["fixed"]
 })], IonGrid);
 (() => {
@@ -5771,7 +2408,7 @@ var IonHeader = class IonHeader2 {
       translucent: "translucent"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonHeader_Template(rf, ctx) {
@@ -5784,7 +2421,7 @@ var IonHeader = class IonHeader2 {
     changeDetection: 0
   });
 };
-IonHeader = __decorate([ProxyCmp2({
+IonHeader = __decorate([ProxyCmp({
   inputs: ["collapse", "mode", "translucent"]
 })], IonHeader);
 (() => {
@@ -5837,7 +2474,7 @@ var IonIcon = class IonIcon2 {
       src: "src"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonIcon_Template(rf, ctx) {
@@ -5850,7 +2487,7 @@ var IonIcon = class IonIcon2 {
     changeDetection: 0
   });
 };
-IonIcon = __decorate([ProxyCmp2({
+IonIcon = __decorate([ProxyCmp({
   inputs: ["color", "flipRtl", "icon", "ios", "lazy", "md", "mode", "name", "sanitize", "size", "src"]
 })], IonIcon);
 (() => {
@@ -5880,7 +2517,7 @@ var IonImg = class IonImg2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionImgWillLoad", "ionImgDidLoad", "ionError"]);
+    proxyOutputs(this, this.el, ["ionImgWillLoad", "ionImgDidLoad", "ionError"]);
   }
   /** @nocollapse */
   static ɵfac = function IonImg_Factory(__ngFactoryType__) {
@@ -5895,7 +2532,7 @@ var IonImg = class IonImg2 {
       src: "src"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonImg_Template(rf, ctx) {
@@ -5908,7 +2545,7 @@ var IonImg = class IonImg2 {
     changeDetection: 0
   });
 };
-IonImg = __decorate([ProxyCmp2({
+IonImg = __decorate([ProxyCmp({
   inputs: ["alt", "src"]
 })], IonImg);
 (() => {
@@ -5938,7 +2575,7 @@ var IonInfiniteScroll = class IonInfiniteScroll2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionInfinite"]);
+    proxyOutputs(this, this.el, ["ionInfinite"]);
   }
   /** @nocollapse */
   static ɵfac = function IonInfiniteScroll_Factory(__ngFactoryType__) {
@@ -5954,7 +2591,7 @@ var IonInfiniteScroll = class IonInfiniteScroll2 {
       threshold: "threshold"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonInfiniteScroll_Template(rf, ctx) {
@@ -5967,7 +2604,7 @@ var IonInfiniteScroll = class IonInfiniteScroll2 {
     changeDetection: 0
   });
 };
-IonInfiniteScroll = __decorate([ProxyCmp2({
+IonInfiniteScroll = __decorate([ProxyCmp({
   inputs: ["disabled", "position", "threshold"],
   methods: ["complete"]
 })], IonInfiniteScroll);
@@ -6012,7 +2649,7 @@ var IonInfiniteScrollContent = class IonInfiniteScrollContent2 {
       loadingText: "loadingText"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonInfiniteScrollContent_Template(rf, ctx) {
@@ -6025,7 +2662,7 @@ var IonInfiniteScrollContent = class IonInfiniteScrollContent2 {
     changeDetection: 0
   });
 };
-IonInfiniteScrollContent = __decorate([ProxyCmp2({
+IonInfiniteScrollContent = __decorate([ProxyCmp({
   inputs: ["loadingSpinner", "loadingText"]
 })], IonInfiniteScrollContent);
 (() => {
@@ -6055,7 +2692,7 @@ var IonInput = class IonInput2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionInput", "ionChange", "ionBlur", "ionFocus"]);
+    proxyOutputs(this, this.el, ["ionInput", "ionChange", "ionBlur", "ionFocus"]);
   }
   /** @nocollapse */
   static ɵfac = function IonInput_Factory(__ngFactoryType__) {
@@ -6103,7 +2740,7 @@ var IonInput = class IonInput2 {
       value: "value"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonInput_Template(rf, ctx) {
@@ -6116,7 +2753,7 @@ var IonInput = class IonInput2 {
     changeDetection: 0
   });
 };
-IonInput = __decorate([ProxyCmp2({
+IonInput = __decorate([ProxyCmp({
   inputs: ["autocapitalize", "autocomplete", "autocorrect", "autofocus", "clearInput", "clearInputIcon", "clearOnEdit", "color", "counter", "counterFormatter", "debounce", "disabled", "enterkeyhint", "errorText", "fill", "helperText", "inputmode", "label", "labelPlacement", "max", "maxlength", "min", "minlength", "mode", "multiple", "name", "pattern", "placeholder", "readonly", "required", "shape", "spellcheck", "step", "type", "value"],
   methods: ["setFocus", "getInputElement"]
 })], IonInput);
@@ -6147,7 +2784,7 @@ var IonInputOtp = class IonInputOtp2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionInput", "ionChange", "ionComplete", "ionBlur", "ionFocus"]);
+    proxyOutputs(this, this.el, ["ionInput", "ionChange", "ionComplete", "ionBlur", "ionFocus"]);
   }
   /** @nocollapse */
   static ɵfac = function IonInputOtp_Factory(__ngFactoryType__) {
@@ -6173,7 +2810,7 @@ var IonInputOtp = class IonInputOtp2 {
       value: "value"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonInputOtp_Template(rf, ctx) {
@@ -6186,7 +2823,7 @@ var IonInputOtp = class IonInputOtp2 {
     changeDetection: 0
   });
 };
-IonInputOtp = __decorate([ProxyCmp2({
+IonInputOtp = __decorate([ProxyCmp({
   inputs: ["autocapitalize", "color", "disabled", "fill", "inputmode", "length", "pattern", "readonly", "separators", "shape", "size", "type", "value"],
   methods: ["setFocus"]
 })], IonInputOtp);
@@ -6233,7 +2870,7 @@ var IonInputPasswordToggle = class IonInputPasswordToggle2 {
       showIcon: "showIcon"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonInputPasswordToggle_Template(rf, ctx) {
@@ -6246,7 +2883,7 @@ var IonInputPasswordToggle = class IonInputPasswordToggle2 {
     changeDetection: 0
   });
 };
-IonInputPasswordToggle = __decorate([ProxyCmp2({
+IonInputPasswordToggle = __decorate([ProxyCmp({
   inputs: ["color", "hideIcon", "mode", "showIcon"]
 })], IonInputPasswordToggle);
 (() => {
@@ -6302,7 +2939,7 @@ var IonItem = class IonItem2 {
       type: "type"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonItem_Template(rf, ctx) {
@@ -6315,7 +2952,7 @@ var IonItem = class IonItem2 {
     changeDetection: 0
   });
 };
-IonItem = __decorate([ProxyCmp2({
+IonItem = __decorate([ProxyCmp({
   inputs: ["button", "color", "detail", "detailIcon", "disabled", "download", "href", "lines", "mode", "rel", "routerAnimation", "routerDirection", "target", "type"]
 })], IonItem);
 (() => {
@@ -6360,7 +2997,7 @@ var IonItemDivider = class IonItemDivider2 {
       sticky: "sticky"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonItemDivider_Template(rf, ctx) {
@@ -6373,7 +3010,7 @@ var IonItemDivider = class IonItemDivider2 {
     changeDetection: 0
   });
 };
-IonItemDivider = __decorate([ProxyCmp2({
+IonItemDivider = __decorate([ProxyCmp({
   inputs: ["color", "mode", "sticky"]
 })], IonItemDivider);
 (() => {
@@ -6413,7 +3050,7 @@ var IonItemGroup = class IonItemGroup2 {
     type: IonItemGroup2,
     selectors: [["ion-item-group"]],
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonItemGroup_Template(rf, ctx) {
@@ -6426,7 +3063,7 @@ var IonItemGroup = class IonItemGroup2 {
     changeDetection: 0
   });
 };
-IonItemGroup = __decorate([ProxyCmp2({})], IonItemGroup);
+IonItemGroup = __decorate([ProxyCmp({})], IonItemGroup);
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonItemGroup, [{
     type: Component,
@@ -6475,7 +3112,7 @@ var IonItemOption = class IonItemOption2 {
       type: "type"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonItemOption_Template(rf, ctx) {
@@ -6488,7 +3125,7 @@ var IonItemOption = class IonItemOption2 {
     changeDetection: 0
   });
 };
-IonItemOption = __decorate([ProxyCmp2({
+IonItemOption = __decorate([ProxyCmp({
   inputs: ["color", "disabled", "download", "expandable", "href", "mode", "rel", "target", "type"]
 })], IonItemOption);
 (() => {
@@ -6518,7 +3155,7 @@ var IonItemOptions = class IonItemOptions2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionSwipe"]);
+    proxyOutputs(this, this.el, ["ionSwipe"]);
   }
   /** @nocollapse */
   static ɵfac = function IonItemOptions_Factory(__ngFactoryType__) {
@@ -6532,7 +3169,7 @@ var IonItemOptions = class IonItemOptions2 {
       side: "side"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonItemOptions_Template(rf, ctx) {
@@ -6545,7 +3182,7 @@ var IonItemOptions = class IonItemOptions2 {
     changeDetection: 0
   });
 };
-IonItemOptions = __decorate([ProxyCmp2({
+IonItemOptions = __decorate([ProxyCmp({
   inputs: ["side"]
 })], IonItemOptions);
 (() => {
@@ -6575,7 +3212,7 @@ var IonItemSliding = class IonItemSliding2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionDrag"]);
+    proxyOutputs(this, this.el, ["ionDrag"]);
   }
   /** @nocollapse */
   static ɵfac = function IonItemSliding_Factory(__ngFactoryType__) {
@@ -6589,7 +3226,7 @@ var IonItemSliding = class IonItemSliding2 {
       disabled: "disabled"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonItemSliding_Template(rf, ctx) {
@@ -6602,7 +3239,7 @@ var IonItemSliding = class IonItemSliding2 {
     changeDetection: 0
   });
 };
-IonItemSliding = __decorate([ProxyCmp2({
+IonItemSliding = __decorate([ProxyCmp({
   inputs: ["disabled"],
   methods: ["getOpenAmount", "getSlidingRatio", "open", "close", "closeOpened"]
 })], IonItemSliding);
@@ -6648,7 +3285,7 @@ var IonLabel = class IonLabel2 {
       position: "position"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonLabel_Template(rf, ctx) {
@@ -6661,7 +3298,7 @@ var IonLabel = class IonLabel2 {
     changeDetection: 0
   });
 };
-IonLabel = __decorate([ProxyCmp2({
+IonLabel = __decorate([ProxyCmp({
   inputs: ["color", "mode", "position"]
 })], IonLabel);
 (() => {
@@ -6706,7 +3343,7 @@ var IonList = class IonList2 {
       mode: "mode"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonList_Template(rf, ctx) {
@@ -6719,7 +3356,7 @@ var IonList = class IonList2 {
     changeDetection: 0
   });
 };
-IonList = __decorate([ProxyCmp2({
+IonList = __decorate([ProxyCmp({
   inputs: ["inset", "lines", "mode"],
   methods: ["closeSlidingItems"]
 })], IonList);
@@ -6765,7 +3402,7 @@ var IonListHeader = class IonListHeader2 {
       mode: "mode"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonListHeader_Template(rf, ctx) {
@@ -6778,7 +3415,7 @@ var IonListHeader = class IonListHeader2 {
     changeDetection: 0
   });
 };
-IonListHeader = __decorate([ProxyCmp2({
+IonListHeader = __decorate([ProxyCmp({
   inputs: ["color", "lines", "mode"]
 })], IonListHeader);
 (() => {
@@ -6808,7 +3445,7 @@ var IonLoading = class IonLoading2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionLoadingDidPresent", "ionLoadingWillPresent", "ionLoadingWillDismiss", "ionLoadingDidDismiss", "didPresent", "willPresent", "willDismiss", "didDismiss"]);
+    proxyOutputs(this, this.el, ["ionLoadingDidPresent", "ionLoadingWillPresent", "ionLoadingWillDismiss", "ionLoadingDidDismiss", "didPresent", "willPresent", "willDismiss", "didDismiss"]);
   }
   /** @nocollapse */
   static ɵfac = function IonLoading_Factory(__ngFactoryType__) {
@@ -6836,7 +3473,7 @@ var IonLoading = class IonLoading2 {
       trigger: "trigger"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonLoading_Template(rf, ctx) {
@@ -6849,7 +3486,7 @@ var IonLoading = class IonLoading2 {
     changeDetection: 0
   });
 };
-IonLoading = __decorate([ProxyCmp2({
+IonLoading = __decorate([ProxyCmp({
   inputs: ["animated", "backdropDismiss", "cssClass", "duration", "enterAnimation", "htmlAttributes", "isOpen", "keyboardClose", "leaveAnimation", "message", "mode", "showBackdrop", "spinner", "translucent", "trigger"],
   methods: ["present", "dismiss", "onDidDismiss", "onWillDismiss"]
 })], IonLoading);
@@ -6880,7 +3517,7 @@ var IonMenu = class IonMenu2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionWillOpen", "ionWillClose", "ionDidOpen", "ionDidClose"]);
+    proxyOutputs(this, this.el, ["ionWillOpen", "ionWillClose", "ionDidOpen", "ionDidClose"]);
   }
   /** @nocollapse */
   static ɵfac = function IonMenu_Factory(__ngFactoryType__) {
@@ -6900,7 +3537,7 @@ var IonMenu = class IonMenu2 {
       type: "type"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonMenu_Template(rf, ctx) {
@@ -6913,7 +3550,7 @@ var IonMenu = class IonMenu2 {
     changeDetection: 0
   });
 };
-IonMenu = __decorate([ProxyCmp2({
+IonMenu = __decorate([ProxyCmp({
   inputs: ["contentId", "disabled", "maxEdgeStart", "menuId", "side", "swipeGesture", "type"],
   methods: ["isOpen", "isActive", "open", "close", "toggle", "setOpen"]
 })], IonMenu);
@@ -6962,7 +3599,7 @@ var IonMenuButton = class IonMenuButton2 {
       type: "type"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonMenuButton_Template(rf, ctx) {
@@ -6975,7 +3612,7 @@ var IonMenuButton = class IonMenuButton2 {
     changeDetection: 0
   });
 };
-IonMenuButton = __decorate([ProxyCmp2({
+IonMenuButton = __decorate([ProxyCmp({
   inputs: ["autoHide", "color", "disabled", "menu", "mode", "type"]
 })], IonMenuButton);
 (() => {
@@ -7019,7 +3656,7 @@ var IonMenuToggle = class IonMenuToggle2 {
       menu: "menu"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonMenuToggle_Template(rf, ctx) {
@@ -7032,7 +3669,7 @@ var IonMenuToggle = class IonMenuToggle2 {
     changeDetection: 0
   });
 };
-IonMenuToggle = __decorate([ProxyCmp2({
+IonMenuToggle = __decorate([ProxyCmp({
   inputs: ["autoHide", "menu"]
 })], IonMenuToggle);
 (() => {
@@ -7078,7 +3715,7 @@ var IonNavLink = class IonNavLink2 {
       routerDirection: "routerDirection"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonNavLink_Template(rf, ctx) {
@@ -7091,7 +3728,7 @@ var IonNavLink = class IonNavLink2 {
     changeDetection: 0
   });
 };
-IonNavLink = __decorate([ProxyCmp2({
+IonNavLink = __decorate([ProxyCmp({
   inputs: ["component", "componentProps", "routerAnimation", "routerDirection"]
 })], IonNavLink);
 (() => {
@@ -7135,7 +3772,7 @@ var IonNote = class IonNote2 {
       mode: "mode"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonNote_Template(rf, ctx) {
@@ -7148,7 +3785,7 @@ var IonNote = class IonNote2 {
     changeDetection: 0
   });
 };
-IonNote = __decorate([ProxyCmp2({
+IonNote = __decorate([ProxyCmp({
   inputs: ["color", "mode"]
 })], IonNote);
 (() => {
@@ -7191,7 +3828,7 @@ var IonPicker = class IonPicker2 {
       mode: "mode"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonPicker_Template(rf, ctx) {
@@ -7204,7 +3841,7 @@ var IonPicker = class IonPicker2 {
     changeDetection: 0
   });
 };
-IonPicker = __decorate([ProxyCmp2({
+IonPicker = __decorate([ProxyCmp({
   inputs: ["mode"]
 })], IonPicker);
 (() => {
@@ -7234,7 +3871,7 @@ var IonPickerColumn = class IonPickerColumn2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionChange"]);
+    proxyOutputs(this, this.el, ["ionChange"]);
   }
   /** @nocollapse */
   static ɵfac = function IonPickerColumn_Factory(__ngFactoryType__) {
@@ -7251,7 +3888,7 @@ var IonPickerColumn = class IonPickerColumn2 {
       value: "value"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonPickerColumn_Template(rf, ctx) {
@@ -7264,7 +3901,7 @@ var IonPickerColumn = class IonPickerColumn2 {
     changeDetection: 0
   });
 };
-IonPickerColumn = __decorate([ProxyCmp2({
+IonPickerColumn = __decorate([ProxyCmp({
   inputs: ["color", "disabled", "mode", "value"],
   methods: ["setFocus"]
 })], IonPickerColumn);
@@ -7310,7 +3947,7 @@ var IonPickerColumnOption = class IonPickerColumnOption2 {
       value: "value"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonPickerColumnOption_Template(rf, ctx) {
@@ -7323,7 +3960,7 @@ var IonPickerColumnOption = class IonPickerColumnOption2 {
     changeDetection: 0
   });
 };
-IonPickerColumnOption = __decorate([ProxyCmp2({
+IonPickerColumnOption = __decorate([ProxyCmp({
   inputs: ["color", "disabled", "value"]
 })], IonPickerColumnOption);
 (() => {
@@ -7353,7 +3990,7 @@ var IonPickerLegacy = class IonPickerLegacy2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionPickerDidPresent", "ionPickerWillPresent", "ionPickerWillDismiss", "ionPickerDidDismiss", "didPresent", "willPresent", "willDismiss", "didDismiss"]);
+    proxyOutputs(this, this.el, ["ionPickerDidPresent", "ionPickerWillPresent", "ionPickerWillDismiss", "ionPickerDidDismiss", "didPresent", "willPresent", "willDismiss", "didDismiss"]);
   }
   /** @nocollapse */
   static ɵfac = function IonPickerLegacy_Factory(__ngFactoryType__) {
@@ -7380,7 +4017,7 @@ var IonPickerLegacy = class IonPickerLegacy2 {
       trigger: "trigger"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonPickerLegacy_Template(rf, ctx) {
@@ -7393,7 +4030,7 @@ var IonPickerLegacy = class IonPickerLegacy2 {
     changeDetection: 0
   });
 };
-IonPickerLegacy = __decorate([ProxyCmp2({
+IonPickerLegacy = __decorate([ProxyCmp({
   inputs: ["animated", "backdropDismiss", "buttons", "columns", "cssClass", "duration", "enterAnimation", "htmlAttributes", "isOpen", "keyboardClose", "leaveAnimation", "mode", "showBackdrop", "trigger"],
   methods: ["present", "dismiss", "onDidDismiss", "onWillDismiss", "getColumn"]
 })], IonPickerLegacy);
@@ -7442,7 +4079,7 @@ var IonProgressBar = class IonProgressBar2 {
       value: "value"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonProgressBar_Template(rf, ctx) {
@@ -7455,7 +4092,7 @@ var IonProgressBar = class IonProgressBar2 {
     changeDetection: 0
   });
 };
-IonProgressBar = __decorate([ProxyCmp2({
+IonProgressBar = __decorate([ProxyCmp({
   inputs: ["buffer", "color", "mode", "reversed", "type", "value"]
 })], IonProgressBar);
 (() => {
@@ -7485,7 +4122,7 @@ var IonRadio = class IonRadio2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionFocus", "ionBlur"]);
+    proxyOutputs(this, this.el, ["ionFocus", "ionBlur"]);
   }
   /** @nocollapse */
   static ɵfac = function IonRadio_Factory(__ngFactoryType__) {
@@ -7506,7 +4143,7 @@ var IonRadio = class IonRadio2 {
       value: "value"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonRadio_Template(rf, ctx) {
@@ -7519,7 +4156,7 @@ var IonRadio = class IonRadio2 {
     changeDetection: 0
   });
 };
-IonRadio = __decorate([ProxyCmp2({
+IonRadio = __decorate([ProxyCmp({
   inputs: ["alignment", "color", "disabled", "justify", "labelPlacement", "mode", "name", "value"]
 })], IonRadio);
 (() => {
@@ -7549,7 +4186,7 @@ var IonRadioGroup = class IonRadioGroup2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionChange"]);
+    proxyOutputs(this, this.el, ["ionChange"]);
   }
   /** @nocollapse */
   static ɵfac = function IonRadioGroup_Factory(__ngFactoryType__) {
@@ -7568,7 +4205,7 @@ var IonRadioGroup = class IonRadioGroup2 {
       value: "value"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonRadioGroup_Template(rf, ctx) {
@@ -7581,7 +4218,7 @@ var IonRadioGroup = class IonRadioGroup2 {
     changeDetection: 0
   });
 };
-IonRadioGroup = __decorate([ProxyCmp2({
+IonRadioGroup = __decorate([ProxyCmp({
   inputs: ["allowEmptySelection", "compareWith", "errorText", "helperText", "name", "value"]
 })], IonRadioGroup);
 (() => {
@@ -7611,7 +4248,7 @@ var IonRange = class IonRange2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionChange", "ionInput", "ionFocus", "ionBlur", "ionKnobMoveStart", "ionKnobMoveEnd"]);
+    proxyOutputs(this, this.el, ["ionChange", "ionInput", "ionFocus", "ionBlur", "ionKnobMoveStart", "ionKnobMoveEnd"]);
   }
   /** @nocollapse */
   static ɵfac = function IonRange_Factory(__ngFactoryType__) {
@@ -7641,7 +4278,7 @@ var IonRange = class IonRange2 {
       value: "value"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonRange_Template(rf, ctx) {
@@ -7654,7 +4291,7 @@ var IonRange = class IonRange2 {
     changeDetection: 0
   });
 };
-IonRange = __decorate([ProxyCmp2({
+IonRange = __decorate([ProxyCmp({
   inputs: ["activeBarStart", "color", "debounce", "disabled", "dualKnobs", "label", "labelPlacement", "max", "min", "mode", "name", "pin", "pinFormatter", "snaps", "step", "ticks", "value"]
 })], IonRange);
 (() => {
@@ -7684,7 +4321,7 @@ var IonRefresher = class IonRefresher2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionRefresh", "ionPull", "ionStart"]);
+    proxyOutputs(this, this.el, ["ionRefresh", "ionPull", "ionStart"]);
   }
   /** @nocollapse */
   static ɵfac = function IonRefresher_Factory(__ngFactoryType__) {
@@ -7704,7 +4341,7 @@ var IonRefresher = class IonRefresher2 {
       snapbackDuration: "snapbackDuration"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonRefresher_Template(rf, ctx) {
@@ -7717,7 +4354,7 @@ var IonRefresher = class IonRefresher2 {
     changeDetection: 0
   });
 };
-IonRefresher = __decorate([ProxyCmp2({
+IonRefresher = __decorate([ProxyCmp({
   inputs: ["closeDuration", "disabled", "mode", "pullFactor", "pullMax", "pullMin", "snapbackDuration"],
   methods: ["complete", "cancel", "getProgress"]
 })], IonRefresher);
@@ -7764,7 +4401,7 @@ var IonRefresherContent = class IonRefresherContent2 {
       refreshingText: "refreshingText"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonRefresherContent_Template(rf, ctx) {
@@ -7777,7 +4414,7 @@ var IonRefresherContent = class IonRefresherContent2 {
     changeDetection: 0
   });
 };
-IonRefresherContent = __decorate([ProxyCmp2({
+IonRefresherContent = __decorate([ProxyCmp({
   inputs: ["pullingIcon", "pullingText", "refreshingSpinner", "refreshingText"]
 })], IonRefresherContent);
 (() => {
@@ -7817,7 +4454,7 @@ var IonReorder = class IonReorder2 {
     type: IonReorder2,
     selectors: [["ion-reorder"]],
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonReorder_Template(rf, ctx) {
@@ -7830,7 +4467,7 @@ var IonReorder = class IonReorder2 {
     changeDetection: 0
   });
 };
-IonReorder = __decorate([ProxyCmp2({})], IonReorder);
+IonReorder = __decorate([ProxyCmp({})], IonReorder);
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonReorder, [{
     type: Component,
@@ -7858,7 +4495,7 @@ var IonReorderGroup = class IonReorderGroup2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionItemReorder", "ionReorderStart", "ionReorderMove", "ionReorderEnd"]);
+    proxyOutputs(this, this.el, ["ionItemReorder", "ionReorderStart", "ionReorderMove", "ionReorderEnd"]);
   }
   /** @nocollapse */
   static ɵfac = function IonReorderGroup_Factory(__ngFactoryType__) {
@@ -7872,7 +4509,7 @@ var IonReorderGroup = class IonReorderGroup2 {
       disabled: "disabled"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonReorderGroup_Template(rf, ctx) {
@@ -7885,7 +4522,7 @@ var IonReorderGroup = class IonReorderGroup2 {
     changeDetection: 0
   });
 };
-IonReorderGroup = __decorate([ProxyCmp2({
+IonReorderGroup = __decorate([ProxyCmp({
   inputs: ["disabled"],
   methods: ["complete"]
 })], IonReorderGroup);
@@ -7929,7 +4566,7 @@ var IonRippleEffect = class IonRippleEffect2 {
       type: "type"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonRippleEffect_Template(rf, ctx) {
@@ -7942,7 +4579,7 @@ var IonRippleEffect = class IonRippleEffect2 {
     changeDetection: 0
   });
 };
-IonRippleEffect = __decorate([ProxyCmp2({
+IonRippleEffect = __decorate([ProxyCmp({
   inputs: ["type"],
   methods: ["addRipple"]
 })], IonRippleEffect);
@@ -7983,7 +4620,7 @@ var IonRow = class IonRow2 {
     type: IonRow2,
     selectors: [["ion-row"]],
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonRow_Template(rf, ctx) {
@@ -7996,7 +4633,7 @@ var IonRow = class IonRow2 {
     changeDetection: 0
   });
 };
-IonRow = __decorate([ProxyCmp2({})], IonRow);
+IonRow = __decorate([ProxyCmp({})], IonRow);
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonRow, [{
     type: Component,
@@ -8024,7 +4661,7 @@ var IonSearchbar = class IonSearchbar2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionInput", "ionChange", "ionCancel", "ionClear", "ionBlur", "ionFocus"]);
+    proxyOutputs(this, this.el, ["ionInput", "ionChange", "ionCancel", "ionClear", "ionBlur", "ionFocus"]);
   }
   /** @nocollapse */
   static ɵfac = function IonSearchbar_Factory(__ngFactoryType__) {
@@ -8060,7 +4697,7 @@ var IonSearchbar = class IonSearchbar2 {
       value: "value"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonSearchbar_Template(rf, ctx) {
@@ -8073,7 +4710,7 @@ var IonSearchbar = class IonSearchbar2 {
     changeDetection: 0
   });
 };
-IonSearchbar = __decorate([ProxyCmp2({
+IonSearchbar = __decorate([ProxyCmp({
   inputs: ["animated", "autocapitalize", "autocomplete", "autocorrect", "cancelButtonIcon", "cancelButtonText", "clearIcon", "color", "debounce", "disabled", "enterkeyhint", "inputmode", "maxlength", "minlength", "mode", "name", "placeholder", "searchIcon", "showCancelButton", "showClearButton", "spellcheck", "type", "value"],
   methods: ["setFocus", "getInputElement"]
 })], IonSearchbar);
@@ -8104,7 +4741,7 @@ var IonSegment = class IonSegment2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionChange"]);
+    proxyOutputs(this, this.el, ["ionChange"]);
   }
   /** @nocollapse */
   static ɵfac = function IonSegment_Factory(__ngFactoryType__) {
@@ -8124,7 +4761,7 @@ var IonSegment = class IonSegment2 {
       value: "value"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonSegment_Template(rf, ctx) {
@@ -8137,7 +4774,7 @@ var IonSegment = class IonSegment2 {
     changeDetection: 0
   });
 };
-IonSegment = __decorate([ProxyCmp2({
+IonSegment = __decorate([ProxyCmp({
   inputs: ["color", "disabled", "mode", "scrollable", "selectOnFocus", "swipeGesture", "value"]
 })], IonSegment);
 (() => {
@@ -8185,7 +4822,7 @@ var IonSegmentButton = class IonSegmentButton2 {
       value: "value"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonSegmentButton_Template(rf, ctx) {
@@ -8198,7 +4835,7 @@ var IonSegmentButton = class IonSegmentButton2 {
     changeDetection: 0
   });
 };
-IonSegmentButton = __decorate([ProxyCmp2({
+IonSegmentButton = __decorate([ProxyCmp({
   inputs: ["contentId", "disabled", "layout", "mode", "type", "value"]
 })], IonSegmentButton);
 (() => {
@@ -8238,7 +4875,7 @@ var IonSegmentContent = class IonSegmentContent2 {
     type: IonSegmentContent2,
     selectors: [["ion-segment-content"]],
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonSegmentContent_Template(rf, ctx) {
@@ -8251,7 +4888,7 @@ var IonSegmentContent = class IonSegmentContent2 {
     changeDetection: 0
   });
 };
-IonSegmentContent = __decorate([ProxyCmp2({})], IonSegmentContent);
+IonSegmentContent = __decorate([ProxyCmp({})], IonSegmentContent);
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonSegmentContent, [{
     type: Component,
@@ -8279,7 +4916,7 @@ var IonSegmentView = class IonSegmentView2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionSegmentViewScroll"]);
+    proxyOutputs(this, this.el, ["ionSegmentViewScroll"]);
   }
   /** @nocollapse */
   static ɵfac = function IonSegmentView_Factory(__ngFactoryType__) {
@@ -8293,7 +4930,7 @@ var IonSegmentView = class IonSegmentView2 {
       disabled: "disabled"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonSegmentView_Template(rf, ctx) {
@@ -8306,7 +4943,7 @@ var IonSegmentView = class IonSegmentView2 {
     changeDetection: 0
   });
 };
-IonSegmentView = __decorate([ProxyCmp2({
+IonSegmentView = __decorate([ProxyCmp({
   inputs: ["disabled"]
 })], IonSegmentView);
 (() => {
@@ -8336,7 +4973,7 @@ var IonSelect = class IonSelect2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionChange", "ionCancel", "ionDismiss", "ionFocus", "ionBlur"]);
+    proxyOutputs(this, this.el, ["ionChange", "ionCancel", "ionDismiss", "ionFocus", "ionBlur"]);
   }
   /** @nocollapse */
   static ɵfac = function IonSelect_Factory(__ngFactoryType__) {
@@ -8372,7 +5009,7 @@ var IonSelect = class IonSelect2 {
       value: "value"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonSelect_Template(rf, ctx) {
@@ -8385,7 +5022,7 @@ var IonSelect = class IonSelect2 {
     changeDetection: 0
   });
 };
-IonSelect = __decorate([ProxyCmp2({
+IonSelect = __decorate([ProxyCmp({
   inputs: ["cancelText", "color", "compareWith", "disabled", "errorText", "expandedIcon", "fill", "helperText", "interface", "interfaceOptions", "justify", "label", "labelPlacement", "mode", "multiple", "name", "okText", "placeholder", "required", "selectedText", "shape", "toggleIcon", "value"],
   methods: ["open"]
 })], IonSelect);
@@ -8431,7 +5068,7 @@ var IonSelectModal = class IonSelectModal2 {
       options: "options"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonSelectModal_Template(rf, ctx) {
@@ -8444,7 +5081,7 @@ var IonSelectModal = class IonSelectModal2 {
     changeDetection: 0
   });
 };
-IonSelectModal = __decorate([ProxyCmp2({
+IonSelectModal = __decorate([ProxyCmp({
   inputs: ["header", "multiple", "options"]
 })], IonSelectModal);
 (() => {
@@ -8488,7 +5125,7 @@ var IonSelectOption = class IonSelectOption2 {
       value: "value"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonSelectOption_Template(rf, ctx) {
@@ -8501,7 +5138,7 @@ var IonSelectOption = class IonSelectOption2 {
     changeDetection: 0
   });
 };
-IonSelectOption = __decorate([ProxyCmp2({
+IonSelectOption = __decorate([ProxyCmp({
   inputs: ["disabled", "value"]
 })], IonSelectOption);
 (() => {
@@ -8544,7 +5181,7 @@ var IonSkeletonText = class IonSkeletonText2 {
       animated: "animated"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonSkeletonText_Template(rf, ctx) {
@@ -8557,7 +5194,7 @@ var IonSkeletonText = class IonSkeletonText2 {
     changeDetection: 0
   });
 };
-IonSkeletonText = __decorate([ProxyCmp2({
+IonSkeletonText = __decorate([ProxyCmp({
   inputs: ["animated"]
 })], IonSkeletonText);
 (() => {
@@ -8603,7 +5240,7 @@ var IonSpinner = class IonSpinner2 {
       paused: "paused"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonSpinner_Template(rf, ctx) {
@@ -8616,7 +5253,7 @@ var IonSpinner = class IonSpinner2 {
     changeDetection: 0
   });
 };
-IonSpinner = __decorate([ProxyCmp2({
+IonSpinner = __decorate([ProxyCmp({
   inputs: ["color", "duration", "name", "paused"]
 })], IonSpinner);
 (() => {
@@ -8646,7 +5283,7 @@ var IonSplitPane = class IonSplitPane2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionSplitPaneVisible"]);
+    proxyOutputs(this, this.el, ["ionSplitPaneVisible"]);
   }
   /** @nocollapse */
   static ɵfac = function IonSplitPane_Factory(__ngFactoryType__) {
@@ -8662,7 +5299,7 @@ var IonSplitPane = class IonSplitPane2 {
       when: "when"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonSplitPane_Template(rf, ctx) {
@@ -8675,7 +5312,7 @@ var IonSplitPane = class IonSplitPane2 {
     changeDetection: 0
   });
 };
-IonSplitPane = __decorate([ProxyCmp2({
+IonSplitPane = __decorate([ProxyCmp({
   inputs: ["contentId", "disabled", "when"]
 })], IonSplitPane);
 (() => {
@@ -8719,7 +5356,7 @@ var IonTab = class IonTab2 {
       tab: "tab"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonTab_Template(rf, ctx) {
@@ -8732,7 +5369,7 @@ var IonTab = class IonTab2 {
     changeDetection: 0
   });
 };
-IonTab = __decorate([ProxyCmp2({
+IonTab = __decorate([ProxyCmp({
   inputs: ["component", "tab"],
   methods: ["setActive"]
 })], IonTab);
@@ -8779,7 +5416,7 @@ var IonTabBar = class IonTabBar2 {
       translucent: "translucent"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonTabBar_Template(rf, ctx) {
@@ -8792,7 +5429,7 @@ var IonTabBar = class IonTabBar2 {
     changeDetection: 0
   });
 };
-IonTabBar = __decorate([ProxyCmp2({
+IonTabBar = __decorate([ProxyCmp({
   inputs: ["color", "mode", "selectedTab", "translucent"]
 })], IonTabBar);
 (() => {
@@ -8843,7 +5480,7 @@ var IonTabButton = class IonTabButton2 {
       target: "target"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonTabButton_Template(rf, ctx) {
@@ -8856,7 +5493,7 @@ var IonTabButton = class IonTabButton2 {
     changeDetection: 0
   });
 };
-IonTabButton = __decorate([ProxyCmp2({
+IonTabButton = __decorate([ProxyCmp({
   inputs: ["disabled", "download", "href", "layout", "mode", "rel", "selected", "tab", "target"]
 })], IonTabButton);
 (() => {
@@ -8900,7 +5537,7 @@ var IonText = class IonText2 {
       mode: "mode"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonText_Template(rf, ctx) {
@@ -8913,7 +5550,7 @@ var IonText = class IonText2 {
     changeDetection: 0
   });
 };
-IonText = __decorate([ProxyCmp2({
+IonText = __decorate([ProxyCmp({
   inputs: ["color", "mode"]
 })], IonText);
 (() => {
@@ -8943,7 +5580,7 @@ var IonTextarea = class IonTextarea2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionChange", "ionInput", "ionBlur", "ionFocus"]);
+    proxyOutputs(this, this.el, ["ionChange", "ionInput", "ionBlur", "ionFocus"]);
   }
   /** @nocollapse */
   static ɵfac = function IonTextarea_Factory(__ngFactoryType__) {
@@ -8985,7 +5622,7 @@ var IonTextarea = class IonTextarea2 {
       wrap: "wrap"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonTextarea_Template(rf, ctx) {
@@ -8998,7 +5635,7 @@ var IonTextarea = class IonTextarea2 {
     changeDetection: 0
   });
 };
-IonTextarea = __decorate([ProxyCmp2({
+IonTextarea = __decorate([ProxyCmp({
   inputs: ["autoGrow", "autocapitalize", "autofocus", "clearOnEdit", "color", "cols", "counter", "counterFormatter", "debounce", "disabled", "enterkeyhint", "errorText", "fill", "helperText", "inputmode", "label", "labelPlacement", "maxlength", "minlength", "mode", "name", "placeholder", "readonly", "required", "rows", "shape", "spellcheck", "value", "wrap"],
   methods: ["setFocus", "getInputElement"]
 })], IonTextarea);
@@ -9039,7 +5676,7 @@ var IonThumbnail = class IonThumbnail2 {
     type: IonThumbnail2,
     selectors: [["ion-thumbnail"]],
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonThumbnail_Template(rf, ctx) {
@@ -9052,7 +5689,7 @@ var IonThumbnail = class IonThumbnail2 {
     changeDetection: 0
   });
 };
-IonThumbnail = __decorate([ProxyCmp2({})], IonThumbnail);
+IonThumbnail = __decorate([ProxyCmp({})], IonThumbnail);
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonThumbnail, [{
     type: Component,
@@ -9094,7 +5731,7 @@ var IonTitle = class IonTitle2 {
       size: "size"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonTitle_Template(rf, ctx) {
@@ -9107,7 +5744,7 @@ var IonTitle = class IonTitle2 {
     changeDetection: 0
   });
 };
-IonTitle = __decorate([ProxyCmp2({
+IonTitle = __decorate([ProxyCmp({
   inputs: ["color", "size"]
 })], IonTitle);
 (() => {
@@ -9137,7 +5774,7 @@ var IonToast = class IonToast2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionToastDidPresent", "ionToastWillPresent", "ionToastWillDismiss", "ionToastDidDismiss", "didPresent", "willPresent", "willDismiss", "didDismiss"]);
+    proxyOutputs(this, this.el, ["ionToastDidPresent", "ionToastWillPresent", "ionToastWillDismiss", "ionToastDidDismiss", "didPresent", "willPresent", "willDismiss", "didDismiss"]);
   }
   /** @nocollapse */
   static ɵfac = function IonToast_Factory(__ngFactoryType__) {
@@ -9170,7 +5807,7 @@ var IonToast = class IonToast2 {
       trigger: "trigger"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonToast_Template(rf, ctx) {
@@ -9183,7 +5820,7 @@ var IonToast = class IonToast2 {
     changeDetection: 0
   });
 };
-IonToast = __decorate([ProxyCmp2({
+IonToast = __decorate([ProxyCmp({
   inputs: ["animated", "buttons", "color", "cssClass", "duration", "enterAnimation", "header", "htmlAttributes", "icon", "isOpen", "keyboardClose", "layout", "leaveAnimation", "message", "mode", "position", "positionAnchor", "swipeGesture", "translucent", "trigger"],
   methods: ["present", "dismiss", "onDidDismiss", "onWillDismiss"]
 })], IonToast);
@@ -9214,7 +5851,7 @@ var IonToggle = class IonToggle2 {
     this.z = z;
     c.detach();
     this.el = r.nativeElement;
-    proxyOutputs2(this, this.el, ["ionChange", "ionFocus", "ionBlur"]);
+    proxyOutputs(this, this.el, ["ionChange", "ionFocus", "ionBlur"]);
   }
   /** @nocollapse */
   static ɵfac = function IonToggle_Factory(__ngFactoryType__) {
@@ -9240,7 +5877,7 @@ var IonToggle = class IonToggle2 {
       value: "value"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonToggle_Template(rf, ctx) {
@@ -9253,7 +5890,7 @@ var IonToggle = class IonToggle2 {
     changeDetection: 0
   });
 };
-IonToggle = __decorate([ProxyCmp2({
+IonToggle = __decorate([ProxyCmp({
   inputs: ["alignment", "checked", "color", "disabled", "enableOnOffLabels", "errorText", "helperText", "justify", "labelPlacement", "mode", "name", "required", "value"]
 })], IonToggle);
 (() => {
@@ -9297,7 +5934,7 @@ var IonToolbar = class IonToolbar2 {
       mode: "mode"
     },
     standalone: false,
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonToolbar_Template(rf, ctx) {
@@ -9310,7 +5947,7 @@ var IonToolbar = class IonToolbar2 {
     changeDetection: 0
   });
 };
-IonToolbar = __decorate([ProxyCmp2({
+IonToolbar = __decorate([ProxyCmp({
   inputs: ["color", "mode"]
 })], IonToolbar);
 (() => {
@@ -9372,7 +6009,7 @@ var IonRouterOutlet2 = class _IonRouterOutlet extends IonRouterOutlet {
     },
     standalone: false,
     features: [ɵɵInheritDefinitionFeature],
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 3,
     vars: 0,
     consts: [["outletContent", ""]],
@@ -9546,9 +6183,9 @@ var IonTabs2 = class _IonTabs extends IonTabs {
     }]
   });
 })();
-var IonBackButton3 = class _IonBackButton extends IonBackButton {
-  constructor(routerOutlet, navCtrl, config2, r, z, c) {
-    super(routerOutlet, navCtrl, config2, r, z, c);
+var IonBackButton2 = class _IonBackButton extends IonBackButton {
+  constructor(routerOutlet, navCtrl, config, r, z, c) {
+    super(routerOutlet, navCtrl, config, r, z, c);
   }
   /** @nocollapse */
   static ɵfac = function IonBackButton_Factory(__ngFactoryType__) {
@@ -9560,7 +6197,7 @@ var IonBackButton3 = class _IonBackButton extends IonBackButton {
     selectors: [["ion-back-button"]],
     standalone: false,
     features: [ɵɵInheritDefinitionFeature],
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonBackButton_Template(rf, ctx) {
@@ -9574,7 +6211,7 @@ var IonBackButton3 = class _IonBackButton extends IonBackButton {
   });
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonBackButton3, [{
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonBackButton2, [{
     type: Component,
     args: [{
       selector: "ion-back-button",
@@ -9600,7 +6237,7 @@ var IonBackButton3 = class _IonBackButton extends IonBackButton {
     }];
   }, null);
 })();
-var IonNav3 = class _IonNav extends IonNav {
+var IonNav2 = class _IonNav extends IonNav {
   constructor(ref, environmentInjector, injector, angularDelegate, z, c) {
     super(ref, environmentInjector, injector, angularDelegate, z, c);
   }
@@ -9614,7 +6251,7 @@ var IonNav3 = class _IonNav extends IonNav {
     selectors: [["ion-nav"]],
     standalone: false,
     features: [ɵɵInheritDefinitionFeature],
-    ngContentSelectors: _c02,
+    ngContentSelectors: _c0,
     decls: 1,
     vars: 0,
     template: function IonNav_Template(rf, ctx) {
@@ -9628,7 +6265,7 @@ var IonNav3 = class _IonNav extends IonNav {
   });
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonNav3, [{
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonNav2, [{
     type: Component,
     args: [{
       selector: "ion-nav",
@@ -9699,7 +6336,7 @@ var RouterLinkWithHrefDelegateDirective2 = class _RouterLinkWithHrefDelegateDire
     }]
   }], null, null);
 })();
-var IonModal3 = class _IonModal extends IonModal {
+var IonModal2 = class _IonModal extends IonModal {
   /** @nocollapse */
   static ɵfac = /* @__PURE__ */ (() => {
     let ɵIonModal_BaseFactory;
@@ -9730,7 +6367,7 @@ var IonModal3 = class _IonModal extends IonModal {
   });
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonModal3, [{
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonModal2, [{
     type: Component,
     args: [{
       selector: "ion-modal",
@@ -9741,7 +6378,7 @@ var IonModal3 = class _IonModal extends IonModal {
     }]
   }], null, null);
 })();
-var IonPopover3 = class _IonPopover extends IonPopover {
+var IonPopover2 = class _IonPopover extends IonPopover {
   /** @nocollapse */
   static ɵfac = /* @__PURE__ */ (() => {
     let ɵIonPopover_BaseFactory;
@@ -9772,7 +6409,7 @@ var IonPopover3 = class _IonPopover extends IonPopover {
   });
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonPopover3, [{
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonPopover2, [{
     type: Component,
     args: [{
       selector: "ion-popover",
@@ -9891,7 +6528,7 @@ var AnimationController = class _AnimationController {
    * Create a new animation
    */
   create(animationId) {
-    return createAnimation2(animationId);
+    return createAnimation(animationId);
   }
   /**
    * EXPERIMENTAL
@@ -9954,7 +6591,7 @@ var ActionSheetController = class _ActionSheetController extends OverlayBaseCont
     return [];
   }, null);
 })();
-var GestureController2 = class _GestureController {
+var GestureController = class _GestureController {
   zone;
   constructor(zone) {
     this.zone = zone;
@@ -9985,7 +6622,7 @@ var GestureController2 = class _GestureController {
   });
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(GestureController2, [{
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(GestureController, [{
     type: Injectable,
     args: [{
       providedIn: "root"
@@ -10138,15 +6775,15 @@ var ToastController = class _ToastController extends OverlayBaseController {
     return [];
   }, null);
 })();
-var appInitialize = (config2, doc2, zone) => {
+var appInitialize = (config, doc, zone) => {
   return () => {
-    const win2 = doc2.defaultView;
-    if (win2 && typeof window !== "undefined") {
-      setupConfig(__spreadProps(__spreadValues({}, config2), {
+    const win = doc.defaultView;
+    if (win && typeof window !== "undefined") {
+      setupConfig(__spreadProps(__spreadValues({}, config), {
         _zoneGate: (h) => zone.run(h)
       }));
-      const aelFn = "__zone_symbol__addEventListener" in doc2.body ? "__zone_symbol__addEventListener" : "addEventListener";
-      return defineCustomElements(win2, {
+      const aelFn = "__zone_symbol__addEventListener" in doc.body ? "__zone_symbol__addEventListener" : "addEventListener";
+      return defineCustomElements(win, {
         exclude: ["ion-tabs"],
         syncQueue: true,
         raf,
@@ -10166,8 +6803,8 @@ var DECLARATIONS = [
   // generated proxies
   ...DIRECTIVES,
   // manual proxies
-  IonModal3,
-  IonPopover3,
+  IonModal2,
+  IonPopover2,
   // ngModel accessors
   BooleanValueAccessorDirective,
   NumericValueAccessorDirective,
@@ -10176,8 +6813,8 @@ var DECLARATIONS = [
   // navigation
   IonTabs2,
   IonRouterOutlet2,
-  IonBackButton3,
-  IonNav3,
+  IonBackButton2,
+  IonNav2,
   RouterLinkDelegateDirective2,
   RouterLinkWithHrefDelegateDirective2,
   // validators
@@ -10185,12 +6822,12 @@ var DECLARATIONS = [
   IonMaxValidator
 ];
 var IonicModule = class _IonicModule {
-  static forRoot(config2 = {}) {
+  static forRoot(config = {}) {
     return {
       ngModule: _IonicModule,
       providers: [{
         provide: ConfigToken,
-        useValue: config2
+        useValue: config
       }, {
         provide: APP_INITIALIZER,
         useFactory: appInitialize,
@@ -10294,8 +6931,8 @@ var IonicModule = class _IonicModule {
       IonToggle,
       IonToolbar,
       // manual proxies
-      IonModal3,
-      IonPopover3,
+      IonModal2,
+      IonPopover2,
       // ngModel accessors
       BooleanValueAccessorDirective,
       NumericValueAccessorDirective,
@@ -10304,8 +6941,8 @@ var IonicModule = class _IonicModule {
       // navigation
       IonTabs2,
       IonRouterOutlet2,
-      IonBackButton3,
-      IonNav3,
+      IonBackButton2,
+      IonNav2,
       RouterLinkDelegateDirective2,
       RouterLinkWithHrefDelegateDirective2,
       // validators
@@ -10401,8 +7038,8 @@ var IonicModule = class _IonicModule {
       IonToggle,
       IonToolbar,
       // manual proxies
-      IonModal3,
-      IonPopover3,
+      IonModal2,
+      IonPopover2,
       // ngModel accessors
       BooleanValueAccessorDirective,
       NumericValueAccessorDirective,
@@ -10411,8 +7048,8 @@ var IonicModule = class _IonicModule {
       // navigation
       IonTabs2,
       IonRouterOutlet2,
-      IonBackButton3,
-      IonNav3,
+      IonBackButton2,
+      IonNav2,
       RouterLinkDelegateDirective2,
       RouterLinkWithHrefDelegateDirective2,
       // validators
@@ -10445,7 +7082,7 @@ export {
   BooleanValueAccessorDirective as BooleanValueAccessor,
   Config,
   DomController,
-  GestureController2 as GestureController,
+  GestureController,
   ION_MAX_VALIDATOR,
   ION_MIN_VALIDATOR,
   IonAccordion,
@@ -10454,7 +7091,7 @@ export {
   IonAlert,
   IonApp,
   IonAvatar,
-  IonBackButton3 as IonBackButton,
+  IonBackButton2 as IonBackButton,
   IonBackdrop,
   IonBadge,
   IonBreadcrumb,
@@ -10500,16 +7137,16 @@ export {
   IonMenuButton,
   IonMenuToggle,
   IonMinValidator,
-  IonModal3 as IonModal,
+  IonModal2 as IonModal,
   IonModalToken,
-  IonNav3 as IonNav,
+  IonNav2 as IonNav,
   IonNavLink,
   IonNote,
   IonPicker,
   IonPickerColumn,
   IonPickerColumnOption,
   IonPickerLegacy,
-  IonPopover3 as IonPopover,
+  IonPopover2 as IonPopover,
   IonProgressBar,
   IonRadio,
   IonRadioGroup,
@@ -10561,7 +7198,7 @@ export {
   SelectValueAccessorDirective as SelectValueAccessor,
   TextValueAccessorDirective as TextValueAccessor,
   ToastController,
-  createAnimation2 as createAnimation,
+  createAnimation,
   createGesture,
   getIonPageElement,
   getPlatforms,
@@ -10573,17 +7210,6 @@ export {
 };
 /*! Bundled license information:
 
-@ionic/core/components/cubic-bezier.js:
-@ionic/core/components/gesture-controller.js:
-@ionic/core/components/index3.js:
-@ionic/core/components/ionic-global.js:
-@ionic/core/components/config.js:
-@ionic/core/components/theme.js:
-@ionic/core/components/hardware-back-button.js:
-@ionic/core/components/index5.js:
-@ionic/core/components/framework-delegate.js:
-@ionic/core/components/overlays.js:
-@ionic/core/components/index.js:
 @ionic/core/dist/esm/index.js:
 @ionic/core/dist/esm/app-globals-CvLYUxE9.js:
 @ionic/core/dist/esm/loader.js:

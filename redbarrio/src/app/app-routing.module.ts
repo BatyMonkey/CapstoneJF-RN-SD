@@ -116,7 +116,7 @@ const routes: Routes = [
     loadComponent: () =>
       import(
         './generar/proyecto/generar-proyecto/generar-proyecto.component'
-      ).then((m) => m.GenerarProyectoComponent),
+      ).then((m) => m.SugerirProyectoPage),
   },
   {
     path: 'generar/votacion',

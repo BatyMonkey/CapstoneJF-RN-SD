@@ -1,135 +1,228 @@
-<ion-header [translucent]="true" class="rb-header">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <!-- Debe coincidir con menuId="mainMenu" del app.component.html -->
-      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
-    </ion-buttons>
-    <ion-title>Generar publicación</ion-title>
-  </ion-toolbar>
+<ion-header class="rb-hero-header">
+  <div class="rb-hero-container">
+    <!-- Logo y texto -->
+    <div class="rb-hero-info">
+      <div class="rb-hero-logo">
+        <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
+      </div>
+      <div class="rb-hero-text">
+        <h1>RedBarrio</h1>
+        <p>Tu comunidad conectada</p>
+      </div>
+    </div>
+
+    <!-- Botón chat oculto (placeholder) -->
+    <div class="rb-hero-chat-wrapper">
+      <!-- vacío -->
+    </div>
+  </div>
 </ion-header>
 
-<ion-content fullscreen>
-  <div class="page-wrap ion-padding">
+<ion-content class="sugerir-page" [fullscreen]="true">
+  <!-- HEADER INTERIOR: ADMIN vs VECINO -->
+  <ng-container *ngIf="esAdmin; else vecinoHeader">
+    <div class="page-subheader">
+      <button class="back-btn" (click)="goBack()">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </button>
 
-    <!-- 🔹 Tarjeta principal tipo header -->
-    <ion-card class="card hero">
-      <ion-card-header>
-        <ion-card-title>Nuevo Proyecto</ion-card-title>
-        <ion-card-subtitle>
-          Completa la información básica del proyecto que quieres publicar.
-        </ion-card-subtitle>
-      </ion-card-header>
+      <div class="page-subheader-main">
+        <div class="page-subheader-text">
+          <h2>Gestionar Proyectos</h2>
+          <p>Crear y administrar proyectos del barrio</p>
+        </div>
 
-      <!-- 🔹 Mensaje dinámico según rol -->
-      <ion-card-content *ngIf="perfil?.rol">
-        <ion-note color="medium" *ngIf="perfil?.rol === 'administrador'">
-          Estás creando un proyecto como <strong>administrador</strong>.
-          El estado quedará automáticamente como <strong>publicada</strong>.
-        </ion-note>
+        <!-- Tabs: Ver Proyectos / Crear Nuevo -->
+        <div class="tabs-row">
+          <button class="tab tab-secondary" type="button" (click)="irAAdminProyectos()">
+            <ion-icon name="eye-outline"></ion-icon>
+            Ver Proyectos
+          </button>
 
-        <ion-note color="warning" *ngIf="perfil?.rol === 'vecino'">
-          Estás creando un proyecto como <strong>vecino</strong>.
-          Tu publicación quedará con estado <strong>pendiente</strong> hasta ser aprobada por un administrador.
-        </ion-note>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- 🔹 Formulario "solo proyecto" con estilo del mockup -->
-    <form [formGroup]="proyectoForm" (ngSubmit)="generarProyecto()" class="create-form">
-
-      <!-- Si tu form tiene control 'tipo', déjalo fijo a 'proyecto' en el .ts -->
-      <!-- <input type="hidden" [formControl]="proyectoForm.get('tipo')" /> -->
-
-      <!-- Nombre del Proyecto -->
-      <div class="field-group">
-        <label class="field-label">
-          Nombre del Proyecto <span class="required">*</span>
-        </label>
-        <ion-input
-          formControlName="titulo"
-          placeholder="Ej: Mejoramiento Plaza Central"
-          maxlength="80"
-          class="field-input">
-        </ion-input>
-        <p class="field-helper">
-          {{ proyectoForm.value.titulo?.length || 0 }}/80
-        </p>
+          <button class="tab tab-primary" type="button">
+            <ion-icon name="add-outline"></ion-icon>
+            Crear Nuevo
+          </button>
+        </div>
       </div>
+    </div>
+  </ng-container>
 
-      <!-- Descripción -->
-      <div class="field-group">
-        <label class="field-label">
-          Descripción <span class="required">*</span>
-        </label>
-        <ion-textarea
-          formControlName="descripcion"
-          placeholder="Describe el proyecto en detalle..."
-          autoGrow="true"
-          class="field-textarea">
-        </ion-textarea>
+  <!-- Header para vecino (sin tabs) -->
+  <ng-template #vecinoHeader>
+    <div class="page-subheader">
+      <button class="back-btn" (click)="goBack()">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </button>
+      <div class="page-subheader-text">
+        <h2>Sugerir Proyecto</h2>
+        <p>Propón mejoras para el barrio</p>
       </div>
+    </div>
+  </ng-template>
 
-      <!-- Imagen del proyecto -->
-      <div class="field-group">
-        <label class="field-label">Imagen del Proyecto</label>
-
-        <div class="image-upload-box" [class.has-image]="previewUrl">
-          <!-- Estado sin imagen (como el cuadro amarillo del mockup) -->
-          <ng-container *ngIf="!previewUrl; else previewTpl">
-            <div class="image-icon-wrap">
-              <ion-icon name="image-outline"></ion-icon>
-            </div>
-            <p class="image-title">Agregar imagen del proyecto</p>
-            <p class="image-subtitle">
-              Selecciona una imagen desde tu dispositivo
-            </p>
-
-            <button
-              type="button"
-              class="image-select-btn"
-              (click)="fileInput.click()">
-              <ion-icon name="cloud-upload-outline"></ion-icon>
-              <span>Seleccionar Imagen</span>
-            </button>
-
-            <input
-              #fileInput
-              type="file"
-              accept="image/*"
-              (change)="onFileSelected($event)"
-              hidden />
-          </ng-container>
-
-          <!-- Estado con imagen cargada -->
-          <ng-template #previewTpl>
-            <div class="preview-card">
-              <img
-                [src]="previewUrl"
-                alt="Vista previa"
-                class="preview-img" />
-            </div>
-          </ng-template>
+  <div class="page-body">
+    <!-- ================== FORMULARIO ================== -->
+    <ng-container *ngIf="!submitted; else enviadoTpl">
+      <!-- Banner informativo (solo vecinos) -->
+      <div class="info-banner" *ngIf="!esAdmin">
+        <div class="banner-icon">
+          <ion-icon name="bulb-outline"></ion-icon>
+        </div>
+        <div class="banner-text">
+          <h3>¡Tu opinión es importante!</h3>
+          <p>
+            Comparte tus ideas para mejorar nuestro barrio. La directiva evaluará tu
+            propuesta y podría convertirse en un proyecto real.
+          </p>
         </div>
       </div>
 
-      <!-- (Opcional) Si más adelante agregas responsable/presupuesto/fechas/estado,
-           se pueden insertar aquí manteniendo este mismo estilo. -->
+      <form [formGroup]="form" class="form-section">
+        <!-- Nombre del proyecto -->
+        <div class="form-group">
+          <label class="label">
+            Nombre del Proyecto <span class="req">*</span>
+          </label>
+          <ion-input formControlName="titulo" class="input" placeholder="Ej: Instalación de paneles solares">
+          </ion-input>
+        </div>
 
-      <!-- Botón Crear -->
-      <div class="buttons-container">
-        <ion-button
-          expand="block"
-          type="submit"
-          [disabled]="proyectoForm.invalid"
-          class="btn-create">
-          Crear Proyecto
-        </ion-button>
+        <!-- Descripción -->
+        <div class="form-group">
+          <label class="label">
+            Descripción del Proyecto <span class="req">*</span>
+          </label>
+          <ion-textarea formControlName="descripcion" class="textarea" rows="6"
+            placeholder="Describe tu proyecto, sus beneficios y cómo mejoraría el barrio...">
+          </ion-textarea>
 
-        <p class="submit-hint" *ngIf="proyectoForm.invalid">
-          * Completa todos los campos obligatorios
-        </p>
+          <p class="counter">
+            {{ form.get('descripcion')?.value?.length || 0 }}/500 caracteres
+          </p>
+        </div>
+
+        <!-- Responsable -->
+        <div class="form-group">
+          <label class="label">Responsable</label>
+          <ion-input formControlName="responsable" class="input" placeholder="Nombre del responsable del proyecto">
+          </ion-input>
+        </div>
+
+        <!-- Presupuesto (numérico) -->
+        <div class="form-group">
+          <label class="label">Presupuesto</label>
+          <ion-input type="number" formControlName="presupuesto" class="input" placeholder="Ej: $5.000.000">
+          </ion-input>
+        </div>
+
+        <!-- Fechas -->
+        <div class="form-row">
+          <div class="form-group form-half">
+            <label class="label">
+              Fecha Inicio <span class="req" *ngIf="esAdmin">*</span>
+            </label>
+            <ion-input type="date" formControlName="fecha_inicio" class="input" placeholder="dd-mm-aaaa">
+            </ion-input>
+          </div>
+
+          <div class="form-group form-half">
+            <label class="label">
+              Fecha Término <span class="req" *ngIf="esAdmin">*</span>
+            </label>
+            <ion-input type="date" formControlName="fecha_fin" class="input" placeholder="dd-mm-aaaa">
+            </ion-input>
+          </div>
+        </div>
+
+        <!-- Estado del proyecto -->
+        <div class="form-group">
+          <label class="label">Estado del Proyecto</label>
+          <select class="native-select" formControlName="estado_proyecto">
+            <option value="Planificación">Planificación</option>
+            <option value="En Progreso">En Progreso</option>
+            <option value="Completado">Completado</option>
+            <option value="Pausado">Pausado</option>
+          </select>
+        </div>
+
+        <!-- Imagen del proyecto -->
+        <div class="form-group">
+          <label class="label">Imagen del Proyecto</label>
+
+          <div class="image-upload-card">
+            <ng-container *ngIf="!previewUrl; else previewTpl">
+              <div class="upload-placeholder">
+                <ion-icon name="image-outline"></ion-icon>
+                <p>Agregar imagen del proyecto</p>
+                <button type="button" class="upload-btn" (click)="fileInput.click()">
+                  <ion-icon name="image-outline"></ion-icon>
+                  Seleccionar Imagen
+                </button>
+              </div>
+            </ng-container>
+
+            <ng-template #previewTpl>
+              <div class="upload-preview">
+                <img [src]="previewUrl" alt="Preview" class="preview-img" />
+                <button type="button" class="upload-btn secondary" (click)="fileInput.click()">
+                  Cambiar imagen
+                </button>
+              </div>
+            </ng-template>
+
+            <input type="file" #fileInput accept="image/*" (change)="onFileSelected($event)" hidden />
+          </div>
+        </div>
+
+        <!-- Botón enviar -->
+        <button type="button" class="submit-btn" [disabled]="form.invalid || cargando" (click)="enviar()">
+          <ion-icon name="paper-plane-outline"></ion-icon>
+          {{ esAdmin ? 'Crear Proyecto' : 'Enviar Propuesta' }}
+        </button>
+      </form>
+
+      <!-- Ejemplos de proyectos -->
+      <div class="examples-card">
+        <h4>Ejemplos de Proyectos:</h4>
+        <ul>
+          <li>💡 Instalación de luminarias LED en calles principales</li>
+          <li>🌳 Creación de área verde con juegos infantiles</li>
+          <li>📹 Sistema de cámaras de seguridad en entradas</li>
+          <li>♻️ Punto de reciclaje comunitario</li>
+          <li>🏃 Circuito de ejercicios al aire libre</li>
+        </ul>
       </div>
-    </form>
+    </ng-container>
 
+    <!-- ================== ESTADO ENVIADO ================== -->
+    <ng-template #enviadoTpl>
+      <div class="success-wrapper">
+        <div class="success-card">
+          <div class="success-icon">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+          </div>
+          <h3>¡Propuesta Enviada!</h3>
+          <p>
+            Tu proyecto "<strong>{{ form.get('titulo')?.value }}</strong>"
+            ha sido enviado exitosamente a la directiva para su evaluación.
+          </p>
+
+          <div class="success-detail">
+            <h4>¿Qué sigue?</h4>
+            <ul>
+              <li>• La directiva revisará tu propuesta en los próximos 7 días</li>
+              <li>• Recibirás una notificación con la decisión</li>
+              <li>• Si es aprobada, podrá pasar a votación vecinal</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="success-actions">
+          <button class="new-btn" (click)="nuevaPropuesta()">Nueva Propuesta</button>
+          <button class="back-main-btn" (click)="volverAlInicio()">Volver al Inicio</button>
+        </div>
+      </div>
+    </ng-template>
   </div>
 </ion-content>

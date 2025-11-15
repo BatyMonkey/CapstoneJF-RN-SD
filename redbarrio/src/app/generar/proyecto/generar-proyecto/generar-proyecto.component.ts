@@ -1,89 +1,127 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, AlertController } from '@ionic/angular';
+import { IonicModule, ToastController, AlertController } from '@ionic/angular';
 import {
-  ReactiveFormsModule,
   FormBuilder,
   FormGroup,
   Validators,
+  ReactiveFormsModule,
 } from '@angular/forms';
+import { addIcons } from 'ionicons';
+import {
+  chevronBackOutline,
+  calendarOutline,
+  briefcaseOutline,
+  peopleOutline,
+  timeOutline,
+  eyeOutline,
+  addOutline,
+  checkmarkCircleOutline,
+  closeCircleOutline,
+  cashOutline,
+  calendarNumberOutline,
+  documentTextOutline,
+  settingsOutline,
+  pauseCircleOutline,
+  createOutline,
+  trashOutline,
+  imageOutline,
+  sendOutline,
+  bulbOutline,
+} from 'ionicons/icons';
+
 import { SupabaseService } from 'src/app/services/supabase.service';
-import { AuthService } from '../../../auth/auth.service';
+import { AuthService } from 'src/app/auth/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   standalone: true,
-  selector: 'app-generar-proyecto',
+  selector: 'app-sugerir-proyecto',
   templateUrl: './generar-proyecto.component.html',
   styleUrls: ['./generar-proyecto.component.scss'],
   imports: [CommonModule, IonicModule, ReactiveFormsModule],
 })
-export class GenerarProyectoComponent implements OnInit {
-  proyectoForm!: FormGroup;
+export class SugerirProyectoPage implements OnInit {
+  form!: FormGroup;
   perfil: any = null;
-  isActividad = false;
 
+  // Estado del componente
+  submitted = false;
+  cargando = false;
+
+  // Imagen
   selectedFile: File | null = null;
   previewUrl: string | null = null;
   uploadedUrl: string | null = null;
 
+  get esAdmin(): boolean {
+    return (this.perfil?.rol || '').toLowerCase() === 'administrador';
+  }
+
   constructor(
     private fb: FormBuilder,
-    private alertCtrl: AlertController,
     private auth: AuthService,
-    private supabaseService: SupabaseService
-  ) {}
+    private supabaseService: SupabaseService,
+    private toastCtrl: ToastController,
+    private alertCtrl: AlertController,
+    private router: Router
+  ) {
+    addIcons({
+      'chevron-back-outline': chevronBackOutline,
+      'calendar-outline': calendarOutline,
+      'briefcase-outline': briefcaseOutline,
+      'people-outline': peopleOutline,
+      'time-outline': timeOutline,
+      'eye-outline': eyeOutline,
+      'add-outline': addOutline,
+      'checkmark-circle-outline': checkmarkCircleOutline,
+      'close-circle-outline': closeCircleOutline,
+      'cash-outline': cashOutline,
+      'calendar-number-outline': calendarNumberOutline,
+      'document-text-outline': documentTextOutline,
+      'settings-outline': settingsOutline,
+      'pause-circle-outline': pauseCircleOutline,
+      'create-outline': createOutline,
+      'trash-outline': trashOutline,
+      'image-outline': imageOutline,
+      'send-outline': sendOutline,
+      'bulb-outline': bulbOutline,
+    });
+  }
 
-  /** Inicializa el formulario y obtiene el perfil del usuario */
   async ngOnInit() {
-    this.proyectoForm = this.fb.group({
-      tipo: ['proyecto', Validators.required],
+    // Primero obtenemos el perfil para saber si es admin
+    this.perfil = await this.auth.miPerfil();
+    console.log('🟦 Perfil cargado:', this.perfil);
+
+    const fechaValidators = this.esAdmin ? [Validators.required] : [];
+
+    this.form = this.fb.group({
       titulo: ['', [Validators.required, Validators.minLength(3)]],
       descripcion: ['', [Validators.required, Validators.minLength(10)]],
-      cupos_total: [null],
-      fecha_inicio: [null],
-      fecha_fin: [null],
+      responsable: [''],
+      presupuesto: [''],
+      fecha_inicio: [null, fechaValidators],
+      fecha_fin: [null, fechaValidators],
+      estado_proyecto: ['Planificación', Validators.required],
     });
-
-    this.perfil = await this.auth.miPerfil();
   }
 
-  /** Cambia el modo entre proyecto y actividad */
-  onTipoChange() {
-    this.isActividad = this.proyectoForm.value.tipo === 'actividad';
-  }
-
-  /** Detecta cambio de fecha */
-  onDateChange(field: 'fecha_inicio' | 'fecha_fin', event: any) {
-    const value = event.detail?.value;
-    this.proyectoForm.patchValue({ [field]: value });
-  }
-
-  /** Limpia el formulario */
-  limpiarFormulario() {
-    this.proyectoForm.reset({
-      tipo: 'proyecto',
-      titulo: '',
-      descripcion: '',
-      cupos_total: null,
-      fecha_inicio: null,
-      fecha_fin: null,
-    });
-    this.isActividad = false;
-    this.selectedFile = null;
-    this.previewUrl = null;
-    this.uploadedUrl = null;
-  }
-
-  /** Maneja la selección de imagen y la sube al bucket */
+  // ============================
+  // MANEJO DE IMAGEN
+  // ============================
   async onFileSelected(event: any) {
     const file = event.target.files[0];
     if (!file) return;
 
     this.selectedFile = file;
+
+    // Preview local
     const reader = new FileReader();
     reader.onload = () => (this.previewUrl = reader.result as string);
     reader.readAsDataURL(file);
 
+    // Subir a Supabase Storage (bucket "proyectos")
     const fileName = `${Date.now()}_${file.name}`;
     const { error: uploadError } = await this.supabaseService.client.storage
       .from('proyectos')
@@ -98,114 +136,135 @@ export class GenerarProyectoComponent implements OnInit {
     const { data: urlData } = this.supabaseService.client.storage
       .from('proyectos')
       .getPublicUrl(fileName);
+
     this.uploadedUrl = urlData.publicUrl;
   }
 
-  /** Envía el formulario a la base de datos */
-  async generarProyecto() {
-    if (this.proyectoForm.invalid) {
-      this.showAlert(
-        'Error',
-        'Por favor completa todos los campos obligatorios.'
-      );
+  // ============================
+  // ENVIAR PROYECTO
+  // ============================
+  async enviar() {
+    if (this.form.invalid) {
+      this.mostrarToast('Completa todos los campos obligatorios');
       return;
     }
 
-    const formValue = this.proyectoForm.value;
-    const id_auth = this.perfil?.id_auth;
-    const rol = this.perfil?.rol; // ✅ aseguramos el rol desde el perfil
-
-    if (!id_auth) {
-      this.showAlert('Error', 'No se pudo obtener la sesión del usuario.');
-      return;
-    }
-
-    // ✅ Estado automático según el rol
-    const estado = rol === 'administrador' ? 'publicada' : 'pendiente';
+    this.cargando = true;
 
     try {
-      if (formValue.tipo === 'actividad') {
-        // ===== INSERTAR ACTIVIDAD =====
-        const { error } = await this.supabaseService.client
-          .from('actividad')
-          .insert([
-            {
-              id_auth,
-              titulo: formValue.titulo,
-              descripcion: formValue.descripcion,
-              cupos_total: formValue.cupos_total ?? 0,
-              fecha_inicio: formValue.fecha_inicio,
-              fecha_fin: formValue.fecha_fin,
-              estado, // 🔹 Publicada o Pendiente según rol
-              imagen_url: this.uploadedUrl,
-              creado_en: new Date().toISOString(),
-              actualizado_en: new Date().toISOString(),
-            },
-          ]);
+      const id_auth = this.perfil?.id_auth;
+      const rol = this.perfil?.rol || 'usuario';
 
-        if (error) throw error;
-        await this.showAlert('Éxito', 'Actividad creada correctamente.');
-
-        // 🧾 Registrar acción en auditoría
-        await this.supabaseService.registrarAuditoria(
-          'crear actividad',
-          'actividad',
-          {
-            titulo: formValue.titulo,
-            descripcion: formValue.descripcion,
-            cupos_total: formValue.cupos_total ?? 0,
-            fecha_inicio: formValue.fecha_inicio,
-            fecha_fin: formValue.fecha_fin,
-            estado,
-            imagen_url: this.uploadedUrl,
-            rol_creador: rol,
-          }
-        );
-      } else {
-        // ===== INSERTAR PROYECTO =====
-        const { error } = await this.supabaseService.client
-          .from('proyecto')
-          .insert([
-            {
-              id_auth,
-              titulo: formValue.titulo,
-              descripcion: formValue.descripcion,
-              estado, // 🔹 Publicada o Pendiente según rol
-              fecha_creacion: new Date().toISOString(),
-              actualizado_en: new Date().toISOString(),
-              imagen_url: this.uploadedUrl,
-            },
-          ]);
-
-        if (error) throw error;
-        await this.showAlert('Éxito', 'Proyecto creado correctamente.');
-
-        // 🧾 Registrar acción en auditoría
-        await this.supabaseService.registrarAuditoria(
-          'crear proyecto',
-          'proyecto',
-          {
-            titulo: formValue.titulo,
-            descripcion: formValue.descripcion,
-            estado,
-            imagen_url: this.uploadedUrl,
-            rol_creador: rol,
-          }
-        );
+      if (!id_auth) {
+        await this.showAlert('Error', 'No existe sesión activa.');
+        return;
       }
 
-      this.limpiarFormulario();
-    } catch (err: any) {
-      console.error('Error al crear:', err);
-      await this.showAlert(
-        'Error',
-        err.message || 'No se pudo crear el registro.'
+      // Estado automático según rol
+      const estado = rol === 'administrador' ? 'publicada' : 'pendiente';
+
+      const presupuestoValor = this.form.value.presupuesto;
+      const presupuesto =
+        presupuestoValor !== null &&
+        presupuestoValor !== undefined &&
+        presupuestoValor !== ''
+          ? Number(presupuestoValor)
+          : null;
+
+      const datos = {
+        id_auth,
+        titulo: this.form.value.titulo,
+        descripcion: this.form.value.descripcion,
+        estado,
+        fecha_creacion: new Date().toISOString(),
+        actualizado_en: new Date().toISOString(),
+        imagen_url: this.uploadedUrl || null,
+        estado_proyecto: this.form.value.estado_proyecto || 'Planificación',
+        presupuesto,
+        responsable: this.form.value.responsable || null,
+        solicitado: null, // ya no usamos categoría
+        fecha_inicio: this.form.value.fecha_inicio || null,
+        fecha_fin: this.form.value.fecha_fin || null,
+      };
+
+      console.log('📤 Insertando proyecto →', datos);
+
+      const { error } = await this.supabaseService.client
+        .from('proyecto')
+        .insert([datos]);
+
+      if (error) throw error;
+
+      // Auditoría
+      await this.supabaseService.registrarAuditoria(
+        'crear sugerencia proyecto',
+        'proyecto',
+        {
+          titulo: datos.titulo,
+          presupuesto: datos.presupuesto,
+          estado,
+          estado_proyecto: datos.estado_proyecto,
+          rol_creador: rol,
+        }
       );
+
+      this.submitted = true;
+    } catch (err: any) {
+      console.error('🔥 Error al enviar sugerencia:', err);
+      this.mostrarToast('Error al enviar la propuesta');
+    } finally {
+      this.cargando = false;
     }
   }
 
-  /** Muestra un mensaje de alerta */
-  private async showAlert(header: string, message: string) {
+  // ============================
+  // NUEVA SUGERENCIA
+  // ============================
+  nuevaPropuesta() {
+    this.form.reset({
+      titulo: '',
+      descripcion: '',
+      responsable: '',
+      presupuesto: '',
+      fecha_inicio: null,
+      fecha_fin: null,
+      estado_proyecto: 'Planificación',
+    });
+    this.previewUrl = null;
+    this.uploadedUrl = null;
+    this.selectedFile = null;
+    this.submitted = false;
+  }
+
+  // ============================
+  // REGRESAR AL INICIO
+  // ============================
+  volverAlInicio() {
+    this.router.navigate(['/proyectos']);
+  }
+
+  goBack() {
+    history.back();
+  }
+
+  irAAdminProyectos() {
+    this.router.navigate(['/admin/proyectos']);
+  }
+
+  // ============================
+  // Alertas y Toasts
+  // ============================
+  async mostrarToast(msg: string) {
+    const toast = await this.toastCtrl.create({
+      message: msg,
+      duration: 2000,
+      color: 'primary',
+      position: 'top',
+    });
+    toast.present();
+  }
+
+  async showAlert(header: string, message: string) {
     const alert = await this.alertCtrl.create({
       header,
       message,

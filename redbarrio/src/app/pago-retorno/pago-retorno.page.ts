@@ -189,8 +189,6 @@ export class PagoRetornoPage implements OnInit {
           },
         ],
       });
-
-      await alert.present();
     } catch (err) {
       console.error('Error general en confirmarPago:', err);
       this.loading = false;

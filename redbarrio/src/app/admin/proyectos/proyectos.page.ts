@@ -1,7 +1,12 @@
 // src/app/proyectos/proyectos.page.ts
 
 import { Component, OnInit } from '@angular/core';
-import { IonicModule, AlertController, ToastController } from '@ionic/angular';
+import {
+  IonicModule,
+  AlertController,
+  ToastController,
+  IonicSafeString,
+} from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from 'src/app/services/supabase.service';
@@ -17,8 +22,12 @@ import {
   eyeOutline,
   addOutline,
   checkmarkCircleOutline,
-  cashOutline,
   closeCircleOutline,
+  cashOutline,
+  calendarNumberOutline,
+  documentTextOutline,
+  settingsOutline,
+  pauseCircleOutline,
   createOutline,
   trashOutline,
 } from 'ionicons/icons';
@@ -48,7 +57,7 @@ export class ProyectosPage implements OnInit {
   /** Sub-tab dentro de manage */
   manageSubTab: 'active' | 'requests' = 'active';
 
-  // (quedan por si quieres reutilizarlos luego)
+  /** Compatibilidad con código antiguo (lista usada en algunos métodos) */
   proyectos: any[] = [];
   filtroActivo: 'todos' | 'proyecto' | 'actividad' = 'todos';
 
@@ -68,8 +77,14 @@ export class ProyectosPage implements OnInit {
       'eye-outline': eyeOutline,
       'add-outline': addOutline,
       'checkmark-circle-outline': checkmarkCircleOutline,
-      'cash-outline': cashOutline,
       'close-circle-outline': closeCircleOutline,
+      'cash-outline': cashOutline,
+      'calendar-number-outline': calendarNumberOutline,
+
+      // 🔹 Estados de proyecto
+      'document-text-outline': documentTextOutline, // Planificación
+      'settings-outline': settingsOutline, // En Progreso
+      'pause-circle-outline': pauseCircleOutline, // Pausado
       'create-outline': createOutline,
       'trash-outline': trashOutline,
     });
@@ -111,7 +126,7 @@ export class ProyectosPage implements OnInit {
         throw errorActivos;
       }
 
-      // Proyectos pendientes (solicitudes de publicación)
+      // Proyectos pendientes (solicitudes)
       const { data: pendientes, error: errorPendientes } =
         await this.supabase.client
           .from('proyecto')
@@ -130,7 +145,7 @@ export class ProyectosPage implements OnInit {
       this.proyectosActivos = activos || [];
       this.projectRequests = pendientes || [];
 
-      // Por compatibilidad, si quieres seguir usando this.proyectos:
+      // compatibilidad
       this.proyectos = this.proyectosActivos;
 
       console.log('✅ Proyectos activos:', this.proyectosActivos);
@@ -144,7 +159,7 @@ export class ProyectosPage implements OnInit {
   }
 
   // ==========================================================
-  // HELPERS DE FORMATO (FRONT)
+  // HELPERS DE FORMATO BÁSICO (por si más adelante los usas)
   // ==========================================================
   formatFecha(fechaIso?: string): string {
     if (!fechaIso) return '';
@@ -190,7 +205,7 @@ export class ProyectosPage implements OnInit {
   // ==========================================================
   // CAMBIO DE ESTADO GENÉRICO (proyecto / solicitud)
   // ==========================================================
-  private async cambiarEstadoGenerico(
+  async cambiarEstadoGenerico(
     item: any,
     nuevoEstado: string,
     tipo: 'proyecto' | 'solicitud'
@@ -221,15 +236,14 @@ export class ProyectosPage implements OnInit {
                 `🟦 Cambiando estado de ${item.id_proyecto} (${etiqueta}) → ${nuevoEstado}`
               );
 
-              // Ambas (proyectos y solicitudes) viven en la tabla "proyecto"
+              // 👇 aquí el cambio: sin destructuring de { error }
               const result = await this.supabase.cambiarEstadoProyecto(
                 item.id_proyecto,
                 nuevoEstado
               );
-
               console.log('✅ Resultado de Supabase:', result);
 
-              // 🧾 Registrar acción en auditoría
+              // Auditoría
               await this.supabase.registrarAuditoria(
                 `${verbo} ${etiqueta}`,
                 'proyecto',
@@ -238,18 +252,35 @@ export class ProyectosPage implements OnInit {
                   id_proyecto: item.id_proyecto,
                   estado_anterior: item.estado,
                   nuevo_estado: nuevoEstado,
-                  origen: tipo, // opcional
+                  origen: tipo,
                 }
               );
 
-              // 🔔 Modal de confirmación con estética de alerta
-              await this.mostrarConfirmacionAccion(tipo, item.titulo, verbo);
+              const accionTexto =
+                verbo === 'aprobar'
+                  ? 'aprobado'
+                  : verbo === 'rechazar'
+                  ? 'rechazado'
+                  : 'actualizado';
 
-              // Recarga listas (activos + solicitudes)
+              const tituloProyecto = item.titulo || '(sin título)';
+              const sujeto =
+                tipo === 'proyecto'
+                  ? 'El proyecto'
+                  : 'La solicitud del proyecto';
+
+              await this.mostrarAlertaAccion(
+                'Acción realizada',
+                `${sujeto} <strong>${tituloProyecto}</strong> fue <strong>${accionTexto}</strong> satisfactoriamente.`
+              );
+
               await this.cargarProyectos();
             } catch (error) {
               console.error('❌ Error al actualizar estado:', error);
-              await this.mostrarToast('Error al actualizar el estado');
+              await this.mostrarAlertaAccion(
+                'Error',
+                'Ocurrió un problema al actualizar el estado. Intenta nuevamente.'
+              );
             }
           },
         },
@@ -260,7 +291,7 @@ export class ProyectosPage implements OnInit {
   }
 
   // ==========================================================
-  // USO EN PROYECTOS ACTIVOS (por ejemplo botón Eliminar)
+  // USO EN PROYECTOS ACTIVOS (wrapper por si lo usas)
   // ==========================================================
   async cambiarEstado(proyecto: any, nuevoEstado: string) {
     await this.cambiarEstadoGenerico(proyecto, nuevoEstado, 'proyecto');
@@ -273,8 +304,133 @@ export class ProyectosPage implements OnInit {
     await this.cambiarEstadoGenerico(request, 'publicada', 'solicitud');
   }
 
+  // Botón RECHAZAR de solicitudes (elimina el registro)
   async rechazarSolicitud(request: any) {
-    await this.cambiarEstadoGenerico(request, 'rechazada', 'solicitud');
+    const titulo = (request?.titulo || '(sin título)').trim();
+
+    const alerta = await this.alertCtrl.create({
+      header: 'Rechazar solicitud',
+      message: `¿Seguro que deseas rechazar y eliminar la solicitud del proyecto "${titulo}"?`,
+      mode: 'ios',
+      cssClass: 'rb-confirm-alert',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Confirmar',
+          handler: async () => {
+            try {
+              console.log(
+                '🟥 Eliminando solicitud id_proyecto=',
+                request.id_proyecto
+              );
+
+              const { error } = await this.supabase.client
+                .from('proyecto')
+                .delete()
+                .eq('id_proyecto', request.id_proyecto);
+
+              if (error) {
+                console.error(
+                  '❌ Error Supabase al eliminar solicitud:',
+                  error
+                );
+                throw error;
+              }
+
+              await this.supabase.registrarAuditoria(
+                'eliminar solicitud',
+                'proyecto',
+                {
+                  titulo,
+                  id_proyecto: request.id_proyecto,
+                  origen: 'solicitud',
+                }
+              );
+
+              await this.mostrarAlertaAccion(
+                'Acción realizada',
+                `La solicitud del proyecto <strong>${titulo}</strong> fue <strong>rechazada</strong> y eliminada satisfactoriamente.`
+              );
+
+              await this.cargarProyectos();
+            } catch (err) {
+              console.error('❌ Error al eliminar la solicitud:', err);
+              await this.mostrarAlertaAccion(
+                'Error',
+                'Ocurrió un problema al eliminar la solicitud. Intenta nuevamente.'
+              );
+            }
+          },
+        },
+      ],
+    });
+
+    await alerta.present();
+  }
+
+  // ==========================================================
+  // ELIMINAR PROYECTO ACTIVO
+  // ==========================================================
+  async rechazarProyecto(proyecto: any) {
+    const titulo = (proyecto?.titulo || '(sin título)').trim();
+
+    const alerta = await this.alertCtrl.create({
+      header: 'Eliminar proyecto',
+      message: `¿Seguro que deseas eliminar el proyecto "${titulo}"? Esta acción no se puede deshacer.`,
+      mode: 'ios',
+      cssClass: 'rb-confirm-alert',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: async () => {
+            try {
+              console.log(
+                '🗑 Eliminando proyecto id_proyecto=',
+                proyecto.id_proyecto
+              );
+
+              const { error } = await this.supabase.client
+                .from('proyecto')
+                .delete()
+                .eq('id_proyecto', proyecto.id_proyecto);
+
+              if (error) {
+                console.error('❌ Error Supabase al eliminar proyecto:', error);
+                throw error;
+              }
+
+              await this.supabase.registrarAuditoria(
+                'eliminar proyecto',
+                'proyecto',
+                {
+                  titulo,
+                  id_proyecto: proyecto.id_proyecto,
+                  estado_anterior: proyecto.estado,
+                  nuevo_estado: 'eliminado',
+                }
+              );
+
+              await this.mostrarAlertaAccion(
+                'Acción realizada',
+                `El proyecto <strong>${titulo}</strong> fue <strong>eliminado</strong> satisfactoriamente.`
+              );
+
+              await this.cargarProyectos();
+            } catch (err) {
+              console.error('❌ Error al eliminar proyecto:', err);
+              await this.mostrarAlertaAccion(
+                'Error',
+                'Ocurrió un problema al eliminar el proyecto.'
+              );
+            }
+          },
+        },
+      ],
+    });
+
+    await alerta.present();
   }
 
   // ==========================================================
@@ -286,7 +442,7 @@ export class ProyectosPage implements OnInit {
   }
 
   // ==========================================================
-  // TOAST
+  // TOAST SIMPLE (ya casi no lo usamos, pero lo dejo)
   // ==========================================================
   async mostrarToast(mensaje: string) {
     const toast = await this.toastCtrl.create({
@@ -306,15 +462,16 @@ export class ProyectosPage implements OnInit {
   }
 
   goBack() {
-    // Si quieres usar Router: this.router.navigate(['/gestiones']);
     history.back();
   }
 
   irAGenerarProyecto() {
-    // Ajusta la ruta según tu routing real
     this.router.navigate(['generar/proyecto']);
   }
-  // Formatea el presupuesto numérico como $3.500.000
+
+  // ==========================================================
+  // FORMATO PRESUPUESTO (input numérico simple)
+  // ==========================================================
   formatPresupuesto(valor: any): string {
     if (valor === null || valor === undefined || valor === '') {
       return '';
@@ -331,26 +488,113 @@ export class ProyectosPage implements OnInit {
       maximumFractionDigits: 0,
     }).format(numero);
   }
-  /**
-   * Muestra un modal de confirmación con estética de alerta:
-   * "El proyecto X fue rechazado satisfactoriamente"
-   */
-  private async mostrarConfirmacionAccion(
-    tipo: 'proyecto' | 'solicitud',
-    titulo: string,
-    verbo: string
-  ) {
-    const accionPasado = this.getAccionPasado(verbo);
 
-    const sujeto =
-      tipo === 'proyecto' ? 'El proyecto' : 'La solicitud del proyecto';
+  // ==========================================================
+  // ESTADO DEL PROYECTO (chip amarillo)
+  // ==========================================================
+  getEstadoProyectoLabel(estado?: string): string {
+    const e = (estado || '').toLowerCase().trim();
 
-    const nombre = (titulo || '(sin título)').trim();
+    if (e.includes('progreso')) return 'En Progreso';
+    if (e.includes('complet')) return 'Completado';
+    if (e.includes('paus')) return 'Pausado';
+    if (e.includes('plan')) return 'Planificación';
 
+    return 'Planificación';
+  }
+
+  /** Formato de presupuesto para tarjetas (activos / solicitudes) */
+  getPresupuestoProyecto(p: any): string {
+    if (p.presupuesto_est || p.presupuesto) {
+      const valor = Number(p.presupuesto_est ?? p.presupuesto);
+      if (!isNaN(valor)) {
+        return new Intl.NumberFormat('es-CL', {
+          style: 'currency',
+          currency: 'CLP',
+          maximumFractionDigits: 0,
+        }).format(valor);
+      }
+      return p.presupuesto_est ?? p.presupuesto;
+    }
+
+    if (p.monto) {
+      const valor = Number(p.monto);
+      if (!isNaN(valor)) {
+        return new Intl.NumberFormat('es-CL', {
+          style: 'currency',
+          currency: 'CLP',
+          maximumFractionDigits: 0,
+        }).format(valor);
+      }
+      return p.monto;
+    }
+
+    return 'Presupuesto por definir';
+  }
+
+  getEstadoProyectoClass(estado?: string): string {
+    const e = (estado || '').toLowerCase().trim();
+
+    if (e.includes('progreso')) return 'status-en-progreso';
+    if (e.includes('complet')) return 'status-completado';
+    if (e.includes('paus')) return 'status-pausado';
+    if (e.includes('plan')) return 'status-planificacion';
+
+    return 'status-planificacion';
+  }
+
+  // Fechas inicio / fin del proyecto (gris bajo presupuesto)
+  formatFechaProyecto(fechaIso?: string): string {
+    if (!fechaIso) return '';
+    const d = new Date(fechaIso);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleDateString('es-CL', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  }
+
+  // Formato numérico simple (3.500.000)
+  formatNumero(valor: any): string {
+    if (valor === null || valor === undefined) return '';
+
+    const num =
+      typeof valor === 'number'
+        ? valor
+        : parseFloat(valor.toString().replace(/\./g, '').replace(/,/g, '.'));
+
+    if (isNaN(num)) return valor.toString();
+
+    return num.toLocaleString('es-CL');
+  }
+
+  getEstadoProyectoIcon(estado?: string): string {
+    const e = (estado || '').toLowerCase().trim();
+
+    if (e.includes('progreso')) return 'settings-outline';
+    if (e.includes('complet')) return 'checkmark-circle-outline';
+    if (e.includes('paus')) return 'pause-circle-outline';
+    if (e.includes('plan')) return 'document-text-outline';
+
+    return 'document-text-outline';
+  }
+
+  // Botón EDITAR (placeholder)
+  editarProyecto(proyecto: any) {
+    console.log('✏️ Editar proyecto', proyecto);
+    // this.router.navigate(['editar/proyecto', proyecto.id_proyecto]);
+  }
+
+  // ==========================================================
+  // ALERTA DE CONFIRMACIÓN DE ACCIÓN (estilo modal bonito)
+  // ==========================================================
+  async mostrarAlertaAccion(titulo: string, mensajeHtml: string) {
     const alerta = await this.alertCtrl.create({
-      header: 'Acción realizada',
-      // 👇 Mensaje sin etiquetas HTML
-      message: `${sujeto} "${nombre}" fue ${accionPasado} satisfactoriamente.`,
+      header: titulo,
+      message: new IonicSafeString(mensajeHtml),
+      mode: 'ios',
+      cssClass: 'rb-action-alert',
       buttons: [
         {
           text: 'Cerrar',
@@ -360,58 +604,5 @@ export class ProyectosPage implements OnInit {
     });
 
     await alerta.present();
-  }
-
-  private getAccionDesdeEstado(estado: string): string {
-    switch (estado) {
-      case 'publicada':
-        return 'publicado';
-      case 'rechazada':
-        return 'rechazado';
-      case 'aprobada':
-        return 'aprobado';
-      default:
-        return estado || 'actualizado';
-    }
-  }
-  /** Convierte el verbo a pasado: publicar -> publicado, aprobar -> aprobado, etc. */
-  private getAccionPasado(verbo: string): string {
-    switch (verbo) {
-      case 'publicar':
-        return 'publicado';
-      case 'aprobar':
-        return 'aprobado';
-      case 'rechazar':
-        return 'rechazado';
-      default:
-        return 'actualizado';
-    }
-  }
-  // Mapea estado_proyecto (texto de BD) a clases de color del pill
-  getEstadoProyectoClase(estado?: string | null): string {
-    if (!estado) {
-      return 'status-in-progress';
-    }
-
-    const e = estado.toLowerCase();
-
-    if (e.includes('plan')) return 'status-planning';
-    if (e.includes('progreso')) return 'status-in-progress';
-    if (e.includes('complet') || e.includes('finaliz'))
-      return 'status-completed';
-    if (e.includes('paus')) return 'status-paused';
-
-    return 'status-planning';
-  }
-
-  // Botón EDITAR (placeholder: aquí rediriges al formulario de edición)
-  editarProyecto(proyecto: any) {
-    console.log('✏️ Editar proyecto', proyecto);
-    // ejemplo: this.router.navigate(['editar/proyecto', proyecto.id_proyecto]);
-  }
-
-  // Botón ELIMINAR de proyectos activos
-  rechazarProyecto(proyecto: any) {
-    this.cambiarEstadoGenerico(proyecto, 'rechazada', 'proyecto');
   }
 }
