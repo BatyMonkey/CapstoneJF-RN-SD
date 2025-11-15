@@ -1,48 +1,57 @@
-// src/app/detalle-noticia/detalle-noticia.page.ts
-
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { environment } from 'src/environments/environment';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { SupabaseService } from 'src/app/services/supabase.service';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { Location } from '@angular/common';
+import { addIcons } from 'ionicons';
+import {
+  calendarOutline,
+  personOutline,
+  chevronBackOutline,
+  personCircleOutline
+} from 'ionicons/icons';
 
-// Definición de la interfaz para la noticia (ajustada a la nueva estructura)
 interface DetalleNoticia {
   id: number;
   titulo: string;
-  parrafos: string[] | null; // Array de párrafos
+  parrafos: string[] | null;
+  url_foto: string[] | null;
   nombre_autor: string | null;
   fecha_creacion: string;
-  url_foto: string[] | null; // Array de URLs de fotos
-}
-
-// Interfaz para el contenido mixto que se renderizará
-interface ContenidoMixtoItem {
-  type: 'parrafo' | 'foto';
-  value: string;
 }
 
 @Component({
   selector: 'app-detalle-noticia',
+  standalone: true,
   templateUrl: './detalle-noticia.page.html',
   styleUrls: ['./detalle-noticia.page.scss'],
-  standalone: true,
-  imports: [CommonModule, IonicModule, RouterModule]
+  imports: [IonicModule, CommonModule, RouterModule],
 })
 export class DetalleNoticiaPage implements OnInit {
 
-  supabase: SupabaseClient;
-  noticiaId: number | null = null;
+  noticiaId!: number;
   noticia: DetalleNoticia | null = null;
+  contenidoMixto: { type: 'parrafo' | 'foto'; value: string }[] = [];
   estaCargando = true;
 
-  // Array para almacenar párrafos y URLs mezclados
-  contenidoMixto: ContenidoMixtoItem[] = [];
+  supabase!: SupabaseClient;
 
-  constructor(private route: ActivatedRoute, private supabaseService: SupabaseService) {
+  constructor(
+    private route: ActivatedRoute,
+    private supabaseService: SupabaseService,
+    public location: Location
+  ) {
+
     this.supabase = this.supabaseService.client;
+
+    addIcons({
+      'calendar-outline': calendarOutline,
+      'person-outline': personOutline,
+      'chevron-back-outline': chevronBackOutline,
+      'person-circle-outline': personCircleOutline
+    });
   }
 
   ngOnInit() {
@@ -50,40 +59,40 @@ export class DetalleNoticiaPage implements OnInit {
     if (idParam) {
       this.noticiaId = parseInt(idParam, 10);
       this.cargarDetalleNoticia(this.noticiaId);
-    } else {
-      this.estaCargando = false;
     }
+  }
+
+  goBack() {
+    this.location.back();
   }
 
   async cargarDetalleNoticia(id: number) {
     this.estaCargando = true;
+
     try {
       const { data, error } = await this.supabase
         .from('noticias')
-        // Seleccionamos 'parrafos' y 'url_foto'
-        .select('id, titulo, parrafos, nombre_autor, fecha_creacion, url_foto') 
+        .select('*')
         .eq('id', id)
-        .single(); 
+        .single();
 
-      if (error && error.code !== 'PGRST116') throw error; 
-
-      if (data) {
-        this.noticia = data as DetalleNoticia;
-        // Llenar el array de contenido mezclado después de cargar
-        this.mezclarContenido(); 
-      } else {
+      if (error) {
+        console.error('❌ Error cargando noticia:', error);
         this.noticia = null;
+        return;
       }
 
-    } catch (error) {
-      console.error('Error al cargar el detalle de la noticia:', error);
+      this.noticia = data as DetalleNoticia;
+      this.mezclarContenido();
+
+    } catch (e) {
+      console.error('❌ Error inesperado:', e);
       this.noticia = null;
     } finally {
       this.estaCargando = false;
     }
   }
 
-  // Lógica para mezclar el contenido: 2 párrafos por 1 foto
   private mezclarContenido() {
     this.contenidoMixto = [];
     if (!this.noticia) return;
@@ -91,37 +100,28 @@ export class DetalleNoticiaPage implements OnInit {
     const parrafos = this.noticia.parrafos || [];
     const fotos = this.noticia.url_foto || [];
 
-    let pIndex = 0;
-    let fIndex = 0;
+    const max = Math.max(parrafos.length, fotos.length);
 
-    // Intercalar el contenido: 2 párrafos por 1 foto
-    // El bucle continúa mientras quede contenido en cualquiera de los dos arrays
-    while (pIndex < parrafos.length || fIndex < fotos.length) {
-      
-      // 1. Agregar dos párrafos
-      for (let i = 0; i < 2; i++) {
-        if (pIndex < parrafos.length) {
-          this.contenidoMixto.push({ type: 'parrafo', value: parrafos[pIndex] });
-          pIndex++;
-        }
+    for (let i = 0; i < max; i++) {
+      if (parrafos[i]) {
+        this.contenidoMixto.push({ type: 'parrafo', value: parrafos[i] });
       }
-
-      // 2. Agregar una foto
-      if (fIndex < fotos.length) {
-        this.contenidoMixto.push({ type: 'foto', value: fotos[fIndex] });
-        fIndex++;
+      if (fotos[i + 1]) {
+        this.contenidoMixto.push({ type: 'foto', value: fotos[i + 1] });
       }
     }
-    
-    // Si quedan párrafos o fotos sobrantes, ya están incluidos debido al bucle 'while'
+  }
+    get tieneFotoPrincipal(): boolean {
+    return !!this.noticia?.url_foto && this.noticia!.url_foto!.length > 0;
   }
 
-  // Helper para formatear la fecha
+
   formatearFecha(fecha: string): string {
-    // Maneja el caso de fecha nula si ocurre
-    if (!fecha) return ''; 
-    return new Date(fecha).toLocaleDateString('es-ES', { 
-        year: 'numeric', month: 'long', day: 'numeric' 
+    if (!fecha) return '';
+    return new Date(fecha).toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
   }
 }
