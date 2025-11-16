@@ -1,0 +1,200 @@
+<!-- ============================================================
+     HEADER — HERO REDBARRIO
+=============================================================== -->
+<ion-header class="rb-hero-header">
+  <div class="rb-hero-container">
+
+    <div class="rb-hero-info">
+      <div class="rb-hero-logo">
+        <img src="assets/icon/redbarrio.png" />
+      </div>
+
+      <div class="rb-hero-text">
+        <h1>RedBarrio</h1>
+        <p>{{ subtitulo }}</p>
+      </div>
+    </div>
+
+    <button class="rb-hero-back" type="button" (click)="goBack()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </button>
+
+  </div>
+</ion-header>
+
+<!-- ============================================================
+     CONTENIDO PRINCIPAL
+=============================================================== -->
+<ion-content>
+
+  <!-- 🔵 FILTRO POR TIPO -->
+  <div class="tabs-container tipo-tabs">
+
+    <button
+      class="tab-btn"
+      [class.active]="filtroTipo === 'todos'"
+      (click)="cambiarFiltroTipo('todos')">
+      TODOS
+    </button>
+
+    <button
+      class="tab-btn"
+      [class.active]="filtroTipo === 'proyectos'"
+      (click)="cambiarFiltroTipo('proyectos')">
+      PROYECTOS ({{ totalProyectos }})
+    </button>
+
+    <button
+      class="tab-btn"
+      [class.active]="filtroTipo === 'actividades'"
+      (click)="cambiarFiltroTipo('actividades')">
+      ACTIVIDADES ({{ totalActividades }})
+    </button>
+
+  </div>
+
+  <!-- 🔴 FILTRO POR ESTADO -->
+  <div class="tabs-container estado-tabs">
+
+    <button
+      class="tab-btn"
+      [class.active]="filtroEstado === 'todos'"
+      (click)="cambiarFiltroEstado('todos')">
+      Todos
+    </button>
+
+    <button
+      class="tab-btn"
+      [class.active]="filtroEstado === 'pendiente'"
+      (click)="cambiarFiltroEstado('pendiente')">
+      Pendientes
+    </button>
+
+    <button
+      class="tab-btn"
+      [class.active]="filtroEstado === 'Aceptado'"
+      (click)="cambiarFiltroEstado('Aceptado')">
+      Aceptados
+    </button>
+
+    <button
+      class="tab-btn"
+      [class.active]="filtroEstado === 'Rechazado'"
+      (click)="cambiarFiltroEstado('Rechazado')">
+      Rechazados
+    </button>
+
+  </div>
+
+  <section class="section-wrapper">
+
+    <h2 class="section-title">Solicitudes de Inscripción</h2>
+
+    <!-- Estado vacío -->
+    <div class="empty" *ngIf="solicitudesFiltradas.length === 0 && !isLoading">
+      <ion-icon name="checkbox-outline"></ion-icon>
+      <p>No hay solicitudes para este filtro.</p>
+    </div>
+
+    <!-- Loader -->
+    <div class="small-loading" *ngIf="isLoading">
+      <ion-icon name="sync-outline" class="spin"></ion-icon>
+      <span>Cargando solicitudes...</span>
+    </div>
+
+    <!-- LISTADO -->
+    <div class="card-solicitud" *ngFor="let s of solicitudesFiltradas">
+
+      <!-- HEADER DE TARJETA -->
+      <div class="card-header">
+
+        <img
+          [src]="getFotoPerfil(s.vecinoFoto)"
+          (error)="onAvatarError($event)"
+          class="avatar"
+        />
+
+        <div class="info">
+          <div class="name-row">
+            <h3 class="name">{{ s.vecinoNombre }}</h3>
+
+            <!-- Tag tipo -->
+            <div
+              class="tipo-tag"
+              [ngClass]="{
+                'tag-actividad': s.tipo === 'actividad',
+                'tag-proyecto': s.tipo === 'proyecto'
+              }">
+              {{ s.tipo === 'actividad' ? 'Actividad' : 'Proyecto' }}
+            </div>
+          </div>
+
+          <p class="correo">{{ s.vecinoCorreo }}</p>
+          <p class="rut">RUT: {{ s.vecinoRut }}</p>
+        </div>
+
+      </div>
+
+      <!-- CUERPO DE LA SOLICITUD -->
+      <div class="solicitud-body">
+
+        <p class="titulo-etiqueta">
+          {{ s.tipo === 'actividad' ? 'Actividad:' : 'Proyecto:' }}
+        </p>
+
+        <h4 class="titulo-solicitud">
+          {{ s.titulo }}
+        </h4>
+
+        <p class="titulo-etiqueta">Motivación:</p>
+
+        <p class="motivo" *ngIf="s.motivo; else noMotivo">
+          {{ s.motivo }}
+        </p>
+
+        <ng-template #noMotivo>
+          <p class="motivo motivo-empty">Sin motivación del vecino.</p>
+        </ng-template>
+
+        <!-- FECHA + ESTADO -->
+        <div class="meta-line">
+
+          <div class="meta-left">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <span>{{ s.fecha | date:'dd-MM-yyyy HH:mm' }}</span>
+          </div>
+
+          <div
+            class="estado-pill"
+            [ngClass]="{
+              'estado-pendiente': s.estado.toLowerCase() === 'pendiente',
+              'estado-aceptado': s.estado.toLowerCase() === 'aceptado',
+              'estado-rechazado': s.estado.toLowerCase() === 'rechazado'
+            }">
+            {{ s.estado }}
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ACCIONES -->
+      <div class="acciones">
+
+        <button class="btn-aceptar" (click)="cambiarEstado(s, 'Aceptado')">
+          <ion-icon name="checkmark-outline"></ion-icon>
+          Aceptar
+        </button>
+
+        <button class="btn-rechazar" (click)="cambiarEstado(s, 'Rechazado')">
+          <ion-icon name="close-outline"></ion-icon>
+          Rechazar
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</ion-content>

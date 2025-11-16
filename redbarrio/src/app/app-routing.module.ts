@@ -54,6 +54,8 @@ const routes: Routes = [
       import('./noticias/noticias.page').then((m) => m.NoticiasPage),
   },
 
+
+
   // ===== Noticias =====
   {
     path: 'noticias/crear',
@@ -117,6 +119,14 @@ const routes: Routes = [
       import(
         './generar/proyecto/generar-proyecto/generar-proyecto.component'
       ).then((m) => m.SugerirProyectoPage),
+  },
+  {
+    path: 'admin/solicitud-inscripciones',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador', 'directorio'] }, 
+    loadComponent: () =>
+      import('./admin/Solicitud-Inscripciones/solicitud-inscripciones.page')
+        .then((m) => m.SolicitudInscripcionesPage),
   },
   {
     path: 'generar/votacion',
