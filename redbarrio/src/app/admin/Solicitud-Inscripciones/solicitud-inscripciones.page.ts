@@ -2,7 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule, DatePipe, NgClass } from '@angular/common';
 import { SupabaseService } from 'src/app/services/supabase.service';
+import { addIcons } from 'ionicons';
+import { chevronBackOutline, checkmarkCircleOutline, closeCircleOutline } from 'ionicons/icons';
 
+addIcons({
+  'chevron-back-outline': chevronBackOutline,
+  'checkmark-circle-outline': checkmarkCircleOutline,
+  'close-circle-outline': closeCircleOutline,
+});
 // ======================== INTERFACES ========================
 interface ActividadRef {
   id_actividad: string;

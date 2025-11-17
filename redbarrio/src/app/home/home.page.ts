@@ -20,7 +20,7 @@ import {
   bulbOutline,
   megaphoneOutline,
   calendarOutline,
-  footballOutline,
+  bicycleOutline,  
 } from 'ionicons/icons';
 
 interface Noticia {
@@ -76,7 +76,7 @@ export class HomePage implements OnInit {
       'bulb-outline': bulbOutline,
       'megaphone-outline': megaphoneOutline,
       'calendar-outline': calendarOutline,
-      'football-outline': footballOutline,
+      'bicycle-outline': bicycleOutline,
     });
   }
 

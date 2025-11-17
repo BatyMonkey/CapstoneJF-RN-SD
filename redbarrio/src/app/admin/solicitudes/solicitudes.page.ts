@@ -15,6 +15,17 @@ import {
 import { CommonModule, DatePipe } from '@angular/common';
 import { SupabaseService } from 'src/app/services/supabase.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { addIcons } from 'ionicons';
+import { chevronBackOutline, checkmarkCircleOutline, closeCircleOutline, mailOutline, locationOutline, banOutline } from 'ionicons/icons';
+
+addIcons({
+  'chevron-back-outline': chevronBackOutline,
+  'checkmark-circle-outline': checkmarkCircleOutline,
+  'close-circle-outline': closeCircleOutline,
+  'mail-outline': mailOutline,
+  'location-outline': locationOutline,
+  'ban-outline': banOutline,
+});
 
 @Component({
   standalone: true,

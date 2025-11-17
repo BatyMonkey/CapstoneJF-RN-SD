@@ -39,7 +39,18 @@ export class LoginPage {
     this.errorMsg = '';
 
     try {
+      // 1) Login normal
       await this.auth.signIn(this.email, this.password);
+
+      // 2) Validar que el usuario esté ACTIVO
+      const esActivo = await this.verificarUsuarioActivo();
+
+      if (!esActivo) {
+        // Si no está activo, cortamos aquí
+        return;
+      }
+
+      // 3) Navegar sólo si pasó la validación
       this.router.navigateByUrl('/home', { replaceUrl: true });
     } catch (e: any) {
       console.error('Error login:', e);
@@ -50,6 +61,46 @@ export class LoginPage {
       await this.mostrarAlertaLoginError(mapped);
     } finally {
       this.loading = false;
+    }
+  }
+
+  /**
+   * Verifica en la base de datos que el usuario tenga estado "activo".
+   * Ajusta el nombre del método/campo según tu AuthService / modelo.
+   */
+  private async verificarUsuarioActivo(): Promise<boolean> {
+    try {
+      // 👉 Usa el método que ya tienes para obtener el perfil
+      //    (por ejemplo miPerfil(), getPerfilActual(), etc.)
+      const perfil: any = await (this.auth as any).miPerfil();
+
+      // Ajusta el nombre del campo según tu tabla:
+      // puede ser perfil.estado, perfil.status, perfil.state, etc.
+      const estado = (perfil?.estado || perfil?.status || '').toString().toLowerCase();
+
+      if (estado === 'activo') {
+        return true;
+      }
+
+      // Si NO está activo:
+      const msg =
+        'Tu cuenta no se encuentra activa. Comunícate con la administración de tu Junta de Vecinos para habilitar el acceso.';
+      this.errorMsg = msg;
+
+      // Cerramos sesión inmediatamente para no dejar sesión abierta
+      await this.auth.signOut();
+
+      await this.mostrarAlertaLoginError(msg);
+      return false;
+    } catch (e) {
+      console.error('Error al verificar estado del usuario:', e);
+      const msg =
+        'No pudimos verificar el estado de tu cuenta. Intenta nuevamente más tarde o contacta a soporte.';
+      this.errorMsg = msg;
+      await this.mostrarAlertaLoginError(msg);
+      // Por seguridad, no dejamos pasar si no se pudo verificar
+      await this.auth.signOut();
+      return false;
     }
   }
 
@@ -146,7 +197,6 @@ export class LoginPage {
     try {
       await this.auth.sendPasswordResetLink(email);
 
-      // ✅ Modal “bonito” con OK, igual estilo que el resto
       const alert = await this.alertCtrl.create({
         header: 'Enlace enviado',
         message:

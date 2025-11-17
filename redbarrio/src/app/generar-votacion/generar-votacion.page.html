@@ -161,6 +161,7 @@
             <div
               class="upload-box"
               (click)="fileInputs.toArray()[i].nativeElement.click()">
+              <ion-icon name="image-outline"></ion-icon>
 
               <span *ngIf="!o.previewDataUrl">Subir imagen</span>
 
@@ -196,6 +197,7 @@
       class="submit-btn"
       [disabled]="!puedeGuardar || loading"
       (click)="guardar()">
+      <ion-icon name="send-outline"></ion-icon>
       Generar Votación
     </button>
 

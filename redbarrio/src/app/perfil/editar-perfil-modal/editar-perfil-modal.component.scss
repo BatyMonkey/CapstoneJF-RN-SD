@@ -1,0 +1,225 @@
+/* Fondo general del contenido de la modal */
+.edit-perfil-content {
+  --background: #f5f7fb;
+
+  /* Aire general dentro del contenido */
+  --padding-top: 1rem;
+  --padding-bottom: 4rem;
+  --padding-start: 1rem;
+  --padding-end: 1rem;
+}
+
+/* Header con degradado */
+.edit-perfil-header ion-toolbar {
+  --background: linear-gradient(90deg, #22d3ee, #06b6d4);
+  --border-style: none;
+  color: #ffffff;
+
+  /* un poco más de aire vertical */
+  padding-top: 0.6rem;
+  padding-bottom: 0.9rem;
+}
+
+/* Contenedor del header: botón circular + textos */
+.header-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1rem;
+}
+
+/* (ya no se usa, pero no estorba si queda) */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Botón circular (back/cerrar) */
+.user-icon-circle {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.user-icon-circle ion-icon {
+  font-size: 1.25rem;
+  color: #ffffff;
+}
+
+/* Texto del header */
+.header-text h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.header-text p {
+  margin: 0;
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+/* Tarjeta central (ocupa ancho max) */
+.edit-card {
+  max-width: 430px;
+  margin: 0 auto 1.5rem;
+}
+
+/* Caja nombre completo */
+.full-name-box {
+  background: linear-gradient(135deg, #ecfeff, #e0f2fe);
+  border: 1px solid #bae6fd;
+  border-radius: 0.75rem;
+  padding: 0.9rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.full-name-box label {
+  display: block;
+  font-size: 0.8rem;
+  color: #4b5563;
+  margin-bottom: 0.25rem;
+}
+
+.full-name-box p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #111827;
+}
+
+/* Bloques de campo */
+.field-block {
+  background: transparent;
+  padding-bottom: 1rem; /* más separación vertical entre campos */
+}
+
+.field-block label {
+  display: block;
+  font-size: 0.8rem;
+  color: #4b5563;
+  margin-bottom: 0.25rem;
+}
+
+.field-block input {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff !important; /* inputs blancos */
+  color: #111827;
+  font-size: 0.9rem;
+  padding: 0.55rem 0.8rem;
+  outline: none;
+}
+
+.field-block input::placeholder {
+  color: #9ca3af;
+}
+
+/* Deshabilitados */
+.field-block.disabled input {
+  background-color: #f3f4f6 !important;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.field-block .hint {
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* Otros textos */
+.optional {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.required {
+  font-size: 0.75rem;
+  color: #ef4444;
+}
+
+.inline-icon {
+  font-size: 0.9rem;
+  margin-right: 0.25rem;
+  vertical-align: text-bottom;
+}
+
+/* Errores */
+.error-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+  margin-top: 0.4rem;
+  color: #dc2626;
+  font-size: 0.8rem;
+}
+
+.error-message ion-icon {
+  font-size: 0.9rem;
+  margin-top: 0.1rem;
+}
+
+/* Nota informativa */
+.info-note {
+  display: flex;
+  gap: 0.6rem;
+  background: #eff6ff;
+  border-radius: 0.9rem;
+  border: 1px solid #bfdbfe;
+  padding: 0.8rem 0.9rem;
+  margin: 0.75rem 0 1.1rem;
+}
+
+.info-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.info-icon ion-icon {
+  font-size: 1.1rem;
+  color: #2563eb;
+}
+
+.info-text .title {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1d4ed8;
+}
+
+.info-text ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.8rem;
+  color: #1e3a8a;
+}
+
+/* Botones */
+.action-buttons {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+
+.action-buttons ion-button {
+  --border-radius: 0.9rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.action-buttons ion-button:last-child {
+  --background: linear-gradient(90deg, #06b6d4, #0891b2);
+  --box-shadow: 0 6px 16px rgba(8, 145, 178, 0.45);
+  color: #ffffff;
+}

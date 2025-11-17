@@ -39,6 +39,7 @@ import {
   sparklesOutline,
   helpCircleOutline,
   newspaperOutline,
+  bicycleOutline,
 } from 'ionicons/icons';
 
 @Component({
@@ -87,6 +88,7 @@ export class AppComponent {
       sparklesOutline,
       helpCircleOutline,
       newspaperOutline,
+      bicycleOutline,
     });
 
     this.currentUrl = this.router.url || '';

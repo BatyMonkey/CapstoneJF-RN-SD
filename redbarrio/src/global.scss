@@ -279,3 +279,23 @@ ion-alert .alert-input::placeholder {
   color: #9ca3af !important;           /* placeholder gris */
 }
 
+/* ===== Modal Editar Perfil como card centrado ===== */
+
+ion-modal.edit-perfil-modal {
+  --backdrop-opacity: 0.45;
+}
+
+ion-modal.edit-perfil-modal::part(content) {
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(15, 23, 42, 0.35);
+
+  max-width: 430px;
+  width: calc(100% - 32px);
+
+  /* un poco más bajo para que no choque con el borde inferior */
+  height: 80vh;
+  max-height: 80vh;
+
+  margin: auto;
+}
