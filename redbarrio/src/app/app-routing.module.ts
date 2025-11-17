@@ -53,6 +53,13 @@ const routes: Routes = [
     loadComponent: () =>
       import('./noticias/noticias.page').then((m) => m.NoticiasPage),
   },
+<<<<<<< HEAD
+=======
+
+
+
+  // ===== Noticias =====
+>>>>>>> b934e0e7fcbc84c7d4761c5f93f93876a4110014
   {
     path: 'noticias/crear',
     loadComponent: () =>
@@ -117,6 +124,7 @@ const routes: Routes = [
       ).then((m) => m.SugerirProyectoPage),
   },
   {
+<<<<<<< HEAD
     path: 'generar/actividad',
     canActivate: [AuthGuard],
     data: { roles: ['administrador', 'vecino'] },
@@ -130,6 +138,14 @@ const routes: Routes = [
     loadComponent: () =>
       import('./admin/actividades/crear-actividad-admin/crear-actividad-admin.page')
       .then(m => m.CrearActividadAdminPage),
+=======
+    path: 'admin/solicitud-inscripciones',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador', 'directorio'] }, 
+    loadComponent: () =>
+      import('./admin/Solicitud-Inscripciones/solicitud-inscripciones.page')
+        .then((m) => m.SolicitudInscripcionesPage),
+>>>>>>> b934e0e7fcbc84c7d4761c5f93f93876a4110014
   },
   {
     path: 'generar/votacion',

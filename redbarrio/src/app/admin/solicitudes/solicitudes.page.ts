@@ -48,7 +48,7 @@ export class SolicitudesPage implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/admin']);
+    this.router.navigate(['/admin/gestiones']);
   }
 
   async cargar() {

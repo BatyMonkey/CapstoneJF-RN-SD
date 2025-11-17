@@ -24,7 +24,7 @@ export interface ChatbotResponse {
 export class ChatbotService {
   // 👇 tu webhook real
   private apiUrl =
-    'https://joaquinfuentesp3101.app.n8n.cloud/webhook/redbarrio/chatbot';
+    'https://joaquinfuentessp3101.app.n8n.cloud/webhook/redbarrio/chatbot';
 
   constructor(private http: HttpClient) {}
 
