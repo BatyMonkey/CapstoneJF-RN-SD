@@ -1,248 +1,737 @@
-/* ==========================================================
-   ===== Paleta base (coherente con otras gestiones)
-   ========================================================== */
-:host {
-  --rb-primary: #2563eb;
-  --rb-primary-10: rgba(37, 99, 235, 0.10);
+/* =========================================
+   ESQUEMA BASE / COLORES
+========================================= */
+:host,
+:host-context(html) {
+  color-scheme: light !important;
+
+  --rb-primary: #06b6d4;
+  --rb-primary-strong: #0e7490;
+  --rb-bg: #f5f7fb;
   --rb-text: #0f172a;
   --rb-muted: #64748b;
-  --rb-sep: rgba(2, 6, 23, 0.06);
-  --rb-bg: #f8fafc;
 
-  color-scheme: light;
   --ion-background-color: var(--rb-bg);
   --ion-text-color: var(--rb-text);
 }
 
-/* ==========================================================
-   ===== Header degradado
-   ========================================================== */
-.rb-header ion-toolbar {
-  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
-  --color: #fff;
-  --border-color: transparent;
-  --min-height: 56px;
-}
-
-/* ==========================================================
-   ===== Estructura principal del módulo
-   ========================================================== */
-ion-content {
-  --background: var(--rb-bg);
-  padding: 24px 18px;
+/* =========================================
+   HERO HEADER (igual al Home)
+========================================= */
+.rb-hero-header {
+  background: linear-gradient(90deg, #06b6d4 0%, #22d3ee 100%);
+  border-bottom-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  height: 130px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-}
-
-/* Contenedor central tipo “tarjeta grande” */
-.actividades-container {
-  background: #fff;
-  border-radius: 18px;
-  padding: 24px 20px;
-  width: min(700px, 100%);
-  box-shadow:
-    0 10px 30px rgba(2, 6, 23, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  border: 1px solid var(--rb-sep);
-
-  h1 {
-    margin: 0 0 8px 0;
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--rb-text);
-  }
-
-  p {
-    margin: 0 0 18px;
-    color: var(--rb-muted);
-    font-weight: 500;
-  }
-}
-
-/* ==========================================================
-   ===== Lista y tarjetas de actividades
-   ========================================================== */
-.actividades-container ion-list {
-  background: transparent;
-  margin: 0;
+  justify-content: center;
   padding: 0;
 }
 
-/* CARD de cada actividad */
-.actividades-container ion-list > ion-item {
-  --background: #ffffff;
-  margin-bottom: 14px;
-  border-radius: 18px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
-  --inner-border-width: 0;
-  --padding-start: 14px;
-  --padding-end: 14px;
-  align-items: flex-start;
+ion-header::after {
+  /* Quita la línea de borde por defecto de Ionic */
+  background: none !important;
+  display: none !important;
 }
 
-/* Texto dentro de la actividad */
-.actividades-container ion-list > ion-item ion-label {
-  color: var(--rb-text);
-}
-
-.actividades-container ion-list > ion-item ion-label h2 {
-  font-weight: 700;
-  font-size: 1.02rem;
-  margin-bottom: 4px;
-  color: var(--rb-text);
-}
-
-.actividades-container ion-list > ion-item ion-label p {
-  margin: 0 0 4px 0;
-  color: var(--rb-muted);
-  font-weight: 500;
-  word-break: break-word;
-}
-
-/* Dirección / ubicación */
-.direccion {
+.rb-hero-container {
+  width: 100%;
+  padding: 0 1.5rem;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+}
+
+.rb-hero-info {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.rb-hero-logo {
+  /* Contenedor simple para el logo */
+  width: 80px;
+  height: 80px;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rb-hero-logo img {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+  border-radius: 0;
+}
+
+.rb-hero-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  h1 {
+    color: #ffffff;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    margin: 2px 0 0 0;
+  }
+}
+
+.rb-hero-chat {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  padding: 10px;
+  color: #fff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon {
+    font-size: 1.3rem;
+  }
+}
+
+/* =========================================
+   LAYOUT CONTENIDO
+========================================= */
+
+.proyectos-page {
+  --background: var(--rb-bg);
+  margin-top: 140px; /* deja espacio para el hero */
+  position: relative;
+  z-index: 1;
+}
+
+.page-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.content-wrapper {
+  width: 100%;
+  max-width: 430px;
+  padding: 0 16px 24px;
+  box-sizing: border-box;
+}
+
+/* =========================================
+   TARJETA PRINCIPAL (HEADER + TABS)
+========================================= */
+
+.projects-manage-card {
+  margin-top: 8px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 14px 16px 16px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.projects-manage-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.header-text h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.header-text p {
+  margin: 2px 0 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* Tabs principales */
+.projects-main-tabs {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.main-tab {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: #f3f4f6;
+  border-radius: 12px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 6px;
-  color: var(--rb-muted);
-  font-size: 0.88rem;
-  margin-top: 4px;
-}
-
-.direccion ion-icon {
-  color: var(--rb-primary);
-  font-size: 1rem;
-}
-
-/* Chip de estado */
-ion-chip[color='warning'] {
-  --background: #facc15;
-  --color: #1e293b;
-  border-radius: 8px;
+  font-size: 0.85rem;
   font-weight: 600;
+  color: #4b5563;
+  transition: background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
+
+  ion-icon {
+    font-size: 1.1rem;
+  }
+
+  &.active {
+    background: linear-gradient(135deg, #06b6d4, #0ea5e9);
+    color: #ffffff;
+    box-shadow: 0 8px 18px rgba(8, 47, 73, 0.3);
+  }
+}
+
+/* =========================================
+   SUBTABS: ACTIVAS / SUGERENCIAS
+========================================= */
+
+.manage-subtabs {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.subtab-chip {
+  flex: 1;
+  border-radius: 999px;
+  padding: 6px 12px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #374151;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+
+  ion-icon {
+    font-size: 0.95rem;
+  }
+
+  &.active {
+    box-shadow: none; /* sin efecto levantado */
+  }
+}
+
+/* 🔹 Actividades publicadas – VERDE cuando está activo */
+.subtab-chip.activos {
+  background: #ffffff;
+  border-color: #e5e7eb;
+  color: #1f2937;
+
+  ion-icon {
+    color: #22c55e;
+  }
+
+  &.active {
+    background: #dcfce7;
+    border-color: #22c55e;
+    color: #166534;
+
+    ion-icon {
+      color: #16a34a;
+    }
+  }
+}
+
+/* 🔸 Sugerencias – naranja cuando está activa */
+.subtab-chip.solicitudes {
+  background: #ffffff;
+  border-color: #e5e7eb;
+  color: #374151;
+
+  ion-icon {
+    color: #fb923c;
+  }
+
+  &.active {
+    background: #fff7ed;
+    border-color: #fb923c;
+    color: #ea580c;
+
+    ion-icon {
+      color: #ea580c;
+    }
+  }
+}
+
+/* Badge rojo de número de solicitudes */
+.subtab-badge {
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 4px;
+}
+
+/* =========================================
+   SECCIONES
+========================================= */
+
+.projects-section {
+  margin-top: 18px;
+}
+
+.section-title {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* =========================================
+   ESTADOS: CARGANDO / VACÍO
+========================================= */
+
+.loading-block {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #6b7280;
+  }
+}
+
+.empty-state {
+  margin-top: 20px;
+  padding: 18px 16px;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px dashed rgba(148, 163, 184, 0.6);
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 2rem;
+  color: #9ca3af;
+  margin-bottom: 6px;
+}
+
+.empty-title {
+  margin: 0 0 4px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.empty-text {
+  margin: 0 0 10px;
+  font-size: 0.86rem;
+  color: #6b7280;
+}
+
+.btn-primary {
+  border: none;
+  outline: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, #06b6d4, #0ea5e9);
+  color: #ffffff;
+  font-size: 0.86rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 10px 20px rgba(8, 47, 73, 0.25);
+
+  ion-icon {
+    font-size: 1.1rem;
+  }
+}
+
+/* =========================================
+   LISTA DE ACTIVIDADES PUBLICADAS
+========================================= */
+
+.projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   margin-top: 6px;
 }
 
-/* Botones de acción a la derecha */
-.actividades-container ion-list > ion-item ion-buttons[slot='end'] {
+.project-card {
+  background: #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.project-image {
+  position: relative;
+  width: 100%;
+  height: 150px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.project-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(8, 47, 73, 0.85);
+  color: #ffffff;
+  font-size: 0.7rem;
+}
+
+.project-body {
+  padding: 12px 14px 12px;
+}
+
+.project-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+
+  h4 {
+    margin: 0;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+}
+
+/* Pill de estado dentro de la tarjeta */
+.status-pill {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  ion-icon {
+    font-size: 0.9rem;
+  }
+}
+
+/* Colores por estado (ACTIVIDADES) */
+.status-publicada {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.status-pendiente {
+  background: #fef9c3;
+  color: #92400e;
+  border: 1px solid #facc15;
+}
+
+.status-rechazada {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.status-default {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+  color: #374151;
+}
+
+/* Descripción */
+.project-desc {
+  margin: 4px 0 8px;
+  font-size: 0.86rem;
+  color: #4b5563;
+  line-height: 1.4;
+}
+
+/* Meta info (cupos / responsable, etc. si lo usas) */
+.project-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #4b5563;
+
+  ion-icon {
+    font-size: 1rem;
+    color: #0ea5e9; /* por defecto, celestito */
+  }
+
+  /* Si reutilizas money-icon para algún valor numérico */
+  ion-icon.money-icon {
+    color: #16a34a !important;
+  }
+}
+
+/* Fechas */
+.project-dates {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  color: #6b7280;
+  margin-bottom: 8px;
+
+  ion-icon {
+    font-size: 0.9rem;
+  }
+}
+
+/* Acciones */
+.project-actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.project-actions button {
+  flex: 1;
+}
+
+/* Botones acción */
+.btn-soft {
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  padding: 7px 8px;
+  background: #ecfeff;
+  color: #0e7490;
+  font-size: 0.84rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  ion-icon {
+    font-size: 1rem;
+  }
+}
+
+.btn-danger {
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  padding: 7px 8px;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 0.84rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  ion-icon {
+    font-size: 1rem;
+  }
+}
+
+/* =========================================
+   SOLICITUDES DE ACTIVIDADES
+========================================= */
+
+.requests-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-left: 10px;
+  gap: 12px;
+  margin-top: 6px;
 }
 
-.actividades-container ion-list > ion-item ion-buttons ion-button {
-  font-weight: 600;
-  border-radius: 12px;
-  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.12);
-  height: 36px;
-  min-width: 110px;
-}
-
-.actividades-container ion-list > ion-item ion-buttons ion-button[color='success'] {
-  --background: #16a34a;
-  --background-activated: #15803d;
-  --color: #fff;
-}
-
-.actividades-container ion-list > ion-item ion-buttons ion-button[color='danger'] {
-  --background: #ef4444;
-  --background-activated: #b91c1c;
-  --color: #fff;
-}
-
-/* ==========================================================
-   ===== Estados de carga o vacío
-   ========================================================== */
-.loading,
-.empty {
-  text-align: center;
-  color: var(--rb-muted);
-  padding: 18px 0;
-  font-weight: 600;
-
-  ion-spinner {
-    margin-bottom: 8px;
-  }
-}
-
-/* ==========================================================
-   ===== Responsive
-   ========================================================== */
-@media (max-width: 520px) {
-  ion-content {
-    padding: 18px 12px;
-  }
-
-  .actividades-container {
-    padding: 20px 14px;
-  }
-
-  .actividades-container ion-list > ion-item {
-    align-items: stretch;
-  }
-
-  .actividades-container ion-list > ion-item ion-buttons[slot='end'] {
-    flex-direction: row;
-    justify-content: flex-end;
-  }
-
-  .actividades-container ion-list > ion-item ion-buttons ion-button {
-    min-width: 0;
-  }
-}
-:host {
-  --rb-primary: #2563eb;
-  --rb-primary-10: rgba(37, 99, 235, 0.10);
-  --rb-text: #0f172a;
-  --rb-muted: #64748b;
-  --rb-sep: rgba(2, 6, 23, 0.06);
-  --rb-bg: #f8fafc;
-
-  color-scheme: light;
-
-  /* 🔹 Fondo global uniforme */
-  --ion-background-color: var(--rb-bg);
-  --ion-text-color: var(--rb-text);
-  background: var(--rb-bg); /* <--- evita el “fondo negro” */
-}
-
-/* ==========================================================
-   ===== Fondo consistente (evita el flash oscuro al refrescar)
-   ========================================================== */
-ion-content {
-  --background: var(--rb-bg) !important;
-  background: var(--rb-bg) !important;
-  padding: 24px 18px;
-  display: block; /* ✅ volvemos al flujo normal */
-  min-height: 100%;
-}
-
-/* 🔹 Asegura que el contenedor quede centrado y no “pegado abajo” */
-.actividades-container {
-  background: #fff;
+.request-card {
   border-radius: 18px;
-  padding: 24px 20px;
-  width: min(700px, 100%);
-  margin: 0 auto 40px auto; /* margen inferior bonito */
-  box-shadow:
-    0 10px 30px rgba(2, 6, 23, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  border: 1px solid var(--rb-sep);
+  background: #ffffff;
+  border: 2px solid #fed7aa; /* naranja suave */
+  overflow: hidden;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }
 
-/* 🔹 También aplicamos color al refresher */
-ion-refresher,
-ion-refresher-content {
-  background: var(--rb-bg) !important;
-  --background: var(--rb-bg) !important;
+/* Header naranja arriba */
+.request-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: #fff7ed;
+  border-bottom: 1px solid #fed7aa;
 }
 
-/* resto de tu CSS debajo... */
-.rb-header ion-toolbar {
-  --background: linear-gradient(135deg, var(--rb-primary), #60a5fa);
-  --color: #fff;
-  --border-color: transparent;
-  --min-height: 56px;
+.request-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: #ea580c;
+
+  ion-icon {
+    font-size: 0.9rem;
+  }
+}
+
+/* 👉 Fecha a la derecha */
+.request-date {
+  font-size: 0.72rem;
+  color: #fb923c;
+  font-weight: 600;
+}
+
+/* Imagen */
+.request-image {
+  width: 100%;
+  height: 150px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+}
+
+/* Cuerpo */
+.request-body {
+  padding: 12px 14px 14px;
+}
+
+.request-title {
+  margin: 8px 0 4px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.request-desc {
+  margin: 0 0 10px;
+  font-size: 0.86rem;
+  color: #4b5563;
+  line-height: 1.4;
+}
+
+/* Bloque celeste con solicitante + presupuesto/cupos si lo usas */
+.request-info-box {
+  margin: 10px 0 8px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: #ecfeff;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #0369a1;
+
+  ion-icon {
+    font-size: 0.95rem;
+  }
+
+  &:not(:last-child) {
+    margin-bottom: 4px;
+  }
+}
+
+/* 👉 Toda la fila de presupuesto en verde (si mapeas algo así) */
+.info-row.budget,
+.info-row.budget ion-icon,
+.info-row.budget span,
+.info-row.budget .budget-value {
+  color: #16a34a !important;
+}
+
+.budget-value {
+  font-weight: 700;
+}
+
+/* Botones aprobar / rechazar */
+.request-actions {
+  display: flex;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn-approve,
+.btn-reject {
+  flex: 1;
+  border: none;
+  border-radius: 12px;
+  padding: 9px 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #ffffff;
+
+  ion-icon {
+    font-size: 1rem;
+  }
+}
+
+.btn-approve {
+  background: #22c55e;
+  box-shadow: 0 8px 18px rgba(22, 163, 74, 0.45);
+}
+
+.btn-reject {
+  background: #ef4444;
+  box-shadow: 0 8px 18px rgba(239, 68, 68, 0.45);
+}
+
+/* =========================================
+   MODO OSCURO (forzado claro)
+========================================= */
+@media (prefers-color-scheme: dark) {
+  :host {
+    --ion-background-color: var(--rb-bg);
+    --ion-text-color: var(--rb-text);
+  }
 }

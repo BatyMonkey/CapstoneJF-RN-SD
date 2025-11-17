@@ -19,7 +19,8 @@
 </ion-header>
 
 <ion-content class="proyectos-page" [fullscreen]="true">
-  <div class="proyectos-wrapper">
+  <!-- 🔹 Contenedor centrado y responsive -->
+  <div class="rb-page-shell proyectos-wrapper">
 
     <!-- TARJETA AZUL BAJO EL HEADER -->
     <section class="proyectos-header-row">
@@ -28,10 +29,22 @@
           <ion-icon name="calendar-outline"></ion-icon>
         </div>
         <div class="proj-hero-text">
-          <h2>Proyectos</h2>
+          <h2>Actividades</h2>
           <p>Gestión comunitaria</p>
         </div>
       </div>
+    </section>
+
+    <!-- BOTÓN SUGERIR ACTIVIDAD -->
+    <section class="proyectos-actions-row">
+      <button
+        type="button"
+        class="suggest-activity-btn"
+        (click)="goSugerir()"
+      >
+        <ion-icon name="add-outline"></ion-icon>
+        <span>Sugerir Actividad</span>
+      </button>
     </section>
 
     <!-- ESTADO DE CARGA -->
@@ -51,7 +64,10 @@
       >
 
         <!-- IMAGEN HERO + ETIQUETA TIPO -->
-        <div class="pro-card-image-wrapper" *ngIf="item.imagen_url; else noImage">
+        <div
+          class="pro-card-image-wrapper"
+          *ngIf="item.imagen_url; else noImage"
+        >
           <img
             [src]="item.imagen_url"
             [alt]="item.titulo"
@@ -65,6 +81,7 @@
             {{ item.tipo === 'actividad' ? 'Actividad' : 'Proyecto' }}
           </div>
         </div>
+
         <ng-template #noImage>
           <div class="pro-card-image-wrapper placeholder">
             <div class="pro-card-placeholder-icon">
@@ -110,7 +127,10 @@
     </ng-container>
 
     <!-- SIN ELEMENTOS -->
-    <div *ngIf="!isLoading && !elementos?.length" class="ion-text-center empty-block">
+    <div
+      *ngIf="!isLoading && !elementos?.length"
+      class="ion-text-center empty-block"
+    >
       <p>No hay elementos disponibles para mostrar.</p>
     </div>
 

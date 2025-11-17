@@ -1,12 +1,12 @@
 <!-- ============================================================
      HEADER — HERO REDBARRIO
 =============================================================== -->
-<ion-header class="rb-hero-header">
+<ion-header class="rb-hero-header" slot="fixed">
   <div class="rb-hero-container">
 
     <div class="rb-hero-info">
       <div class="rb-hero-logo">
-        <img src="assets/icon/redbarrio.png" />
+        <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
       </div>
 
       <div class="rb-hero-text">
@@ -94,7 +94,11 @@
 
         <!-- ================= USUARIO ================= -->
         <div class="user-block">
-          <img class="avatar" [src]="getFotoPerfil(item.url_foto_perfil)" (error)="onAvatarError($event)" />
+          <img
+            class="avatar"
+            [src]="getFotoPerfil(item.url_foto_perfil)"
+            (error)="onAvatarError($event)"
+          />
 
           <div class="user-info">
             <p class="label">Usuario</p>
@@ -131,7 +135,9 @@
                 <div class="obj-block">
 
                   <div class="obj-row" *ngFor="let k of (item.detalle[key] | keyvalue)">
-                    <span class="obj-key">{{ normalizeKey(k.key + '') | titlecase }}:</span>
+                    <span class="obj-key">
+                      {{ normalizeKey(k.key + '') | titlecase }}:
+                    </span>
 
                     <span class="obj-val">
 
@@ -151,8 +157,6 @@
                 </div>
 
               </ng-container>
-
-
 
 
 
@@ -197,7 +201,6 @@
 
 
 
-
               <!-- ======================== GANADOR ======================== -->
               <ng-container *ngIf="key === 'ganador'">
                 <div class="ganador-chip" [ngClass]="{ empate: item.detalle[key] === 'Empate' }">
@@ -205,7 +208,6 @@
                   {{ item.detalle[key] }}
                 </div>
               </ng-container>
-
 
 
 

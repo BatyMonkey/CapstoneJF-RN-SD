@@ -19,7 +19,8 @@ import {
   barChartOutline,
   bulbOutline,
   megaphoneOutline,
-  calendarOutline
+  calendarOutline,
+  footballOutline,
 } from 'ionicons/icons';
 
 interface Noticia {
@@ -74,7 +75,8 @@ export class HomePage implements OnInit {
       'bar-chart-outline': barChartOutline,
       'bulb-outline': bulbOutline,
       'megaphone-outline': megaphoneOutline,
-      'calendar-outline': calendarOutline
+      'calendar-outline': calendarOutline,
+      'football-outline': footballOutline,
     });
   }
 
@@ -119,6 +121,10 @@ export class HomePage implements OnInit {
 
   navigateToSuggestProject() {
     this.router.navigate(['/generar/proyecto']);
+  }
+
+  navigateToActividades() {
+    this.router.navigate(['/inscripcion/actividades'])
   }
 
   async salir() {

@@ -1,0 +1,168 @@
+<ion-header class="rb-hero-header">
+    <div class="rb-hero-container">
+        <!-- Logo y texto -->
+        <div class="rb-hero-info">
+            <div class="rb-hero-logo">
+                <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
+            </div>
+            <div class="rb-hero-text">
+                <h1>RedBarrio</h1>
+                <p>Tu comunidad conectada</p>
+            </div>
+        </div>
+    </div>
+</ion-header>
+
+<ion-content class="sugerir-actividad-page" [fullscreen]="true">
+    <!-- Sub-header blanco interior -->
+    <div class="page-subheader">
+        <button class="back-btn" type="button" (click)="goBack()">
+            <ion-icon name="chevron-back-outline"></ion-icon>
+        </button>
+
+        <div class="page-subheader-main">
+            <div class="page-subheader-text">
+                <h2>Sugerir Actividad</h2>
+                <p>Propón una nueva actividad para el barrio</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-body">
+        <!-- Aviso informativo -->
+        <div class="info-banner">
+            <p>
+                💡 Tu sugerencia será revisada por el administrador antes de ser
+                publicada. Proporciona la mayor información posible para facilitar su
+                aprobación.
+            </p>
+        </div>
+
+        <!-- Información básica -->
+        <section class="section-card">
+            <h3 class="section-title">Información de la Actividad</h3>
+
+            <!-- Título -->
+            <div class="form-group">
+                <label class="label">
+                    Título de la Actividad <span class="req">*</span>
+                </label>
+                <ion-input class="input" [(ngModel)]="titulo" placeholder="Ej: Clase de Yoga Matinal"></ion-input>
+            </div>
+
+            <!-- Descripción -->
+            <div class="form-group">
+                <label class="label">
+                    Descripción <span class="req">*</span>
+                </label>
+                <ion-textarea class="textarea" [(ngModel)]="descripcion" rows="5"
+                    placeholder="Describe los detalles de la actividad, qué se hará, qué deben traer los participantes, etc."></ion-textarea>
+            </div>
+
+            <!-- Cupos -->
+            <div class="form-group">
+                <label class="label">
+                    Cupos Sugeridos <span class="req">*</span>
+                </label>
+
+                <div class="icon-input">
+                    <ion-icon name="people-outline" class="input-leading-icon"></ion-icon>
+
+                    <input type="number" min="1" [(ngModel)]="cupos" placeholder="Ej: 20" />
+                </div>
+            </div>
+        </section>
+
+        <!-- Imagen de referencia -->
+        <section class="section-card">
+            <h3 class="section-title">Imagen de Referencia</h3>
+
+            <div class="image-upload-card">
+                <input #fileInput type="file" accept="image/*" hidden (change)="onImageSelected($event)" />
+
+                <!-- Preview -->
+                <ng-container *ngIf="imagenPreview; else uploadPlaceholder">
+                    <div class="image-preview-wrapper">
+                        <div class="image-preview">
+                            <img [src]="imagenPreview" [alt]="titulo || 'Actividad'" />
+                        </div>
+                        <button type="button" class="remove-img-btn" (click)="eliminarImagen()">
+                            <ion-icon name="close-outline"></ion-icon>
+                        </button>
+                    </div>
+                </ng-container>
+
+                <!-- Placeholder -->
+                <ng-template #uploadPlaceholder>
+                    <div class="upload-placeholder" (click)="fileInput.click()">
+                        <ion-icon name="cloud-upload-outline"></ion-icon>
+                        <p>Subir imagen</p>
+                        <span class="hint">Opcional</span>
+                    </div>
+                </ng-template>
+            </div>
+        </section>
+
+        <!-- Fecha y Horario Sugerido -->
+        <div class="section-card">
+            <h3 class="section-title">Fecha y Horario Sugerido</h3>
+
+            <!-- Fecha y Hora de Inicio -->
+            <div class="datetime-group">
+                <label class="label">
+                    Fecha y Hora de Inicio <span class="req">*</span>
+                </label>
+
+                <div class="datetime-row">
+                    <!-- Fecha Inicio -->
+                    <div class="datetime-field">
+                        <span class="datetime-field-icon">
+                            <ion-icon name="calendar-outline"></ion-icon>
+                        </span>
+                        <input type="date" [(ngModel)]="fechaInicio" />
+                    </div>
+
+                    <!-- Hora Inicio -->
+                    <div class="datetime-field">
+                        <span class="datetime-field-icon">
+                            <ion-icon name="time-outline"></ion-icon>
+                        </span>
+                        <input type="time" [(ngModel)]="horaInicio" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fecha y Hora de Fin -->
+            <div class="datetime-group">
+                <label class="label">
+                    Fecha y Hora de Fin <span class="req">*</span>
+                </label>
+
+                <div class="datetime-row">
+                    <!-- Fecha Fin -->
+                    <div class="datetime-field">
+                        <span class="datetime-field-icon">
+                            <ion-icon name="calendar-outline"></ion-icon>
+                        </span>
+                        <input type="date" [(ngModel)]="fechaFin" />
+                    </div>
+
+                    <!-- Hora Fin -->
+                    <div class="datetime-field">
+                        <span class="datetime-field-icon">
+                            <ion-icon name="time-outline"></ion-icon>
+                        </span>
+                        <input type="time" [(ngModel)]="horaFin" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Botón enviar -->
+        <button type="button" class="submit-btn" (click)="enviarSugerencia()">
+            <ion-icon name="send-outline"></ion-icon>
+            Enviar Sugerencia
+        </button>
+    </div>
+</ion-content>
