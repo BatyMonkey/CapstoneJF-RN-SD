@@ -106,7 +106,7 @@ export class SolicitudesPage implements OnInit {
   }
 
   async desactivar(s: any) {
-    await this.authService.cambiarEstadoUsuario(s.id_usuario, 'pendiente');
+    await this.authService.cambiarEstadoUsuario(s.id_usuario, 'desactivado');
     this.cargar();
   }
 
