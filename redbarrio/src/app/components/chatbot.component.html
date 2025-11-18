@@ -74,7 +74,36 @@
       [disabled]="loading"
       autocomplete="off"
     />
-    <button type="submit" [disabled]="loading || !inputText.trim()">
+
+    <!-- Botón nota de voz (a la derecha, junto al enviar) -->
+        <!-- Botón nota de voz (a la derecha, junto al enviar) -->
+    <button
+      type="button"
+      class="rb-chat__voice"
+      [class.is-recording]="isRecording"
+      [disabled]="loading || !canUseVoice"
+      (click)="toggleVoice()"
+      aria-label="Nota de voz"
+    >
+      <!-- Icono cuando NO está grabando -->
+      <ion-icon
+        *ngIf="!isRecording"
+        name="mic"
+      ></ion-icon>
+
+      <!-- Icono cuando SÍ está grabando -->
+      <ion-icon
+        *ngIf="isRecording"
+        name="square"
+      ></ion-icon>
+    </button>
+
+
+    <button
+      type="submit"
+      class="rb-chat__send"
+      [disabled]="loading || !inputText.trim()"
+    >
       <ion-icon name="paper-plane-outline"></ion-icon>
       <span class="rb-chat__send-fallback">➤</span>
     </button>

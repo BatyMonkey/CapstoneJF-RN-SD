@@ -381,7 +381,7 @@ export class PagoRetornoPage implements OnInit {
       console.log('[PagoRetorno] llamando webhook n8n...', webhookBody);
 
       const resp = await fetch(
-        'https://joaquinfuentesp3101.app.n8n.cloud/webhook/redbarrio/boleta-pagada',
+        'https://joaquinfuentessp3101.app.n8n.cloud/webhook/redbarrio/boleta-pagada',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

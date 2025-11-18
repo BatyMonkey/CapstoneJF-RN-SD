@@ -17,6 +17,9 @@ import {
 import { environment } from 'src/environments/environment';
 import { ReservasService } from '../services/reservas.service';
 import { Browser } from '@capacitor/browser';
+import { Capacitor } from '@capacitor/core';
+import { SpeechRecognition } from '@capacitor-community/speech-recognition';
+
 
 interface ChatMessage {
   from: 'user' | 'bot';
@@ -101,6 +104,14 @@ export class ChatbotComponent implements OnInit {
   private certWebhookUrl = (environment as any).N8N_WEBHOOK_URL || '';
   private openaiKeyForN8N: string =
     (environment as any).OPENAI_KEY_FOR_N8N || '';
+    // ===== Notas de voz =====
+  canUseVoice = false;
+  isRecording = false;
+
+  // para fallback Web (navegador)
+  private webRecognition: any = null;
+  private lastVoiceText: string = '';
+
 
   // ====== logger ======
   private dbg(...args: any[]) {
@@ -155,6 +166,7 @@ export class ChatbotComponent implements OnInit {
     } catch (e) {
       this.dbg('auth.getUser() error:', e);
     }
+    await this.initVoiceSupport();
   }
 
   private async cargarPerfil() {
@@ -194,6 +206,92 @@ export class ChatbotComponent implements OnInit {
       this.dbg('cargarPerfil() error:', e);
     }
   }
+
+    // ===== Init notas de voz (Capacitor + fallback Web) =====
+    // ===== Init notas de voz (Capacitor + fallback Web) =====
+    // ===== Init notas de voz (Capacitor + fallback Web) =====
+  private async initVoiceSupport() {
+    try {
+      // Si es plataforma nativa (Android / iOS con Capacitor)
+      if (Capacitor.isNativePlatform()) {
+        const available = await SpeechRecognition.available();
+        if (!available?.available) {
+          this.dbg('SpeechRecognition no disponible en este dispositivo');
+          return;
+        }
+
+        // Permisos
+        const permStatus = await SpeechRecognition.checkPermissions();
+        if (!permStatus || permStatus.speechRecognition !== 'granted') {
+          const req = await SpeechRecognition.requestPermissions();
+          if (!req || req.speechRecognition !== 'granted') {
+            this.dbg('Permiso de reconocimiento de voz no concedido');
+            return;
+          }
+        }
+
+        // 🔊 Solo usamos partialResults para ir rellenando el input,
+        //    pero NO mandamos el mensaje aquí.
+        SpeechRecognition.addListener('partialResults', (result: any) => {
+          this.dbg('speech partialResults:', result);
+          const text =
+            (result && result.matches && result.matches[0]) || '';
+          if (text) {
+            this.lastVoiceText = text;
+            this.inputText = text; // se ve lo que estás diciendo
+          }
+        });
+
+        this.canUseVoice = true;
+        this.dbg('Notas de voz habilitadas (nativo)');
+        return;
+      }
+
+      // Fallback Web: API de reconocimiento de voz del navegador
+      const anyWin = window as any;
+      const WebRec =
+        anyWin.SpeechRecognition || anyWin.webkitSpeechRecognition;
+      if (WebRec) {
+        const rec = new WebRec();
+        rec.lang = 'es-CL';
+        rec.continuous = false;
+        rec.interimResults = false;
+
+        rec.onresult = (ev: any) => {
+          const text =
+            ev.results?.[0]?.[0]?.transcript ||
+            ev.results?.[0]?.[0]?.transcript ||
+            '';
+          this.dbg('webSpeech result:', text);
+          if (text) {
+            this.lastVoiceText = text;
+            // En web lo mandamos directo cuando termina
+            this.onVoiceText(text);
+          }
+          this.isRecording = false;
+        };
+        rec.onerror = (err: any) => {
+          this.dbg('webSpeech error:', err);
+          this.isRecording = false;
+        };
+        rec.onend = () => {
+          this.isRecording = false;
+        };
+
+        this.webRecognition = rec;
+        this.canUseVoice = true;
+        this.dbg('Notas de voz habilitadas (web SpeechRecognition)');
+      } else {
+        this.dbg('Web SpeechRecognition no disponible');
+      }
+    } catch (e) {
+      this.dbg('initVoiceSupport error:', e);
+      this.canUseVoice = false;
+      this.isRecording = false;
+    }
+  }
+
+
 
   // ===== Quick buttons =====
   clickQuick(kind: 'faq' | 'cert' | 'votacion' | 'noticias') {
@@ -599,6 +697,98 @@ export class ChatbotComponent implements OnInit {
       return db - da;
     });
   }
+
+    // ===== Controles del botón de micrófono =====
+    // ===== Controles del botón de micrófono =====
+  async toggleVoice() {
+    if (!this.canUseVoice) {
+      this.pushBot(
+        'Tu dispositivo no soporta notas de voz en el chat por ahora 😅',
+      );
+      return;
+    }
+
+    if (this.isRecording) {
+      await this.stopVoice();   // 2do click → detener y enviar
+    } else {
+      await this.startVoice();  // 1er click → comenzar a escuchar
+    }
+  }
+
+  private async startVoice() {
+    try {
+      if (this.isRecording) return;
+      this.isRecording = true;
+      this.lastVoiceText = '';
+      this.inputText = '';
+
+      if (Capacitor.isNativePlatform()) {
+        this.dbg('SpeechRecognition.start() (nativo)');
+        await SpeechRecognition.start({
+          language: 'es-CL',
+          popup: false,
+          partialResults: true, // recibimos por evento
+          maxResults: 1,
+        });
+      } else if (this.webRecognition) {
+        this.dbg('webRecognition.start()');
+        this.webRecognition.start();
+      } else {
+        this.isRecording = false;
+        this.pushBot(
+          'No pude iniciar la nota de voz en este dispositivo 😅',
+        );
+      }
+    } catch (e) {
+      this.dbg('startVoice error:', e);
+      this.isRecording = false;
+      this.pushBot('Hubo un problema al iniciar la nota de voz 😅');
+    }
+  }
+
+    private async stopVoice() {
+    try {
+      if (!this.isRecording) return;
+
+      // dejamos de grabar
+      this.isRecording = false;
+
+      if (Capacitor.isNativePlatform()) {
+        this.dbg('SpeechRecognition.stop() (nativo)');
+        await SpeechRecognition.stop();
+      } else if (this.webRecognition) {
+        this.dbg('webRecognition.stop()');
+        this.webRecognition.stop();
+      }
+
+      // 🔥 TOMAR LO QUE HAYA QUEDADO EN EL INPUT Y ENVIAR
+      const text = (this.inputText || '').trim();
+      if (text) {
+        this.onVoiceText(text);  // esto hace el "send()" automático
+      } else {
+        this.pushBot('No se alcanzó a escuchar nada en la nota de voz 😅');
+      }
+    } catch (e) {
+      this.dbg('stopVoice error:', e);
+    }
+  }
+
+
+
+  // Cuando tenemos texto reconocido, lo mandamos como si el usuario lo hubiera escrito
+    // Cuando tenemos texto reconocido, lo mandamos como si el usuario lo hubiera escrito
+    // Cuando tenemos texto reconocido, lo mandamos como si el usuario lo hubiera escrito
+  private onVoiceText(texto: string) {
+    const cleaned = (texto || '').trim();
+    if (!cleaned) return;
+
+    // Estilo WhatsApp: se envía directo al terminar de grabar
+    this.inputText = cleaned;
+    this.send();   // 👈 aquí se envía el mensaje sin tercer toque
+  }
+
+
+
 
   // ===== Certificado =====
   private async emitirCertificadoDesdeChat() {

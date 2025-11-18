@@ -9,7 +9,6 @@
 }
 
 /* ===== Ventana del chat ===== */
-/* ===== Ventana del chat ===== */
 .rb-chat {
   position: fixed;
   right: 16px;
@@ -39,7 +38,6 @@
   z-index: 1100;
   overflow: hidden;
 }
-
 
 /* ===== HEADER (gradiente + texto blanco) ===== */
 .rb-chat__header {
@@ -231,15 +229,15 @@
   border-color: rgba(14, 165, 233, .7);
   box-shadow: 0 0 0 3px rgba(14, 165, 233, .12);
 }
+
+/* Botones del input (mic + enviar) */
 .rb-chat__input button {
   width: 38px;
   height: 38px;
   border-radius: 9999px;
-  background: #0ea5e9;
   border: none;
   display: grid;
   place-items: center;
-  color: #fff;
   font-size: 20px;
   cursor: pointer;
   transition: .1s ease-out;
@@ -258,6 +256,37 @@
   transform: scale(.96);
 }
 
+/* Botón enviar */
+.rb-chat__send {
+  background: #0ea5e9;
+  color: #fff;
+}
+
+/* Botón micrófono */
+.rb-chat__voice {
+  background: #e2f3fc;
+  color: #0f172a;
+  border: 1px solid rgba(148, 163, 184, .35);
+}
+.rb-chat__voice ion-icon {
+  font-size: 18px;
+}
+
+/* Estado grabando */
+.rb-chat__voice.is-recording {
+  background: #ef4444;
+  border-color: #b91c1c;
+  color: #fff;
+  animation: rb-chat-pulse 1s infinite;
+}
+
+/* Animación suave cuando está grabando */
+@keyframes rb-chat-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(239, 68, 68, .6); }
+  70%  { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
 /* Scroll */
 .rb-chat__messages::-webkit-scrollbar {
   width: 5px;
@@ -273,6 +302,7 @@ ion-icon[hidden] ~ .rb-chat__avatar-fallback {
   display: block;
 }
 
+/* ===== Responsive ===== */
 @media (max-width: 480px) {
   .rb-chat {
     right: 8px;
