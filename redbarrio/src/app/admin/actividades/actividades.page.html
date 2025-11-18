@@ -1,62 +1,330 @@
-<ion-header class="rb-header">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button menu="mainMenu" autoHide="false"></ion-menu-button>
-    </ion-buttons>
-    <ion-title>Gestión de Actividades</ion-title>
-  </ion-toolbar>
+<!-- ========================================
+     HERO HEADER SUPERIOR (igual al Home)
+========================================= -->
+<ion-header class="rb-hero-header">
+  <div class="rb-hero-container">
+    <!-- Logo y texto -->
+    <div class="rb-hero-info">
+      <div class="rb-hero-logo">
+        <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
+      </div>
+      <div class="rb-hero-text">
+        <h1>RedBarrio</h1>
+        <p>Tu comunidad conectada</p>
+      </div>
+    </div>
+
+    <!-- 🔹 Espacio reservado (sin botón de chat) -->
+    <div class="rb-hero-chat-wrapper">
+      <!-- vacío / oculto por CSS -->
+    </div>
+  </div>
 </ion-header>
 
-<ion-content>
-  <!-- 🔄 Refresher -->
-  <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
-    <ion-refresher-content pullingIcon="arrow-down-outline" refreshingSpinner="crescent"
-      pullingText="Desliza para actualizar" refreshingText="Actualizando...">
+<ion-content [fullscreen]="true" class="proyectos-page">
+  <!-- Refresher -->
+  <ion-refresher slot="fixed" (ionRefresh)="refrescar($event)">
+    <ion-refresher-content
+      pullingText="Desliza para actualizar"
+      refreshingSpinner="crescent"
+      refreshingText="Actualizando...">
     </ion-refresher-content>
   </ion-refresher>
 
-  <!-- 📦 Contenedor principal -->
-  <div class="actividades-container">
-    <h1>Actividades Pendientes</h1>
-    <p>Revisa, publica o rechaza las actividades propuestas por los vecinos.</p>
+  <div class="page-container">
+    <div class="content-wrapper">
+      <!-- =======================================
+           TARJETA PRINCIPAL: HEADER + TABS
+      ======================================== -->
+      <section class="projects-manage-card">
+        <!-- Header interno de la tarjeta -->
+        <div class="projects-manage-header">
+          <div class="header-text">
+            <h2>Gestionar Actividades</h2>
+            <p>Crear y administrar actividades del barrio</p>
+          </div>
+        </div>
 
-    <!-- ✅ Lista -->
-    <ion-list *ngIf="!cargando && actividades.length > 0">
-      <ion-item *ngFor="let act of actividades">
-        <ion-label>
-          <h2>{{ act.titulo || 'Actividad sin título' }}</h2>
-          <p>{{ act.descripcion || 'Sin descripción' }}</p>
+        <!-- Tabs principales: Ver / Crear -->
+        <div class="projects-main-tabs">
+          <button
+            type="button"
+            class="main-tab"
+            [class.active]="activeTab === 'manage'"
+            (click)="activeTab = 'manage'">
+            <ion-icon name="eye-outline"></ion-icon>
+            <span>Ver Actividades</span>
+          </button>
 
-          <div class="direccion" *ngIf="act.ubicacion">
-            <ion-icon name="location-outline"></ion-icon>
-            <span>{{ act.ubicacion }}</span>
+          <!-- Este botón navega al formulario de creación de actividad -->
+          <button
+            type="button"
+            class="main-tab create"
+            (click)="irAGenerarActividad()">
+            <ion-icon name="add-outline"></ion-icon>
+            <span>Crear Nueva</span>
+          </button>
+        </div>
+
+        <!-- Sub-tabs: Actividades Publicadas / Sugerencias -->
+        <div class="manage-subtabs" *ngIf="activeTab === 'manage'">
+          <!-- Chip Actividades publicadas -->
+          <button
+            type="button"
+            class="subtab-chip activos"
+            [class.active]="manageSubTab === 'active'"
+            (click)="setManageSubTab('active')">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+            <span>Actividades Publicadas ({{ actividadesPublicadas.length }})</span>
+          </button>
+
+          <!-- Chip Sugerencias (pendientes) -->
+          <button
+            type="button"
+            class="subtab-chip solicitudes"
+            [class.active]="manageSubTab === 'requests'"
+            (click)="setManageSubTab('requests')">
+            <ion-icon name="time-outline"></ion-icon>
+            <span>Sugerencias</span>
+
+            <!-- Badge rojo -->
+            <span class="subtab-badge" *ngIf="activityRequests.length > 0">
+              {{ activityRequests.length }}
+            </span>
+          </button>
+        </div>
+      </section>
+
+      <!-- =======================================
+           CONTENIDO: TAB "VER ACTIVIDADES"
+      ======================================== -->
+      <ng-container *ngIf="activeTab === 'manage'">
+        <!-- Sub-vista: ACTIVIDADES PUBLICADAS -->
+        <section class="projects-section" *ngIf="manageSubTab === 'active'">
+
+          <h3 class="section-title">
+            Actividades Publicadas ({{ actividadesPublicadas.length }})
+          </h3>
+
+          <!-- Cargando -->
+          <div class="loading-block" *ngIf="cargando">
+            <ion-spinner name="crescent"></ion-spinner>
+            <p>Cargando actividades...</p>
           </div>
 
-          <ion-chip color="warning">
-            <ion-label>{{ act.estado }}</ion-label>
-          </ion-chip>
-        </ion-label>
+          <!-- Vacío -->
+          <div
+            class="empty-state"
+            *ngIf="!cargando && (!actividadesPublicadas || actividadesPublicadas.length === 0)">
+            <p class="empty-title">No hay actividades publicadas</p>
+            <p class="empty-text">
+              Cuando se publiquen actividades, aparecerán aquí.
+            </p>
+            <button type="button" class="btn-primary" (click)="irAGenerarActividad()">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>Crear Primera Actividad</span>
+            </button>
+          </div>
 
-        <ion-buttons slot="end">
-          <ion-button color="success" (click)="cambiarEstado(act, 'publicada')">
-            Publicar
-          </ion-button>
-          <ion-button color="danger" (click)="cambiarEstado(act, 'rechazada')">
-            Rechazar
-          </ion-button>
-        </ion-buttons>
-      </ion-item>
-    </ion-list>
+          <!-- LISTADO DE ACTIVIDADES PUBLICADAS -->
+          <div
+            class="projects-list"
+            *ngIf="!cargando && actividadesPublicadas && actividadesPublicadas.length">
 
-    <!-- 🌀 Loading -->
-    <div *ngIf="cargando" class="loading">
-      <ion-spinner name="crescent"></ion-spinner>
-      <p>Cargando actividades...</p>
-    </div>
+            <article class="project-card" *ngFor="let actividad of actividadesPublicadas">
+              <!-- Imagen -->
+              <div class="project-image" *ngIf="actividad.imagen_url">
+                <img
+                  [src]="actividad.imagen_url"
+                  [alt]="actividad.titulo || 'Actividad'" />
+              </div>
 
-    <!-- ⚠️ Empty -->
-    <div *ngIf="!cargando && actividades.length === 0" class="empty">
-      No hay actividades pendientes.
+              <div class="project-body">
+                <!-- Título + chip de estado -->
+                <div class="project-title-row">
+                  <h4>{{ actividad.titulo }}</h4>
+
+                  <span
+                    class="status-pill"
+                    [ngClass]="getEstadoActividadClass(actividad.estado)">
+                    <ion-icon [name]="getEstadoActividadIcon(actividad.estado)"></ion-icon>
+                    <span>{{ getEstadoActividadLabel(actividad.estado) }}</span>
+                  </span>
+                </div>
+
+                <!-- Descripción -->
+                <p class="project-desc">
+                  {{ actividad.descripcion }}
+                </p>
+
+                <!-- Cupos + Fechas -->
+                <div class="project-meta-grid">
+                  <!-- Cupos -->
+                  <div class="meta-item">
+                    <ion-icon name="people-outline"></ion-icon>
+                    <span>
+                      {{
+                        actividad.cupos_total != null
+                          ? ('Cupos: ' + actividad.cupos_total)
+                          : 'Cupos por definir'
+                      }}
+                    </span>
+                  </div>
+
+                  <!-- Rango de fechas -->
+                  <div class="meta-item" *ngIf="actividad.fecha_inicio || actividad.fecha_fin">
+                    <ion-icon name="calendar-outline"></ion-icon>
+                    <span>
+                      <ng-container *ngIf="actividad.fecha_inicio">
+                        {{ formatFechaActividad(actividad.fecha_inicio) }}
+                      </ng-container>
+
+                      <ng-container *ngIf="actividad.fecha_inicio && actividad.fecha_fin">
+                        &nbsp;–&nbsp;
+                      </ng-container>
+
+                      <ng-container *ngIf="actividad.fecha_fin">
+                        {{ formatFechaActividad(actividad.fecha_fin) }}
+                      </ng-container>
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Acciones -->
+                <div class="project-actions">
+                  <button
+                    type="button"
+                    class="btn-soft"
+                    (click)="editarActividad(actividad)">
+                    <ion-icon name="create-outline"></ion-icon>
+                    <span>Editar</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn-danger"
+                    (click)="eliminarActividad(actividad)">
+                    <ion-icon name="trash-outline"></ion-icon>
+                    <span>Eliminar</span>
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- Sub-vista: SUGERENCIAS (PENDIENTES) -->
+        <section class="projects-section" *ngIf="manageSubTab === 'requests'">
+          <h3 class="section-title">
+            Sugerencias de Actividad ({{ activityRequests.length }})
+          </h3>
+
+          <!-- Estado vacío -->
+          <div class="empty-state" *ngIf="!activityRequests.length">
+            <ion-icon name="time-outline" class="empty-icon"></ion-icon>
+            <p class="empty-title">No hay sugerencias pendientes</p>
+            <p class="empty-text">
+              Las sugerencias de actividades enviadas por los vecinos aparecerán aquí.
+            </p>
+          </div>
+
+          <!-- Listado de sugerencias -->
+          <div class="requests-list" *ngIf="activityRequests.length">
+            <article class="request-card" *ngFor="let request of activityRequests">
+
+              <!-- Header con estado + fecha creación -->
+              <div class="request-header">
+                <div class="request-status">
+                  <ion-icon name="time-outline"></ion-icon>
+                  <span>Sugerencia Pendiente</span>
+                </div>
+
+                <span class="request-date">
+                  {{ formatFecha(request.creado_en) }}
+                </span>
+              </div>
+
+              <!-- Imagen si existe -->
+              <div class="request-image" *ngIf="request.imagen_url">
+                <img
+                  [src]="request.imagen_url"
+                  [alt]="request.titulo || 'Sugerencia de actividad'" />
+              </div>
+
+              <div class="request-body">
+                <!-- Título -->
+                <h4 class="request-title">{{ request.titulo }}</h4>
+
+                <!-- Descripción -->
+                <p class="request-desc">
+                  {{ request.descripcion }}
+                </p>
+
+                <!-- Bloque celeste: Cupos + Fechas sugeridas -->
+                <div class="request-info-box">
+                  <div class="info-row" *ngIf="request.cupos_total != null">
+                    <ion-icon name="people-outline"></ion-icon>
+                    <span>
+                      Cupos sugeridos:
+                      <strong>{{ request.cupos_total }}</strong>
+                    </span>
+                  </div>
+
+                  <div class="info-row" *ngIf="request.fecha_inicio || request.fecha_fin">
+                    <ion-icon name="calendar-outline"></ion-icon>
+                    <span>
+                      <ng-container *ngIf="request.fecha_inicio">
+                        Inicio:
+                        <strong>{{ formatFechaHora(request.fecha_inicio) }}</strong>
+                      </ng-container>
+
+                      <ng-container *ngIf="request.fecha_fin">
+                        &nbsp;• Fin:
+                        <strong>{{ formatFechaHora(request.fecha_fin) }}</strong>
+                      </ng-container>
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Botones Aprobar / Rechazar -->
+                <div class="request-actions">
+                  <button
+                    type="button"
+                    class="btn-approve"
+                    (click)="aprobarSugerencia(request)">
+                    <ion-icon name="checkmark-circle-outline"></ion-icon>
+                    <span>Aprobar</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn-reject"
+                    (click)="rechazarSugerencia(request)">
+                    <ion-icon name="close-circle-outline"></ion-icon>
+                    <span>Rechazar</span>
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </ng-container>
+
+      <!-- =======================================
+           TAB CREATE (placeholder)
+      ======================================== -->
+      <ng-container *ngIf="activeTab === 'create'">
+        <section class="projects-section">
+          <h3 class="section-title">Crear nueva actividad</h3>
+
+          <div class="empty-state">
+            <p class="empty-title">Redirección al formulario</p>
+            <p class="empty-text">
+              Estás siendo dirigido al formulario de creación de actividades.
+            </p>
+          </div>
+        </section>
+      </ng-container>
     </div>
   </div>
 </ion-content>

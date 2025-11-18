@@ -361,3 +361,63 @@ ion-header::after {
   color: #64748b; /* gris apagado bonito */
   line-height: 1.3;
 }
+
+
+/* ============================================================
+   RESPONSIVE
+=============================================================== */
+
+/* 📱 Pantallas pequeñas (celulares chicos) */
+@media (max-width: 480px) {
+  .rb-hero-header {
+    height: 115px;
+    border-bottom-left-radius: 1.3rem;
+    border-bottom-right-radius: 1.3rem;
+  }
+
+  .rb-hero-container {
+    padding: 0 1rem;
+  }
+
+  .rb-hero-logo img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .rb-hero-text h1 {
+    font-size: 1.05rem;
+  }
+
+  .rb-hero-text p {
+    font-size: 0.8rem;
+  }
+
+  .rb-hero-back {
+    width: 36px;
+    height: 36px;
+  }
+
+  .audit-wrapper {
+    padding: 0.9rem;
+  }
+
+  .audit-card-header {
+    padding: 0.85rem 1rem;
+  }
+
+  .audit-card-body {
+    padding: 0.9rem 1.05rem 1.1rem;
+  }
+
+  .detalle {
+    gap: 0.8rem;
+  }
+}
+
+/* 📲 Pantallas medianas/grandes (centrar y limitar ancho) */
+@media (min-width: 768px) {
+  .audit-wrapper {
+    max-width: 720px;
+    margin: 0 auto 1.5rem;
+  }
+}

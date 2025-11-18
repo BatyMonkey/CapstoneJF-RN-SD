@@ -1,12 +1,12 @@
 <!-- ============================================================
      HEADER — HERO REDBARRIO
 =============================================================== -->
-<ion-header class="rb-hero-header">
+<ion-header class="rb-hero-header" slot="fixed">
   <div class="rb-hero-container">
 
     <div class="rb-hero-info">
       <div class="rb-hero-logo">
-        <img src="assets/icon/redbarrio.png" />
+        <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
       </div>
 
       <div class="rb-hero-text">
@@ -94,7 +94,11 @@
 
         <!-- ================= USUARIO ================= -->
         <div class="user-block">
-          <img class="avatar" [src]="getFotoPerfil(item.url_foto_perfil)" (error)="onAvatarError($event)" />
+          <img
+            class="avatar"
+            [src]="getFotoPerfil(item.url_foto_perfil)"
+            (error)="onAvatarError($event)"
+          />
 
           <div class="user-info">
             <p class="label">Usuario</p>
@@ -111,121 +115,122 @@
         ================================================================ -->
         <div class="detalle">
 
-          <div class="detalle-field" *ngFor="let key of orderedDetalleKeys(item.detalle)">
+          <!-- 👇 Aquí filtramos para NO mostrar 'url_foto' ni 'url_foto_perfil' -->
+          <ng-container *ngFor="let key of orderedDetalleKeys(item.detalle)">
+            <div
+              class="detalle-field"
+              *ngIf="key !== 'url_foto' && key !== 'url_foto_perfil'"
+            >
 
-            <!-- Título del campo -->
-            <p class="detalle-title">
-              <strong>{{ normalizeKey(key) | titlecase }}:</strong>
-            </p>
+              <!-- Título del campo -->
+              <p class="detalle-title">
+                <strong>{{ normalizeKey(key) | titlecase }}:</strong>
+              </p>
 
+              <!-- VALOR -->
+              <div class="detalle-value">
 
-            <!-- VALOR -->
-            <div class="detalle-value">
+                <!-- ======================================================
+                     OBJETO BONITO
+                ======================================================== -->
+                <ng-container *ngIf="isObject(item.detalle[key])">
 
+                  <div class="obj-block">
 
-              <!-- ======================================================
-                   OBJETO BONITO
-              ======================================================== -->
-              <ng-container *ngIf="isObject(item.detalle[key])">
+                    <div class="obj-row" *ngFor="let k of (item.detalle[key] | keyvalue)">
+                      <span class="obj-key">
+                        {{ normalizeKey(k.key + '') | titlecase }}:
+                      </span>
 
-                <div class="obj-block">
+                      <span class="obj-val">
 
-                  <div class="obj-row" *ngFor="let k of (item.detalle[key] | keyvalue)">
-                    <span class="obj-key">{{ normalizeKey(k.key + '') | titlecase }}:</span>
+                        <!-- Si es Fecha -->
+                        <ng-container *ngIf="isFecha(k.value); else normalValue">
+                          {{ (k.value + '') | date:'dd-MM-yyyy HH:mm':'America/Santiago' }}
+                        </ng-container>
 
-                    <span class="obj-val">
+                        <!-- Valor normal -->
+                        <ng-template #normalValue>
+                          {{ k.value }}
+                        </ng-template>
 
-                      <!-- Si es Fecha -->
-                      <ng-container *ngIf="isFecha(k.value); else normalValue">
-                        {{ (k.value + '') | date:'dd-MM-yyyy HH:mm':'America/Santiago' }}
-                      </ng-container>
-
-                      <!-- Valor normal -->
-                      <ng-template #normalValue>
-                        {{ k.value }}
-                      </ng-template>
-
-                    </span>
-                  </div>
-
-                </div>
-
-              </ng-container>
-
-
-
-
-
-              <!-- LISTA DE OPCIONES (CREAR VOTACIÓN, FORMATO MEJORADO) -->
-              <ng-container *ngIf="key === 'opciones' && isArray(item.detalle[key])">
-
-                <div class="opciones-bloque">
-                  <div class="opcion-item" *ngFor="let op of item.detalle[key]">
-
-                    <div class="opcion-titulo-strong">
-                      {{ op.titulo }}
-                    </div>
-
-                    <div class="opcion-descripcion" *ngIf="op.descripcion">
-                      {{ op.descripcion }}
+                      </span>
                     </div>
 
                   </div>
-                </div>
 
-              </ng-container>
+                </ng-container>
 
-              <!-- ======================================================
-                   RESULTADOS DE VOTACIÓN
-              ======================================================== -->
-              <ng-container *ngIf="key === 'resultados' && isArray(item.detalle[key])">
 
-                <div class="resultado" *ngFor="let r of item.detalle[key]">
 
-                  <div class="res-header">
-                    <span>{{ r.opcion }}</span>
-                    <span>{{ r.votos }} votos ({{ r.porcentaje }}%)</span>
+                <!-- LISTA DE OPCIONES (CREAR VOTACIÓN, FORMATO MEJORADO) -->
+                <ng-container *ngIf="key === 'opciones' && isArray(item.detalle[key])">
+
+                  <div class="opciones-bloque">
+                    <div class="opcion-item" *ngFor="let op of item.detalle[key]">
+
+                      <div class="opcion-titulo-strong">
+                        {{ op.titulo }}
+                      </div>
+
+                      <div class="opcion-descripcion" *ngIf="op.descripcion">
+                        {{ op.descripcion }}
+                      </div>
+
+                    </div>
                   </div>
 
-                  <div class="res-bar">
-                    <div class="res-fill" [style.width.%]="r.porcentaje"></div>
+                </ng-container>
+
+                <!-- ======================================================
+                     RESULTADOS DE VOTACIÓN
+                ======================================================== -->
+                <ng-container *ngIf="key === 'resultados' && isArray(item.detalle[key])">
+
+                  <div class="resultado" *ngFor="let r of item.detalle[key]">
+
+                    <div class="res-header">
+                      <span>{{ r.opcion }}</span>
+                      <span>{{ r.votos }} votos ({{ r.porcentaje }}%)</span>
+                    </div>
+
+                    <div class="res-bar">
+                      <div class="res-fill" [style.width.%]="r.porcentaje"></div>
+                    </div>
+
                   </div>
 
-                </div>
-
-              </ng-container>
+                </ng-container>
 
 
 
-
-              <!-- ======================== GANADOR ======================== -->
-              <ng-container *ngIf="key === 'ganador'">
-                <div class="ganador-chip" [ngClass]="{ empate: item.detalle[key] === 'Empate' }">
-                  <span *ngIf="item.detalle[key] !== 'Empate'">🏆</span>
-                  {{ item.detalle[key] }}
-                </div>
-              </ng-container>
-
+                <!-- ======================== GANADOR ======================== -->
+                <ng-container *ngIf="key === 'ganador'">
+                  <div class="ganador-chip" [ngClass]="{ empate: item.detalle[key] === 'Empate' }">
+                    <span *ngIf="item.detalle[key] !== 'Empate'">🏆</span>
+                    {{ item.detalle[key] }}
+                  </div>
+                </ng-container>
 
 
 
-              <!-- ======================================================
-                   TEXTO SIMPLE (todo lo demás)
-              ======================================================== -->
-              <ng-container *ngIf="
-                !isObject(item.detalle[key]) &&
-                key !== 'resultados' &&
-                key !== 'ganador' &&
-                key !== 'opciones'
-              ">
-                <span class="detalle-simple">
-                  {{ item.detalle[key] }}
-                </span>
-              </ng-container>
+                <!-- ======================================================
+                     TEXTO SIMPLE (todo lo demás)
+                ======================================================== -->
+                <ng-container *ngIf="
+                  !isObject(item.detalle[key]) &&
+                  key !== 'resultados' &&
+                  key !== 'ganador' &&
+                  key !== 'opciones'
+                ">
+                  <span class="detalle-simple">
+                    {{ item.detalle[key] }}
+                  </span>
+                </ng-container>
 
-
+              </div>
             </div>
-          </div>
+          </ng-container>
 
         </div>
 

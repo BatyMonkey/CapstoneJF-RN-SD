@@ -1,0 +1,438 @@
+/* ==========================
+   HEADER PRINCIPAL
+========================== */
+
+:host {
+  color-scheme: light;
+}
+
+/* Quitar la rayita de Ionic */
+ion-header::after {
+  display: none !important;
+}
+
+.rb-hero-header {
+  background: linear-gradient(90deg, #06b6d4, #22d3ee);
+  border-bottom-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.14);
+}
+
+.rb-hero-container {
+  width: 100%;
+  padding: 0 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rb-hero-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rb-hero-logo img {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+}
+
+.rb-hero-text h1 {
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.rb-hero-text p {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 2px 0 0;
+  font-size: 0.9rem;
+}
+
+/* ==========================
+   CONTENIDO
+========================== */
+
+.sugerir-actividad-page {
+  --background: #f5f7fb;
+  /* 👉 esto hace que el subheader quede bajo el header y no se tape */
+  margin-top: 140px;
+}
+
+.page-container {
+  max-width: 430px;
+  margin: 0 auto;
+  padding: 0 14px 26px;
+  box-sizing: border-box;
+}
+
+/* ==========================
+   SUBHEADER BLANCO
+========================== */
+
+.page-subheader {
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.12);
+  padding: 10px 12px 14px;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.back-btn {
+  min-width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: none;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon {
+    font-size: 1.2rem;
+    color: #374151;
+  }
+}
+
+.page-subheader-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.page-subheader-text h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.page-subheader-text p {
+  margin: 2px 0 0;
+  font-size: 0.84rem;
+  color: #6b7280;
+}
+
+.tabs-row {
+  display: flex;
+  gap: 8px;
+}
+
+.tab {
+  flex: 1;
+  border-radius: 999px;
+  padding: 7px 10px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tab-primary {
+  background: #facc15;
+  color: #1f2933;
+}
+
+.tab-secondary {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+/* ==========================
+   CUERPO
+========================== */
+
+.page-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Cards principales (un poco más estrechas) */
+.section-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 14px 14px 16px;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  margin: 0 12px 10px; /* 👉 separa las tarjetas de los bordes */
+}
+
+.section-title {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* ==========================
+   FORMULARIO
+========================== */
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+.label {
+  display: block;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.req {
+  color: #ef4444;
+}
+
+/* 👉 Inputs / textareas bien dentro de la tarjeta */
+.form-group ion-input,
+.form-group ion-textarea {
+  display: block;
+  width: 100%;
+  --background: #f9fafb;
+  --border-radius: 12px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  --border-color: #e5e7eb;
+  --highlight-color-focused: #06b6d4;
+  font-size: 0.86rem;
+}
+
+/* ==========================
+   INPUT CON ÍCONO (CUPOS)
+========================== */
+
+.icon-input {
+  position: relative;
+}
+
+.icon-input .input-leading-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: #9ca3af;
+}
+
+/* Estilo pill para el input de cupos */
+.icon-input input[type='number'] {
+  width: 100%;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  padding: 8px 12px 8px 34px; /* espacio para el ícono */
+  background: #f9fafb;
+  font-size: 0.86rem;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.icon-input input[type='number']:focus {
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 1px rgba(6, 182, 212, 0.35);
+}
+
+/* ==========================
+   IMAGEN DE REFERENCIA
+========================== */
+
+.image-upload-card {
+  border-radius: 16px;
+  border: 1px dashed #d1d5db;
+  padding: 12px;
+  text-align: center;
+  background: #f9fafb;
+}
+
+.upload-placeholder ion-icon {
+  font-size: 1.8rem;
+  color: #9ca3af;
+  margin-bottom: 4px;
+}
+
+.upload-placeholder p {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #6b7280;
+}
+
+.upload-helper {
+  font-size: 0.76rem;
+  color: #9ca3af;
+}
+
+.upload-btn {
+  margin-top: 8px;
+  border-radius: 999px;
+  border: none;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #06b6d4, #0ea5e9);
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.image-preview {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.image-preview img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.remove-img-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==========================
+   FECHA Y HORA
+========================== */
+
+.datetime-group {
+  margin-bottom: 12px;
+}
+
+.datetime-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.datetime-field {
+  position: relative;
+}
+
+.datetime-field-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: #9ca3af;
+}
+
+/* inputs nativos date/time dentro de la “pill” */
+.datetime-field input[type='date'],
+.datetime-field input[type='time'] {
+  width: 100%;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  padding: 8px 12px 8px 34px;
+  font-size: 0.86rem;
+  background: #f9fafb;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.datetime-field input[type='date']:focus,
+.datetime-field input[type='time']:focus {
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 1px rgba(6, 182, 212, 0.35);
+}
+
+/* ==========================
+   BOTÓN ENVIAR
+========================== */
+
+.submit-wrapper {
+  margin: 14px 0 26px;
+  /* sin display:flex aquí, así el botón se puede centrar con margin:auto */
+}
+
+.submit-btn {
+  width: 90%;                /* más angosto que las tarjetas */
+  max-width: 360px;          /* límite en pantallas grandes */
+  margin: 0 auto;            /* centrado horizontal */
+
+  border-radius: 999px;
+  border: none;
+  padding: 8px 14px;         /* un poco más bajo */
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  background: linear-gradient(90deg, #06b6d4, #facc15);
+  box-shadow: 0 12px 22px rgba(8, 47, 73, 0.35);
+
+  ion-icon {
+    font-size: 1rem;
+  }
+}
+
+
+/* Forzar claro en modo oscuro del sistema */
+@media (prefers-color-scheme: dark) {
+  :host {
+    --ion-background-color: #f5f7fb;
+    --ion-text-color: #0f172a;
+  }
+}
+
+/* ==========================
+   Aviso informativo (💡)
+========================== */
+
+.info-banner {
+  margin: 0 12px 14px;          /* 👉 mismo margen horizontal que las tarjetas */
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #ecfeff;          /* celeste muy claro */
+  border: 1px solid #bae6fd;    /* borde celeste suave */
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  box-shadow: 0 6px 14px rgba(8, 47, 73, 0.08);
+}
+
+.info-banner .info-icon {
+  font-size: 1.1rem;
+  color: #0891b2;
+  margin-top: 2px;
+}
+
+.info-banner .info-text {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: #0f172a;
+}

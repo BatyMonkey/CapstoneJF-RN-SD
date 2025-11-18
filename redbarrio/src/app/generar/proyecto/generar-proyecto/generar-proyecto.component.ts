@@ -30,6 +30,7 @@ import {
   createOutline,
   trashOutline,
   imageOutline,
+  sendOutline,
 } from 'ionicons/icons';
 
 import { SupabaseService } from 'src/app/services/supabase.service';
@@ -85,6 +86,7 @@ export class SugerirProyectoPage implements OnInit {
       'create-outline': createOutline,
       'trash-outline': trashOutline,
       'image-outline': imageOutline,
+      'send-outline': sendOutline,
     });
   }
 

@@ -80,6 +80,10 @@
         <ion-icon name="calendar-outline"></ion-icon>
         <span>Calendario</span>
       </div>
+      <div class="quick-btn" role="button" tabindex="0" (click)="go('inscripcion/actividades')">
+        <ion-icon name="bicycle-outline"></ion-icon>
+        <span>Actividades</span>
+      </div>
     </div>
   </div>
 
@@ -91,10 +95,7 @@
     </div>
 
     <!-- 🔄 Cargando -->
-    <ion-spinner
-      *ngIf="estaCargando"
-      class="loading-spinner"
-      name="dots">
+    <ion-spinner *ngIf="estaCargando" class="loading-spinner" name="dots">
     </ion-spinner>
 
     <!-- 🚫 Sin noticias -->
@@ -104,23 +105,13 @@
 
     <!-- ✅ Noticias dinámicas (mismo estilo que las de prueba + foto a la izquierda) -->
     <ng-container *ngIf="!estaCargando && noticias.length > 0">
-      <ion-card
-        class="news-card"
-        *ngFor="let n of noticias | slice:0:3"
-        (click)="verDetalle(n.id)"
-      >
+      <ion-card class="news-card" *ngFor="let n of noticias | slice:0:3" (click)="verDetalle(n.id)">
         <div class="news-item">
           <div class="icon" [ngClass]="getIconColor(n)">
             <!-- FOTO si hay url_foto -->
-            <img
-              *ngIf="n.url_foto && n.url_foto.length > 0"
-              [src]="n.url_foto[0]"
-              alt="Noticia"
-            />
+            <img *ngIf="n.url_foto && n.url_foto.length > 0" [src]="n.url_foto[0]" alt="Noticia" />
             <!-- Icono megáfono si no hay foto -->
-            <ion-icon
-              *ngIf="!n.url_foto || n.url_foto.length === 0"
-              name="megaphone-outline">
+            <ion-icon *ngIf="!n.url_foto || n.url_foto.length === 0" name="megaphone-outline">
             </ion-icon>
           </div>
 

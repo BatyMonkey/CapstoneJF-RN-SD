@@ -6,7 +6,15 @@ import { Router, RouterModule } from '@angular/router';
 import { VotacionesService } from '../services/votaciones.service';
 import { SupabaseService } from 'src/app/services/supabase.service';
 import { ViewChildren, QueryList, ElementRef } from '@angular/core';
+import { addIcons } from 'ionicons';
+import { imageOutline } from 'ionicons/icons';
+import { chevronBackOutline, sendOutline } from 'ionicons/icons';
 
+addIcons({
+  'image-outline': imageOutline,
+  'chevron-back-outline': chevronBackOutline,
+  'send-outline': sendOutline,
+}); 
 
 interface OpcionVM {
   titulo: string;

@@ -22,20 +22,34 @@
 
     <div class="page-subheader-main">
       <div class="page-subheader-text">
-        <h2>Gestionar Proyectos</h2>
-        <p>Crear y administrar proyectos del barrio</p>
+        <!-- Títulos dinámicos según rol -->
+        <h2>{{ esAdmin ? 'Gestionar Proyectos' : 'Sugerir Proyecto' }}</h2>
+        <p>
+          {{
+            esAdmin
+              ? 'Crear y administrar proyectos del barrio'
+              : 'Sugiere un proyecto para mejorar la comunidad'
+          }}
+        </p>
       </div>
 
       <!-- Tabs -->
       <div class="tabs-row">
-        <button type="button" class="tab tab-secondary" (click)="irAAdminProyectos()">
+        <!-- Tab "Ver Proyectos" SOLO para administradores -->
+        <button
+          *ngIf="esAdmin"
+          type="button"
+          class="tab tab-secondary"
+          (click)="irAAdminProyectos()"
+        >
           <ion-icon name="eye-outline"></ion-icon>
           Ver Proyectos
         </button>
 
+        <!-- Tab principal: texto cambia según rol -->
         <button type="button" class="tab tab-primary">
           <ion-icon name="add-outline"></ion-icon>
-          Crear Nuevo
+          {{ esAdmin ? 'Crear Nuevo' : 'Sugerir Proyecto' }}
         </button>
       </div>
     </div>
@@ -48,7 +62,11 @@
         <label class="label">
           Nombre del Proyecto <span class="req">*</span>
         </label>
-        <ion-input class="input" formControlName="titulo" placeholder="Ej: Mejoramiento Plaza Central"></ion-input>
+        <ion-input
+          class="input"
+          formControlName="titulo"
+          placeholder="Ej: Mejoramiento Plaza Central"
+        ></ion-input>
       </div>
 
       <!-- Descripción -->
@@ -56,8 +74,12 @@
         <label class="label">
           Descripción <span class="req">*</span>
         </label>
-        <ion-textarea class="textarea" formControlName="descripcion" rows="4"
-          placeholder="Describe el proyecto en detalle..."></ion-textarea>
+        <ion-textarea
+          class="textarea"
+          formControlName="descripcion"
+          rows="4"
+          placeholder="Describe el proyecto en detalle..."
+        ></ion-textarea>
       </div>
 
       <!-- Responsable -->
@@ -65,8 +87,11 @@
         <label class="label">
           Responsable
         </label>
-        <ion-input class="input" formControlName="responsable"
-          placeholder="Nombre del responsable del proyecto"></ion-input>
+        <ion-input
+          class="input"
+          formControlName="responsable"
+          placeholder="Nombre del responsable del proyecto"
+        ></ion-input>
       </div>
 
       <!-- Presupuesto -->
@@ -74,7 +99,12 @@
         <label class="label">
           Presupuesto
         </label>
-        <ion-input class="input" formControlName="presupuesto" type="text" placeholder="Ej: $5.000.000"></ion-input>
+        <ion-input
+          class="input"
+          formControlName="presupuesto"
+          type="text"
+          placeholder="Ej: $5.000.000"
+        ></ion-input>
       </div>
 
       <!-- Fechas -->
@@ -83,14 +113,22 @@
           <label class="label">
             Fecha Inicio <span class="req">*</span>
           </label>
-          <ion-input class="input" type="date" formControlName="fecha_inicio"></ion-input>
+          <ion-input
+            class="input"
+            type="date"
+            formControlName="fecha_inicio"
+          ></ion-input>
         </div>
 
         <div class="form-half">
           <label class="label">
             Fecha Término <span class="req">*</span>
           </label>
-          <ion-input class="input" type="date" formControlName="fecha_fin"></ion-input>
+          <ion-input
+            class="input"
+            type="date"
+            formControlName="fecha_fin"
+          ></ion-input>
         </div>
       </div>
 
@@ -112,14 +150,24 @@
 
         <div class="image-upload-card">
           <!-- input real de archivos -->
-          <input #fileInput type="file" accept="image/*" hidden (change)="onImageSelected($event)" />
+          <input
+            #fileInput
+            type="file"
+            accept="image/*"
+            hidden
+            (change)="onImageSelected($event)"
+          />
 
           <!-- Si hay imagen seleccionada, mostramos preview -->
           <ng-container *ngIf="imagenPreview; else uploadPlaceholder">
             <div class="image-preview">
               <img [src]="imagenPreview" alt="Imagen del proyecto" />
 
-              <button type="button" class="remove-img-btn" (click)="eliminarImagen()">
+              <button
+                type="button"
+                class="remove-img-btn"
+                (click)="eliminarImagen()"
+              >
                 <ion-icon name="close-circle-outline"></ion-icon>
               </button>
             </div>
@@ -131,7 +179,11 @@
               <ion-icon name="image-outline"></ion-icon>
               <p>Agregar imagen del proyecto</p>
 
-              <button type="button" class="upload-btn" (click)="fileInput.click()">
+              <button
+                type="button"
+                class="upload-btn"
+                (click)="fileInput.click()"
+              >
                 <ion-icon name="image-outline"></ion-icon>
                 Seleccionar Imagen
               </button>
@@ -141,9 +193,14 @@
       </div>
 
       <!-- Botón Crear -->
-      <button type="button" class="submit-btn" [disabled]="form.invalid || cargando" (click)="enviar()">
+      <button
+        type="button"
+        class="submit-btn"
+        [disabled]="form.invalid || cargando"
+        (click)="enviar()"
+      >
         <ion-icon name="send-outline"></ion-icon>
-        Crear Proyecto
+        {{ esAdmin ? 'Crear Proyecto' : 'Enviar Sugerencia' }}
       </button>
 
       <p class="helper required-helper" *ngIf="form.invalid">

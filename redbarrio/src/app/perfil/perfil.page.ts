@@ -2,8 +2,13 @@
 
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { IonicModule, ToastController } from '@ionic/angular';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { IonicModule, ToastController, ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 
 // 🚨 Importaciones de Supabase
@@ -29,6 +34,9 @@ import {
   chevronForwardOutline,
   logOutOutline,
 } from 'ionicons/icons';
+
+// 👉 Modal de edición de perfil
+import { EditarPerfilModalComponent } from './editar-perfil-modal/editar-perfil-modal.page';
 
 // 🚨 CONFIGURACIÓN DE STORAGE
 const PROFILE_BUCKET = 'perfiles-bucket'; // 🚨 AJUSTA ESTE NOMBRE AL DE TU BUCKET DE PERFILES
@@ -68,7 +76,8 @@ export class PerfilPage implements OnInit {
     private authService: AuthService,
     private toastController: ToastController,
     private router: Router,
-    private supabaseService: SupabaseService
+    private supabaseService: SupabaseService,
+    private modalCtrl: ModalController
   ) {
     // 👇 Registrar íconos usados en el HTML de perfil
     addIcons({
@@ -104,6 +113,30 @@ export class PerfilPage implements OnInit {
 
   async ngOnInit() {
     await this.cargarPerfil();
+  }
+
+  // =======================
+  //  MODAL EDITAR PERFIL
+  // =======================
+
+  async openEditPerfilModal() {
+    const modal = await this.modalCtrl.create({
+      component: EditarPerfilModalComponent,
+      componentProps: {
+        perfilActual: this.perfilActual,
+      },
+      cssClass: 'edit-perfil-modal',
+    });
+
+    await modal.present();
+
+    const { role } = await modal.onDidDismiss();
+
+    // Más adelante, si la modal guarda cambios reales, aquí
+    // podrías recargar el perfil:
+    if (role === 'saved') {
+      await this.cargarPerfil();
+    }
   }
 
   // --- Lógica de Carga y Actualización del Perfil ---
@@ -199,7 +232,7 @@ export class PerfilPage implements OnInit {
     }
   }
 
-    async onFileSelected(event: any) {
+  async onFileSelected(event: any) {
     const files: FileList | null = event.target.files;
 
     if (!files || files.length === 0) {
@@ -214,9 +247,9 @@ export class PerfilPage implements OnInit {
     await this.guardarCambios();
   }
 
-
   async guardarCambios() {
-    if (this.perfilForm.invalid || (!this.perfilForm.dirty && !this.fotoFile)) return;
+    if (this.perfilForm.invalid || (!this.perfilForm.dirty && !this.fotoFile))
+      return;
 
     this.isSaving = true;
 
@@ -259,7 +292,10 @@ export class PerfilPage implements OnInit {
     this.router.navigateByUrl('/auth/login', { replaceUrl: true });
   }
 
-  async mostrarToast(message: string, color: 'success' | 'danger' | 'warning') {
+  async mostrarToast(
+    message: string,
+    color: 'success' | 'danger' | 'warning'
+  ) {
     const toast = await this.toastController.create({
       message: message,
       duration: 3000,
@@ -268,5 +304,4 @@ export class PerfilPage implements OnInit {
     });
     await toast.present();
   }
-  
 }

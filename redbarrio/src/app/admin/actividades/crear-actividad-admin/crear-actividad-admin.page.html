@@ -1,0 +1,186 @@
+<!-- src/app/admin/crear-actividad-admin/crear-actividad-admin.page.html -->
+
+<ion-header class="rb-hero-header">
+  <div class="rb-hero-container">
+    <!-- Logo y texto -->
+    <div class="rb-hero-info">
+      <div class="rb-hero-logo">
+        <img src="assets/icon/redbarrio.png" alt="Logo RedBarrio" />
+      </div>
+      <div class="rb-hero-text">
+        <h1>RedBarrio</h1>
+        <p>Panel de administración</p>
+      </div>
+    </div>
+  </div>
+</ion-header>
+
+<ion-content class="sugerir-actividad-page" [fullscreen]="true">
+  <!-- Sub-header blanco interior -->
+  <div class="page-subheader">
+    <button class="back-btn" type="button" (click)="goBack()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </button>
+
+    <div class="page-subheader-main">
+      <div class="page-subheader-text">
+        <h2>Crear Actividad</h2>
+        <p>Publica una nueva actividad para los vecinos</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-body">
+    <!-- Aviso informativo (modo admin) -->
+    <div class="info-banner admin">
+      <p>
+        ⚙️ Como administrador, las actividades creadas desde esta pantalla se
+        <strong>publican de inmediato</strong> y quedan visibles para toda la
+        comunidad. Revisa bien la información antes de guardar.
+      </p>
+    </div>
+
+    <!-- Información básica -->
+    <section class="section-card">
+      <h3 class="section-title">Información de la Actividad</h3>
+
+      <!-- Título -->
+      <div class="form-group">
+        <label class="label">
+          Título de la Actividad <span class="req">*</span>
+        </label>
+        <ion-input
+          class="input"
+          [(ngModel)]="titulo"
+          placeholder="Ej: Jornada de Limpieza Comunitaria"
+        ></ion-input>
+      </div>
+
+      <!-- Descripción -->
+      <div class="form-group">
+        <label class="label">
+          Descripción <span class="req">*</span>
+        </label>
+        <ion-textarea
+          class="textarea"
+          [(ngModel)]="descripcion"
+          rows="5"
+          placeholder="Describe los detalles de la actividad, qué se hará, qué deben traer los participantes, etc."
+        ></ion-textarea>
+      </div>
+
+      <!-- Cupos -->
+      <div class="form-group">
+        <label class="label">
+          Cupos Totales <span class="req">*</span>
+        </label>
+
+        <div class="icon-input">
+          <ion-icon
+            name="people-outline"
+            class="input-leading-icon"
+          ></ion-icon>
+
+          <input type="number" min="1" [(ngModel)]="cupos" placeholder="Ej: 30" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Imagen de referencia -->
+    <section class="section-card">
+      <h3 class="section-title">Imagen de la Actividad</h3>
+
+      <div class="image-upload-card">
+        <input
+          #fileInput
+          type="file"
+          accept="image/*"
+          hidden
+          (change)="onImageSelected($event)"
+        />
+
+        <!-- Preview -->
+        <ng-container *ngIf="imagenPreview; else uploadPlaceholder">
+          <div class="image-preview-wrapper">
+            <div class="image-preview">
+              <img [src]="imagenPreview" [alt]="titulo || 'Actividad'" />
+            </div>
+            <button
+              type="button"
+              class="remove-img-btn"
+              (click)="eliminarImagen()"
+            >
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </div>
+        </ng-container>
+
+        <!-- Placeholder -->
+        <ng-template #uploadPlaceholder>
+          <div class="upload-placeholder" (click)="fileInput.click()">
+            <ion-icon name="cloud-upload-outline"></ion-icon>
+            <p>Subir imagen</p>
+            <span class="hint">Opcional</span>
+          </div>
+        </ng-template>
+      </div>
+    </section>
+
+    <!-- Fecha y Horario -->
+    <div class="section-card">
+      <h3 class="section-title">Fecha y Horario</h3>
+
+      <!-- Inicio -->
+      <div class="datetime-group">
+        <label class="label">
+          Fecha y Hora de Inicio <span class="req">*</span>
+        </label>
+
+        <div class="datetime-row">
+          <div class="datetime-field">
+            <span class="datetime-field-icon">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </span>
+            <input type="date" [(ngModel)]="fechaInicio" />
+          </div>
+
+          <div class="datetime-field">
+            <span class="datetime-field-icon">
+              <ion-icon name="time-outline"></ion-icon>
+            </span>
+            <input type="time" [(ngModel)]="horaInicio" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Fin -->
+      <div class="datetime-group">
+        <label class="label">
+          Fecha y Hora de Fin <span class="req">*</span>
+        </label>
+
+        <div class="datetime-row">
+          <div class="datetime-field">
+            <span class="datetime-field-icon">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </span>
+            <input type="date" [(ngModel)]="fechaFin" />
+          </div>
+
+          <div class="datetime-field">
+            <span class="datetime-field-icon">
+              <ion-icon name="time-outline"></ion-icon>
+            </span>
+            <input type="time" [(ngModel)]="horaFin" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón crear -->
+    <button type="button" class="submit-btn" (click)="enviarActividad()">
+      <ion-icon name="send-outline"></ion-icon>
+      Crear Actividad
+    </button>
+  </div>
+</ion-content>

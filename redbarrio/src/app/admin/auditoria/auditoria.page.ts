@@ -4,6 +4,17 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { SupabaseService } from 'src/app/services/supabase.service';
+import { addIcons } from 'ionicons';
+import { cubeOutline, documentTextOutline, calendarOutline, checkmarkDoneOutline, newspaperOutline, chevronBackOutline } from 'ionicons/icons';
+
+addIcons({
+  'cube-outline': cubeOutline,
+  'document-text-outline': documentTextOutline,
+  'calendar-outline': calendarOutline,
+  'checkmark-done-outline': checkmarkDoneOutline,
+  'newspaper-outline': newspaperOutline,
+  'chevron-back-outline': chevronBackOutline,
+});
 
 @Component({
   standalone: true,

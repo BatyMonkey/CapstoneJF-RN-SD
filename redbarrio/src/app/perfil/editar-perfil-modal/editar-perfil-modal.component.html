@@ -1,0 +1,168 @@
+<!-- src/app/perfil/editar-perfil-modal/editar-perfil-modal.component.html -->
+
+<ion-header class="edit-perfil-header">
+  <ion-toolbar>
+    <div class="header-container">
+      <!-- CÍRCULO que cierra la modal -->
+      <button
+        type="button"
+        class="user-icon-circle back-circle"
+        (click)="close()"
+      >
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </button>
+
+      <div class="header-text">
+        <h2>Editar Perfil</h2>
+        <p>Actualiza tu información personal</p>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="edit-perfil-content">
+  <div class="edit-card">
+    <!-- Formulario reactivo -->
+    <form [formGroup]="perfilForm" (ngSubmit)="guardarCambios()">
+      <!-- Nombre completo -->
+      <div class="full-name-box">
+        <label>Nombre Completo</label>
+        <p>{{ nombreCompleto || 'Nombre completo' }}</p>
+      </div>
+
+      <!-- Primer Nombre (no editable) -->
+      <div class="field-block disabled">
+        <label>Primer Nombre</label>
+        <input
+          type="text"
+          [value]="perfilActual?.primer_nombre || ''"
+          disabled
+        />
+        <p class="hint">Este campo no puede ser editado</p>
+      </div>
+
+      <!-- Segundo Nombre (Editable) -->
+      <div class="field-block">
+        <label>
+          Segundo Nombre
+          <span class="optional">(Opcional)</span>
+        </label>
+        <input
+          type="text"
+          formControlName="segundo_nombre"
+          placeholder="Segundo nombre"
+        />
+      </div>
+
+      <!-- Primer Apellido (no editable) -->
+      <div class="field-block disabled">
+        <label>Primer Apellido</label>
+        <input
+          type="text"
+          [value]="perfilActual?.primer_apellido || ''"
+          disabled
+        />
+        <p class="hint">Este campo no puede ser editado</p>
+      </div>
+
+      <!-- Segundo Apellido (Editable) -->
+      <div class="field-block">
+        <label>
+          Segundo Apellido
+          <span class="optional">(Opcional)</span>
+        </label>
+        <input
+          type="text"
+          formControlName="segundo_apellido"
+          placeholder="Segundo apellido"
+        />
+      </div>
+
+      <!-- Teléfono (Editable) -->
+      <div class="field-block">
+        <label>
+          <ion-icon name="call-outline" class="inline-icon"></ion-icon>
+          Teléfono
+          <span class="optional">(Opcional)</span>
+        </label>
+        <input
+          type="tel"
+          formControlName="telefono"
+          placeholder="+56912345678 o 912345678"
+        />
+
+        <!-- Error de teléfono (pattern) -->
+        <div
+          class="error-message"
+          *ngIf="
+            telefonoCtrl?.errors?.['pattern'] &&
+            (telefonoCtrl?.dirty || telefonoCtrl?.touched)
+          "
+        >
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <p>
+            El formato de teléfono debe ser: (+56) 9XXXXXXXX (ej:
+            +56912345678 o 912345678).
+          </p>
+        </div>
+      </div>
+
+      <!-- Correo (solo visual por ahora, no editable en el form) -->
+      <div class="field-block">
+        <label>
+          <ion-icon name="mail-outline" class="inline-icon"></ion-icon>
+          Correo Electrónico
+          <span class="required">*</span>
+        </label>
+        <input
+          type="email"
+          [value]="perfilActual?.correo || ''"
+          placeholder="correo@ejemplo.com"
+          disabled
+        />
+
+        <!-- Placeholder para error de email (por si después lo vuelves editable) -->
+        <div class="error-message" *ngIf="false">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <p>Ingresa un correo electrónico válido.</p>
+        </div>
+      </div>
+
+      <!-- Nota info -->
+      <div class="info-note">
+        <div class="info-icon">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+        </div>
+        <div class="info-text">
+          <p class="title">Campos editables:</p>
+          <ul>
+            <li>Segundo Nombre (opcional)</li>
+            <li>Segundo Apellido (opcional)</li>
+            <li>Teléfono (opcional)</li>
+            <li>Correo Electrónico (solo informativo por ahora)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="action-buttons">
+        <ion-button
+          type="button"
+          expand="block"
+          fill="outline"
+          (click)="close()"
+        >
+          Cancelar
+        </ion-button>
+        <ion-button
+          type="submit"
+          expand="block"
+          [disabled]="isSaving || perfilForm.invalid || !perfilForm.dirty"
+        >
+          <ion-icon name="save-outline" slot="start"></ion-icon>
+          Guardar Cambios
+        </ion-button>
+      </div>
+    </form>
+  </div>
+</ion-content>

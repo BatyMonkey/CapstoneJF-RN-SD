@@ -1,11 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import {
-  IonicModule,
-  LoadingController,
-  AlertController,
-} from '@ionic/angular';
+import { IonicModule, LoadingController, AlertController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from 'src/app/services/supabase.service';
 import { AuthService, Perfil } from 'src/app/auth/auth.service';
@@ -20,21 +16,22 @@ import {
   megaphoneOutline,
   calendarOutline,
   chevronBackOutline,
+  addOutline,
 } from 'ionicons/icons';
 
 @Component({
   standalone: true,
-  selector: 'app-proyectos',
-  templateUrl: './proyectos.page.html',
-  styleUrls: ['./proyectos.page.scss'],
+  selector: 'app-actividades',
+  templateUrl: './actividades.page.html',
+  styleUrls: ['./actividades.page.scss'],
   imports: [CommonModule, IonicModule, FormsModule],
 })
-export class ProyectosPage implements OnInit {
+export class ActividadesPage implements OnInit {
   perfil: Perfil | null = null;
   elementos: any[] = [];
   elementosFiltrados: any[] = [];
   isLoading = true;
-  filtro: string = 'todos'; // todos | proyectos
+  filtro: string = 'todos'; // todos | actividades
 
   constructor(
     private auth: AuthService,
@@ -54,6 +51,7 @@ export class ProyectosPage implements OnInit {
       'megaphone-outline': megaphoneOutline,
       'calendar-outline': calendarOutline,
       'chevron-back-outline': chevronBackOutline,
+      'add-outline': addOutline,
     });
   }
 
@@ -85,32 +83,32 @@ export class ProyectosPage implements OnInit {
     }
   }
 
-  // ✅ Cargar proyectos
+  // ✅ Cargar proyectos y actividades
   async cargarListado() {
     this.isLoading = true;
     const loading = await this.loadingCtrl.create({
-      message: 'Cargando proyectos...',
+      message: 'Cargando actividades...',
       spinner: 'crescent',
     });
     await loading.present();
 
     try {
-      const [proyectosRes] = await Promise.all([
+      const [actividadesRes] = await Promise.all([
         this.supabaseService.client
-          .from('proyecto')
+          .from('actividad')
           .select('*')
-          .eq('estado', 'publicada'), // ✅ solo publicados
+          .eq('estado', 'publicada'), // ✅ solo publicadas
       ]);
 
-      if (proyectosRes.error) throw proyectosRes.error;
+      if (actividadesRes.error) throw actividadesRes.error;
 
-      const proyectos = (proyectosRes.data || []).map((p) => ({
-        ...p,
-        tipo: 'proyecto',
-        fecha: p.fecha || p.creado_en || new Date().toISOString(),
+      const actividades = (actividadesRes.data || []).map((a) => ({
+        ...a,
+        tipo: 'actividad',
+        fecha: a.fecha || a.creado_en || new Date().toISOString(),
       }));
 
-      this.elementos = [...proyectos].sort(
+      this.elementos = [...actividades].sort(
         (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
       );
 
@@ -125,12 +123,12 @@ export class ProyectosPage implements OnInit {
     }
   }
 
-  // ✅ Filtro visual entre proyectos
+  // ✅ Filtro visual entre y actividades
   filtrarListado() {
     switch (this.filtro) {
-      case 'proyectos':
+      case 'actividades':
         this.elementosFiltrados = this.elementos.filter(
-          (e) => e.tipo === 'proyecto'
+          (e) => e.tipo === 'actividad'
         );
         break;
       default:
@@ -161,10 +159,6 @@ export class ProyectosPage implements OnInit {
 
       // 🧭 Redirigir usando parámetro de ruta
       if (item.id_proyecto) {
-        this.router.navigate([
-          '/inscripcion/inscripcion-proyecto',
-          item.id_proyecto,
-        ]);
       } else if (item.id_actividad) {
         this.router.navigate([
           '/inscripcion/inscripcion-proyecto',
@@ -185,8 +179,12 @@ export class ProyectosPage implements OnInit {
       window.history.back();
     } else {
       // ruta de seguridad si entra directo por deep-link
-      this.router.navigate(['/home']);
+      this.router.navigate(['/']);
     }
+  }
+
+  goSugerir() {
+    this.router.navigate(['generar/actividad'])
   }
 
   // ✅ Mostrar alerta genérica

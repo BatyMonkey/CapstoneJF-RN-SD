@@ -17,8 +17,7 @@ const routes: Routes = [
     loadComponent: () =>
       import('./auth/register/register.page').then((c) => c.RegisterPage),
   },
-
-  // 🔁 Callback para Supabase (web/dev). Debe existir el componente.
+  // Callback Supabase
   {
     path: 'auth/callback',
     loadComponent: () =>
@@ -26,8 +25,7 @@ const routes: Routes = [
         (m) => m.AuthCallbackPage
       ),
   },
-
-  // ✅ Ruta ASCII para el form de nueva contraseña
+  // Nueva contraseña (ASCII)
   {
     path: 'auth/recuperar-contrasena',
     loadComponent: () =>
@@ -35,7 +33,7 @@ const routes: Routes = [
         (m) => m.UpdatePasswordPage
       ),
   },
-  // 🔀 Redirect si quedó algún link con "ñ"
+  // Redirect desde versión con ñ
   {
     path: 'auth/recuperar-contraseña',
     redirectTo: 'auth/recuperar-contrasena',
@@ -48,13 +46,13 @@ const routes: Routes = [
     loadComponent: () =>
       import('./pago-retorno/pago-retorno.page').then((m) => m.PagoRetornoPage),
   },
+
+  // ===== Noticias =====
   {
     path: 'noticias',
     loadComponent: () =>
       import('./noticias/noticias.page').then((m) => m.NoticiasPage),
   },
-
-  // ===== Noticias =====
   {
     path: 'noticias/crear',
     loadComponent: () =>
@@ -119,6 +117,31 @@ const routes: Routes = [
       ).then((m) => m.SugerirProyectoPage),
   },
   {
+    path: 'generar/actividad',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador', 'vecino'] },
+    loadComponent: () =>
+      import('./generar/actividad/sugerir-actividad.page').then(
+        (m) => m.SugerirActividadPage
+      ),
+  },
+  {
+    path: 'admin/actividades/crear-actividad',
+    loadComponent: () =>
+      import(
+        './admin/actividades/crear-actividad-admin/crear-actividad-admin.page'
+      ).then((m) => m.CrearActividadAdminPage),
+  },
+  {
+    path: 'admin/solicitud-inscripciones',
+    canActivate: [AuthGuard],
+    data: { roles: ['administrador', 'directorio'] },
+    loadComponent: () =>
+      import(
+        './admin/Solicitud-Inscripciones/solicitud-inscripciones.page'
+      ).then((m) => m.SolicitudInscripcionesPage),
+  },
+  {
     path: 'generar/votacion',
     canActivate: [AuthGuard],
     data: { roles: ['administrador'] },
@@ -169,6 +192,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'actividades',
+        loadComponent: () =>
+          import('./inscripcion/actividades/actividades.page').then(
+            (m) => m.ActividadesPage
+          ),
+      },
+      {
         path: 'inscripcion-proyecto/:id',
         loadComponent: () =>
           import(
@@ -190,11 +220,9 @@ const routes: Routes = [
   },
   {
     path: 'admin/actividades',
-    canActivate: [AuthGuard],
-    data: { roles: ['administrador'] },
     loadComponent: () =>
       import('./admin/actividades/actividades.page').then(
-        (m) => m.ActividadesPage
+        (m) => m.ActividadesAdminPage // 👈 cambiar ActividadesPage por ActividadesAdminPage
       ),
   },
   {
@@ -215,62 +243,6 @@ const routes: Routes = [
     data: { roles: ['administrador'] },
     loadComponent: () =>
       import('./admin/auditoria/auditoria.page').then((m) => m.AuditoriaPage),
-  },
-
-  // ===== Home (protegido) =====
-  {
-    path: 'admin/solicitudes',
-    canActivate: [AuthGuard],
-    data: { roles: ['administrador'] },
-    loadComponent: () =>
-      import('./admin/solicitudes/solicitudes.page').then(
-        (m) => m.SolicitudesPage
-      ),
-  },
-  {
-    path: 'calendario',
-    loadComponent: () =>
-      import('./Calendario/calendario.component').then(
-        (m) => m.CalendarioComponent
-      ),
-  },
-  {
-    path: 'admin/actividades',
-    loadComponent: () =>
-      import('./admin/actividades/actividades.page').then(
-        (m) => m.ActividadesPage
-      ),
-  },
-  {
-    path: 'admin/gestiones',
-    loadComponent: () =>
-      import('./admin/gestiones/gestiones.page').then((m) => m.GestionesPage),
-  },
-
-  {
-    path: 'admin/solicitudes',
-    canActivate: [AuthGuard],
-    data: { roles: ['administrador'] },
-    loadComponent: () =>
-      import('./admin/solicitudes/solicitudes.page').then(
-        (m) => m.SolicitudesPage
-      ),
-  },
-  {
-    path: 'admin/actividades',
-    canActivate: [AuthGuard],
-    data: { roles: ['administrador'] },
-    loadComponent: () =>
-      import('./admin/actividades/actividades.page').then(
-        (m) => m.ActividadesPage
-      ),
-  },
-  {
-    path: 'admin/proyectos',
-    canActivate: [AuthGuard],
-    data: { roles: ['administrador'] },
-    loadComponent: () =>
-      import('./admin/proyectos/proyectos.page').then((m) => m.ProyectosPage),
   },
   {
     path: 'admin/proyectos/editar/:id',
@@ -280,18 +252,22 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'admin/auditoria',
-    canActivate: [AuthGuard],
-    data: { roles: ['administrador'] },
-    loadComponent: () =>
-      import('./admin/auditoria/auditoria.page').then((m) => m.AuditoriaPage),
-  },
-  {
     path: 'admin/noticias',
     canActivate: [AuthGuard],
     data: { roles: ['administrador'] },
     loadComponent: () =>
-      import('./admin/noticias/gestionar-noticias.page').then((m) => m.GestionarNoticiasPage),
+      import('./admin/noticias/gestionar-noticias.page').then(
+        (m) => m.GestionarNoticiasPage
+      ),
+  },
+
+  // ===== Calendario / Home =====
+  {
+    path: 'calendario',
+    loadComponent: () =>
+      import('./Calendario/calendario.component').then(
+        (m) => m.CalendarioComponent
+      ),
   },
   {
     path: 'home',

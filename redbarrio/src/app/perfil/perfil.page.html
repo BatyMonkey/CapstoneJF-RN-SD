@@ -25,29 +25,15 @@
     <section class="perfil-hero-card">
       <div class="avatar-wrap">
         <div class="avatar-ring">
-          <img
-            [src]="perfilActual?.url_foto_perfil || 'assets/default_avatar.svg'"
-            alt="Foto de perfil"
-          />
+          <img [src]="perfilActual?.url_foto_perfil || 'assets/default_avatar.png'" alt="Foto de perfil" />
         </div>
 
         <!-- Botón para cambiar foto (usa el mismo flujo que tenías) -->
-        <button
-          type="button"
-          class="avatar-edit-btn"
-          (click)="fileInput.click()"
-          [disabled]="isUploading || isSaving"
-        >
+        <button type="button" class="avatar-edit-btn" (click)="fileInput.click()" [disabled]="isUploading || isSaving">
           <ion-icon name="pencil-outline"></ion-icon>
         </button>
 
-        <input
-          type="file"
-          #fileInput
-          (change)="onFileSelected($event)"
-          accept="image/png, image/jpeg"
-          hidden
-        />
+        <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/png, image/jpeg" hidden />
       </div>
 
       <h2 class="perfil-name">
@@ -56,13 +42,13 @@
 
       <p class="perfil-role">
         {{
-          perfilActual?.rol === 'vecino'
-            ? 'Vecino del Barrio'
-            : perfilActual?.rol === 'directorio'
-              ? 'Miembro del Directorio'
-              : perfilActual?.rol === 'administrador'
-                ? 'Administrador'
-                : 'Vecino del Barrio'
+        perfilActual?.rol === 'vecino'
+        ? 'Vecino del Barrio'
+        : perfilActual?.rol === 'directorio'
+        ? 'Miembro del Directorio'
+        : perfilActual?.rol === 'administrador'
+        ? 'Administrador'
+        : 'Vecino del Barrio'
         }}
       </p>
 
@@ -163,7 +149,7 @@
           <div class="config-icon edit">
             <ion-icon name="create-outline"></ion-icon>
           </div>
-          <div class="config-text">
+          <div class="config-text" (click)="openEditPerfilModal()">
             <span class="config-label">Editar Perfil</span>
           </div>
         </div>
@@ -173,12 +159,7 @@
 
     <!-- TARJETA: CERRAR SESIÓN (SOLO DISEÑO, SIN (click)) -->
     <section class="perfil-logout-card">
-      <button
-        type="button"
-        class="logout-btn"
-        (click)="logout()"
-        [disabled]="isSaving || isUploading"
-      >
+      <button type="button" class="logout-btn" (click)="logout()" [disabled]="isSaving || isUploading">
         <ion-icon name="log-out-outline"></ion-icon>
         <span>Cerrar sesión</span>
       </button>
