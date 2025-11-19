@@ -177,6 +177,67 @@ ion-header::after {
 }
 
 /* ========================================
+   CABECERA "ESPACIOS DISPONIBLES" + BOTÓN
+========================================= */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.section-header .section-title {
+  margin: 0;
+}
+
+/* Botón "Añadir espacio" inspirado en el React */
+.btn-add-space {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  background: linear-gradient(90deg, #06b6d4, #0891b2);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(8, 145, 178, 0.35);
+  white-space: nowrap;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease;
+}
+
+.btn-add-space ion-icon {
+  font-size: 1rem;
+}
+
+.btn-add-space:hover {
+  filter: brightness(1.05);
+}
+
+.btn-add-space:active {
+  transform: translateY(1px);
+  box-shadow: 0 4px 10px rgba(8, 145, 178, 0.45);
+}
+
+/* En pantallas muy pequeñas, escondemos el texto y dejamos solo el ícono */
+@media (max-width: 380px) {
+  .btn-add-space span {
+    display: none;
+  }
+
+  .btn-add-space {
+    padding: 8px;
+  }
+}
+
+/* ========================================
    TARJETAS DE ESPACIOS
 ========================================= */
 ion-card.espacio-card {
@@ -440,4 +501,66 @@ textarea {
   from { opacity: 0; transform: translateY(-3px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+/* Contenedor del botón "Ver en mapa" dentro de la tarjeta */
+.espacio-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-start;
+}
 
+/* Botón "Ver en mapa" estilo React */
+.btn-ver-mapa {
+  border: none;
+  outline: none;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 14px;
+  border-radius: 12px;
+
+  background: linear-gradient(90deg, #06b6d4, #0891b2);
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 600;
+
+  box-shadow: 0 8px 18px rgba(8, 145, 178, 0.45);
+  transition:
+    filter 0.15s ease,
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
+}
+
+.btn-ver-mapa ion-icon {
+  font-size: 1rem;
+}
+
+/* Hover / active para efecto "clicky" */
+.btn-ver-mapa:hover {
+  filter: brightness(1.05);
+}
+
+.btn-ver-mapa:active {
+  transform: translateY(1px);
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.25);
+}
+/* Toast de advertencia para "Ver en mapa" */
+.rb-toast-warning {
+  --background: #fef3c7;      /* amarillo claro */
+  --color: #92400e;           /* texto marrón */
+  --border-radius: 14px;
+  --box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
+  --padding-start: 12px;
+  --padding-end: 12px;
+
+  font-size: 0.85rem;
+}
+
+/* Opcional: que no quede pegado a los bordes */
+.rb-toast-warning::part(container) {
+  margin-top: 12px;
+  margin-left: 12px;
+  margin-right: 12px;
+}

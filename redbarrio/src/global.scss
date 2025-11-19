@@ -299,3 +299,61 @@ ion-modal.edit-perfil-modal::part(content) {
 
   margin: auto;
 }
+
+/* ===== Modal Crear Espacio como card centrado ===== */
+ion-modal.crear-espacio-modal {
+  --backdrop-opacity: 0.45; /* se ve lo de atrás un poco oscurecido */
+}
+
+ion-modal.crear-espacio-modal::part(content) {
+  /* 👉 quitamos el “marco” blanco del modal */
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+
+  /* que ocupe toda la pantalla, la card se encarga del tamaño */
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  margin: 0;
+}
+
+/* ============================
+   Toast sólidos Crear Espacio
+   ============================ */
+
+/* El host del toast queda transparente y sin sombra extra */
+ion-toast.rb-toast-solid {
+  --background: transparent;
+  --box-shadow: none;
+}
+
+/* Caja real del toast */
+ion-toast.rb-toast-solid::part(container) {
+  border-radius: 14px;
+  border: none;
+  padding: 10px 16px;
+  margin: 8px 12px 0;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.35);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Éxito */
+ion-toast.rb-toast-solid.rb-toast-success::part(container) {
+  background: #ecfdf5;  /* verde muy claro */
+  color: #166534;
+}
+
+/* Advertencia */
+ion-toast.rb-toast-solid.rb-toast-warning::part(container) {
+  background: #fef3c7;  /* amarillo claro */
+  color: #92400e;
+}
+
+/* Error */
+ion-toast.rb-toast-solid.rb-toast-danger::part(container) {
+  background: #fef2f2;  /* rojo claro */
+  color: #b91c1c;
+}
