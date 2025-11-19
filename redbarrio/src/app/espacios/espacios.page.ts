@@ -7,6 +7,8 @@ import {
   IonicModule,
   LoadingController,
   AlertController,
+  ModalController,
+  ToastController,
 } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 
@@ -39,7 +41,11 @@ import {
   gridOutline,
   homeOutline,
   alertCircleOutline,
+  addOutline,
+  mapOutline,
 } from 'ionicons/icons';
+
+import { CrearEspacioModalPage } from './crear-espacio-modal/crear-espacio-modal.page';
 
 type EspacioUI = Espacio & {
   precio?: string | null;
@@ -54,9 +60,7 @@ type EspacioUI = Espacio & {
   imports: [IonicModule, CommonModule, FormsModule, RouterModule],
 })
 export class EspaciosPage implements OnInit {
-
-
-    // =========================================================
+  // =========================================================
   // SERVICIOS (UI)
   // =========================================================
 
@@ -96,7 +100,6 @@ export class EspaciosPage implements OnInit {
     return map[code] ?? 'checkmark-outline';
   }
 
-
   espacios: EspacioUI[] = [];
   isLoading = false;
   error: string | null = null;
@@ -117,7 +120,9 @@ export class EspaciosPage implements OnInit {
     private authService: AuthService,
     private supabaseService: SupabaseService,
     private loadingCtrl: LoadingController,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private modalCtrl: ModalController,
+    private toastCtrl: ToastController
   ) {
     addIcons({
       'chevron-back-outline': chevronBackOutline,
@@ -140,6 +145,8 @@ export class EspaciosPage implements OnInit {
       'basketball-outline': basketballOutline,
       'grid-outline': gridOutline,
       'home-outline': homeOutline,
+      'add-outline': addOutline,
+      'map-outline': mapOutline,
     });
   }
 
@@ -169,7 +176,8 @@ export class EspaciosPage implements OnInit {
     if (!event) this.isLoading = true;
 
     try {
-      this.espacios = (await this.espaciosService.obtenerEspacios()) as EspacioUI[];
+      this.espacios =
+        (await this.espaciosService.obtenerEspacios()) as EspacioUI[];
     } catch (e: any) {
       this.error = e.message;
       this.espacios = [];
@@ -182,7 +190,9 @@ export class EspaciosPage implements OnInit {
   seleccionarEspacio(espacio: EspacioUI) {
     this.errorHorario = null;
     this.espacioSeleccionadoId =
-      this.espacioSeleccionadoId === espacio.id_espacio ? null : espacio.id_espacio;
+      this.espacioSeleccionadoId === espacio.id_espacio
+        ? null
+        : espacio.id_espacio;
   }
 
   // =========================================================
@@ -198,8 +208,12 @@ export class EspaciosPage implements OnInit {
     const inicioLocal = new Date(`${this.fechaArriendo}T${this.horaInicio}`);
     const finLocal = new Date(`${this.fechaArriendo}T${this.horaFin}`);
 
-    const inicioUTC = new Date(inicioLocal.getTime() - inicioLocal.getTimezoneOffset() * 60000);
-    const finUTC = new Date(finLocal.getTime() - finLocal.getTimezoneOffset() * 60000);
+    const inicioUTC = new Date(
+      inicioLocal.getTime() - inicioLocal.getTimezoneOffset() * 60000
+    );
+    const finUTC = new Date(
+      finLocal.getTime() - finLocal.getTimezoneOffset() * 60000
+    );
 
     // Validaciones básicas
     if (inicioUTC >= finUTC) {
@@ -256,7 +270,12 @@ export class EspaciosPage implements OnInit {
       return;
     }
 
-    if (!this.espacioSeleccionadoId || !this.fechaArriendo || !this.horaInicio || !this.horaFin) {
+    if (
+      !this.espacioSeleccionadoId ||
+      !this.fechaArriendo ||
+      !this.horaInicio ||
+      !this.horaFin
+    ) {
       this.mostrarAlerta('Error', 'Completa todos los campos.');
       return;
     }
@@ -284,8 +303,12 @@ export class EspaciosPage implements OnInit {
     const inicioLocal = new Date(`${this.fechaArriendo}T${this.horaInicio}`);
     const finLocal = new Date(`${this.fechaArriendo}T${this.horaFin}`);
 
-    const inicioUTC = new Date(inicioLocal.getTime() - inicioLocal.getTimezoneOffset() * 60000);
-    const finUTC = new Date(finLocal.getTime() - finLocal.getTimezoneOffset() * 60000);
+    const inicioUTC = new Date(
+      inicioLocal.getTime() - inicioLocal.getTimezoneOffset() * 60000
+    );
+    const finUTC = new Date(
+      finLocal.getTime() - finLocal.getTimezoneOffset() * 60000
+    );
 
     const evento_inicio = inicioUTC.toISOString();
     const evento_fin = finUTC.toISOString();
@@ -323,20 +346,19 @@ export class EspaciosPage implements OnInit {
       if (errReserva) throw errReserva;
 
       // Crear orden pago
-      const { error: errOrden } =
-        await this.supabaseService.client
-          .from('orden_pago')
-          .insert([
-            {
-              id_auth: idUsuario,
-              id_evento: evento.id_evento,
-              id_espacio: this.espacioSeleccionadoId,
-              monto: 1500,
-              estado: 'pendiente',
-            },
-          ])
-          .select()
-          .single();
+      const { error: errOrden } = await this.supabaseService.client
+        .from('orden_pago')
+        .insert([
+          {
+            id_auth: idUsuario,
+            id_evento: evento.id_evento,
+            id_espacio: this.espacioSeleccionadoId,
+            monto: 1500,
+            estado: 'pendiente',
+          },
+        ])
+        .select()
+        .single();
       if (errOrden) throw errOrden;
 
       // Simular Transbank
@@ -370,7 +392,6 @@ export class EspaciosPage implements OnInit {
       this.horaInicio = '';
       this.horaFin = '';
       this.motivo = '';
-
     } catch (e) {
       console.error('Error al solicitar arriendo:', e);
       loading.dismiss();
@@ -407,5 +428,78 @@ export class EspaciosPage implements OnInit {
     const soloNumero = precio.replace(/\D/g, '');
     const conMiles = soloNumero.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     return `$${conMiles}/hora`;
+  }
+
+  // ============================
+  // MODAL CREAR ESPACIO
+  // ============================
+  async abrirCrearEspacioModal() {
+    const modal = await this.modalCtrl.create({
+      component: CrearEspacioModalPage,
+      cssClass: 'crear-espacio-modal',
+    });
+
+    await modal.present();
+
+    const { data, role } = await modal.onDidDismiss();
+
+    // Si se cerró con éxito desde la modal
+    if (role === 'success') {
+      // Recargar lista de espacios desde Supabase
+      await this.cargarEspacios();
+
+      // Si la modal devuelve el espacio creado, lo dejamos seleccionado
+      const creado =
+        data?.espacio && Array.isArray(data.espacio)
+          ? data.espacio[0]
+          : data?.espacio;
+
+      if (creado?.id_espacio) {
+        this.espacioSeleccionadoId = creado.id_espacio;
+      }
+    }
+  }
+
+  // ============================
+  // VER EN MAPA
+  // ============================
+  async verEnMapa(espacio: any, event: Event) {
+    // Evita que se dispare el click de la tarjeta
+    event.stopPropagation();
+
+    if (!espacio) return;
+
+    let url: string | null = null;
+
+    // 1) Si hay latitud y longitud, usamos SOLO las coordenadas
+    if (espacio.latitud && espacio.longitud) {
+      const lat = espacio.latitud;
+      const lng = espacio.longitud;
+
+      // Formato que entiende bien Google Maps:
+      // https://www.google.com/maps/search/?api=1&query=-33.5189,-70.7641
+      url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+    }
+    // 2) Si no hay coordenadas pero sí dirección, buscamos por dirección
+    else if (espacio.direccion_completa) {
+      const query = encodeURIComponent(espacio.direccion_completa);
+      url = `https://www.google.com/maps/search/?api=1&query=${query}`;
+    }
+
+    if (!url) {
+      const toast = await this.toastCtrl.create({
+        message: 'Este espacio no tiene ubicación configurada.',
+        duration: 2500,
+        position: 'top',
+        color: 'warning',
+        icon: 'alert-circle-outline',
+        cssClass: 'rb-toast-warning',
+      });
+      await toast.present();
+      return;
+    }
+
+    // En móvil normalmente abre la app de mapas
+    window.open(url, '_blank');
   }
 }

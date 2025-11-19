@@ -1,0 +1,267 @@
+<ion-content [fullscreen]="true" class="add-space-page">
+  <div class="add-space-center">
+    <div class="add-space-modal-card">
+      <!-- Header -->
+      <div class="add-space-header">
+        <div class="add-space-header-left">
+          <div class="add-space-header-icon">
+            <ion-icon name="location-outline"></ion-icon>
+          </div>
+          <div class="add-space-header-text">
+            <h2>Añadir Espacio</h2>
+            <p>Agrega un nuevo espacio comunitario</p>
+          </div>
+        </div>
+
+        <button type="button" class="add-space-close-btn" (click)="cancelar()">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+
+      <!-- Body / Form -->
+      <div class="add-space-body">
+        <!-- Nombre -->
+        <div class="add-space-block">
+          <label>
+            Nombre del Espacio <span class="req">*</span>
+          </label>
+          <input
+            type="text"
+            placeholder="Ej: Salón de Eventos"
+            [(ngModel)]="nombre"
+          />
+        </div>
+
+        <!-- Descripción -->
+        <div class="add-space-block">
+          <label>
+            Descripción <span class="req">*</span>
+          </label>
+          <textarea
+            rows="3"
+            placeholder="Describe el espacio y sus características..."
+            [(ngModel)]="descripcion"
+          ></textarea>
+        </div>
+
+        <!-- Capacidad -->
+        <div class="add-space-block">
+          <label>
+            <ion-icon name="people-outline"></ion-icon>
+            <span>Capacidad (personas) <span class="req">*</span></span>
+          </label>
+          <input
+            type="number"
+            min="1"
+            placeholder="Ej: 50"
+            [(ngModel)]="capacidad"
+          />
+        </div>
+
+        <!-- Precio -->
+        <div class="add-space-block">
+          <label>
+            <ion-icon name="cash-outline"></ion-icon>
+            <span>Precio <span class="req">*</span></span>
+          </label>
+          <input
+            type="text"
+            placeholder="Ej: $10.000/hora"
+            [(ngModel)]="precio"
+          />
+          <p class="help-text">Especifica el precio y la unidad de tiempo</p>
+        </div>
+
+        <!-- Dirección / Ubicación -->
+        <div class="add-space-block">
+          <label>
+            <ion-icon name="location-outline"></ion-icon>
+            <span>Dirección del espacio <span class="req">*</span></span>
+          </label>
+          <input
+            type="text"
+            placeholder="Ej: Los Alerces 550, Maipú, Santiago"
+            [(ngModel)]="direccion"
+          />
+          <p class="help-text">
+            Usaremos esta dirección para obtener las coordenadas con Mapbox.
+          </p>
+        </div>
+
+        <!-- Imagen (UPLOAD) -->
+        <div class="add-space-block">
+          <label>
+            <ion-icon name="image-outline"></ion-icon>
+            <span>Imagen del espacio <span class="optional">(Opcional)</span></span>
+          </label>
+
+          <div class="image-upload">
+            <!-- Input real (oculto visualmente) -->
+            <input
+              type="file"
+              accept="image/*"
+              id="imagenEspacio"
+              (change)="onFileSelected($event)"
+            />
+
+            <!-- Caja bonita -->
+            <label for="imagenEspacio" class="image-upload-trigger">
+              <div class="image-upload-icon">
+                <ion-icon name="cloud-upload-outline"></ion-icon>
+              </div>
+              <div class="image-upload-text">
+                <span class="primary">Seleccionar imagen</span>
+                <span class="secondary">JPG o PNG, máximo 5 MB</span>
+              </div>
+            </label>
+          </div>
+
+          <p class="help-text">Selecciona una imagen desde tu dispositivo.</p>
+        </div>
+
+        <!-- Servicios incluidos -->
+        <div class="add-space-block">
+          <label>Servicios incluidos</label>
+
+          <div class="services-grid">
+            <button
+              type="button"
+              class="service-option"
+              (click)="toggleServicio('Mesas y sillas')"
+              [class.selected]="estaServicioSeleccionado('Mesas y sillas')"
+            >
+              <ion-icon name="restaurant-outline"></ion-icon>
+              <span>Mesas y sillas</span>
+            </button>
+
+            <button
+              type="button"
+              class="service-option"
+              (click)="toggleServicio('WiFi')"
+              [class.selected]="estaServicioSeleccionado('WiFi')"
+            >
+              <ion-icon name="wifi-outline"></ion-icon>
+              <span>WiFi</span>
+            </button>
+
+            <button
+              type="button"
+              class="service-option"
+              (click)="toggleServicio('Cocina equipada')"
+              [class.selected]="estaServicioSeleccionado('Cocina equipada')"
+            >
+              <ion-icon name="pizza-outline"></ion-icon>
+              <span>Cocina equipada</span>
+            </button>
+
+            <button
+              type="button"
+              class="service-option"
+              (click)="toggleServicio('Baños')"
+              [class.selected]="estaServicioSeleccionado('Baños')"
+            >
+              <ion-icon name="water-outline"></ion-icon>
+              <span>Baños</span>
+            </button>
+
+            <button
+              type="button"
+              class="service-option"
+              (click)="toggleServicio('Sistema de sonido')"
+              [class.selected]="estaServicioSeleccionado('Sistema de sonido')"
+            >
+              <ion-icon name="volume-high-outline"></ion-icon>
+              <span>Sistema de sonido</span>
+            </button>
+
+            <button
+              type="button"
+              class="service-option"
+              (click)="toggleServicio('Iluminación LED')"
+              [class.selected]="estaServicioSeleccionado('Iluminación LED')"
+            >
+              <ion-icon name="bulb-outline"></ion-icon>
+              <span>Iluminación LED</span>
+            </button>
+
+            <button
+              type="button"
+              class="service-option"
+              (click)="toggleServicio('Parrilla')"
+              [class.selected]="estaServicioSeleccionado('Parrilla')"
+            >
+              <ion-icon name="flame-outline"></ion-icon>
+              <span>Parrilla</span>
+            </button>
+
+            <button
+              type="button"
+              class="service-option"
+              (click)="toggleServicio('Pizarra')"
+              [class.selected]="estaServicioSeleccionado('Pizarra')"
+            >
+              <ion-icon name="create-outline"></ion-icon>
+              <span>Pizarra</span>
+            </button>
+
+            <button
+              type="button"
+              class="service-option"
+              (click)="toggleServicio('Proyector')"
+              [class.selected]="estaServicioSeleccionado('Proyector')"
+            >
+              <ion-icon name="videocam-outline"></ion-icon>
+              <span>Proyector</span>
+            </button>
+
+            <button
+              type="button"
+              class="service-option"
+              (click)="toggleServicio('Aire acondicionado')"
+              [class.selected]="estaServicioSeleccionado('Aire acondicionado')"
+            >
+              <ion-icon name="snow-outline"></ion-icon>
+              <span>Aire acondicionado</span>
+            </button>
+
+            <button
+              type="button"
+              class="service-option"
+              (click)="toggleServicio('Balones disponibles')"
+              [class.selected]="estaServicioSeleccionado('Balones disponibles')"
+            >
+              <ion-icon name="football-outline"></ion-icon>
+              <span>Balones disponibles</span>
+            </button>
+
+            <button
+              type="button"
+              class="service-option"
+              (click)="toggleServicio('Graderías')"
+              [class.selected]="estaServicioSeleccionado('Graderías')"
+            >
+              <ion-icon name="reorder-three-outline"></ion-icon>
+              <span>Graderías</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Botones acción -->
+        <div class="add-space-actions">
+          <button type="button" class="btn-cancel" (click)="cancelar()">
+            Cancelar
+          </button>
+          <button
+            type="button"
+            class="btn-save"
+            (click)="guardar()"
+            [disabled]="isSaving"
+          >
+            <ion-icon name="save-outline"></ion-icon>
+            <span>Guardar espacio</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

@@ -1,32 +1,30 @@
 import { Injectable } from '@angular/core';
 import { SupabaseService } from './supabase.service';
 
-// 🚨 CORRECCIÓN 1: Cambiar 'ubicacion' por 'direccion_con' en la interfaz
 export interface Espacio {
   id_espacio: number;
   nombre: string;
-  // 🚨 CORRECCIÓN 1: Asegúrate de que 'tipo' sea number.
-  tipo: number; 
   capacidad: number;
   descripcion: string | null;
-  creado_en: string; 
-  actualizado_en: string; 
-  
-  // 💡 ESTO DEBE COINCIDIR EXACTAMENTE CON TU BASE DE DATOS
-  direccion_completa: string; 
-  
+  creado_en: string;
+  actualizado_en: string;
+
+  // Campos de ubicación
+  direccion_completa: string;
   latitud: number;
   longitud: number;
-  imagen_url?: string | null; // URL de la imagen asociada al espacio
+
+  // Nuevos campos que estás usando en la app
+  precio: string;                 // texto, ej: "$10.000/hora"
+  servicios: string[];            // array de servicios
+  imagen_url?: string | null;     // URL de la imagen asociada al espacio
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class EspaciosService {
-
-  constructor(private supabaseService: SupabaseService) { }
+  constructor(private supabaseService: SupabaseService) {}
 
   /**
    * Obtiene la lista completa de espacios desde la tabla 'espacio'.
@@ -34,7 +32,7 @@ export class EspaciosService {
   async obtenerEspacios(): Promise<Espacio[]> {
     const { data, error } = await this.supabaseService.client
       .from('espacio')
-      .select('*') // Obtiene todos los campos
+      .select('*')
       .order('nombre', { ascending: true });
 
     if (error) {
@@ -48,10 +46,9 @@ export class EspaciosService {
   /**
    * Crea un nuevo espacio en la tabla 'espacio' de la base de datos.
    */
-    async crearNuevoEspacio(espacioData: any): Promise<any> {
+  async crearNuevoEspacio(espacioData: any): Promise<any> {
     console.log('Datos a insertar:', espacioData);
-    
-    // 🚨 ATENCIÓN: Se usa el ID numérico del 'tipo'
+
     const { data, error } = await this.supabaseService.client
       .from('espacio')
       .insert([
@@ -59,12 +56,14 @@ export class EspaciosService {
           nombre: espacioData.nombre,
           descripcion: espacioData.descripcion,
           capacidad: espacioData.capacidad,
-          tipo: espacioData.tipo, // 🚨 Insertando el ID numérico del tipo
+          // 👇 ya NO se usa 'tipo'
           direccion_completa: espacioData.direccion_completa,
           latitud: espacioData.latitud,
           longitud: espacioData.longitud,
-          imagen_url: espacioData.imagen_url || null, // Guardar la URL de la imagen
-        }
+          imagen_url: espacioData.imagen_url || null,
+          precio: espacioData.precio,                 // nuevo campo
+          servicios: espacioData.servicios || [],     // array de servicios
+        },
       ])
       .select();
 
@@ -81,14 +80,13 @@ export class EspaciosService {
       .from('espacio')
       .select('*')
       .eq('id_espacio', id)
-      .single(); // Esperamos solo una fila
+      .single();
 
-    if (error && error.code !== 'PGRST116') { // PGRST116: No hay filas
+    if (error && error.code !== 'PGRST116') {
       console.error('Error al obtener espacio por ID:', error);
       throw new Error(`No se pudo cargar el espacio: ${error.message}`);
     }
-    
-    // Si no hay data, devolvemos null, si hay, lo casteamos
+
     return (data as Espacio) || null;
   }
 }

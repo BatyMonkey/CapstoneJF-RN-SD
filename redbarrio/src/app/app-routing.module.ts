@@ -164,22 +164,6 @@ const routes: Routes = [
     loadComponent: () =>
       import('./espacios/espacios.page').then((m) => m.EspaciosPage),
   },
-  {
-    path: 'espacio/crear',
-    canActivate: [AuthGuard],
-    loadComponent: () =>
-      import('./espacios/crear-espacios/crear-espacio.page').then(
-        (m) => m.CrearEspacioPage
-      ),
-  },
-  {
-    path: 'espacios/:id',
-    loadComponent: () =>
-      import('./espacios/detalle-espacio/detalle-espacio.page').then(
-        (m) => m.DetalleEspacioPage
-      ),
-  },
-
   // ===== Inscripción =====
   {
     path: 'inscripcion',

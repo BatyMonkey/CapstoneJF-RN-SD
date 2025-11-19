@@ -2,38 +2,50 @@
   --ion-background-color: transparent;
 }
 
-/* Fondo del contenido de la modal (igual enfoque que edit-perfil-content) */
+/* ion-content de la modal: transparente y sin padding propio */
 .add-space-page {
-  --background: #f5f7fb;
+  --background: transparent;  /* 👈 importante: sin fondo blanco */
+  background: transparent;
 
-  --padding-top: 1rem;
-  --padding-bottom: 0;      /* 👈 sin espacio extra abajo */
-  --padding-start: 1rem;
-  --padding-end: 1rem;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+
+  --overflow: hidden;         /* desactiva scroll del ion-content */
 }
 
-/* Contenedor que centra la card dentro del contenido */
+/* Contenedor que centra la card */
 .add-space-center {
-  min-height: 100%;
+  height: 100%;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
 }
 
-/* Tarjeta principal de la modal */
+/* Tarjeta principal */
 .add-space-modal-card {
   width: 100%;
   max-width: 430px;
-  max-height: 100%;
+  max-height: 90vh;
   background: #ffffff;
   border-radius: 22px;
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.35);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  margin: 16px; /* separada de los bordes de la pantalla */
 }
 
-/* Header degradado (tipo React/Figma) */
+/* Responsive pequeño */
+@media (max-width: 420px) {
+  .add-space-modal-card {
+    margin: 8px;
+    border-radius: 18px;
+  }
+}
+
+/* Header degradado */
 .add-space-header {
   background: linear-gradient(90deg, #06b6d4, #0891b2);
   padding: 14px 16px;
@@ -100,7 +112,7 @@
   background: rgba(255, 255, 255, 0.28);
 }
 
-/* Body: ocupa el espacio restante de la card y hace scroll */
+/* Body: scroll SOLO dentro de la card */
 .add-space-body {
   padding: 14px 16px 16px;
   flex: 1;
@@ -254,17 +266,74 @@
   box-shadow: 0 5px 10px rgba(15, 23, 42, 0.2);
 }
 
-/* Responsive pequeño */
-@media (max-width: 420px) {
-  .add-space-modal-card {
-    border-radius: 18px;
-  }
+/* ===============================
+   Estilo fancy para input file
+================================== */
 
-  .services-grid {
-    gap: 6px;
-  }
+.image-upload {
+  position: relative;
+  width: 100%;
+}
 
-  .service-option {
-    padding: 6px 4px;
-  }
+/* Input nativo completamente oculto, sin ocupar ancho */
+.image-upload input[type='file'] {
+  display: none;
+}
+
+/* Caja que se ve como botón/card */
+.image-upload-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px dashed #cbd5f5;
+  background: #f9fafb;
+  cursor: pointer;
+  box-sizing: border-box;  /* 👈 importante para que no se salga de la tarjeta */
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.image-upload-trigger:hover {
+  border-color: #06b6d4;
+  background: #f0fbff;
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.15);
+}
+
+/* Icono celeste a la izquierda */
+.image-upload-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: rgba(6, 182, 212, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.image-upload-icon ion-icon {
+  font-size: 1.2rem;
+  color: #06b6d4;
+}
+
+/* Textos */
+.image-upload-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.image-upload-text .primary {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.image-upload-text .secondary {
+  font-size: 0.78rem;
+  color: #6b7280;
 }

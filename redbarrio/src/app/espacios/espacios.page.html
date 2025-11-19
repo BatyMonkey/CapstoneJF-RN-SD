@@ -49,15 +49,22 @@
       </p>
     </div>
 
-    <h3 class="section-title">Espacios Disponibles</h3>
+    <!-- CABECERA LISTA + BOTÓN AÑADIR ESPACIO -->
+    <div class="section-header">
+      <h3 class="section-title">Espacios Disponibles</h3>
+
+      <!-- Botón Añadir Espacio (solo admin) -->
+      <button *ngIf="isAdmin" type="button" class="btn-add-space" (click)="abrirCrearEspacioModal()">
+        <ion-icon name="add-outline"></ion-icon>
+        <span>Añadir espacio</span>
+      </button>
+    </div>
 
     <!-- LISTADO ESPACIOS -->
     <ng-container *ngIf="!isLoading && espacios?.length; else loadingOrEmpty">
 
-      <ion-card *ngFor="let espacio of espacios"
-        class="espacio-card"
-        [class.selected]="espacioSeleccionadoId === espacio.id_espacio"
-        (click)="seleccionarEspacio(espacio)">
+      <ion-card *ngFor="let espacio of espacios" class="espacio-card"
+        [class.selected]="espacioSeleccionadoId === espacio.id_espacio" (click)="seleccionarEspacio(espacio)">
 
         <div class="espacio-img-wrapper">
           <img *ngIf="espacio.imagen_url" [src]="espacio.imagen_url" [alt]="espacio.nombre" />
@@ -98,6 +105,15 @@
               </div>
             </div>
           </div>
+
+          <!-- Ver en mapa -->
+          <!-- Ver en mapa -->
+          <div class="espacio-actions">
+            <button type="button" class="btn-ver-mapa" (click)="verEnMapa(espacio, $event)">
+              <ion-icon name="map-outline"></ion-icon>
+              <span>Ver en mapa</span>
+            </button>
+          </div>
         </ion-card-content>
 
       </ion-card>
@@ -112,7 +128,7 @@
 
       <div *ngIf="!isLoading && !espacios?.length" class="empty-wrapper">
         <p>No se encontraron espacios disponibles.</p>
-        <ion-button *ngIf="isAdmin" (click)="irACrearEspacio()" fill="solid">
+        <ion-button *ngIf="isAdmin" (click)="abrirCrearEspacioModal()" fill="solid">
           Crear nuevo espacio
         </ion-button>
       </div>
@@ -172,7 +188,7 @@
 
   <!-- FAB ADMIN -->
   <ion-fab *ngIf="isAdmin" slot="fixed" vertical="bottom" horizontal="end">
-    <ion-button (click)="irACrearEspacio()" class="fab-squared-button" color="primary" fill="solid">
+    <ion-button (click)="abrirCrearEspacioModal()" class="fab-squared-button" color="primary" fill="solid">
       <ion-icon name="add-outline" slot="start"></ion-icon>
       Nuevo Espacio
     </ion-button>
