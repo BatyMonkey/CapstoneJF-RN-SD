@@ -13,15 +13,6 @@
     </div>
 
     <!-- BOTÓN CERRAR -->
-    <button
-      type="button"
-      class="rb-chat__close"
-      aria-label="Cerrar chat"
-      (click)="closeChat()"
-    >
-      <ion-icon name="close-outline"></ion-icon>
-      <span class="rb-chat__close-fallback">×</span>
-    </button>
   </div>
 
   <!-- QUICK ACTIONS -->
@@ -88,15 +79,20 @@
       <!-- Icono cuando NO está grabando -->
       <ion-icon
         *ngIf="!isRecording"
-        name="mic"
+        name="mic-outline"
+        class="rb-chat__voice-icon"
       ></ion-icon>
 
       <!-- Icono cuando SÍ está grabando -->
       <ion-icon
         *ngIf="isRecording"
-        name="square"
+        name="stop-circle-outline"
+        class="rb-chat__voice-icon"
       ></ion-icon>
     </button>
+
+
+
 
 
     <button

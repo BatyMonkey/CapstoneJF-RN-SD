@@ -1,5 +1,5 @@
 // src/app/components/chatbot.component.ts
-import { Component, OnInit, Input, Output } from '@angular/core';
+import { Component, OnInit, Input, Output, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -19,7 +19,6 @@ import { ReservasService } from '../services/reservas.service';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
 import { SpeechRecognition } from '@capacitor-community/speech-recognition';
-
 
 interface ChatMessage {
   from: 'user' | 'bot';
@@ -104,7 +103,8 @@ export class ChatbotComponent implements OnInit {
   private certWebhookUrl = (environment as any).N8N_WEBHOOK_URL || '';
   private openaiKeyForN8N: string =
     (environment as any).OPENAI_KEY_FOR_N8N || '';
-    // ===== Notas de voz =====
+
+  // ===== Notas de voz =====
   canUseVoice = false;
   isRecording = false;
 
@@ -112,6 +112,8 @@ export class ChatbotComponent implements OnInit {
   private webRecognition: any = null;
   private lastVoiceText: string = '';
 
+  // evita enviar varias veces el mismo audio
+  private hasSentCurrentVoice = false;
 
   // ====== logger ======
   private dbg(...args: any[]) {
@@ -134,6 +136,7 @@ export class ChatbotComponent implements OnInit {
     private chatbot: ChatbotService,
     private auth: AuthService,
     private reservas: ReservasService,
+    private zone: NgZone,
   ) {}
 
   async ngOnInit() {
@@ -207,12 +210,10 @@ export class ChatbotComponent implements OnInit {
     }
   }
 
-    // ===== Init notas de voz (Capacitor + fallback Web) =====
-    // ===== Init notas de voz (Capacitor + fallback Web) =====
-    // ===== Init notas de voz (Capacitor + fallback Web) =====
+  // ===== Init notas de voz (Capacitor + fallback Web) =====
   private async initVoiceSupport() {
     try {
-      // Si es plataforma nativa (Android / iOS con Capacitor)
+      // Plataforma nativa (Android / iOS con Capacitor)
       if (Capacitor.isNativePlatform()) {
         const available = await SpeechRecognition.available();
         if (!available?.available) {
@@ -230,24 +231,45 @@ export class ChatbotComponent implements OnInit {
           }
         }
 
-        // 🔊 Solo usamos partialResults para ir rellenando el input,
-        //    pero NO mandamos el mensaje aquí.
+        // 🔊 Parciales: actualizamos texto, pero SOLO enviamos una vez
         SpeechRecognition.addListener('partialResults', (result: any) => {
-          this.dbg('speech partialResults:', result);
-          const text =
-            (result && result.matches && result.matches[0]) || '';
-          if (text) {
+          this.zone.run(() => {
+            this.dbg('speech partialResults:', result);
+            const text =
+              (result && result.matches && result.matches[0]) || '';
+            if (!text) return;
+
+            // guardamos SIEMPRE el último texto
             this.lastVoiceText = text;
-            this.inputText = text; // se ve lo que estás diciendo
-          }
+
+            // 👉 si YA se detuvo la grabación y aún no enviamos,
+            // mandamos el mensaje UNA sola vez
+            if (!this.isRecording && !this.hasSentCurrentVoice) {
+              this.dbg(
+                'partialResults → onVoiceText (grabación detenida, primer envío)',
+              );
+              this.hasSentCurrentVoice = true;
+              this.onVoiceText(this.lastVoiceText);
+            }
+          });
         });
+
+        // Solo log del estado, no tocamos isRecording aquí
+        SpeechRecognition.addListener(
+          'listeningState',
+          (data: { status: 'started' | 'stopped' }) => {
+            this.zone.run(() => {
+              this.dbg('speech listeningState:', data);
+            });
+          },
+        );
 
         this.canUseVoice = true;
         this.dbg('Notas de voz habilitadas (nativo)');
         return;
       }
 
-      // Fallback Web: API de reconocimiento de voz del navegador
+      // === Fallback Web (SpeechRecognition del navegador) ===
       const anyWin = window as any;
       const WebRec =
         anyWin.SpeechRecognition || anyWin.webkitSpeechRecognition;
@@ -258,24 +280,28 @@ export class ChatbotComponent implements OnInit {
         rec.interimResults = false;
 
         rec.onresult = (ev: any) => {
-          const text =
-            ev.results?.[0]?.[0]?.transcript ||
-            ev.results?.[0]?.[0]?.transcript ||
-            '';
-          this.dbg('webSpeech result:', text);
-          if (text) {
-            this.lastVoiceText = text;
-            // En web lo mandamos directo cuando termina
-            this.onVoiceText(text);
-          }
-          this.isRecording = false;
+          this.zone.run(() => {
+            const text = ev.results?.[0]?.[0]?.transcript || '';
+            this.dbg('webSpeech result:', text);
+            if (text) {
+              this.lastVoiceText = text;
+              this.onVoiceText(text); // web: se envía directo
+              this.hasSentCurrentVoice = true;
+            }
+            this.isRecording = false;
+          });
         };
         rec.onerror = (err: any) => {
-          this.dbg('webSpeech error:', err);
-          this.isRecording = false;
+          this.zone.run(() => {
+            this.dbg('webSpeech error:', err);
+            this.isRecording = false;
+            this.hasSentCurrentVoice = false;
+          });
         };
         rec.onend = () => {
-          this.isRecording = false;
+          this.zone.run(() => {
+            this.isRecording = false;
+          });
         };
 
         this.webRecognition = rec;
@@ -285,13 +311,13 @@ export class ChatbotComponent implements OnInit {
         this.dbg('Web SpeechRecognition no disponible');
       }
     } catch (e) {
-      this.dbg('initVoiceSupport error:', e);
-      this.canUseVoice = false;
-      this.isRecording = false;
+      this.zone.run(() => {
+        this.dbg('initVoiceSupport error:', e);
+        this.canUseVoice = false;
+        this.isRecording = false;
+      });
     }
   }
-
-
 
   // ===== Quick buttons =====
   clickQuick(kind: 'faq' | 'cert' | 'votacion' | 'noticias') {
@@ -323,14 +349,23 @@ export class ChatbotComponent implements OnInit {
 
   // ===== Input =====
   send() {
-    const text = this.inputText.trim();
+    const text = (this.inputText || '').trim();
     if (!text) return;
 
-    this.lastUserText = text;
-    this.pushUser(text);
+    // limpiamos la caja SOLO para texto escrito
     this.inputText = '';
+    this.processUserMessage(text);
+  }
 
-    const low = text
+  // Lógica compartida para texto escrito y notas de voz
+  private processUserMessage(text: string) {
+    const clean = text.trim();
+    if (!clean) return;
+
+    this.lastUserText = clean;
+    this.pushUser(clean);
+
+    const low = clean
       .toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
@@ -338,7 +373,7 @@ export class ChatbotComponent implements OnInit {
 
     // Si ya estamos en el flujo de reserva, cualquier texto va allí
     if (this.reservaPaso) {
-      this.continuarFlujoReservaEspacio(text);
+      this.continuarFlujoReservaEspacio(clean);
       return;
     }
 
@@ -397,11 +432,11 @@ export class ChatbotComponent implements OnInit {
     }
 
     // ===== manejos locales por ordinal (resumen y mensaje) =====
-    const handledResumen = this.tryLocalOrdinalActions(text);
-    const handledPost = this.tryLocalPostulacionActions(text);
+    const handledResumen = this.tryLocalOrdinalActions(clean);
+    const handledPost = this.tryLocalPostulacionActions(clean);
 
     if (!handledResumen && !handledPost) {
-      this.sendTextToBot(text);
+      this.sendTextToBot(clean);
     }
   }
 
@@ -697,9 +732,67 @@ export class ChatbotComponent implements OnInit {
       return db - da;
     });
   }
+  private numeroDesdeTexto(text: string): number | null {
+    const s = text
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
 
-    // ===== Controles del botón de micrófono =====
-    // ===== Controles del botón de micrófono =====
+    const mapa: Record<string, number> = {
+      uno: 1,
+      una: 1,
+      primer: 1,
+      primera: 1,
+      primero: 1,
+
+      dos: 2,
+      segundo: 2,
+      segunda: 2,
+
+      tres: 3,
+      tercero: 3,
+      tercera: 3,
+
+      cuatro: 4,
+      cuarto: 4,
+      cuarta: 4,
+
+      cinco: 5,
+      quinto: 5,
+      quinta: 5,
+
+      seis: 6,
+      sexto: 6,
+      sexta: 6,
+
+      siete: 7,
+      septimo: 7,
+      septima: 7,
+
+      ocho: 8,
+      octavo: 8,
+      octava: 8,
+
+      nueve: 9,
+      noveno: 9,
+      novena: 9,
+
+      diez: 10,
+      decimo: 10,
+      decima: 10,
+    };
+
+    const tokens = s.split(/\s+/);
+    for (const tk of tokens) {
+      if (mapa[tk] != null) {
+        return mapa[tk];
+      }
+    }
+    return null;
+  }
+
+  // ===== Controles del botón de micrófono =====
   async toggleVoice() {
     if (!this.canUseVoice) {
       this.pushBot(
@@ -709,18 +802,22 @@ export class ChatbotComponent implements OnInit {
     }
 
     if (this.isRecording) {
-      await this.stopVoice();   // 2do click → detener y enviar
+      await this.stopVoice(); // 2do click → detener y enviar
     } else {
-      await this.startVoice();  // 1er click → comenzar a escuchar
+      await this.startVoice(); // 1er click → comenzar a escuchar
     }
   }
 
   private async startVoice() {
     try {
       if (this.isRecording) return;
-      this.isRecording = true;
-      this.lastVoiceText = '';
-      this.inputText = '';
+
+      this.zone.run(() => {
+        this.isRecording = true;
+        this.hasSentCurrentVoice = false;
+        this.lastVoiceText = '';
+        this.inputText = ''; // nos aseguramos que el input quede vacío
+      });
 
       if (Capacitor.isNativePlatform()) {
         this.dbg('SpeechRecognition.start() (nativo)');
@@ -734,24 +831,34 @@ export class ChatbotComponent implements OnInit {
         this.dbg('webRecognition.start()');
         this.webRecognition.start();
       } else {
-        this.isRecording = false;
-        this.pushBot(
-          'No pude iniciar la nota de voz en este dispositivo 😅',
-        );
+        this.zone.run(() => {
+          this.isRecording = false;
+          this.hasSentCurrentVoice = false;
+          this.pushBot(
+            'No pude iniciar la nota de voz en este dispositivo 😅',
+          );
+        });
       }
     } catch (e) {
-      this.dbg('startVoice error:', e);
-      this.isRecording = false;
-      this.pushBot('Hubo un problema al iniciar la nota de voz 😅');
+      this.zone.run(() => {
+        this.dbg('startVoice error:', e);
+        this.isRecording = false;
+        this.hasSentCurrentVoice = false;
+        this.pushBot('Hubo un problema al iniciar la nota de voz 😅');
+      });
     }
   }
 
-    private async stopVoice() {
+  private async stopVoice() {
     try {
-      if (!this.isRecording) return;
+      if (!this.isRecording) {
+        // ya estaba detenido, no hacemos nada
+        return;
+      }
 
-      // dejamos de grabar
-      this.isRecording = false;
+      this.zone.run(() => {
+        this.isRecording = false;
+      });
 
       if (Capacitor.isNativePlatform()) {
         this.dbg('SpeechRecognition.stop() (nativo)');
@@ -761,36 +868,37 @@ export class ChatbotComponent implements OnInit {
         this.webRecognition.stop();
       }
 
-      // 🔥 TOMAR LO QUE HAYA QUEDADO EN EL INPUT Y ENVIAR
-      const text = (this.inputText || '').trim();
-      if (text) {
-        this.onVoiceText(text);  // esto hace el "send()" automático
-      } else {
-        this.pushBot('No se alcanzó a escuchar nada en la nota de voz 😅');
-      }
+      // ⏱️ Fallback: si no llega ningún partial extra,
+      // enviamos UNA sola vez con el último texto reconocido.
+      setTimeout(() => {
+        this.zone.run(() => {
+          if (!this.hasSentCurrentVoice && this.lastVoiceText.trim()) {
+            this.dbg('stopVoice timeout → onVoiceText (fallback único)');
+            this.hasSentCurrentVoice = true;
+            this.onVoiceText(this.lastVoiceText);
+          }
+        });
+      }, 600);
     } catch (e) {
-      this.dbg('stopVoice error:', e);
+      this.zone.run(() => {
+        this.dbg('stopVoice error:', e);
+        this.isRecording = false;
+      });
     }
   }
 
-
-
-  // Cuando tenemos texto reconocido, lo mandamos como si el usuario lo hubiera escrito
-    // Cuando tenemos texto reconocido, lo mandamos como si el usuario lo hubiera escrito
-    // Cuando tenemos texto reconocido, lo mandamos como si el usuario lo hubiera escrito
   private onVoiceText(texto: string) {
     const cleaned = (texto || '').trim();
     if (!cleaned) return;
 
-    // Estilo WhatsApp: se envía directo al terminar de grabar
-    this.inputText = cleaned;
-    this.send();   // 👈 aquí se envía el mensaje sin tercer toque
+    this.zone.run(() => {
+      this.dbg('onVoiceText →', cleaned);
+      this.lastVoiceText = cleaned;
+      // NO tocamos this.inputText, así el placeholder sigue limpio
+      this.processUserMessage(cleaned); // se envía directo al bot
+    });
   }
 
-
-
-
-  // ===== Certificado =====
   private async emitirCertificadoDesdeChat() {
     if (!this.certWebhookUrl) {
       this.pushBot(
@@ -941,7 +1049,9 @@ export class ChatbotComponent implements OnInit {
       horaFin: null,
       motivo: null,
     };
-    this.pushBot('Perfecto, te ayudo a reservar un espacio. Te muestro los disponibles:');
+    this.pushBot(
+      'Perfecto, te ayudo a reservar un espacio. Te muestro los disponibles:',
+    );
 
     try {
       let items = await this.trySelect(['espacio', 'espacios'], '*');
@@ -993,6 +1103,7 @@ export class ChatbotComponent implements OnInit {
       return;
     }
 
+    // ===== Paso 1: elegir espacio =====
     if (this.reservaPaso === 'esperando_espacio') {
       if (!this.lastSpacesCache.length) {
         this.pushBot(
@@ -1002,28 +1113,59 @@ export class ChatbotComponent implements OnInit {
         return;
       }
 
-      const numMatch = low.match(/(\d+)/);
       let elegido: any | null = null;
+      let idx: number | null = null;
 
+      // 1) Intentar con número digitado (1, 2, 3…)
+      const numMatch = low.match(/(\d+)/);
       if (numMatch) {
-        const idx = Number(numMatch[1]) - 1;
-        if (idx >= 0 && idx < this.lastSpacesCache.length) {
-          elegido = this.lastSpacesCache[idx];
+        idx = Number(numMatch[1]) - 1;
+      } else {
+        // 2) Intentar con número en palabras: "uno", "dos", "tercer espacio", etc.
+        const nPal = this.numeroDesdeTexto(low);
+        if (nPal != null) {
+          idx = nPal - 1;
         }
       }
 
+      if (idx != null && idx >= 0 && idx < this.lastSpacesCache.length) {
+        elegido = this.lastSpacesCache[idx];
+      }
+
+      // 3) Si no se encontró por índice, intentamos por nombre ("quincho", "salon", etc.)
       if (!elegido) {
+        const tokens = low
+          .split(/\s+/)
+          .filter(
+            (w) =>
+              w.length >= 3 &&
+              ![
+                'reservar',
+                'arrendar',
+                'espacio',
+                'espacios',
+                'el',
+                'la',
+                'los',
+                'las',
+              ].includes(w),
+          );
+
+        this.dbg('tokens para buscar espacio:', tokens);
+
         elegido =
-          this.lastSpacesCache.find((e: any) =>
-            String(e.nombre || '')
+          this.lastSpacesCache.find((e: any) => {
+            const name = String(e.nombre || '')
               .toLowerCase()
-              .includes(low),
-          ) || null;
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '');
+            return tokens.some((tok) => name.includes(tok));
+          }) || null;
       }
 
       if (!elegido) {
         this.pushBot(
-          'No entendí cuál espacio quieres. Dime el número de la lista, por ejemplo “1” o “reservar el 2”.',
+          'No entendí cuál espacio quieres. Dime el número de la lista (ej: “1” o “reservar el 2”) o menciona el nombre del espacio (ej: “reservar el quincho”).',
         );
         return;
       }
@@ -1040,6 +1182,7 @@ export class ChatbotComponent implements OnInit {
       return;
     }
 
+    // ===== Paso 2: fecha =====
     if (this.reservaPaso === 'esperando_fecha') {
       const reFecha = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -1056,6 +1199,7 @@ export class ChatbotComponent implements OnInit {
       return;
     }
 
+    // ===== Paso 3: hora inicio =====
     if (this.reservaPaso === 'esperando_hora_inicio') {
       const reHora = /^\d{2}:\d{2}$/;
       if (!reHora.test(low)) {
@@ -1072,6 +1216,7 @@ export class ChatbotComponent implements OnInit {
       return;
     }
 
+    // ===== Paso 4: hora fin =====
     if (this.reservaPaso === 'esperando_hora_fin') {
       const reHora = /^\d{2}:\d{2}$/;
       if (!reHora.test(low)) {
@@ -1088,6 +1233,7 @@ export class ChatbotComponent implements OnInit {
       return;
     }
 
+    // ===== Paso 5: motivo =====
     if (this.reservaPaso === 'esperando_motivo') {
       this.reservaTmp.motivo = text.trim() || 'Uso de espacio común';
       const esp = this.reservaTmp.espacio;
@@ -1108,6 +1254,7 @@ export class ChatbotComponent implements OnInit {
       return;
     }
 
+    // ===== Paso 6: confirmación =====
     if (this.reservaPaso === 'confirmar') {
       if (low.startsWith('no')) {
         this.pushBot(
@@ -1129,8 +1276,7 @@ export class ChatbotComponent implements OnInit {
     }
   }
 
-  // Interpretar fecha + horario con n8n + OpenAI
-    // Interpretar fecha + horario con parser local y, si falla, con n8n + IA
+  // Interpretar fecha + horario con parser local y, si falla, con n8n + IA
   private pedirFechaHoraNatural(frase: string) {
     this.pushBot('Déjame interpretar la fecha y el horario de tu reserva… ⏳');
 
@@ -1234,8 +1380,7 @@ export class ChatbotComponent implements OnInit {
     });
   }
 
-
-    // ==== Parser local de fecha + horario para reservas ====
+  // ==== Parser local de fecha + horario para reservas ====
   private parseReservaDateTimeLocal(frase: string) {
     const text = frase
       .toLowerCase()
@@ -1266,7 +1411,9 @@ export class ChatbotComponent implements OnInit {
       ) {
         const d = new Date(now);
         d.setDate(d.getDate() + offset);
-        fecha = `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+        fecha = `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(
+          d.getDate(),
+        )}`;
       }
     }
 
@@ -1312,7 +1459,6 @@ export class ChatbotComponent implements OnInit {
       interpretacion_humana: interpretacion,
     };
   }
-
 
   private resetFlujoReservaEspacio() {
     this.reservaPaso = null;
@@ -1475,7 +1621,12 @@ export class ChatbotComponent implements OnInit {
 
       const proy = await this.trySelect(['proyecto', 'proyectos'], '*');
       const act = await this.trySelect(['actividad', 'actividades'], '*');
-      this.dbg('ambos → proy len:', proy?.length ?? 0, 'act len:', act?.length ?? 0);
+      this.dbg(
+        'ambos → proy len:',
+        proy?.length ?? 0,
+        'act len:',
+        act?.length ?? 0,
+      );
       this.printSample('ambos-proyectos', proy || []);
       this.printSample('ambos-actividades', act || []);
 
@@ -1531,7 +1682,9 @@ export class ChatbotComponent implements OnInit {
     try {
       const { data, error } = await supabase
         .from('noticias')
-        .select('id, titulo, url_foto, nombre_autor, fecha_creacion, parrafos');
+        .select(
+          'id, titulo, url_foto, nombre_autor, fecha_creacion, parrafos',
+        );
 
       if (error) this.dbg('noticias error:', error);
       this.dbg('noticias len:', data?.length ?? 0);
