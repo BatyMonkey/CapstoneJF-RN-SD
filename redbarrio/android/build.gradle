@@ -1,5 +1,5 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-// 🔧 Forzar toolchain global a Java 17 para todos los submódulos
+// 🔧 Forzar toolchain global a Java 21 para todos los submódulos
 import org.gradle.api.JavaVersion
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 
@@ -8,24 +8,24 @@ gradle.projectsLoaded {
         plugins.withId("com.android.library") {
             project.extensions.configure(com.android.build.gradle.LibraryExtension) {
                 compileOptions {
-                    sourceCompatibility = JavaVersion.VERSION_17
-                    targetCompatibility = JavaVersion.VERSION_17
+                    sourceCompatibility = JavaVersion.VERSION_21
+                    targetCompatibility = JavaVersion.VERSION_21
                 }
             }
         }
         plugins.withId("com.android.application") {
             project.extensions.configure(com.android.build.gradle.AppExtension) {
                 compileOptions {
-                    sourceCompatibility = JavaVersion.VERSION_17
-                    targetCompatibility = JavaVersion.VERSION_17
+                    sourceCompatibility = JavaVersion.VERSION_21
+                    targetCompatibility = JavaVersion.VERSION_21
                 }
             }
         }
 
-        // Toolchain global
+        // Toolchain global (usar Java 21 para coincidir con el JDK instalado)
         tasks.withType(JavaCompile).configureEach {
             javaCompiler = javaToolchains.compilerFor {
-                languageVersion = JavaLanguageVersion.of(17)
+                languageVersion = JavaLanguageVersion.of(21)
             }
         }
     }
@@ -51,12 +51,12 @@ allprojects {
         mavenCentral()
     }
 
-    // 🔧 Forzar compilación con Java 17 para todos los subproyectos (incluye plugins como capacitor-filesystem)
+    // 🔧 Forzar compilación con Java 21 para todos los subproyectos (incluye plugins como capacitor-filesystem)
     plugins.withType(com.android.build.gradle.BasePlugin).configureEach {
         project.android {
             compileOptions {
-                sourceCompatibility = JavaVersion.VERSION_17
-                targetCompatibility = JavaVersion.VERSION_17
+                sourceCompatibility = JavaVersion.VERSION_21
+                targetCompatibility = JavaVersion.VERSION_21
             }
             if (project.hasProperty("kotlinOptions")) {
                 kotlinOptions.jvmTarget = '17'
@@ -66,7 +66,7 @@ allprojects {
 
     tasks.withType(JavaCompile).configureEach {
         javaCompiler = javaToolchains.compilerFor {
-            languageVersion = JavaLanguageVersion.of(17)
+            languageVersion = JavaLanguageVersion.of(21)
         }
     }
 }
