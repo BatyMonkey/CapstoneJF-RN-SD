@@ -156,3 +156,10 @@ redbarrio/.angular/cache/20.3.3/app/vite/deps/web-UXXNEAK2.js.map
 redbarrio/.angular/cache/20.3.3/app/vite/deps/zone__js.js
 redbarrio/.angular/cache/20.3.3/app/vite/deps/zone__js.js.map
 redbarrio/.angular/cache/20.3.3/app/vite/deps_ssr/_metadata.json
+redbarrio/android/build.gradle
+redbarrio/android/capacitor.settings.gradle
+redbarrio/android/gradle.properties
+redbarrio/android/.idea/deploymentTargetSelector.xml
+redbarrio/android/.idea/misc.xml
+redbarrio/android/app/capacitor.build.gradle
+redbarrio/www/3rdpartylicenses.txt

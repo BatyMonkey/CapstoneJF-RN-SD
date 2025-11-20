@@ -357,3 +357,25 @@ ion-toast.rb-toast-solid.rb-toast-danger::part(container) {
   background: #fef2f2;  /* rojo claro */
   color: #b91c1c;
 }
+
+.rb-toast-solid {
+  --border-radius: 12px;
+  --backdrop-opacity: 0.9;
+  text-align: center;
+  font-weight: 500;
+}
+
+.rb-toast-success {
+  --background: #22c55e;
+  --color: #ffffff;
+}
+
+.rb-toast-warning {
+  --background: #eab308;
+  --color: #1f2933;
+}
+
+.rb-toast-danger {
+  --background: #ef4444;
+  --color: #ffffff;
+}

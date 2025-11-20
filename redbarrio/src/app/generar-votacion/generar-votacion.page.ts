@@ -14,7 +14,7 @@ addIcons({
   'image-outline': imageOutline,
   'chevron-back-outline': chevronBackOutline,
   'send-outline': sendOutline,
-}); 
+});
 
 interface OpcionVM {
   titulo: string;
@@ -33,7 +33,9 @@ interface OpcionVM {
   imports: [IonicModule, CommonModule, FormsModule, RouterModule],
 })
 export class GenerarVotacionPage implements OnInit {
-  @ViewChildren('fileInput') fileInputs!: QueryList<ElementRef<HTMLInputElement>>;
+  @ViewChildren('fileInput') fileInputs!: QueryList<
+    ElementRef<HTMLInputElement>
+  >;
 
   loading = false;
   errorMsg = '';
@@ -47,8 +49,8 @@ export class GenerarVotacionPage implements OnInit {
   // ================================
   // FECHAS Y HORAS (SEPARADAS)
   // ================================
-  fechaInicio = '';   // yyyy-mm-dd
-  horaInicio = '';    // hh:mm
+  fechaInicio = ''; // yyyy-mm-dd
+  horaInicio = ''; // hh:mm
   fechaTermino = '';
   horaTermino = '';
 
@@ -85,7 +87,6 @@ export class GenerarVotacionPage implements OnInit {
   goBack() {
     this.router.navigate(['/votaciones'], { replaceUrl: true });
   }
-
 
   // ============================================================
   // OPCIONES
@@ -151,12 +152,18 @@ export class GenerarVotacionPage implements OnInit {
     const unicas = new Set(limpias);
 
     // Validar fechas y horas
-    if (!this.fechaInicio || !this.horaInicio || !this.fechaTermino || !this.horaTermino)
+    if (
+      !this.fechaInicio ||
+      !this.horaInicio ||
+      !this.fechaTermino ||
+      !this.horaTermino
+    )
       return false;
 
     const inicio = new Date(`${this.fechaInicio}T${this.horaInicio}`).getTime();
     const fin = new Date(`${this.fechaTermino}T${this.horaTermino}`).getTime();
-    const fechasOk = Number.isFinite(inicio) && Number.isFinite(fin) && inicio < fin;
+    const fechasOk =
+      Number.isFinite(inicio) && Number.isFinite(fin) && inicio < fin;
 
     return (
       t.length > 0 &&
@@ -170,7 +177,14 @@ export class GenerarVotacionPage implements OnInit {
   // GUARDAR VOTACIÓN EN SUPABASE
   // ============================================================
   async guardar() {
-    if (!this.puedeGuardar) return;
+    // ✅ Mostrar toast de error/advertencia cuando falta info
+    if (!this.puedeGuardar) {
+      await this.presentToast(
+        'Completa el título, fechas válidas y al menos 2 opciones distintas',
+        'warning'
+      );
+      return;
+    }
 
     this.loading = true;
     this.errorMsg = '';
@@ -221,7 +235,8 @@ export class GenerarVotacionPage implements OnInit {
           descripcion: this.descripcion.trim(),
           fecha_inicio: fechaInicioISO,
           fecha_fin: fechaFinISO,
-          cantidad_opciones: this.opciones.filter((o) => o.titulo.trim()).length,
+          cantidad_opciones: this.opciones.filter((o) => o.titulo.trim())
+            .length,
           opciones: this.opciones,
         }
       );
@@ -230,7 +245,8 @@ export class GenerarVotacionPage implements OnInit {
       await this.router.navigateByUrl('/votaciones', { replaceUrl: true });
     } catch (e: any) {
       this.errorMsg = e?.message ?? 'No se pudo crear la votación';
-      await this.presentToast(this.errorMsg, 'danger');
+      console.error('[GENERAR VOTACIÓN] Error:', e);
+      await this.presentToast(this.errorMsg, 'danger'); // 👈 toast de error
     } finally {
       this.loading = false;
     }
@@ -239,16 +255,18 @@ export class GenerarVotacionPage implements OnInit {
   // ============================================================
   // TOAST
   // ============================================================
-  private async presentToast(message: string, color: 'success' | 'danger') {
-  const t = await this.toast.create({
-    message,
-    duration: 2500,
-    position: 'bottom',    // 👈 Cambiado aquí
-    color,
-    animated: true,
-    cssClass: 'custom-toast'
-  });
-  await t.present();
-}
+  private async presentToast(
+    message: string,
+    type: 'success' | 'warning' | 'danger'
+  ) {
+    const toast = await this.toast.create({
+      message,
+      duration: 2500,
+      mode: 'ios', // estilo iOS
+      position: 'top',
+      cssClass: ['rb-toast-solid', `rb-toast-${type}`], // clases personalizadas
+    });
 
+    await toast.present();
+  }
 }

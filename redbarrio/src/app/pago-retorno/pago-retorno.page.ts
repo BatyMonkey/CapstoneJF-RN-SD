@@ -1,8 +1,10 @@
 import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, AlertController } from '@ionic/angular';
+import { IonicModule, AlertController, Platform } from '@ionic/angular';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { SupabaseService } from 'src/app/services/supabase.service';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 
 // íconos
 import { addIcons } from 'ionicons';
@@ -36,7 +38,8 @@ export class PagoRetornoPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private alertCtrl: AlertController,
-    private supabaseService: SupabaseService
+    private supabaseService: SupabaseService,
+    private platform: Platform
   ) {
     // registrar iconos usados en la página
     addIcons({
@@ -98,8 +101,8 @@ export class PagoRetornoPage implements OnInit {
           codigoAutorizacion: data.authorization_code,
           tipoPago: data.payment_type_code,
           monto: data.amount,
-          numeroOrden: numeroOrdenFn,      // se ajusta luego con la info de Supabase
-          fechaHora: fechaHoraFn,          // se ajusta luego con created_at
+          numeroOrden: numeroOrdenFn, // se ajusta luego con la info de Supabase
+          fechaHora: fechaHoraFn, // se ajusta luego con created_at
           concepto: data.concepto ?? 'Pago realizado en RedBarrio',
           tarjeta: data.card_detail?.card_number ?? null,
         };
@@ -114,10 +117,7 @@ export class PagoRetornoPage implements OnInit {
               .order('id_orden', { ascending: false })
               .limit(1);
 
-          console.log(
-            '[PagoRetorno] última orden select:',
-            ordenRows || null
-          );
+          console.log('[PagoRetorno] última orden select:', ordenRows || null);
 
           if (ordenErr) {
             console.error(
@@ -208,8 +208,7 @@ export class PagoRetornoPage implements OnInit {
     const monto = this.detalles.monto ?? 0;
     const numeroOrden = this.detalles.numeroOrden ?? '—';
     const fechaHora = this.detalles.fechaHora ?? '—';
-    const concepto =
-      this.detalles.concepto ?? 'Pago realizado en RedBarrio';
+    const concepto = this.detalles.concepto ?? 'Pago realizado en RedBarrio';
     const tipoPago = this.detalles.tipoPago ?? '—';
     const tarjeta = this.detalles.tarjeta ?? '**** **** **** 4532';
     const codAut = this.detalles.codigoAutorizacion ?? '—';
@@ -400,14 +399,73 @@ export class PagoRetornoPage implements OnInit {
   async descargarBoleta() {
     if (!this.detalles) return;
 
+    let fileUri: string | null = null;
+
+    // 1) GENERAR Y GUARDAR PDF
     try {
       const { doc, nombreArchivo } = this.crearPdf();
-      doc.save(nombreArchivo);
+
+      // Web (PC)
+      if (!this.platform.is('hybrid')) {
+        doc.save(nombreArchivo);
+        return;
+      }
+
+      // App móvil
+      const dataUri = doc.output('datauristring'); // "data:application/pdf;base64,AAAA..."
+      const base64 = dataUri.split(',')[1];
+
+      const fileName = nombreArchivo.endsWith('.pdf')
+        ? nombreArchivo
+        : `${nombreArchivo}.pdf`;
+
+      const writeResult = await Filesystem.writeFile({
+        path: fileName,
+        data: base64,
+        directory: Directory.Cache, // o Documents si prefieres
+      });
+
+      fileUri = writeResult.uri;
+      console.log('PDF generado y guardado en:', fileUri);
     } catch (e) {
-      console.error('Error al generar PDF para descarga:', e);
+      console.error('Error generando/guardando PDF:', e);
       const alert = await this.alertCtrl.create({
         header: 'Error',
         message: 'No se pudo generar el comprobante en PDF.',
+        buttons: ['OK'],
+      });
+      await alert.present();
+      return; // IMPORTANTE: no seguimos al share si falló aquí
+    }
+
+    // 2) COMPARTIR / ABRIR PDF (SI SE GENERÓ BIEN)
+    if (!fileUri) return;
+
+    try {
+      await Share.share({
+        title: 'Boleta en PDF',
+        text: 'Te envío tu boleta en formato PDF.',
+        url: fileUri,
+        dialogTitle: 'Compartir boleta',
+      });
+
+      // Aquí opcionalmente puedes NO mostrar nada:
+      // el usuario ya vio el share sheet.
+    } catch (e: any) {
+      // 👇 Aquí distinguimos "canceló" de "error real"
+      const msg = (e?.message || e?.toString() || '').toLowerCase();
+
+      if (msg.includes('cancel') || msg.includes('dismiss')) {
+        console.log('Usuario canceló el compartir:', e);
+        // No mostramos alerta de error, porque el PDF sí se generó.
+        return;
+      }
+
+      console.error('Error al compartir el PDF:', e);
+      const alert = await this.alertCtrl.create({
+        header: 'Error',
+        message:
+          'El comprobante se generó, pero ocurrió un problema al compartirlo.',
         buttons: ['OK'],
       });
       await alert.present();
