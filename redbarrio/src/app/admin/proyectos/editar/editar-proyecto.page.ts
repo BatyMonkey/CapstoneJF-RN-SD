@@ -44,8 +44,8 @@ export class EditarProyectoPage implements OnInit {
 
   /** Estados de UI */
   cargando = false;
-  saved = false;              // *ngIf="saved"
-  showDeleteConfirm = false;  // *ngIf="showDeleteConfirm"
+  saved = false;             // *ngIf="saved"
+  showDeleteConfirm = false; // *ngIf="showDeleteConfirm"
 
   /** Lista de estados con emojis para el <select> */
   estados = [
@@ -78,13 +78,15 @@ export class EditarProyectoPage implements OnInit {
   ngOnInit() {
     this.form = this.fb.group({
       titulo: ['', [Validators.required, Validators.minLength(3)]],
-      // Control interno se llama estado_proyecto, aunque en BD es estado_proyect
+      // Control interno se llama estado_proyecto, y en BD también es estado_proyecto
       estado_proyecto: ['planificacion', Validators.required],
       descripcion: ['', [Validators.required, Validators.minLength(10)]],
       responsable: ['', Validators.required],
       fecha_inicio: ['', Validators.required],
       fecha_fin: [''],
       presupuesto: [''],
+      // lo dejamos en el form por si el template lo usa
+      objetivos: [''],
     });
 
     this.proyectoId = this.route.snapshot.paramMap.get('id') ?? '';
@@ -125,8 +127,8 @@ export class EditarProyectoPage implements OnInit {
         id: data.id ?? data.id_proyecto,
       };
 
-      // Mapear columna BD estado_proyect → value del select
-      const estadoForm = this.mapEstadoDbToForm(data.estado_proyect);
+      // Mapear columna BD estado_proyecto → value del select
+      const estadoForm = this.mapEstadoDbToForm(data.estado_proyecto);
 
       this.form.patchValue({
         titulo: data.titulo ?? '',
@@ -171,15 +173,7 @@ export class EditarProyectoPage implements OnInit {
     try {
       const valores = this.form.value;
 
-      const objetivosArray =
-        valores.objetivos && typeof valores.objetivos === 'string'
-          ? valores.objetivos
-              .split('\n')
-              .map((t: string) => t.trim())
-              .filter((t: string) => t.length > 0)
-          : null;
-
-      // Value del select → texto para guardar en BD (estado_proyect)
+      // Value del select → texto que se guarda en BD (estado_proyecto)
       const estadoDb = this.mapEstadoFormToDb(valores.estado_proyecto);
 
       const payload: any = {
@@ -189,8 +183,7 @@ export class EditarProyectoPage implements OnInit {
         fecha_inicio: valores.fecha_inicio || null,
         fecha_fin: valores.fecha_fin || null,
         presupuesto: valores.presupuesto || null,
-        estado_proyect: estadoDb,  // 👈 columna real
-        objetivos: objetivosArray,
+        estado_proyecto: estadoDb, // 👈 columna real en BD
         actualizado_en: new Date().toISOString(),
       };
 
@@ -201,7 +194,10 @@ export class EditarProyectoPage implements OnInit {
         .update(payload)
         .eq('id_proyecto', this.proyectoId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('🔥 Supabase update error:', error);
+        throw error;
+      }
 
       // Actualizar objeto local
       this.proyecto = {
@@ -216,7 +212,7 @@ export class EditarProyectoPage implements OnInit {
         {
           id_proyecto: this.proyectoId,
           titulo: payload.titulo,
-          estado_proyect: payload.estado_proyect,
+          estado_proyecto: payload.estado_proyecto,
         }
       );
 
@@ -226,9 +222,15 @@ export class EditarProyectoPage implements OnInit {
       setTimeout(() => {
         this.saved = false;
       }, 3000);
-    } catch (err) {
+    } catch (err: any) {
       console.error('🔥 Error al guardar cambios:', err);
-      this.mostrarToast('Error al guardar los cambios');
+      const detalle =
+        err?.message || err?.error_description || err?.hint || '';
+      this.mostrarToast(
+        detalle
+          ? `Error al guardar los cambios: ${detalle}`
+          : 'Error al guardar los cambios'
+      );
     } finally {
       this.cargando = false;
     }
@@ -325,7 +327,7 @@ export class EditarProyectoPage implements OnInit {
     }
   }
 
-  /** value del select → texto que se guarda en BD (estado_proyect) */
+  /** value del select → texto que se guarda en BD (estado_proyecto) */
   private mapEstadoFormToDb(value: string): string {
     switch (value) {
       case 'planificacion':
@@ -348,8 +350,8 @@ export class EditarProyectoPage implements OnInit {
     const toast = await this.toastCtrl.create({
       message,
       duration: 2500,
-      color: 'primary',
       position: 'top',
+      cssClass: 'rb-toast-solid', // Asegúrate de tener esta clase en global.scss
     });
     await toast.present();
   }

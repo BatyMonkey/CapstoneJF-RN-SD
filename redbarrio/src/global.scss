@@ -324,10 +324,6 @@ ion-modal.crear-espacio-modal::part(content) {
    ============================ */
 
 /* El host del toast queda transparente y sin sombra extra */
-ion-toast.rb-toast-solid {
-  --background: transparent;
-  --box-shadow: none;
-}
 
 /* Caja real del toast */
 ion-toast.rb-toast-solid::part(container) {
@@ -378,4 +374,22 @@ ion-toast.rb-toast-solid.rb-toast-danger::part(container) {
 .rb-toast-danger {
   --background: #ef4444;
   --color: #ffffff;
+}
+
+.rb-toast-ios {
+  --background: #1c1c1e;          // fondo sólido tipo iOS
+  --color: #ffffff;
+  --border-radius: 14px;
+  --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+ion-toast.rb-toast-solid {
+  --background: #111827;
+  --color: #f9fafb;
+  --border-radius: 12px;
+  --box-shadow: 0 10px 25px rgba(15, 23, 42, 0.35);
+  --padding-start: 12px;
+  --padding-end: 12px;
+  font-size: 0.9rem;
+  text-align: center;
 }

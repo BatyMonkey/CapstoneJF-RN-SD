@@ -64,7 +64,37 @@ export class EspaciosPage implements OnInit {
   // SERVICIOS (UI)
   // =========================================================
 
-  nombreServicio(code: string): string {
+  /**
+   * Normaliza el valor que viene de la BD (label o código)
+   * a un código interno estable: mesas_sillas, wifi, cocina, etc.
+   */
+  private normalizarServicio(codeOrLabel: string): string {
+    if (!codeOrLabel) return '';
+
+    // bajar a minúsculas y quitar tildes
+    let v = codeOrLabel
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+
+    if (v.includes('mesa')) return 'mesas_sillas';
+    if (v.includes('wifi')) return 'wifi';
+    if (v.includes('cocina')) return 'cocina';
+    if (v.includes('bano') || v.includes('baño')) return 'banos';
+    if (v.includes('sonido')) return 'sonido';
+    if (v.includes('led') || v.includes('iluminacion')) return 'iluminacion';
+    if (v.includes('parrilla') || v.includes('quincho')) return 'parrilla';
+    if (v.includes('pizarra')) return 'pizarra';
+    if (v.includes('proyector')) return 'proyector';
+    if (v.includes('aire acondicionado')) return 'aire_acondicionado';
+    if (v.includes('balon')) return 'balones';
+    if (v.includes('grader')) return 'graderias';
+
+    // si ya venía como código o algo raro, lo devolvemos tal cual
+    return codeOrLabel;
+  }
+
+  nombreServicio(codeOrLabel: string): string {
     const map: Record<string, string> = {
       mesas_sillas: 'Mesas y sillas',
       wifi: 'WiFi',
@@ -79,10 +109,12 @@ export class EspaciosPage implements OnInit {
       balones: 'Balones disponibles',
       graderias: 'Graderías',
     };
-    return map[code] || code;
+
+    const code = this.normalizarServicio(codeOrLabel);
+    return map[code] || codeOrLabel;
   }
 
-  iconoServicio(code: string): string {
+  iconoServicio(codeOrLabel: string): string {
     const map: Record<string, string> = {
       mesas_sillas: 'cube-outline',
       wifi: 'wifi-outline',
@@ -97,6 +129,8 @@ export class EspaciosPage implements OnInit {
       balones: 'basketball-outline',
       graderias: 'grid-outline',
     };
+
+    const code = this.normalizarServicio(codeOrLabel);
     return map[code] ?? 'checkmark-outline';
   }
 
@@ -262,7 +296,7 @@ export class EspaciosPage implements OnInit {
   }
 
   // =========================================================
-  //  SOLICITAR ARRIENDO
+  //  SOLICITAR ARRIENDO (con cobro según precio del espacio)
   // =========================================================
   async solicitarArriendo() {
     if (this.errorHorario) {
@@ -293,6 +327,43 @@ export class EspaciosPage implements OnInit {
       return;
     }
 
+    // ==============================
+    // OBTENER ESPACIO Y SU PRECIO
+    // ==============================
+    const espacio = this.espacios.find(
+      (e) => e.id_espacio === this.espacioSeleccionadoId
+    );
+
+    if (!espacio) {
+      this.mostrarAlerta(
+        'Error',
+        'No se pudo obtener la información del espacio.'
+      );
+      return;
+    }
+
+    // precio viene como texto desde la BD (ej: "5000", "5.000", "$5000")
+    const precioTexto = (espacio.precio ?? '').toString();
+    const soloNumero = precioTexto.replace(/\D/g, ''); // dejar solo dígitos
+
+    if (!soloNumero) {
+      this.mostrarAlerta(
+        'Error',
+        'Este espacio no tiene un precio configurado.'
+      );
+      return;
+    }
+
+    const precioPorHora = parseInt(soloNumero, 10);
+
+    if (isNaN(precioPorHora) || precioPorHora <= 0) {
+      this.mostrarAlerta(
+        'Error',
+        'El precio del espacio es inválido. Contacta a la administración.'
+      );
+      return;
+    }
+
     const loading = await this.loadingCtrl.create({
       message: 'Procesando solicitud...',
       spinner: 'crescent',
@@ -312,6 +383,23 @@ export class EspaciosPage implements OnInit {
 
     const evento_inicio = inicioUTC.toISOString();
     const evento_fin = finUTC.toISOString();
+
+    // Calcular duración en horas (para cobrar por hora)
+    const diffHoras =
+      (finUTC.getTime() - inicioUTC.getTime()) / 3600000; // ms → horas
+
+    // Por seguridad, volvemos a validar rango
+    if (diffHoras < 1 || diffHoras > 3) {
+      await loading.dismiss();
+      this.mostrarAlerta(
+        'Error',
+        'La duración del arriendo debe ser entre 1 y 3 horas.'
+      );
+      return;
+    }
+
+    // Monto total = precio por hora * horas de arriendo
+    const monto = Math.round(precioPorHora * diffHoras);
 
     try {
       // Crear evento
@@ -345,7 +433,7 @@ export class EspaciosPage implements OnInit {
           .single();
       if (errReserva) throw errReserva;
 
-      // Crear orden pago
+      // Crear orden pago con el MONTO REAL del espacio
       const { error: errOrden } = await this.supabaseService.client
         .from('orden_pago')
         .insert([
@@ -353,7 +441,7 @@ export class EspaciosPage implements OnInit {
             id_auth: idUsuario,
             id_evento: evento.id_evento,
             id_espacio: this.espacioSeleccionadoId,
-            monto: 1500,
+            monto: monto,
             estado: 'pendiente',
           },
         ])
@@ -361,7 +449,9 @@ export class EspaciosPage implements OnInit {
         .single();
       if (errOrden) throw errOrden;
 
-      // Simular Transbank
+      // ==========================
+      // LLAMAR FUNCIÓN TRANSBANK
+      // ==========================
       const response = await fetch(
         `${environment.supabaseUrl}/functions/v1/transbank-simular`,
         {
@@ -369,22 +459,54 @@ export class EspaciosPage implements OnInit {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             id_reserva: reserva.id_reserva,
-            monto: 1500,
+            monto: monto,
             descripcion: `Pago arriendo espacio #${this.espacioSeleccionadoId}`,
           }),
         }
       );
 
-      const sim = await response.json();
-
-      if (sim.url && sim.token) {
-        await Browser.open({
-          url: `${sim.url}?token_ws=${sim.token}`,
-          presentationStyle: 'fullscreen',
-        });
+      if (!response.ok) {
+        const text = await response.text().catch(() => '');
+        console.error(
+          'Error HTTP en transbank-simular:',
+          response.status,
+          text
+        );
+        throw new Error('La función de pago respondió con error.');
       }
 
-      loading.dismiss();
+      const sim: any = await response.json().catch((e) => {
+        console.error('Error parseando JSON de transbank-simular:', e);
+        throw new Error('Respuesta inválida desde la función de pago.');
+      });
+
+      console.log('Transbank sim response:', sim);
+
+      // Soportar distintos formatos de respuesta
+      const url =
+        sim.url ||
+        sim.redirect_url ||
+        sim.data?.url ||
+        sim.data?.redirect_url;
+      const token =
+        sim.token ||
+        sim.token_ws ||
+        sim.data?.token ||
+        sim.data?.token_ws;
+
+      if (!url || !token) {
+        console.error('Respuesta de transbank-simular sin url/token:', sim);
+        throw new Error(
+          'La función de pago no entregó la URL o el token de Transbank.'
+        );
+      }
+
+      await Browser.open({
+        url: `${url}?token_ws=${token}`,
+        presentationStyle: 'fullscreen',
+      });
+
+      await loading.dismiss();
 
       // Reset
       this.espacioSeleccionadoId = null;
@@ -394,8 +516,11 @@ export class EspaciosPage implements OnInit {
       this.motivo = '';
     } catch (e) {
       console.error('Error al solicitar arriendo:', e);
-      loading.dismiss();
-      this.mostrarAlerta('Error', 'No se pudo completar la solicitud.');
+      await loading.dismiss();
+      this.mostrarAlerta(
+        'Error',
+        'No se pudo completar la solicitud de pago. Intenta nuevamente.'
+      );
     }
   }
 

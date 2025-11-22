@@ -24,7 +24,44 @@ export interface Espacio {
   providedIn: 'root',
 })
 export class EspaciosService {
+  // 👇 Ajusta este nombre al bucket real en Supabase
+  private readonly BUCKET_ESPACIOS = 'espacios-bucket';
+
   constructor(private supabaseService: SupabaseService) {}
+
+  /**
+   * Sube una imagen de espacio a Supabase Storage y devuelve la URL pública.
+   */
+  async subirImagenEspacio(file: File): Promise<string> {
+    const supa = this.supabaseService.client;
+
+    const ext = file.name.split('.').pop() || 'jpg';
+    const fileName = `${Date.now()}-${Math.random()
+      .toString(36)
+      .slice(2)}.${ext}`;
+    const filePath = `espacios/${fileName}`;
+
+    // 1) Subir archivo
+    const { data, error } = await supa.storage
+      .from(this.BUCKET_ESPACIOS)
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false,
+      });
+
+    if (error) {
+      console.error('Error subiendo imagen de espacio:', error);
+      throw new Error(`No se pudo subir la imagen: ${error.message}`);
+    }
+
+    // 2) Obtener URL pública
+    const { data: publicData } = supa.storage
+      .from(this.BUCKET_ESPACIOS)
+      .getPublicUrl(data.path);
+
+    const publicUrl = publicData.publicUrl;
+    return publicUrl;
+  }
 
   /**
    * Obtiene la lista completa de espacios desde la tabla 'espacio'.
@@ -55,8 +92,7 @@ export class EspaciosService {
         {
           nombre: espacioData.nombre,
           descripcion: espacioData.descripcion,
-          capacidad: espacioData.capacidad,
-          // 👇 ya NO se usa 'tipo'
+          capacidad: espacioData.capacidad,          // 👈 FALTABA ESTO
           direccion_completa: espacioData.direccion_completa,
           latitud: espacioData.latitud,
           longitud: espacioData.longitud,

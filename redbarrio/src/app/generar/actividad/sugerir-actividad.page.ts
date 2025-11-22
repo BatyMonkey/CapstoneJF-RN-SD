@@ -7,6 +7,7 @@ import {
   AlertController,
   LoadingController,
   IonicSafeString,
+  ToastController,
 } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -55,7 +56,8 @@ export class SugerirActividadPage {
     private navCtrl: NavController,
     private supabaseService: SupabaseService,
     private alertCtrl: AlertController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private toastCtrl: ToastController
   ) {
     this.supabase = this.supabaseService.client;
 
@@ -172,6 +174,55 @@ export class SugerirActividadPage {
   }
 
   // ==========================
+  // Toast sólido (anti "undefined")
+  // ==========================
+  private async mostrarToast(
+    mensaje?: any,
+    tipo: 'success' | 'danger' | 'warning' = 'success'
+  ) {
+    let raw =
+      mensaje === undefined || mensaje === null ? '' : (mensaje as any);
+
+    if (typeof raw !== 'string') {
+      try {
+        raw = String(raw);
+      } catch {
+        raw = '';
+      }
+    }
+
+    let clean = raw.trim();
+
+    // Limpia "undefined" / "null" del string si vienen pegados
+    clean = clean
+      .replace(/\bundefined\b/gi, '')
+      .replace(/\bnull\b/gi, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (!clean) {
+      clean = 'Acción realizada correctamente.';
+    }
+
+    console.log(
+      '[Toast debug sugerir-actividad] mensaje recibido:',
+      mensaje,
+      '→ usando:',
+      clean
+    );
+
+    const toast = await this.toastCtrl.create({
+      message: clean,
+      duration: 2500,
+      position: 'top',
+      mode: 'ios',
+      cssClass: ['rb-toast-solid', `rb-toast-${tipo}`],
+    });
+
+    await toast.present();
+  }
+
+  // ==========================
   // Alertas bonitas
   // ==========================
   private async mostrarAlertaAccion(titulo: string, mensajeHtml: string) {
@@ -192,6 +243,7 @@ export class SugerirActividadPage {
   }
 
   private async mostrarError(mensaje: string) {
+    await this.mostrarToast(mensaje, 'danger');
     await this.mostrarAlertaAccion('Ups...', mensaje);
   }
 
@@ -333,6 +385,13 @@ export class SugerirActividadPage {
           Tu actividad fue enviada correctamente.<br/>
           <strong>Un administrador la revisará antes de publicarla.</strong>
         `;
+
+      await this.mostrarToast(
+        this.esAdmin
+          ? 'Actividad creada correctamente.'
+          : 'Sugerencia enviada correctamente.',
+        'success'
+      );
 
       await this.mostrarAlertaAccion(tituloModal, mensajeModal);
     } catch (e: any) {

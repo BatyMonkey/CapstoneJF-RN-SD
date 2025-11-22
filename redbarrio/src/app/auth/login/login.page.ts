@@ -9,7 +9,13 @@ import {
 } from '@ionic/angular';
 import { AuthService } from '../auth.service';
 import { RouterLink } from '@angular/router';
+import { addIcons } from 'ionicons';
+import { lockClosedOutline, mailOutline } from 'ionicons/icons';
 
+addIcons({
+  'lock-closed-outline': lockClosedOutline,
+  'mail-outline': mailOutline,
+});
 @Component({
   standalone: true,
   selector: 'app-login',

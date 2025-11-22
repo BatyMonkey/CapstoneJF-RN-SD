@@ -7,6 +7,7 @@ import {
   AlertController,
   LoadingController,
   IonicSafeString,
+  ToastController,
 } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -54,7 +55,8 @@ export class CrearActividadAdminPage implements OnInit {
     private navCtrl: NavController,
     private supabaseService: SupabaseService,
     private alertCtrl: AlertController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private toastCtrl: ToastController
   ) {
     this.supabase = this.supabaseService.client;
 
@@ -123,6 +125,52 @@ export class CrearActividadAdminPage implements OnInit {
 
   private async mostrarError(mensaje: string) {
     await this.mostrarAlertaAccion('Ups...', mensaje);
+  }
+
+  // ==========================
+  // Toast robusto (anti "undefined")
+  // ==========================
+  private async mostrarToast(mensaje?: any) {
+    let raw =
+      mensaje === undefined || mensaje === null ? '' : (mensaje as any);
+
+    if (typeof raw !== 'string') {
+      try {
+        raw = String(raw);
+      } catch {
+        raw = '';
+      }
+    }
+
+    let clean = raw.trim();
+
+    // Quitamos 'undefined' y 'null' del mensaje si vienen pegados
+    clean = clean
+      .replace(/\bundefined\b/gi, '')
+      .replace(/\bnull\b/gi, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (!clean) {
+      clean = 'Acción realizada correctamente.';
+    }
+
+    console.log(
+      '[Toast debug crear-actividad-admin] mensaje recibido:',
+      mensaje,
+      '→ usando:',
+      clean
+    );
+
+    const toast = await this.toastCtrl.create({
+      message: clean,
+      duration: 2000,
+      color: 'primary',
+      position: 'top',
+      mode: 'ios',
+    });
+
+    await toast.present();
   }
 
   // ==========================
@@ -284,7 +332,6 @@ export class CrearActividadAdminPage implements OnInit {
           await this.supabase.storage
             .from('proyectos')
             .upload(filePath, this.imagenFile, {
-              // ✅ imagenFile
               cacheControl: '3600',
               upsert: false,
             });
@@ -326,6 +373,8 @@ export class CrearActividadAdminPage implements OnInit {
 
       this.resetFormulario();
 
+      // Toast corto + alerta bonita
+      await this.mostrarToast('Actividad creada correctamente.');
       await this.mostrarAlertaAccion(
         'Actividad creada',
         `

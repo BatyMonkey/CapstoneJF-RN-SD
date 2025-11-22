@@ -271,6 +271,6 @@ export class InscripcionProyectoComponent implements OnInit {
 
   // ✅ Botón volver del header tipo RedBarrio
   goBack() {
-    this.router.navigate(['/inscripcion/proyectos']);
+    this.router.navigate(['/home']);
   }
 }

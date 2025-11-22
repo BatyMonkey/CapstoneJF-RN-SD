@@ -1,139 +1,154 @@
+/* src/app/perfil/editar-perfil-modal/editar-perfil-modal.component.scss */
+
 :host {
   --ion-background-color: transparent;
 }
 
-/* Fondo del contenido de la modal (igual enfoque que edit-perfil-content) */
-.add-space-page {
+/* HEADER de la modal */
+.edit-perfil-header {
+  ion-toolbar {
+    --background: transparent;
+    --border-style: none;
+    padding: 8px 16px; /* 👈 este padding marca la “línea” de alineación */
+  }
+
+  .header-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .user-icon-circle.back-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e5e7eb;
+    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.25);
+    cursor: pointer;
+
+    ion-icon {
+      font-size: 1.2rem;
+      color: #111827;
+    }
+  }
+
+  .header-text h2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .header-text p {
+    margin: 2px 0 0;
+    font-size: 0.8rem;
+    color: #6b7280;
+  }
+}
+
+/* CONTENIDO de la modal: pega el contenido al borde de la modal */
+.edit-perfil-content {
   --background: #f5f7fb;
 
-  --padding-top: 1rem;
-  --padding-bottom: 0;      /* 👈 sin espacio extra abajo */
-  --padding-start: 1rem;
-  --padding-end: 1rem;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+
+  display: block;
 }
 
-/* Contenedor que centra la card dentro del contenido */
-.add-space-center {
-  min-height: 100%;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-}
-
-/* Tarjeta principal de la modal */
-.add-space-modal-card {
+/* Contenedor principal del formulario */
+.edit-card {
   width: 100%;
-  max-width: 430px;
-  max-height: 100%;
-  background: #ffffff;
-  border-radius: 22px;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.35);
-  overflow: hidden;
+  max-width: 100%;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 8px 16px 16px; /* mismo padding horizontal que el header */
+
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+/* El formulario va centrado y es el que scrollea */
+.edit-card form {
+  flex: 1;
   display: flex;
   flex-direction: column;
-}
-
-/* Header degradado (tipo React/Figma) */
-.add-space-header {
-  background: linear-gradient(90deg, #06b6d4, #0891b2);
-  padding: 14px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   gap: 10px;
+
+  width: 100%;
+  max-width: 360px;   /* 👈 limita el ancho de los campos */
+  margin: 0 auto;     /* 👈 centra el formulario dentro de la modal */
+
+  max-height: calc(100vh - 120px); /* para no pasarse de la pantalla */
+  overflow-y: auto;               /* 👈 este es el contenedor scroll */
+
+  /* 👇 espacio extra para que los botones sticky no se corten */
+  padding-bottom: 64px;
 }
 
-.add-space-header-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+/* Caja de nombre completo */
+.full-name-box {
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  margin-bottom: 14px;
 
-.add-space-header-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  ion-icon {
-    color: #ffffff;
-    font-size: 1.2rem;
+  label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #1d4ed8;
+    margin-bottom: 4px;
   }
-}
 
-.add-space-header-text h2 {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 700;
-  color: #ffffff;
-}
-
-.add-space-header-text p {
-  margin: 2px 0 0;
-  font-size: 0.8rem;
-  color: rgba(239, 246, 255, 0.95);
-}
-
-.add-space-close-btn {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: none;
-  outline: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.18);
-  cursor: pointer;
-  transition: background 0.15s ease;
-
-  ion-icon {
-    color: #ffffff;
-    font-size: 1.1rem;
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1f2937;
   }
-}
-
-.add-space-close-btn:hover {
-  background: rgba(255, 255, 255, 0.28);
-}
-
-/* Body: ocupa el espacio restante de la card y hace scroll */
-.add-space-body {
-  padding: 14px 16px 16px;
-  flex: 1;
-  overflow-y: auto;
 }
 
 /* Bloques de campo */
-.add-space-block {
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 10px 12px;
-  margin-bottom: 10px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+.field-block {
+  margin-bottom: 12px;
 }
 
-.add-space-block label {
+.field-block label {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: #111827;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 
-  ion-icon {
-    font-size: 1.1rem;
+  .inline-icon {
+    font-size: 1rem;
     color: #06b6d4;
+  }
+
+  .optional {
+    font-size: 0.75rem;
+    color: #9ca3af;
+  }
+
+  .required {
+    font-size: 0.75rem;
+    color: #dc2626;
   }
 }
 
-.add-space-block input,
-.add-space-block textarea {
+.field-block input {
   width: 100%;
   border-radius: 10px;
   border: 1px solid #e5e7eb;
@@ -145,126 +160,116 @@
   box-sizing: border-box;
 }
 
-.add-space-block input:focus,
-.add-space-block textarea:focus {
+.field-block input:focus {
   border-color: #06b6d4;
   box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.18);
   background: #ffffff;
 }
 
-.add-space-block textarea {
-  resize: none;
-  min-height: 80px;
+/* Campos deshabilitados */
+.field-block.disabled input {
+  background: #f3f4f6;
+  color: #6b7280;
+  border-style: dashed;
 }
 
-.optional {
-  font-size: 0.78rem;
+.field-block .hint {
+  margin: 4px 0 0;
+  font-size: 0.75rem;
   color: #9ca3af;
 }
 
-.help-text {
-  margin: 4px 0 0;
-  font-size: 0.75rem;
-  color: #6b7280;
-}
-
-/* Servicios */
-.services-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  margin-top: 6px;
-}
-
-.service-option {
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  padding: 8px 6px;
-  background: #ffffff;
+/* Errores */
+.error-message {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.78rem;
-  color: #4b5563;
-  cursor: default;
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+
+  ion-icon {
+    font-size: 1rem;
+    color: #dc2626;
+    margin-top: 2px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.78rem;
+    color: #b91c1c;
+  }
 }
 
-.service-option ion-icon {
-  font-size: 1.2rem;
-  color: #6b7280;
-}
-
-/* Acciones */
-.add-space-actions {
+/* Nota informativa */
+.info-note {
   display: flex;
   gap: 10px;
-  margin-top: 12px;
+  margin: 14px 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
 }
 
-.btn-cancel,
-.btn-save {
-  flex: 1;
-  border-radius: 12px;
-  border: none;
-  outline: none;
-  padding: 11px 10px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
+.info-icon {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  gap: 6px;
-  transition:
-    background 0.15s ease,
-    transform 0.1s ease,
-    box-shadow 0.1s ease;
+
+  ion-icon {
+    font-size: 1.2rem;
+    color: #2563eb;
+  }
 }
 
-/* Cancelar */
-.btn-cancel {
-  background: #e5e7eb;
+.info-text .title {
+  margin: 0 0 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1d4ed8;
+}
+
+.info-text ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.info-text li {
+  font-size: 0.78rem;
   color: #374151;
 }
 
-.btn-cancel:hover {
-  background: #d1d5db;
+/* Botones */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+
+  /* 👇 siempre visibles y un poco por encima del borde curvo */
+  position: sticky;
+  bottom: 16px;
+  padding-top: 8px;
+  padding-bottom: 4px;
+  background: #f5f7fb;
+  z-index: 10;
 }
 
-/* Guardar */
-.btn-save {
-  background: linear-gradient(90deg, #06b6d4, #0891b2);
-  color: #ffffff;
-  box-shadow: 0 10px 22px rgba(8, 145, 178, 0.4);
+.action-buttons ion-button {
+  --border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
-.btn-save ion-icon {
-  font-size: 1.1rem;
+.action-buttons ion-button[fill='outline'] {
+  --border-color: #9ca3af;
+  --color: #374151;
 }
 
-.btn-save:hover {
-  filter: brightness(1.05);
-}
-
-.btn-save:active,
-.btn-cancel:active {
-  transform: translateY(1px);
-  box-shadow: 0 5px 10px rgba(15, 23, 42, 0.2);
-}
-
-/* Responsive pequeño */
-@media (max-width: 420px) {
-  .add-space-modal-card {
-    border-radius: 18px;
-  }
-
-  .services-grid {
-    gap: 6px;
-  }
-
-  .service-option {
-    padding: 6px 4px;
-  }
+.action-buttons ion-button[type='submit'] {
+  --background: linear-gradient(90deg, #06b6d4, #0891b2);
+  --background-activated: linear-gradient(90deg, #0891b2, #0e7490);
+  --color: #ffffff;
 }

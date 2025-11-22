@@ -1,10 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  IonicModule,
-  ToastController,
-  AlertController,
-} from '@ionic/angular';
+import { IonicModule, ToastController, AlertController } from '@ionic/angular';
 import {
   FormBuilder,
   FormGroup,
@@ -221,7 +217,8 @@ export class SugerirProyectoPage implements OnInit {
       }
 
       // Estado automático según rol
-      const estado = rol.toLowerCase() === 'administrador' ? 'publicada' : 'pendiente';
+      const estado =
+        rol.toLowerCase() === 'administrador' ? 'publicada' : 'pendiente';
 
       // Origen de la solicitud
       const solicitado = this.esAdmin
@@ -244,7 +241,8 @@ export class SugerirProyectoPage implements OnInit {
         estado_proyecto: this.form.value.estado_proyecto || 'Planificación',
         presupuesto: presupuestoNumero,
         responsable:
-          this.form.value.responsable && this.form.value.responsable.trim() !== ''
+          this.form.value.responsable &&
+          this.form.value.responsable.trim() !== ''
             ? this.form.value.responsable.trim()
             : null,
         solicitado,
@@ -279,9 +277,10 @@ export class SugerirProyectoPage implements OnInit {
 
       this.submitted = true;
 
-      // limpiamos imagen en memoria
-      this.selectedImageFile = null;
-      this.imagenPreview = null;
+      // 👇 NUEVO: limpiar formulario + imagen + mostrar toast éxito
+      this.nuevaPropuesta();
+      await this.mostrarToast('Tu propuesta fue enviada correctamente');
+      this.router.navigate(['/proyectos']);
     } catch (err: any) {
       console.error('🔥 Error al enviar proyecto/sugerencia:', err);
       this.mostrarToast('Error al enviar la propuesta');

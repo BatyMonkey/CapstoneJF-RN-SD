@@ -1,6 +1,21 @@
 <?xml version='1.0' encoding='utf-8'?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 👇 TODOS los permisos VAN ANTES de <application> -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Acceso a almacenamiento “clásico” (solo tiene efecto hasta ciertas APIs) -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29" />
+
+    <!-- Permisos nuevos de Android 13+ para media (no son para .xlsx, pero no molestan) -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
 
     <application
         android:allowBackup="true"
@@ -9,70 +24,62 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:requestLegacyExternalStorage="true">
 
         <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:launchMode="singleTask"
-            android:label="@string/title_activity_main"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation"
+            android:exported="true"
+            android:label="@string/title_activity_main"
+            android:launchMode="singleTask"
+            android:name=".MainActivity"
             android:theme="@style/AppTheme.NoActionBarLaunch">
 
-            <!-- Intent principal -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- Deep link de pago -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                    android:scheme="redbarrio"
                     android:host="app"
-                    android:pathPrefix="/pago-retorno" />
+                    android:pathPrefix="/pago-retorno"
+                    android:scheme="redbarrio" />
             </intent-filter>
 
-            <!-- Deep link de recuperación de contraseña -->
-            <!-- MainActivity -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                    android:scheme="myapp"
                     android:host="auth"
-                    android:pathPrefix="/reset" />
+                    android:pathPrefix="/reset"
+                    android:scheme="myapp" />
             </intent-filter>
 
-            <!-- Deep link de votación -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                    android:scheme="redbarrio"
                     android:host="app"
-                    android:pathPrefix="/votacion" />
+                    android:pathPrefix="/votacion"
+                    android:scheme="redbarrio" />
             </intent-filter>
-
-
-
         </activity>
 
         <provider
-            android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true"
+            android:name="androidx.core.content.FileProvider">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
     </application>
 
-    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

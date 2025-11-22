@@ -1,6 +1,11 @@
 import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, AlertController, Platform } from '@ionic/angular';
+import {
+  IonicModule,
+  AlertController,
+  Platform,
+  ToastController,
+} from '@ionic/angular';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { SupabaseService } from 'src/app/services/supabase.service';
 import { Filesystem, Directory } from '@capacitor/filesystem';
@@ -39,7 +44,8 @@ export class PagoRetornoPage implements OnInit {
     private router: Router,
     private alertCtrl: AlertController,
     private supabaseService: SupabaseService,
-    private platform: Platform
+    private platform: Platform,
+    private toastCtrl: ToastController
   ) {
     // registrar iconos usados en la página
     addIcons({
@@ -59,15 +65,71 @@ export class PagoRetornoPage implements OnInit {
     this.router.navigate(['/home']);
   }
 
+  /** 🧩 Helper: intenta obtener token_ws de varias formas (Angular + location + hash) */
+  private extraerTokenWs(): string | null {
+    // 1) Angular query params (web normal / dev / navegación interna)
+    let token_ws = this.route.snapshot.queryParamMap.get('token_ws');
+    console.log('[PagoRetorno] token_ws via ActivatedRoute =', token_ws);
+
+    // 2) URL completa (por si viene como /pago-retorno?token_ws=... sin hash)
+    if (!token_ws && typeof window !== 'undefined') {
+      try {
+        const urlObj = new URL(window.location.href);
+        const fromSearch = urlObj.searchParams.get('token_ws');
+        if (fromSearch) {
+          token_ws = fromSearch;
+          console.log(
+            '[PagoRetorno] token_ws via window.location.search =',
+            token_ws
+          );
+        }
+      } catch (e) {
+        console.warn('[PagoRetorno] Error parseando window.location.href:', e);
+      }
+    }
+
+    // 3) HASH: típico en Capacitor → http://localhost/#/pago-retorno?token_ws=...
+    if (!token_ws && typeof window !== 'undefined') {
+      const hash = window.location.hash || '';
+      console.log('[PagoRetorno] window.location.hash =', hash);
+
+      if (hash.includes('token_ws=')) {
+        const qIndex = hash.indexOf('?');
+        if (qIndex !== -1) {
+          const qs = hash.substring(qIndex + 1); // "token_ws=....&otro=..."
+          const params = new URLSearchParams(qs);
+          const fromHash = params.get('token_ws');
+          if (fromHash) {
+            token_ws = fromHash;
+            console.log(
+              '[PagoRetorno] token_ws via hash (#/pago-retorno?...) =',
+              token_ws
+            );
+          }
+        }
+      }
+    }
+
+    return token_ws;
+  }
+
   /** 🔄 Confirmar pago al volver de Transbank */
   private async confirmarPago() {
-    const token_ws = this.route.snapshot.queryParamMap.get('token_ws');
+    const token_ws = this.extraerTokenWs();
     this.tokenWs = token_ws;
-    console.log('[PagoRetorno] token_ws =', token_ws);
+    console.log('[PagoRetorno] token_ws final =', token_ws);
 
     if (!token_ws) {
       this.mensaje = '⚠️ No se encontró el token del pago.';
       this.loading = false;
+
+      const alert = await this.alertCtrl.create({
+        header: 'Error con el pago',
+        message:
+          'No se pudo recuperar la información del pago al volver desde Transbank.',
+        buttons: ['OK'],
+      });
+      await alert.present();
       return;
     }
 
@@ -85,6 +147,14 @@ export class PagoRetornoPage implements OnInit {
       if (error) {
         console.error('Error Supabase (función transbank-confirm):', error);
         this.mensaje = '❌ Error al confirmar el pago.';
+
+        const alert = await this.alertCtrl.create({
+          header: 'Error con el pago',
+          message:
+            'Ocurrió un problema al confirmar el pago con el servidor. Intenta nuevamente.',
+          buttons: ['OK'],
+        });
+        await alert.present();
         return;
       }
 
@@ -132,12 +202,10 @@ export class PagoRetornoPage implements OnInit {
             this.detalles.id_auth = ord.id_auth;
 
             // === Número de orden "real" ===
-            // Preferimos lo que guardaste en la tabla (tbk_order_id),
-            // luego lo que vino de la función, y último fallback RB-<id_orden>.
             const numeroOrdenFinal =
-              (ord as any).tbk_order_id ??
-              this.detalles.numeroOrden ??
-              (ord.id_orden ? `RB-${ord.id_orden}` : null);
+              (ord as any).tbk_order_id ?? // lo que guardó la función
+              this.detalles.numeroOrden ?? // lo que vino de Transbank
+              (ord.id_orden ? `RB-${ord.id_orden}` : null); // fallback
 
             if (numeroOrdenFinal) {
               this.detalles.numeroOrden = numeroOrdenFinal;
@@ -189,10 +257,19 @@ export class PagoRetornoPage implements OnInit {
           },
         ],
       });
+      await alert.present();
     } catch (err) {
       console.error('Error general en confirmarPago:', err);
       this.loading = false;
       this.mensaje = '⚠️ Error inesperado al confirmar el pago.';
+
+      const alert = await this.alertCtrl.create({
+        header: 'Error con el pago',
+        message:
+          'Ocurrió un error inesperado al confirmar el pago. Por favor, inténtalo otra vez.',
+        buttons: ['OK'],
+      });
+      await alert.present();
     }
   }
 
@@ -395,23 +472,22 @@ export class PagoRetornoPage implements OnInit {
     }
   }
 
-  /** 📥 Botón: solo descarga local, no sube ni llama webhook */
+  /** 📥 Botón: genera PDF, lo guarda en una carpeta visible y luego permite compartirlo */
   async descargarBoleta() {
     if (!this.detalles) return;
 
     let fileUri: string | null = null;
 
-    // 1) GENERAR Y GUARDAR PDF
     try {
       const { doc, nombreArchivo } = this.crearPdf();
 
-      // Web (PC)
+      // === Web / PC ===
       if (!this.platform.is('hybrid')) {
         doc.save(nombreArchivo);
         return;
       }
 
-      // App móvil
+      // === App móvil (Capacitor) ===
       const dataUri = doc.output('datauristring'); // "data:application/pdf;base64,AAAA..."
       const base64 = dataUri.split(',')[1];
 
@@ -419,14 +495,46 @@ export class PagoRetornoPage implements OnInit {
         ? nombreArchivo
         : `${nombreArchivo}.pdf`;
 
-      const writeResult = await Filesystem.writeFile({
-        path: fileName,
-        data: base64,
-        directory: Directory.Cache, // o Documents si prefieres
-      });
+      // ANDROID → guardar en /Download para que se vea en "Descargas"
+      if (this.platform.is('android')) {
+        // Aseguramos carpeta Download
+        try {
+          await Filesystem.mkdir({
+            directory: Directory.ExternalStorage,
+            path: 'Download',
+            recursive: true,
+          });
+        } catch (e) {
+          // si ya existe, ignoramos el error
+          console.log('mkdir Download (ignorable):', e);
+        }
 
-      fileUri = writeResult.uri;
-      console.log('PDF generado y guardado en:', fileUri);
+        const writeResult = await Filesystem.writeFile({
+          path: `Download/${fileName}`,
+          data: base64,
+          directory: Directory.ExternalStorage,
+        });
+
+        fileUri = writeResult.uri;
+        console.log('PDF guardado en (Android/ExternalStorage):', fileUri);
+
+        await this.mostrarToast('Boleta guardada en Descargas.', 'success');
+      } else {
+        // iOS u otras plataformas híbridas → Documents de la app
+        const writeResult = await Filesystem.writeFile({
+          path: fileName,
+          data: base64,
+          directory: Directory.Documents,
+        });
+
+        fileUri = writeResult.uri;
+        console.log('PDF guardado en (Documents):', fileUri);
+
+        await this.mostrarToast(
+          'Boleta guardada en documentos de la aplicación.',
+          'success'
+        );
+      }
     } catch (e) {
       console.error('Error generando/guardando PDF:', e);
       const alert = await this.alertCtrl.create({
@@ -435,7 +543,7 @@ export class PagoRetornoPage implements OnInit {
         buttons: ['OK'],
       });
       await alert.present();
-      return; // IMPORTANTE: no seguimos al share si falló aquí
+      return;
     }
 
     // 2) COMPARTIR / ABRIR PDF (SI SE GENERÓ BIEN)
@@ -448,16 +556,11 @@ export class PagoRetornoPage implements OnInit {
         url: fileUri,
         dialogTitle: 'Compartir boleta',
       });
-
-      // Aquí opcionalmente puedes NO mostrar nada:
-      // el usuario ya vio el share sheet.
     } catch (e: any) {
-      // 👇 Aquí distinguimos "canceló" de "error real"
       const msg = (e?.message || e?.toString() || '').toLowerCase();
 
       if (msg.includes('cancel') || msg.includes('dismiss')) {
         console.log('Usuario canceló el compartir:', e);
-        // No mostramos alerta de error, porque el PDF sí se generó.
         return;
       }
 
@@ -470,5 +573,19 @@ export class PagoRetornoPage implements OnInit {
       });
       await alert.present();
     }
+  }
+
+  private async mostrarToast(
+    message: string,
+    color: 'success' | 'danger' | 'warning' = 'success'
+  ) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 2500,
+      position: 'top',
+      mode: 'ios',
+      color,
+    });
+    await toast.present();
   }
 }

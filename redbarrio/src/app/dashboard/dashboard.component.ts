@@ -1,3 +1,5 @@
+// src/app/dashboard/dashboard.component.ts
+
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
@@ -8,8 +10,10 @@ import { ChartData, Chart, registerables, ChartOptions } from 'chart.js';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { Capacitor } from '@capacitor/core';
-import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Router } from '@angular/router';
+import { Browser } from '@capacitor/browser';
+
+import { SupabaseService } from 'src/app/services/supabase.service';
 
 import { addIcons } from 'ionicons';
 import {
@@ -61,6 +65,7 @@ export class DashboardComponent implements OnInit {
   constructor(
     private metricasService: MetricasService,
     private router: Router,
+    private supabaseService: SupabaseService
   ) {
     addIcons({
       documentTextOutline,
@@ -120,7 +125,7 @@ export class DashboardComponent implements OnInit {
       this.filtroTipo === 'Todos'
         ? [...this.metricasOriginales]
         : this.metricasOriginales.filter(
-            (m) => m.tipo_transaccion === this.filtroTipo,
+            (m) => m.tipo_transaccion === this.filtroTipo
           );
 
     this.calcularTotales();
@@ -129,19 +134,19 @@ export class DashboardComponent implements OnInit {
 
   calcularTotales() {
     const ingresos = this.metricas.filter(
-      (m) => m.tipo_transaccion === 'Ingreso',
+      (m) => m.tipo_transaccion === 'Ingreso'
     );
     const gastos = this.metricas.filter(
-      (m) => m.tipo_transaccion === 'Gasto',
+      (m) => m.tipo_transaccion === 'Gasto'
     );
 
     this.totalIngresos = ingresos.reduce(
       (acc, i) => acc + Number(i.monto || 0),
-      0,
+      0
     );
     this.totalGastos = gastos.reduce(
       (acc, i) => acc + Number(i.monto || 0),
-      0,
+      0
     );
     this.balance = this.totalIngresos - this.totalGastos;
   }
@@ -206,7 +211,7 @@ export class DashboardComponent implements OnInit {
               const total = valores.reduce((acc, v) => acc + v, 0);
               const pct = total ? (value / total) * 100 : 0;
               return `${label}: $${value.toLocaleString(
-                'es-CL',
+                'es-CL'
               )} (${pct.toFixed(1)}%)`;
             },
           },
@@ -307,16 +312,18 @@ export class DashboardComponent implements OnInit {
     this.chart?.update();
   }
 
+  // ========================================================
+  // DESCARGAR TRANSPARENCIA ✅ vía Supabase Storage
+  // ========================================================
   async descargarTransparencia() {
     try {
       if (!this.metricas || this.metricas.length === 0) {
-        const msg = 'No hay datos disponibles para exportar.';
-        Capacitor.isNativePlatform() ? alert(msg) : alert(msg);
+        alert('No hay datos disponibles para exportar.');
         return;
       }
 
       const dataExcel = this.metricas.map((m) => ({
-        Fecha: m.fecha.split(' ')[0].replace(/-/g, '/'),
+        Fecha: m.fecha ? m.fecha.split(' ')[0].replace(/-/g, '/') : '',
         'Tipo transacción': m.tipo_transaccion,
         Monto: m.monto,
         'Nombre item': m.nombre_item,
@@ -330,36 +337,78 @@ export class DashboardComponent implements OnInit {
       const wb: XLSX.WorkBook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Transparencia');
 
-      const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-      const blob = new Blob([wbout], {
-        type:
-          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      });
-
       const fileName = `detalle_transparencia_${new Date()
         .toISOString()
         .slice(0, 10)}.xlsx`;
 
-      if (Capacitor.isNativePlatform()) {
-        const base64 = await blob
-          .arrayBuffer()
-          .then((b) => btoa(String.fromCharCode(...new Uint8Array(b))));
+      const platform = Capacitor.getPlatform();
 
-        await Filesystem.writeFile({
-          path: fileName,
-          data: base64,
-          directory: Directory.Documents,
+      if (platform === 'web') {
+        // 🌐 Navegador (PC): puedes descargar directo o subir a Supabase igual,
+        // pero mantenemos la descarga directa porque funciona bien.
+        const wbArray = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([wbArray], {
+          type:
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        });
+        saveAs(blob, fileName);
+        return;
+      }
+
+      // 📱 App (Android/iOS): subimos el archivo a Supabase y descargamos desde ahí
+      const wbArray = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([wbArray], {
+        type:
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+
+      // Ruta dentro del bucket
+      const timestamp = Date.now();
+      const path = `excel/${timestamp}-${fileName}`;
+
+      // 🔸 Usa un bucket llamado 'transparencia' (créalo en Supabase),
+      // o cambia 'transparencia' por algún bucket que ya tengas, p. ej. 'proyectos'
+      const { data, error } = await this.supabaseService
+        .storage()
+        .from('Transparencia')
+        .upload(path, blob, {
+          cacheControl: '3600',
+          upsert: false,
+          contentType:
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         });
 
+      if (error) {
+        console.error('❌ Error al subir Excel a Supabase:', error);
         alert(
-          `✅ Archivo guardado correctamente como ${fileName} en Documentos.`,
+          'Ocurrió un problema al subir el archivo de transparencia. Intenta nuevamente.'
         );
-      } else {
-        saveAs(blob, fileName);
+        return;
       }
-    } catch (error) {
-      console.error('Error al generar el archivo Excel:', error);
-      alert('Error al generar el archivo.');
+
+      const { data: publicData } = this.supabaseService
+        .storage()
+        .from('Transparencia')
+        .getPublicUrl(path);
+
+      const publicUrl = publicData?.publicUrl;
+
+      if (!publicUrl) {
+        alert(
+          'No se pudo obtener la URL pública del archivo. Revisa la configuración del bucket.'
+        );
+        return;
+      }
+
+      // 🧭 Abrimos en el navegador del sistema para que maneje la descarga
+      await Browser.open({ url: publicUrl });
+    } catch (error: any) {
+      console.error('Error al generar / subir / abrir el Excel:', error);
+      alert(
+        `Error al generar o descargar el archivo: ${
+          error?.message || error?.toString() || ''
+        }`
+      );
     }
   }
 }

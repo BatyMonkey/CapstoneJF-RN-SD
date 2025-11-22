@@ -1,4 +1,4 @@
-// src/app/admin-actividades/actividades.page.ts (adaptado de proyectos)
+// src/app/admin-actividades/actividades.page.ts
 
 import { Component, OnInit } from '@angular/core';
 import {
@@ -373,13 +373,44 @@ export class ActividadesAdminPage implements OnInit {
   // ==========================================================
   // TOAST SIMPLE
   // ==========================================================
-  async mostrarToast(mensaje: string) {
+  async mostrarToast(mensaje?: any) {
+    // Normalizamos cualquier cosa que venga
+    let raw =
+      mensaje === undefined || mensaje === null ? '' : (mensaje as any);
+
+    if (typeof raw !== 'string') {
+      try {
+        raw = String(raw);
+      } catch {
+        raw = '';
+      }
+    }
+
+    // Limpiamos espacios
+    let clean = raw.trim();
+
+    // Si el mensaje contiene la palabra 'undefined' o 'null', la quitamos
+    clean = clean
+      .replace(/\bundefined\b/gi, '')
+      .replace(/\bnull\b/gi, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    // Si después de limpiar quedó vacío, usamos uno por defecto
+    if (!clean) {
+      clean = 'Acción realizada correctamente.';
+    }
+
+    console.log('[Toast debug] mensaje recibido:', mensaje, '→ usando:', clean);
+
     const toast = await this.toastCtrl.create({
-      message: mensaje,
+      message: clean,
       duration: 2000,
       color: 'primary',
       position: 'top',
+      mode: 'ios',
     });
+
     await toast.present();
   }
 
@@ -391,7 +422,6 @@ export class ActividadesAdminPage implements OnInit {
   }
 
   irAGenerarActividad() {
-    // Ajusta la ruta según como la tengas definida
     this.router.navigate(['admin/actividades/crear-actividad']);
   }
 
@@ -431,7 +461,6 @@ export class ActividadesAdminPage implements OnInit {
       return;
     }
 
-    // Ajusta la ruta al formulario de edición de actividades
     this.router.navigate(['/admin/actividades/editar', id]);
   }
 

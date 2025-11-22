@@ -20,6 +20,9 @@ import {
 } from '../../core/certificado';
 
 import { environment } from 'src/environments/environment';
+import { Share } from '@capacitor/share';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Capacitor } from '@capacitor/core';
 
 /*  🔥 IMPORTS NUEVOS PARA ICONOS  */
 import { addIcons } from 'ionicons';
@@ -79,6 +82,15 @@ export class SolicitarCertificadoPage implements OnInit {
     await this.cargarHistorial();
   }
 
+  // 🔙 Volver desde el header hero
+  goBack() {
+    if (window.history.length > 1) {
+      this.navCtrl.back();
+    } else {
+      this.navCtrl.navigateRoot('/home');
+    }
+  }
+
   // ============================================================
   // 🔹 Construcción de datos personales
   // ============================================================
@@ -88,14 +100,27 @@ export class SolicitarCertificadoPage implements OnInit {
     pa?: string | null,
     sa?: string | null
   ) {
-    return [pn, sn, pa, sa].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
+    return [pn, sn, pa, sa]
+      .filter(Boolean)
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 
   private monthNameEs(m: number) {
     return [
-      'enero', 'febrero', 'marzo', 'abril',
-      'mayo', 'junio', 'julio', 'agosto',
-      'septiembre', 'octubre', 'noviembre', 'diciembre',
+      'enero',
+      'febrero',
+      'marzo',
+      'abril',
+      'mayo',
+      'junio',
+      'julio',
+      'agosto',
+      'septiembre',
+      'octubre',
+      'noviembre',
+      'diciembre',
     ][m];
   }
 
@@ -209,7 +234,10 @@ export class SolicitarCertificadoPage implements OnInit {
         who?.segundo_nombre,
         who?.primer_apellido,
         who?.segundo_apellido
-      ) || who?.full_name || who?.nombre || '';
+      ) ||
+      who?.full_name ||
+      who?.nombre ||
+      '';
 
     return {
       nombre_completo: nombre,
@@ -240,7 +268,46 @@ export class SolicitarCertificadoPage implements OnInit {
   }
 
   // ============================================================
-  // 🔹 Emitir + Descargar
+  // 🔹 Helper: Blob -> base64 (para Filesystem en móvil)
+  // ============================================================
+  private blobToBase64(blob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dataUrl = reader.result as string;
+        const base64 = dataUrl.split(',')[1]; // quitamos "data:...;base64,"
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  // ============================================================
+  // 🔹 Helper: asegurar carpeta 'certificados' en Documents (fallback)
+  // ============================================================
+  private async ensureCertDirDocuments() {
+    try {
+      await Filesystem.mkdir({
+        path: 'certificados',
+        directory: Directory.Documents,
+        recursive: true,
+      });
+    } catch (e: any) {
+      const msg = e?.message || '';
+      if (
+        msg.includes('EXISTS') ||
+        msg.includes('AlreadyExists') ||
+        msg.includes('EEXIST')
+      ) {
+        return;
+      }
+      console.warn('No se pudo crear el directorio certificados:', e);
+    }
+  }
+
+  // ============================================================
+  // 🔹 Emitir + Descargar (PC: descarga, móvil: guardar + compartir)
   // ============================================================
   async emitirDescargar() {
     try {
@@ -265,7 +332,84 @@ export class SolicitarCertificadoPage implements OnInit {
 
       const blob = await fillCertificate(baseBytes, vars);
 
-      downloadBlob(blob, `certificado-${id}.pdf`);
+      const platform = Capacitor.getPlatform();
+
+      if (platform === 'web') {
+        // 👉 Navegador (PC): descarga clásica
+        downloadBlob(blob, `certificado-${id}.pdf`);
+      } else {
+        // 👉 App móvil (Android/iOS): guardar archivo en carpeta visible + compartir
+
+        const base64Data = await this.blobToBase64(blob);
+        const fileName = `certificado-${id}-${Date.now()}.pdf`;
+
+        let fileUri: string | null = null;
+
+        if (platform === 'android') {
+          // ANDROID → guardar en /Download para que se vea en "Descargas"
+          try {
+            await Filesystem.mkdir({
+              directory: Directory.ExternalStorage,
+              path: 'Download',
+              recursive: true,
+            });
+          } catch (e: any) {
+            console.log('mkdir Download (ignorable):', e);
+          }
+
+          const fileResult = await Filesystem.writeFile({
+            path: `Download/${fileName}`,
+            data: base64Data,
+            directory: Directory.ExternalStorage,
+          });
+
+          fileUri = fileResult.uri;
+          console.log(
+            'Certificado guardado en (Android/ExternalStorage):',
+            fileUri
+          );
+
+          await this.mostrarToast(
+            'Certificado guardado en la carpeta Descargas.',
+            'success'
+          );
+        } else {
+          // iOS u otras plataformas híbridas → Documents de la app
+          await this.ensureCertDirDocuments();
+
+          const fileResult = await Filesystem.writeFile({
+            path: `certificados/${fileName}`,
+            data: base64Data,
+            directory: Directory.Documents,
+          });
+
+          fileUri = fileResult.uri;
+          console.log('Certificado guardado en (Documents):', fileUri);
+
+          await this.mostrarToast(
+            'Certificado guardado en documentos de la aplicación.',
+            'success'
+          );
+        }
+
+        // Compartir (opcional) si tenemos URI
+        if (fileUri) {
+          try {
+            await Share.share({
+              title: 'Certificado',
+              text: 'Se ha generado tu certificado.',
+              url: fileUri,
+              dialogTitle: 'Compartir certificado',
+            });
+          } catch (shareError) {
+            console.warn(
+              'Compartir certificado cancelado o fallido:',
+              shareError
+            );
+            // No rompemos el flujo: el archivo ya está guardado
+          }
+        }
+      }
 
       await this.cargarHistorial();
     } catch (e: any) {
@@ -322,7 +466,6 @@ export class SolicitarCertificadoPage implements OnInit {
 
       await this.cargarHistorial();
 
-      // ✅ Mensaje simple sin HTML ni undefined
       const msg =
         `Tu certificado fue enviado a ${this.emailDestino}. ` +
         `Revisa tu bandeja de entrada y la carpeta de spam.`;
@@ -351,15 +494,6 @@ export class SolicitarCertificadoPage implements OnInit {
     }
   }
 
-  // 🔙 Volver desde el header hero
-  goBack() {
-    if (window.history.length > 1) {
-      this.navCtrl.back();
-    } else {
-      this.navCtrl.navigateRoot('/home');
-    }
-  }
-
   // ============================================================
   // 🔹 Utilidades de UI
   // ============================================================
@@ -370,8 +504,10 @@ export class SolicitarCertificadoPage implements OnInit {
     const toast = await this.toastCtrl.create({
       message,
       duration: 3000,
-      position: 'top',
+      position: 'bottom', // 👈 estilo iOS: abajo
       color,
+      mode: 'ios', // 👈 fuerza el modo iOS
+      cssClass: 'rb-toast-ios',
     });
     await toast.present();
   }

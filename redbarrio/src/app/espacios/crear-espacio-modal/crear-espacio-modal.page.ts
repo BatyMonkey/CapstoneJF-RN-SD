@@ -255,9 +255,23 @@ export class CrearEspacioModalPage {
         return;
       }
 
-      // 2) (Opcional) subir imagen a Supabase Storage más adelante
+      // 2) Subir imagen a Supabase Storage (si se seleccionó)
       let imagen_url: string | null = null;
-      // TODO: aquí subimos this.imagenFile y llenamos imagen_url
+
+      if (this.imagenFile) {
+        try {
+          imagen_url = await this.espaciosService.subirImagenEspacio(
+            this.imagenFile
+          );
+        } catch (e) {
+          console.error('[CrearEspacioModal] Error subiendo imagen', e);
+          // No cortamos el flujo, solo avisamos
+          await this.mostrarToast(
+            'El espacio se creará, pero hubo un problema al subir la imagen.',
+            'warning'
+          );
+        }
+      }
 
       // 3) Payload para la tabla
       const payload: any = {
@@ -298,7 +312,7 @@ export class CrearEspacioModalPage {
       duration: 2500,
       mode: 'ios', // estilo iOS
       position: 'top',
-      cssClass: ['rb-toast-solid', `rb-toast-${type}`], // 👈 clase nueva
+      cssClass: ['rb-toast-solid', `rb-toast-${type}`],
     });
 
     await toast.present();

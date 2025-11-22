@@ -60,6 +60,9 @@ export class AppComponent {
   isAdmin = false;
   private static _deepLinkInit = false;
 
+  // === Estado del chatbot IA ===
+  showChatbot = false;
+
   constructor(
     private router: Router,
     private menu: MenuController,
@@ -177,42 +180,67 @@ export class AppComponent {
     } catch {}
   }
 
+  // 🔗 Deep links (solo ajustado lo relacionado con pago-retorno)
   private setupDeepLinks() {
     App.getLaunchUrl().then((launch) => {
-      if (launch?.url) this.handleUrl(launch.url);
+      if (launch?.url) {
+        console.log('[DeepLink] getLaunchUrl =>', launch.url);
+        this.handleUrl(launch.url);
+      }
     });
 
     App.addListener('appUrlOpen', (data) => {
+      console.log('[DeepLink] appUrlOpen =>', data?.url);
       if (data?.url) this.handleUrl(data.url);
     });
   }
 
   private async handleUrl(rawUrl: string) {
     try {
+      console.log('[DeepLink] handleUrl rawUrl =', rawUrl);
       const u = new URL(rawUrl);
 
+      const proto = u.protocol; // ej: 'capacitor:', 'redbarrio:', 'myapp:'
+      const host = u.host;      // ej: 'localhost', 'app', etc.
+      const path = u.pathname || ''; // ej: '/pago-retorno'
+      const params = u.searchParams;
+
+      console.log('[DeepLink] parsed =>', {
+        proto,
+        host,
+        path,
+        search: u.search,
+      });
+
+      // ==========================
+      // 🔹 RETORNO PAGO TRANSBANK
+      // ==========================
       if (
-        (u.protocol === 'redbarrio:' &&
-          u.host === 'app' &&
-          u.pathname.startsWith('/pago-retorno')) ||
-        (u.protocol === 'capacitor:' &&
-          u.host === 'localhost' &&
-          u.pathname === '/pago-retorno')
+        path.includes('pago-retorno') &&
+        (proto === 'capacitor:' || proto === 'redbarrio:')
       ) {
-        const token = u.searchParams.get('token_ws') || '';
+        const token = params.get('token_ws') || '';
+
+        console.log('[DeepLink] pago-retorno detectado, token_ws =', token);
+
+        // Cerramos navegador externo (si venías de Browser.open)
         try {
           await Browser.close();
         } catch {}
+
         this.ngZone.run(() => {
           this.router.navigate(['/pago-retorno'], {
-            queryParams: { token_ws: token },
+            queryParams: token ? { token_ws: token } : {},
             replaceUrl: true,
           });
         });
         return;
       }
 
-      if (u.protocol === 'myapp:' && u.host === 'auth') {
+      // ==========================
+      // 🔹 DEEP LINK AUTH (SUPABASE)
+      // ==========================
+      if (proto === 'myapp:' && host === 'auth') {
         const q = u.searchParams;
         const hashParams = new URLSearchParams(
           u.hash?.startsWith('#') ? u.hash.slice(1) : u.hash
@@ -250,11 +278,7 @@ export class AppComponent {
     }
   }
 
-    // === Estado del chatbot IA ===
-  showChatbot = false;
-
   toggleChatbot() {
     this.showChatbot = !this.showChatbot;
   }
-
 }
